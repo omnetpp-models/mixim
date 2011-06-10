@@ -1,26 +1,19 @@
 package mixnet.examples.hybrid;
 
-import inet.applications.pingapp.PingApp;
-import inet.applications.tcpapp.TCPApp;
-import inet.applications.udpapp.UDPApp;
 import inet.base.NotificationBoard;
 import inet.linklayer.ethernet.EthernetInterface;
 import inet.linklayer.ppp.PPPInterface;
+import inet.mobility.NoMobility;
 import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
-import inet.transport.tcp.TCP;
-import inet.transport.udp.UDP;
-
+import mixnet.modules.MixnetBridge;
+import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic80211;
 import org.mixim.modules.nic.Nic802154_TI_CC2420;
-import org.mixim.base.modules.BaseMobility;
-import org.mixim.base.modules.BaseArp;
-import org.mixim.base.modules.BaseUtility;
-import org.mixim.modules.power.battery.SimpleBattery;
 import org.mixim.modules.power.battery.BatteryStats;
+import org.mixim.modules.power.battery.SimpleBattery;
 
-import mixnet.modules.MixnetBridge;
 
 // Router equipped with all types of NICs existent in the network's hosts,
 // able to route packages between all of the hosts.
@@ -50,7 +43,7 @@ module HybridRouter
         utility: BaseUtility {
             @display("p=155,49");
         }
-        mobility: BaseMobility {
+        mobility: NoMobility {
             parameters:
                 @display("p=155,119");
         }

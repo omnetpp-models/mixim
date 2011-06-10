@@ -1,14 +1,12 @@
 package org.mixim.examples.ieee802154Narrow;
 
-import org.mixim.modules.mobility.LinearMobility;
-//import org.mixim.modules.application.BurstApplLayer;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.base.modules.BaseArp;
 import org.mixim.base.modules.BaseMobility;
-import org.mixim.modules.power.battery.SimpleBattery;
-import org.mixim.modules.power.battery.BatteryStats;
-
+import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic802154_TI_CC2420;
+import org.mixim.modules.power.battery.BatteryStats;
+import org.mixim.modules.power.battery.SimpleBattery;
+
 
 module PhyMacHost
 {

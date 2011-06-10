@@ -21,14 +21,11 @@
 
 package mixnet.examples.bulktransfer;
 
-import inet.networklayer.autorouting.FlatNetworkConfigurator;
-import inet.nodes.inet.Router;
-import inet.nodes.inet.StandardHost;
-import ned.DatarateChannel;
-
-import org.mixim.base.connectionManager.ConnectionManager;
+import inet.networklayer.autorouting.ipv4.FlatNetworkConfigurator;
 import mixnet.modules.MixnetWorldUtility;
 import mixnet.nodes.Ieee80211Host;
+import org.mixim.base.connectionManager.ConnectionManager;
+
 
 //
 //This network is based on INET's "inet/bulktransfer" example.
@@ -47,12 +44,12 @@ import mixnet.nodes.Ieee80211Host;
 network BulkTransfer
 {
     parameters:
-    	double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
+        double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
 
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
-    
+
     submodules:
         world: MixnetWorldUtility {
             parameters:
@@ -66,7 +63,7 @@ network BulkTransfer
             parameters:
                 @display("p=66,25");
         }
-        
+
         client1: Ieee80211Host {
             parameters:
                 @display("p=131,67");

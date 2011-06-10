@@ -1,11 +1,11 @@
 package mixnet.examples.adhoc;
 
 
-import inet.networklayer.autorouting.FlatNetworkConfigurator;
-import org.mixim.base.connectionManager.ConnectionManager;
-
+import inet.networklayer.autorouting.ipv4.FlatNetworkConfigurator;
 import mixnet.modules.MixnetWorldUtility;
 import mixnet.nodes.Ieee80211Host;
+import org.mixim.base.connectionManager.ConnectionManager;
+
 
 //Network for testing hosts containing an INET network stack,
 //a MiXiM NIC (802.11) and a MiXiM mobility module.

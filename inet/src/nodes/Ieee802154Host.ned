@@ -1,25 +1,23 @@
 package mixnet.nodes;
 
+import inet.applications.ITCPApp;
+import inet.applications.IUDPApp;
 import inet.applications.pingapp.PingApp;
-import inet.applications.tcpapp.TCPApp;
-import inet.applications.udpapp.UDPApp;
 import inet.base.NotificationBoard;
 import inet.linklayer.ethernet.EthernetInterface;
 import inet.linklayer.ppp.PPPInterface;
+import inet.mobility.IMobility;
 import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
 import inet.transport.tcp.TCP;
 import inet.transport.udp.UDP;
-
-import org.mixim.modules.nic.Nic802154_TI_CC2420;
-import org.mixim.base.modules.IBaseMobility;
-import org.mixim.base.modules.BaseArp;
-import org.mixim.base.modules.BaseUtility;
-import org.mixim.modules.power.battery.SimpleBattery;
-import org.mixim.modules.power.battery.BatteryStats;
-
 import mixnet.modules.MixnetBridge;
+import org.mixim.base.modules.BaseUtility;
+import org.mixim.modules.nic.Nic802154_TI_CC2420;
+import org.mixim.modules.power.battery.BatteryStats;
+import org.mixim.modules.power.battery.SimpleBattery;
+
 
 // This host is an example on how a host with INET network stack
 // can be equipped with mobility- and wireless-modules from MiXiM. 
@@ -42,7 +40,7 @@ module Ieee802154Host
         string udpAppType = default("");
         bool IPForward = default(false);
         string routingFile = default("");
-        string mobilityType = default("BaseMobility");
+        string mobilityType = default("inet.mobility.NoMobility");
     gates:
         inout pppg[] @labels(PPPFrame-conn);
         inout ethg[] @labels(EtherFrame-conn);
@@ -57,7 +55,7 @@ module Ieee802154Host
         utility: BaseUtility {
             @display("p=147,41");
         }
-        mobility: <mobilityType> like IBaseMobility {
+        mobility: <mobilityType> like IMobility {
             parameters:
                 @display("p=147,128");
         }
@@ -77,7 +75,7 @@ module Ieee802154Host
                 routingFile = routingFile;
                 @display("p=60,346");
         }
-        tcpApp[numTcpApps]: <tcpAppType> like TCPApp {
+        tcpApp[numTcpApps]: <tcpAppType> like ITCPApp {
             parameters:
                 @display("p=231,67");
         }
@@ -85,7 +83,7 @@ module Ieee802154Host
             parameters:
                 @display("p=231,154");
         }
-        udpApp[numUdpApps]: <udpAppType> like UDPApp {
+        udpApp[numUdpApps]: <udpAppType> like IUDPApp {
             parameters:
                 @display("p=388,67");
         }

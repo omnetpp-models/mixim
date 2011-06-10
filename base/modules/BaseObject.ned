@@ -1,5 +1,8 @@
 package org.mixim.base.modules;
 
+import inet.mobility.IMobility;
+
+
 module BaseObject
 {
     parameters:
@@ -9,7 +12,7 @@ module BaseObject
             parameters:
                 @display("p=130,38,rect;b=24,24,,black,,");
         }
-        mobility: BaseMobility {
+        mobility: <> like IMobility {
             parameters:
                 @display("p=130,172;i=cogwheel2");
 

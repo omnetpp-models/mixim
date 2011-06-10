@@ -1,14 +1,10 @@
 package mixnet.examples.hybrid;
 
-import inet.networklayer.autorouting.FlatNetworkConfigurator;
-import inet.linklayer.ethernet.EtherHub;
 import inet.nodes.inet.StandardHost;
-
-import org.mixim.base.connectionManager.ConnectionManager;
-
 import mixnet.modules.MixnetWorldUtility;
 import mixnet.nodes.Ieee80211Host;
 import mixnet.nodes.Ieee802154Host;
+import org.mixim.base.connectionManager.ConnectionManager;
 
 
 //Network for testing a hybrid host (hybridRouter) containing different wired
@@ -34,7 +30,7 @@ network Hybrid
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
-        
+
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
 
     submodules:
