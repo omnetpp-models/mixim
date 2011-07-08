@@ -52,8 +52,8 @@
 class ChannelAccess : public BatteryAccess, protected MobilityAccess, protected cListener
 {
 protected:
-    /** @brief A signal used to subscribe to position changes. */
-    static simsignal_t positionChangedSignal;
+    /** @brief A signal used to subscribe to mobility state changes. */
+    static simsignal_t mobilityStateChangedSignal;
 
     /** @brief use sendDirect or not?*/
     bool useSendDirect;

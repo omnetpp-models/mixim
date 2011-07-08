@@ -32,7 +32,7 @@
 
 #include <cassert>
 
-simsignal_t ChannelAccess::positionChangedSignal = SIMSIGNAL_NULL;
+simsignal_t ChannelAccess::mobilityStateChangedSignal = SIMSIGNAL_NULL;
 
 BaseConnectionManager* ChannelAccess::getConnectionManager(cModule* nic)
 {
@@ -54,8 +54,8 @@ void ChannelAccess::initialize( int stage )
 	BatteryAccess::initialize(stage);
 
     if( stage == 0 ){
-        positionChangedSignal = registerSignal("positionChanged");
-        findHost()->subscribe(positionChangedSignal, this);
+        mobilityStateChangedSignal = registerSignal("mobilityStateChanged");
+        findHost()->subscribe(mobilityStateChangedSignal, this);
         hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
         cModule* nic = getParentModule();
 		cc = getConnectionManager(nic);
@@ -141,7 +141,7 @@ simtime_t ChannelAccess::calculatePropagationDelay(const NicEntry* nic) {
 
 void ChannelAccess::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
 {
-	if (signalID == positionChangedSignal) {
+	if (signalID == mobilityStateChangedSignal) {
 		Coord *coord = static_cast<Coord*>(obj);
 
 		if(isRegistered) {
