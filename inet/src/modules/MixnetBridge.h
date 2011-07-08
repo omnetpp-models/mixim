@@ -19,7 +19,6 @@
 #include <omnetpp.h>
 #include <MACAddress.h>
 #include <BaseLayer.h>
-#include <MixnetWorldUtility.h>
 
 /**
  * @brief INET <-> MiXiM compatibility class. Converts packets between
@@ -42,8 +41,6 @@
  * to work. Therefore no addressing module implementing MiXiM's
  * "AddressingInterface" should be present in the host!
  *
- * Uses MixnetWorldUtility as INET<->MiXiM MAC-address database.
- *
  * @ingroup mixnet
  *
  * @author Karl Wessel
@@ -51,17 +48,6 @@
 class MixnetBridge : public cSimpleModule
 {
 protected:
-	/** @brief INET's MAC-address for this bridge's NIC.*/
-	MACAddress myINETMacAddr;
-	/** @brief MiXiM's MAC-address for this bridge's NIC.*/
-	int myMiximMacAddr;
-
-	/** @brief Pointer to MIxNET's world utility module.*/
-	MixnetWorldUtility* world;
-
-	/** @brief Pointer to this bridge's NIC module.*/
-	cModule* nic;
-
 	/** @name gate ids*/
     /*@{*/
     int upperGateIn;

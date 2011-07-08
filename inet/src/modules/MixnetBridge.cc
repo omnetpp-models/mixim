@@ -43,37 +43,6 @@ void MixnetBridge::initialize(int stage)
 						"module. Please remove it!");
 		}
 
-		//find this bridge's NIC module
-		nic = findMyNic();
-
-		//get a pointer to the Mixnet world utility module
-		world = FindModule<MixnetWorldUtility*>::findGlobalModule();
-		if(world == 0) {
-			opp_error("Could not find an instance of MixnetWorldUtility in "
-					  "network! Please add it.");
-		}
-
-		//MiXiM MAC-address has to be the NIC's id
-		myMiximMacAddr = nic->getId();
-
-		//get INET MAC-address
-		const char *addrstr = par("address");
-		if (!strcmp(addrstr, "auto"))
-		{
-			// assign automatic address
-			myINETMacAddr = MACAddress::generateAutoAddress();
-
-			// change module parameter from "auto" to concrete address
-			par("address").setStringValue(myINETMacAddr.str().c_str());
-		}
-		else
-		{
-			myINETMacAddr.setAddress(addrstr);
-		}
-
-		//register MAC-address pair with MixnetWorldUtility
-		world->addMACAddrPair(myINETMacAddr, nic->getId());
-
 		registerInterface();
 	}
 }
@@ -99,20 +68,8 @@ void MixnetBridge::handleUpperMsg(cMessage *msg)
 	assert(dynamic_cast<Ieee802Ctrl*>(msg->getControlInfo()));
 	Ieee802Ctrl* inetCtrl = static_cast<Ieee802Ctrl*>(msg->removeControlInfo());
 
-	//convert INET dest address to MiXiM dest address
-	const MACAddress& inetDestAddr = inetCtrl->getDest();
-	int miximDestAddr = L2BROADCAST;
-	if(!inetDestAddr.isBroadcast()) {
-		miximDestAddr = world->getMiximMACAddr(inetDestAddr);
-
-		if(miximDestAddr == MixnetWorldUtility::NoMacPairFound) {
-			opp_error("Could not find MiXiM's corresponding MAC address for "
-					  "INET's address %s!", inetDestAddr.str().c_str());
-		}
-	}
-
 	//create and attach MiXiM control info
-	NetwToMacControlInfo* miximCtrl = new NetwToMacControlInfo(miximDestAddr);
+	NetwToMacControlInfo* miximCtrl = new NetwToMacControlInfo(inetCtrl->getDest());
 	msg->setControlInfo(miximCtrl);
 
 	delete inetCtrl;
@@ -139,6 +96,7 @@ cModule* MixnetBridge::findMyNic() {
 
 void MixnetBridge::registerInterface()
 {
+	cModule* nic = findMyNic();
     InterfaceEntry *e = new InterfaceEntry();
 
     // interface name: NIC module's name without special
@@ -153,6 +111,8 @@ void MixnetBridge::registerInterface()
     e->setName(interfaceName);
     delete [] interfaceName;
 
+	// this MAC address must be the same as the one in BaseMacLayer
+	MACAddress myINETMacAddr = MACAddress(nic->getId());
     e->setMACAddress(myINETMacAddr);
 
     // generate interface identifier for IPv6
