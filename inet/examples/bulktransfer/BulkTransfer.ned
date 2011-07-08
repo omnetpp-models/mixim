@@ -22,9 +22,9 @@
 package mixnet.examples.bulktransfer;
 
 import inet.networklayer.autorouting.ipv4.FlatNetworkConfigurator;
-import mixnet.modules.MixnetWorldUtility;
 import mixnet.nodes.Ieee80211Host;
 import org.mixim.base.connectionManager.ConnectionManager;
+import org.mixim.base.modules.BaseWorldUtility;
 
 
 //
@@ -51,7 +51,7 @@ network BulkTransfer
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
 
     submodules:
-        world: MixnetWorldUtility {
+        world: BaseWorldUtility {
             parameters:
                 playgroundSizeX = playgroundSizeX;
                 playgroundSizeY = playgroundSizeY;

@@ -1,10 +1,10 @@
 package mixnet.examples.hybrid;
 
 import inet.nodes.inet.StandardHost;
-import mixnet.modules.MixnetWorldUtility;
 import mixnet.nodes.Ieee80211Host;
 import mixnet.nodes.Ieee802154Host;
 import org.mixim.base.connectionManager.ConnectionManager;
+import org.mixim.base.modules.BaseWorldUtility;
 
 
 //Network for testing a hybrid host (hybridRouter) containing different wired
@@ -34,7 +34,7 @@ network Hybrid
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
 
     submodules:
-        world: MixnetWorldUtility {
+        world: BaseWorldUtility {
             parameters:
                 playgroundSizeX = playgroundSizeX;
                 playgroundSizeY = playgroundSizeY;
