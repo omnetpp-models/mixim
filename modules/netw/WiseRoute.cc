@@ -108,7 +108,7 @@ void WiseRoute::handleSelfMsg(cMessage* msg)
 {
 	if (msg->getKind() == SEND_ROUTE_FLOOD_TIMER) {
 		// Send route flood packet and restart the timer
-		int macBcastAddr = L2BROADCAST;
+		MACAddress macBcastAddr = MACAddress::BROADCAST_ADDRESS;
 		int ipBcastAddr = L3BROADCAST;
 		WiseRoutePkt* pkt = new WiseRoutePkt("route-flood", ROUTE_FLOOD);
 		pkt->setByteLength(headerLength);
@@ -136,8 +136,8 @@ void WiseRoute::handleSelfMsg(cMessage* msg)
 
 void WiseRoute::handleLowerMsg(cMessage* msg)
 {
-	int macBcastAddr = L3BROADCAST;
-	int bcastIpAddr = L2BROADCAST;
+	MACAddress macBcastAddr = MACAddress::BROADCAST_ADDRESS;
+	int bcastIpAddr = L3BROADCAST;
 	WiseRoutePkt* netwMsg = check_and_cast<WiseRoutePkt*>(msg);
 	int finalDestAddr = netwMsg->getFinalDestAddr();
 	int initialSrcAddr = netwMsg->getInitialSrcAddr();
@@ -230,7 +230,7 @@ void WiseRoute::handleUpperMsg(cMessage* msg)
 {
 	int finalDestAddr;
 	int nextHopAddr;
-	unsigned long nextHopMacAddr;
+	MACAddress nextHopMacAddr;
 	WiseRoutePkt* pkt = new WiseRoutePkt(msg->getName(), DATA);
 	NetwControlInfo* cInfo = dynamic_cast<NetwControlInfo*>(msg->removeControlInfo());
 	int ipBcastAddr = L3BROADCAST;
@@ -260,7 +260,7 @@ void WiseRoute::handleUpperMsg(cMessage* msg)
 	pkt->setDestAddr(nextHopAddr);
 	if (nextHopAddr == ipBcastAddr) {
 		// it's a flood.
-		nextHopMacAddr = L2BROADCAST;
+		nextHopMacAddr = MACAddress::BROADCAST_ADDRESS;
 		pkt->setIsFlood(1);
 		nbFloodsSent++;
 		// record flood in flood table

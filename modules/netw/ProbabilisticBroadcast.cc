@@ -28,7 +28,7 @@ void ProbabilisticBroadcast::initialize(int stage)
 	    timeInQueueAfterDeath = par("timeInQueueAfterDeath");
 	    timeToLive = par("timeToLive");
 	    broadcastTimer = new cMessage("broadcastTimer");
-	    convertedMacBroadcastAddr = L2BROADCAST;
+	    convertedMacBroadcastAddr = MACAddress::BROADCAST_ADDRESS;
 	    maxFirstBcastBackoff = par("maxFirstBcastBackoff");
 	    oneHopLatencies.setName("oneHopLatencies");
 	    nbDataPacketsReceived = 0;
@@ -53,7 +53,7 @@ void ProbabilisticBroadcast::handleUpperMsg(cMessage* msg)
 
 void ProbabilisticBroadcast::handleLowerMsg(cMessage* msg)
 {
-	unsigned long macSrcAddr;
+	MACAddress macSrcAddr;
 	double oneHopLatency;
 	ProbabilisticBroadcastPkt* m = check_and_cast<ProbabilisticBroadcastPkt*>(msg);
 	MacToNetwControlInfo* cInfo = check_and_cast<MacToNetwControlInfo*>(m->removeControlInfo());

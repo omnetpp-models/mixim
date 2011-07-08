@@ -29,7 +29,6 @@
  */
 enum {
     L3BROADCAST = -1,
-    L2BROADCAST = -1,
 };
 
 #endif

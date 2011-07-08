@@ -8,6 +8,10 @@
 #ifndef ARPINTERFACE_H_
 #define ARPINTERFACE_H_
 
+
+#include <MACAddress.h>
+
+
 /**
  * @brief Interface every Address resolution protocol (ARP) module has to
  * implement.
@@ -22,7 +26,7 @@
 class ArpInterface {
 public:
 	/** @brief returns a L2 address to a given L3 address.*/
-    virtual int getMacAddr(const int netwAddr) = 0;
+    virtual MACAddress getMacAddr(const int netwAddr) = 0;
 };
 
 #endif /* ARPINTERFACE_H_ */

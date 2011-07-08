@@ -74,7 +74,7 @@ protected:
     /** @brief Data about a neighbor host.*/
     struct NeighborEntry {
     	/** @brief The neighbors address.*/
-        int address;
+    	MACAddress address;
         int fsc;
         simtime_t age;
         double bitrate;
@@ -191,16 +191,16 @@ protected:
     void suspendContention();
 
     /** @brief figure out at which bitrate to send to this particular destination */
-    double retrieveBitrate(int destAddress);
+    double retrieveBitrate(MACAddress destAddress);
 
     /** @brief add a new entry to the neighbor list */
     void addNeighbor(Mac80211Pkt *af);
 
     /** @brief find a neighbor based on his address */
-    NeighborList::iterator findNeighbor(int id)  {
+    NeighborList::iterator findNeighbor(MACAddress address)  {
         NeighborList::iterator it;
         for(it = neighbors.begin(); it != neighbors.end(); ++it) {
-            if(it->address == id) break;
+            if(it->address == address) break;
         }
         return it;
     }

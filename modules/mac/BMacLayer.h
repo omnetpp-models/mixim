@@ -166,8 +166,8 @@ class  BMacLayer : public BaseMacLayer
 
 	/** @name Help variables for the acknowledgment process. */
 	/*@{*/
-	int lastDataPktSrcAddr;
-	int lastDataPktDestAddr;
+	MACAddress lastDataPktSrcAddr;
+	MACAddress lastDataPktDestAddr;
 	int txAttempts;
 	/*@}*/
 

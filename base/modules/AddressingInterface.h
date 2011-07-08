@@ -9,6 +9,7 @@
 #define ADDRESSINGINTERFACE_H_
 
 #include <omnetpp.h>
+#include <MACAddress.h>
 
 /**
  * @brief Interface for modules which assign L2 and L3 addresses for modules.
@@ -30,7 +31,7 @@
 class AddressingInterface {
 public:
 	/** @brief Returns the L2 address for the passed mac.*/
-    virtual int myMacAddr(cModule* mac) = 0;
+    virtual MACAddress myMacAddr(cModule* mac) = 0;
 
     /** @brief Returns the L3 address for the passed net.*/
     virtual int myNetwAddr(cModule* netw) = 0;

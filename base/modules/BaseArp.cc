@@ -29,7 +29,7 @@ void BaseArp::initialize(int stage)
 	}
 }
 
-int BaseArp::getMacAddr(const int netwAddr)
+MACAddress BaseArp::getMacAddr(const int netwAddr)
 {
     if(coreDebug) {
         Enter_Method("getMacAddr(%d)",netwAddr);
@@ -41,7 +41,7 @@ int BaseArp::getMacAddr(const int netwAddr)
     	opp_error("Invalid network address: %d! Could not find a module with "
 				  "that id.", netwAddr);
     }
-    int macAddr = netwLayer->getParentModule()->getSubmodule( "nic" )->getId();
+    MACAddress macAddr(netwLayer->getParentModule()->getSubmodule( "nic" )->getId());
     coreEV << "for host[" << netwLayer->getParentModule()->getIndex()
        << "]: netwAddr " << netwAddr << "; MAC address "
        << macAddr <<endl;
@@ -67,7 +67,7 @@ int BaseArp::myNetwAddr(cModule* netw) {
     return netw->getId();
 }
 
-int BaseArp::myMacAddr(cModule *mac)
+MACAddress BaseArp::myMacAddr(cModule *mac)
 {
-    return (mac->getParentModule())->getId();
+    return MACAddress(mac->getParentModule()->getId());
 }

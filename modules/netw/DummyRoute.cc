@@ -61,7 +61,7 @@ void DummyRoute::finish() {
 }
 
 NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt) {
-    int macAddr;
+    MACAddress macAddr;
     int netwAddr;
 
     debugEV <<"in encaps...\n";
@@ -88,7 +88,7 @@ NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt) {
     if(netwAddr == L3BROADCAST) {
         debugEV << "sendDown: nHop=L3BROADCAST -> message has to be broadcasted"
            << " -> set destMac=L2BROADCAST\n";
-        macAddr = L2BROADCAST;
+        macAddr = MACAddress::BROADCAST_ADDRESS;
     }
     else{
         debugEV <<"sendDown: get the MAC address\n";

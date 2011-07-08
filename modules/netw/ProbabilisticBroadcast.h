@@ -187,7 +187,7 @@ protected:
     MsgIdSet debugMsgIdSet;
 
     // keep MAC broadcast address at class level:
-    int convertedMacBroadcastAddr;
+    MACAddress convertedMacBroadcastAddr;
 
     // variables for statistics
     long nbDataPacketsReceived; // total number of received packets from lower layer

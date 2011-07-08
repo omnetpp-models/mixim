@@ -247,7 +247,7 @@ void PhyLayerUWBIR::receiveSignal(cComponent *source, simsignal_t signalID, cObj
 {
 	Enter_Method_Silent();
 	ChannelAccess::receiveSignal(source, signalID, obj);
-	if (signalID == positionChangedSignal) {
+	if (signalID == mobilityStateChangedSignal) {
 		coreEV<< "Received move information in uwbphylayer." << endl;
 	}
 }

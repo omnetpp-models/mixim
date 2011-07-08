@@ -258,7 +258,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		else if(msg->getKind() == LMAC_CONTROL)
 		{
 			LMacPkt *mac = static_cast<LMacPkt *>(msg);
-			int dest = mac->getDestAddr();
+			MACAddress dest = mac->getDestAddr();
 			debugEV << " I have received a control packet from src " << mac->getSrcAddr() << " and dest " << dest << ".\n";
 			bool collision = false;
 			// if we are listening to the channel and receive anything, there is a collision in the slot.
@@ -301,7 +301,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 				findNewSlot();
 			}
 
-			if(dest == myMacAddr || dest == L2BROADCAST)
+			if(dest == myMacAddr || dest == MACAddress::BROADCAST_ADDRESS)
 			{
 				debugEV << "I need to stay awake.\n";
 				if (timeout->isScheduled())
@@ -324,7 +324,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		else if(msg->getKind() == LMAC_DATA)
 		{
 			LMacPkt *mac = static_cast<LMacPkt *>(msg);
-			int dest = mac->getDestAddr();
+			MACAddress dest = mac->getDestAddr();
 			bool collision = false;
 			// if we are listening to the channel and receive anything, there is a collision in the slot.
 			if (checkChannel->isScheduled())
@@ -333,7 +333,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 				collision = true;
 			}
 			debugEV << " I have received a data packet.\n";
-			if(dest == myMacAddr || dest == L2BROADCAST)
+			if(dest == myMacAddr || dest == MACAddress::BROADCAST_ADDRESS)
 			{
 				debugEV << "sending pkt to upper...\n";
 				sendUp(decapsMsg(mac));
@@ -376,7 +376,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		{
 
 			LMacPkt *mac = static_cast<LMacPkt *>(msg);
-			int dest = mac->getDestAddr();
+			MACAddress dest = mac->getDestAddr();
 			debugEV << " I have received a control packet from src " << mac->getSrcAddr() << " and dest " << dest << ".\n";
 
 			bool collision = false;
@@ -418,7 +418,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 				findNewSlot();
 			}
 
-			if(dest == myMacAddr || dest == L2BROADCAST)
+			if(dest == myMacAddr || dest == MACAddress::BROADCAST_ADDRESS)
 			{
 				debugEV << "I need to stay awake.\n";
 				macState=WAIT_DATA;
@@ -551,9 +551,9 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		if(msg->getKind() == LMAC_DATA)
 		{
 			LMacPkt *mac = static_cast<LMacPkt *>(msg);
-			int dest = mac->getDestAddr();
+			MACAddress dest = mac->getDestAddr();
 			debugEV << " I have received a data packet.\n";
-			if(dest == myMacAddr || dest == L2BROADCAST)
+			if(dest == myMacAddr || dest == MACAddress::BROADCAST_ADDRESS)
 			{
 				debugEV << "sending pkt to upper...\n";
 				sendUp(decapsMsg(mac));

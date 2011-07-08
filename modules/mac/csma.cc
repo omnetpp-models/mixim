@@ -192,7 +192,7 @@ void csma::handleUpperMsg(cMessage *msg) {
 	NetwToMacControlInfo* cInfo =
 			static_cast<NetwToMacControlInfo*> (msg->removeControlInfo());
 	debugEV<<"CSMA received a message from upper layer, name is " << msg->getName() <<", CInfo removed, mac addr="<< cInfo->getNextHopMac()<<endl;
-	int dest = cInfo->getNextHopMac();
+	MACAddress dest = cInfo->getNextHopMac();
 	macPkt->setDestAddr(dest);
 	delete cInfo;
 	macPkt->setSrcAddr(myMacAddr);
@@ -442,7 +442,7 @@ void csma::updateStatusTransmitFrame(t_mac_event event, cMessage *msg) {
 		phy->setRadioState(Radio::RX);
 
 		bool expectAck = useMACAcks;
-		if (packet->getDestAddr() != L2BROADCAST) {
+		if (packet->getDestAddr() != MACAddress::BROADCAST_ADDRESS) {
 			//unicast
 			debugEV << "(4) FSM State TRANSMITFRAME_4, "
 			   << "EV_FRAME_TRANSMITTED [Unicast]: ";
@@ -749,8 +749,8 @@ void csma::handleSelfMsg(cMessage *msg) {
  */
 void csma::handleLowerMsg(cMessage *msg) {
 	MacPkt *macPkt = static_cast<MacPkt *> (msg);
-	long src = macPkt->getSrcAddr();
-	long dest = macPkt->getDestAddr();
+	MACAddress src = macPkt->getSrcAddr();
+	MACAddress dest = macPkt->getDestAddr();
 	long ExpectedNr = 0;
 
 	debugEV<< "Received frame name= " << macPkt->getName()
@@ -824,7 +824,7 @@ void csma::handleLowerMsg(cMessage *msg) {
 			}
 		}
 	}
-	else if (dest == L2BROADCAST) {
+	else if (dest == MACAddress::BROADCAST_ADDRESS) {
 		executeMac(EV_BROADCAST_RECEIVED, macPkt);
 	} else {
 		debugEV << "packet not for me, deleting...\n";

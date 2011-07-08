@@ -29,7 +29,7 @@ void ArpHost::initialize(int stage) {
 	}
 }
 
-int ArpHost::getMacAddr(const int netwAddr)
+MACAddress ArpHost::getMacAddr(const int netwAddr)
 {
     if(debug) {
         Enter_Method("getMacAddr(%d)",netwAddr);
@@ -46,7 +46,7 @@ int ArpHost::getMacAddr(const int netwAddr)
 //    return simulation.getModule(netwAddr)->getParentModule()->getSubmodule("nic")->getId();
 }
 
-int ArpHost::getNetwAddr(const int macAddr)
+int ArpHost::getNetwAddr(const MACAddress macAddr)
 {
     if(debug) {
         Enter_Method("getNetwAddr(%d)",macAddr);
@@ -56,7 +56,7 @@ int ArpHost::getNetwAddr(const int macAddr)
     // modification by Jerome Rousselot, CSEM
     // assumes that addresses are equal to host IDs
     // and that mac addresses == net addresses
-    return macAddr;
+    return (int)macAddr.raw();
 //    debugEV << "for host[" << simulation.getModule( macAddr )->getParentModule()->getIndex()
 //       << "]: macAddr " << macAddr << "; netw address "
 //       << simulation.getModule( macAddr )->getParentModule()->getSubmodule("nic")->getId() <<endl;
@@ -71,11 +71,11 @@ int ArpHost::myNetwAddr(cModule* netw) {
 //    return netw->getId();
 }
 
-int ArpHost::myMacAddr(cModule *mac)
+MACAddress ArpHost::myMacAddr(cModule *mac)
 {
     // modification by Jerome Rousselot, CSEM
 	// assumes that addresses are equal to host index.
     // and that mac addresses == net addresses
-	return mac->getParentModule()->getParentModule()->getIndex()+offset;
+	return MACAddress(mac->getParentModule()->getParentModule()->getIndex()+offset);
 //    return (mac->getParentModule())->getId();
 }

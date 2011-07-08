@@ -71,7 +71,7 @@ cMessage* BaseNetwLayer::decapsMsg(NetwPkt *msg)
  * header fields.
  **/
 NetwPkt* BaseNetwLayer::encapsMsg(cPacket *appPkt) {
-    int macAddr;
+	MACAddress macAddr;
     int netwAddr;
 
     coreEV <<"in encaps...\n";
@@ -97,7 +97,7 @@ NetwPkt* BaseNetwLayer::encapsMsg(cPacket *appPkt) {
     if(netwAddr == L3BROADCAST) {
         coreEV << "sendDown: nHop=L3BROADCAST -> message has to be broadcasted"
            << " -> set destMac=L2BROADCAST\n";
-        macAddr = L2BROADCAST;
+        macAddr = MACAddress::BROADCAST_ADDRESS;
     }
     else{
         coreEV <<"sendDown: get the MAC address\n";

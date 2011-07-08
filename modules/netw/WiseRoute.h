@@ -103,7 +103,7 @@ protected:
 
     /** @brief cached variable of my network address */
 //    int myNetwAddr;
-    int macaddress;
+    MACAddress macaddress;
 
     int sinkAddress;
 

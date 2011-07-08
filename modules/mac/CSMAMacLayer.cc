@@ -202,9 +202,9 @@ void CSMAMacLayer::handleSelfMsg(cMessage *msg)
 void CSMAMacLayer::handleLowerMsg(cMessage *msg)
 {
     MacPkt *mac = static_cast<MacPkt *>(msg);
-    int dest = mac->getDestAddr();
+    MACAddress dest = mac->getDestAddr();
 
-    if(dest == myMacAddr || dest == L2BROADCAST)
+    if(dest == myMacAddr || dest == MACAddress::BROADCAST_ADDRESS)
     {
     	debugEV << "sending pkt to upper...\n";
         sendUp(decapsMsg(mac));

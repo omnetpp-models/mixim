@@ -54,13 +54,13 @@ public:
     };
 
     /** @brief returns a L2 address to a given L3 address*/
-    virtual int getMacAddr(const int netwAddr);
+    virtual MACAddress getMacAddr(const int netwAddr);
 
     /** @brief returns a L3 address to a given L2 address*/
-    virtual int getNetwAddr(const int macAddr);
+    virtual int getNetwAddr(const MACAddress macAddr);
 
     /** @brief Returns the L2 address for the passed mac*/
-    virtual int myMacAddr(cModule* mac);
+    virtual MACAddress myMacAddr(cModule* mac);
 
     /** @brief Returns the L3 address for the passed net*/
     virtual int myNetwAddr(cModule* netw);

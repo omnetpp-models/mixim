@@ -17,6 +17,7 @@
 #define MACTONETWCONTROLINFO_H_
 
 #include <omnetpp.h>
+#include <MACAddress.h>
 
 /**
  * @brief Stores control information from mac to upper layer.
@@ -36,7 +37,7 @@ protected:
 	double bitErrorRate;
 
 	/** @brief MAC address of the last hop of this packet.*/
-	long lastHopMac;
+	MACAddress lastHopMac;
 
 	/** @brief The received signal strength for this packet.*/
 	double rssi;
@@ -45,7 +46,7 @@ public:
 	/**
 	 * @brief Initializes with the passed last hop address and bit error rate.
 	 */
-	MacToNetwControlInfo(long lastHop, double ber = 0, double rssi = 0):
+	MacToNetwControlInfo(MACAddress lastHop, double ber = 0, double rssi = 0):
 		bitErrorRate(ber),
 		lastHopMac(lastHop),
 		rssi(rssi)
@@ -73,7 +74,7 @@ public:
 	/**
 	 * @brief Returns the MAC address of the packets last hop.
 	 */
-	long getLastHopMac() const {
+	MACAddress getLastHopMac() const {
 		return lastHopMac;
 	}
 
@@ -82,7 +83,7 @@ public:
 	 *
 	 * @param lastHop The last hops MAC address
 	 */
-	virtual void setLastHopMac(long lastHop) {
+	virtual void setLastHopMac(MACAddress lastHop) {
 		lastHopMac = lastHop;
 	}
 

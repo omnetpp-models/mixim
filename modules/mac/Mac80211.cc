@@ -237,7 +237,7 @@ void Mac80211::handleLowerMsg(cMessage *msg)
         if(af->getDestAddr() == myMacAddr) {
             handleMsgForMe(af);
         }
-        else if(af->getDestAddr() == L2BROADCAST) {
+        else if(af->getDestAddr() == MACAddress::BROADCAST_ADDRESS) {
             handleBroadcastMsg(af);
         }
         else {
@@ -974,7 +974,7 @@ void Mac80211::beginNewCycle()
     if (!fromUpperLayer.empty()) {
 
         // look if the next packet is unicast or broadcast
-        nextIsBroadcast = (fromUpperLayer.front()->getDestAddr() == L2BROADCAST);
+        nextIsBroadcast = (fromUpperLayer.front()->getDestAddr() == MACAddress::BROADCAST_ADDRESS);
 
         setState(CONTEND);
         if(!contention->isScheduled()) {
@@ -1218,10 +1218,10 @@ void Mac80211::suspendContention()  {
     //}
 }
 
-double Mac80211::retrieveBitrate(int destAddress) {
+double Mac80211::retrieveBitrate(MACAddress destAddress) {
     double bitrate = defaultBitrate;
     NeighborList::iterator it;
-    if(autoBitrate && (destAddress != L2BROADCAST) &&
+    if(autoBitrate && (destAddress != MACAddress::BROADCAST_ADDRESS) &&
        (longRetryCounter == 0) && (shortRetryCounter == 0)) {
         it = findNeighbor(destAddress);
         if((it != neighbors.end()) && (it->age > (simTime() - neighborhoodCacheMaxAge))) {
@@ -1232,7 +1232,7 @@ double Mac80211::retrieveBitrate(int destAddress) {
 }
 
 void Mac80211::addNeighbor(Mac80211Pkt *af) {
-    int srcAddress = af->getSrcAddr();
+	MACAddress srcAddress = af->getSrcAddr();
     NeighborList::iterator it = findNeighbor(srcAddress);
     const DeciderResult80211* result = static_cast<const DeciderResult80211*>(
 											static_cast<PhyToMacControlInfo *>(

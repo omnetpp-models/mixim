@@ -19,6 +19,11 @@
 // *              - subclass to create your own MAC layer packets
 // **************************************************************************/
 
+cplusplus {{
+    #include "MACAddress.h"
+}}
+
+class MACAddress extends void;
 
 // A basic MAC (Media Access Control) packet format definition
 // 
@@ -29,7 +34,7 @@
 // @author Daniel Willkomm
 packet MacPkt
 {
-    long destAddr; // destination mac address
-    long srcAddr;  // source mac address
+    MACAddress destAddr; // destination mac address
+    MACAddress srcAddr;  // source mac address
     long sequenceId; // Sequence Number to detect duplicate messages
 }

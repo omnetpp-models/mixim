@@ -22,6 +22,7 @@
 #define NETWTOMACCONTROLINFO_H
 
 #include <omnetpp.h>
+#include <MACAddress.h>
 
 /**
  * @brief Control info to pass next hop L2 addr from netw to MAC layer
@@ -40,23 +41,23 @@ class NetwToMacControlInfo : public cObject
 {
   protected:
     /** @brief MAC address of the sending or receiving node*/
-    int nextHopMac;
+    MACAddress nextHopMac;
 
 
   public:
     /** @brief Default constructor*/
-    NetwToMacControlInfo(const int addr) : nextHopMac(addr) {};
+    NetwToMacControlInfo(const MACAddress addr) : nextHopMac(addr) {};
 
     /** @brief Destructor*/
     virtual ~NetwToMacControlInfo() {};
 
     /** @brief Getter method */
-    virtual const int getNextHopMac() {
+    virtual const MACAddress getNextHopMac() {
     	return nextHopMac;
     };
 
     /** @brief Setter method */
-    virtual void setNextHopMac(const int addr){
+    virtual void setNextHopMac(const MACAddress addr){
     	nextHopMac = addr;
     };
 };

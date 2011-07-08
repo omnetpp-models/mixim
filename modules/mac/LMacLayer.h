@@ -162,9 +162,9 @@ class  LMacLayer : public BaseMacLayer
 	/** @brief The current slot of the simulation */
 	int currSlot;
 	/** @brief Occupied slots from nodes, from which I hear directly */
-	short occSlotsDirect[64];
+	MACAddress occSlotsDirect[64];
 	/** @brief Occupied slots of two-hop neighbors */
-	short occSlotsAway[64];
+	MACAddress occSlotsAway[64];
 	/** @brief The first couple of slots are reserved for nodes with special needs to avoid changing slots for them (mobile nodes) */
 	int reservedMobileSlots;
 

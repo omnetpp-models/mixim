@@ -54,8 +54,8 @@ void BMacLayer::initialize(int stage)
 		nbTxAcks=0;
 
 		txAttempts = 0;
-		lastDataPktDestAddr = L2BROADCAST;
-		lastDataPktSrcAddr = L2BROADCAST;
+		lastDataPktDestAddr = MACAddress::BROADCAST_ADDRESS;
+		lastDataPktSrcAddr = MACAddress::BROADCAST_ADDRESS;
 
 		macState = INIT;
 
@@ -177,7 +177,7 @@ void BMacLayer::sendPreamble()
 {
 	MacPkt* preamble = new MacPkt();
 	preamble->setSrcAddr(myMacAddr);
-	preamble->setDestAddr(L2BROADCAST);
+	preamble->setDestAddr(MACAddress::BROADCAST_ADDRESS);
 	preamble->setKind(BMAC_PREAMBLE);
 	preamble->setBitLength(headerLength);
 
@@ -347,7 +347,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 	case WAIT_TX_DATA_OVER:
 		if (msg->getKind() == BMAC_DATA_TX_OVER)
 		{
-			if ((useMacAcks) && (lastDataPktDestAddr != L2BROADCAST))
+			if ((useMacAcks) && (lastDataPktDestAddr != MACAddress::BROADCAST_ADDRESS))
 			{
 				debugEV << "State WAIT_TX_DATA_OVER, message BMAC_DATA_TX_OVER,"
 						  " new state WAIT_ACK" << endl;
@@ -419,7 +419,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 		{
 			debugEV << "State WAIT_ACK, message BMAC_ACK" << endl;
 			MacPkt *mac = static_cast<MacPkt *>(msg);
-			int src = mac->getSrcAddr();
+			MACAddress src = mac->getSrcAddr();
 			// the right ACK is received..
 			debugEV << "We are waiting for ACK from : " << lastDataPktDestAddr
 				   << ", and ACK came from : " << src << endl;
@@ -427,7 +427,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 			{
 				debugEV << "New state SLEEP" << endl;
 				nbRecvdAcks++;
-				lastDataPktDestAddr = L2BROADCAST;
+				lastDataPktDestAddr = MACAddress::BROADCAST_ADDRESS;
 				cancelEvent(ack_timeout);
 				delete macQueue.front();
 				macQueue.pop_front();
@@ -439,7 +439,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 				macState = SLEEP;
 				phy->setRadioState(Radio::SLEEP);
 				changeDisplayColor(BLACK);
-				lastDataPktDestAddr = L2BROADCAST;
+				lastDataPktDestAddr = MACAddress::BROADCAST_ADDRESS;
 			}
 			delete msg;
 			return;
@@ -467,9 +467,9 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 		{
 			nbRxDataPackets++;
 			MacPkt *mac = static_cast<MacPkt *>(msg);
-			int dest = mac->getDestAddr();
-			int src = mac->getSrcAddr();
-			if ((dest == myMacAddr) || (dest == L2BROADCAST)) {
+			MACAddress dest = mac->getDestAddr();
+			MACAddress src = mac->getSrcAddr();
+			if ((dest == myMacAddr) || (dest == MACAddress::BROADCAST_ADDRESS)) {
 				sendUp(decapsMsg(mac));
 			} else {
 				delete msg;
@@ -542,7 +542,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 			macState = SLEEP;
 			phy->setRadioState(Radio::SLEEP);
 			changeDisplayColor(BLACK);
-			lastDataPktSrcAddr = L2BROADCAST;
+			lastDataPktSrcAddr = MACAddress::BROADCAST_ADDRESS;
 			return;
 		}
 		break;
@@ -644,7 +644,7 @@ bool BMacLayer::addToQueue(cMessage *msg)
 	//EV<<"CSMA received a message from upper layer, name is "
 	//  << msg->getName() <<", CInfo removed, mac addr="
 	//  << cInfo->getNextHopMac()<<endl;
-	int dest = cInfo->getNextHopMac();
+	MACAddress dest = cInfo->getNextHopMac();
 	macPkt->setDestAddr(dest);
 	delete cInfo;
 	macPkt->setSrcAddr(myMacAddr);

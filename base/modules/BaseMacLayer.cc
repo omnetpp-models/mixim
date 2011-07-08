@@ -58,7 +58,7 @@ void BaseMacLayer::initialize(int stage)
 		if(addrScheme) {
 			myMacAddr = addrScheme->myMacAddr(this);
 		} else {
-			myMacAddr = getParentModule()->getId();
+			myMacAddr = MACAddress(getParentModule()->getId());
 		}
     }
 }
@@ -130,11 +130,11 @@ void BaseMacLayer::handleUpperMsg(cMessage *mac)
 void BaseMacLayer::handleLowerMsg(cMessage *msg)
 {
     MacPkt *mac = static_cast<MacPkt *>(msg);
-    int dest = mac->getDestAddr();
-    int src = mac->getSrcAddr();
+    MACAddress dest = mac->getDestAddr();
+    MACAddress src = mac->getSrcAddr();
 
     //only foward to upper layer if message is for me or broadcast
-    if((dest == myMacAddr) || (dest == L2BROADCAST)) {
+    if((dest == myMacAddr) || dest.isBroadcast()) {
 		coreEV << "message with mac addr " << src
 			   << " for me (dest=" << dest
 			   << ") -> forward packet to upper layer\n";

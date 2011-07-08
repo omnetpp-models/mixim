@@ -224,8 +224,8 @@ void UWBIRMac::handleLowerMsg(cPacket *msg) {
 	UWBIRMacPkt *mac = static_cast<UWBIRMacPkt *> (msg);
 
 	if (validatePacket(mac)) {
-		int dest = mac->getDestAddr();
-		int src = mac->getSrcAddr();
+		MACAddress dest = mac->getDestAddr();
+		MACAddress src = mac->getSrcAddr();
 		if ((dest == myMacAddr)) {
 			debugEV<< "message with mac addr " << src
 			<< " for me (dest=" << dest

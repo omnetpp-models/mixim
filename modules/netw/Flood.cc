@@ -158,7 +158,7 @@ void Flood::handleLowerMsg(cMessage* m) {
 				<<" > 1 -> rebroadcast msg & send to upper\n";
 				msg->setTtl( msg->getTtl()-1 );
 				dMsg = static_cast<NetwPkt*>(msg->dup());
-				dMsg->setControlInfo(new NetwToMacControlInfo(L2BROADCAST));
+				dMsg->setControlInfo(new NetwToMacControlInfo(MACAddress::BROADCAST_ADDRESS));
 				sendDown(dMsg);
 				nbDataPacketsForwarded++;
 			}
@@ -179,7 +179,7 @@ void Flood::handleLowerMsg(cMessage* m) {
 				msg->setTtl( msg->getTtl()-1 );
 				// needs to set the next hop address again to broadcast
 				msg->removeControlInfo();
-				msg->setControlInfo(new NetwToMacControlInfo(L2BROADCAST));
+				msg->setControlInfo(new NetwToMacControlInfo(MACAddress::BROADCAST_ADDRESS));
 				//            EV << static_cast<NetwToMacControlInfo*>(msg->getControlInfo())->getNextHopMac() << "\n";
 				sendDown( msg );
 				nbDataPacketsForwarded++;
@@ -238,7 +238,7 @@ bool Flood::notBroadcasted(NetwPkt* msg) {
 }
 
 NetwPkt* Flood::encapsMsg(cPacket *appPkt) {
-	int macAddr;
+	MACAddress macAddr;
 	int netwAddr;
 
 	EV<<"in encaps...\n";
@@ -264,7 +264,7 @@ NetwPkt* Flood::encapsMsg(cPacket *appPkt) {
 
         EV << "sendDown: nHop=L3BROADCAST -> message has to be broadcasted"
            << " -> set destMac=L2BROADCAST\n";
-        macAddr = L2BROADCAST;
+        macAddr = MACAddress::BROADCAST_ADDRESS;
 
 
     pkt->setControlInfo(new NetwToMacControlInfo(macAddr));

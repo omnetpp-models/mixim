@@ -4,15 +4,17 @@
 
 
 cplusplus {{
+#include <MACAddress.h>
 #include <MacPkt_m.h>
 }}
 
 
+class MACAddress extends void;
 class MacPkt;
 
 
 message LMacPkt extends MacPkt
 {
     int mySlot; // the node's current slot number
-    short occupiedSlots[]; // currently known occupied slots
+    MACAddress occupiedSlots[]; // currently known occupied slots
 }

@@ -29,9 +29,9 @@ Define_Module(AlohaMacLayer);
 
 void AlohaMacLayer::initialize(int stage) {
 	UWBIRMac::initialize(stage);
-	if(stage == 1 && myMacAddr != 0) {
+	if(stage == 1 && myMacAddr != MACAddress((int64_t)0)) {
             phy->setRadioState(Radio::TX);
-    } else if(stage == 1 && myMacAddr == 0) {
+    } else if(stage == 1 && myMacAddr == MACAddress((int64_t)0)) {
             phy->setRadioState(Radio::RX);
     }
 }
@@ -90,8 +90,8 @@ void AlohaMacLayer::handleLowerMsg(cMessage *msg) {
     UWBIRMacPkt *mac = static_cast<UWBIRMacPkt *>(msg);
 
     if(validatePacket(mac)) {
-        int dest = mac->getDestAddr();
-        int src = mac->getSrcAddr();
+        MACAddress dest = mac->getDestAddr();
+        MACAddress src = mac->getSrcAddr();
         if ((dest == myMacAddr)) {
         	debugEV << "message with mac addr " << src
                     << " for me (dest=" << dest

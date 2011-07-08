@@ -75,7 +75,7 @@ protected:
     /**
      * @brief MAC address (simply module id)
      **/
-    int myMacAddr;
+    MACAddress myMacAddr;
 
     /** @brief debug this core module? */
     bool coreDebug;
