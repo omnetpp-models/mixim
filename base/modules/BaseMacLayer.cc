@@ -49,9 +49,7 @@ void BaseMacLayer::initialize(int stage)
         phyHeaderLength = phy->getPhyHeaderLength();
 
         hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
-    }
-    else if (stage==1)
-    {
+
     	// see if there is an addressing module available
 		// otherwise use NIC modules id as MAC address
 		AddressingInterface* addrScheme = FindModule<AddressingInterface*>::findSubModule(findHost());
@@ -60,6 +58,45 @@ void BaseMacLayer::initialize(int stage)
 		} else {
 			myMacAddr = MACAddress(getParentModule()->getId());
 		}
+		registerInterface();
+    }
+}
+
+void BaseMacLayer::registerInterface()
+{
+    IInterfaceTable *ift = InterfaceTableAccess().getIfExists();
+    if (ift) {
+		cModule* nic = getParentModule();
+		InterfaceEntry *e = new InterfaceEntry();
+
+		// interface name: NIC module's name without special
+		// characters ([])
+		char *interfaceName = new char[strlen(nic->getFullName()) + 1];
+		char *d = interfaceName;
+		for (const char *s = nic->getFullName(); *s; s++)
+			if (isalnum(*s))
+				*d++ = *s;
+		*d = '\0';
+
+		e->setName(interfaceName);
+		delete [] interfaceName;
+
+		// this MAC address must be the same as the one in BaseMacLayer
+		e->setMACAddress(myMacAddr);
+
+		// generate interface identifier for IPv6
+		e->setInterfaceToken(myMacAddr.formInterfaceIdentifier());
+
+		// MTU on 802.11 = ?
+		e->setMtu(1500);            // FIXME
+
+		// capabilities
+		e->setBroadcast(true);
+		e->setMulticast(true);
+		e->setPointToPoint(false);
+
+		// add
+		ift->addInterface(e, this);
     }
 }
 

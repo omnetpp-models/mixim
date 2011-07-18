@@ -97,6 +97,11 @@ public:
 
 protected:
 
+	/**
+     * @brief Registers this bridge's NIC with INET's InterfaceTable.
+     */
+    virtual void registerInterface();
+
     /**
      * @brief Handle messages comming from the network layer
      *
