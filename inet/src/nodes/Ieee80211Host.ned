@@ -12,7 +12,6 @@ import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
 import inet.transport.tcp.TCP;
 import inet.transport.udp.UDP;
-import mixnet.modules.MixnetBridge;
 import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic80211;
 
@@ -20,8 +19,7 @@ import org.mixim.modules.nic.Nic80211;
 // This host is an example on how a host with INET network stack
 // can be equipped with mobility- and wireless-modules from MiXiM. 
 //
-// It contains an INET network stack and a MiXiM 802.11 NIC (connected
-// by the MixnetBridge module) as well as a mobility-module from MiXiM.
+// It contains an INET network stack and a MiXiM 802.11 NIC
 module Ieee80211Host
 {
     parameters:
@@ -100,9 +98,6 @@ module Ieee80211Host
                 @display("p=404,427,row,90;q=txQueue");
         }
 
-        bridge: MixnetBridge {
-            @display("p=217,332");
-        }
         wlan: Nic80211 {
             parameters:
                 @display("p=217,427;q=queue");
@@ -142,12 +137,10 @@ module Ieee80211Host
         }
 
         radioIn --> wlan.radioIn;
-        bridge.upperGateOut --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
-        bridge.upperGateIn <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
 
-        wlan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> bridge.lowerGateIn;
-        wlan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- bridge.lowerGateOut;
-        wlan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> bridge.lowerControlIn;
-        wlan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- bridge.lowerControlOut;
+        wlan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
+        wlan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
+        // wlan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> bridge.lowerControlIn;
+        // wlan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- bridge.lowerControlOut;
 }
 

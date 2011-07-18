@@ -7,7 +7,6 @@ import inet.mobility.models.StationaryMobility;
 import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
-import mixnet.modules.MixnetBridge;
 import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic80211;
 import org.mixim.modules.nic.Nic802154_TI_CC2420;
@@ -18,8 +17,7 @@ import org.mixim.modules.power.battery.SimpleBattery;
 // Router equipped with all types of NICs existent in the network's hosts,
 // able to route packages between all of the hosts.
 //
-// It consists of an INET network-layer, MiXiM NICs (which are each connected
-// by a separate MixnetBridge) and INET NICs. 
+// It consists of an INET network-layer, MiXiM NICs
 module HybridRouter
 {
     parameters:
@@ -81,14 +79,6 @@ module HybridRouter
                 @display("p=265,345,row,90;q=txQueue");
         }
 
-        wlanBridge: MixnetBridge {
-            @display("p=180,280");
-        }
-
-        lrwpanBridge: MixnetBridge {
-            @display("p=92,280");
-        }
-
         wlan: Nic80211 {
             parameters:
                 @display("p=180,370;q=queue");
@@ -116,22 +106,18 @@ module HybridRouter
         }
 
         wlanRadioIn --> wlan.radioIn;
-        wlanBridge.upperGateOut --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
-        wlanBridge.upperGateIn <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
 
-        wlan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> wlanBridge.lowerGateIn;
-        wlan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- wlanBridge.lowerGateOut;
-        wlan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> wlanBridge.lowerControlIn;
-        wlan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- wlanBridge.lowerControlOut;
+        wlan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
+        wlan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
+        // wlan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> wlanBridge.lowerControlIn;
+        // wlan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- wlanBridge.lowerControlOut;
 
 
         lrwpanRadioIn --> lrwpan.radioIn;
-        lrwpanBridge.upperGateOut --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))+1];
-        lrwpanBridge.upperGateIn <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))+1];
 
-        lrwpan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> lrwpanBridge.lowerGateIn;
-        lrwpan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- lrwpanBridge.lowerGateOut;
-        lrwpan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> lrwpanBridge.lowerControlIn;
-        lrwpan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- lrwpanBridge.lowerControlOut;
+        lrwpan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))+1];
+        lrwpan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))+1];
+        // lrwpan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> lrwpanBridge.lowerControlIn;
+        // lrwpan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- lrwpanBridge.lowerControlOut;
 }
 

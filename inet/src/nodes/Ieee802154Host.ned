@@ -12,7 +12,6 @@ import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
 import inet.transport.tcp.TCP;
 import inet.transport.udp.UDP;
-import mixnet.modules.MixnetBridge;
 import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic802154_TI_CC2420;
 import org.mixim.modules.power.battery.BatteryStats;
@@ -23,7 +22,6 @@ import org.mixim.modules.power.battery.SimpleBattery;
 // can be equipped with mobility- and wireless-modules from MiXiM. 
 //
 // It contains an INET network stack and a MiXiM 802.15.4 NIC (TI_CC2420)
-// (connected by the MixnetBridge module), a mobility-module from MiXiM
 // as well as a battery module from MiXiM which is used by the NIC.
 //
 // This host's NIC is able to operate in a multi-ConnectionManager
@@ -112,9 +110,6 @@ module Ieee802154Host
                 @display("p=404,427,row,90;q=txQueue");
         }
 
-        bridge: MixnetBridge {
-            @display("p=217,332");
-        }
         lrwpan: Nic802154_TI_CC2420 {
             parameters:
                 @display("p=217,427;q=queue;i=block/ifcard");
@@ -154,12 +149,10 @@ module Ieee802154Host
         }
 
         radioIn --> lrwpan.radioIn;
-        bridge.upperGateOut --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
-        bridge.upperGateIn <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
 
-        lrwpan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> bridge.lowerGateIn;
-        lrwpan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- bridge.lowerGateOut;
-        lrwpan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> bridge.lowerControlIn;
-        lrwpan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- bridge.lowerControlOut;
+        lrwpan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
+        lrwpan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
+        // lrwpan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> bridge.lowerControlIn;
+        // lrwpan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- bridge.lowerControlOut;
 }
 
