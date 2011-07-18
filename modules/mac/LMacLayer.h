@@ -22,7 +22,7 @@
 #include "MacToPhyControlInfo.h"
 #include <BaseArp.h>
 #include <BaseConnectionManager.h>
-#include <NetwToMacControlInfo.h>
+#include <Ieee802Ctrl_m.h>
 
 
 /**

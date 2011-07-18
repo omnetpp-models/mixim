@@ -22,7 +22,7 @@
 
 #include "BaseNetwLayer.h"
 #include "NetwControlInfo.h"
-#include "NetwToMacControlInfo.h"
+#include "Ieee802Ctrl_m.h"
 #include "BaseMacLayer.h"
 #include "AddressingInterface.h"
 
@@ -104,7 +104,9 @@ NetwPkt* BaseNetwLayer::encapsMsg(cPacket *appPkt) {
         macAddr = arp->getMacAddr(netwAddr);
     }
 
-    pkt->setControlInfo(new NetwToMacControlInfo(macAddr));
+    Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+    ctrl->setDest(macAddr);
+    pkt->setControlInfo(ctrl);
 
     //encapsulate the application packet
     pkt->encapsulate(appPkt);

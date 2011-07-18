@@ -21,7 +21,7 @@
 
 #include "AlohaMacLayer.h"
 #include <iostream>
-#include <NetwToMacControlInfo.h>
+#include <Ieee802Ctrl_m.h>
 
 using namespace std;
 
@@ -59,10 +59,10 @@ MacPkt* AlohaMacLayer::encapsMsg(cPacket *msg) {
 
     // copy dest address from the Control Info attached to the network
     // mesage by the network layer
-    NetwToMacControlInfo* cInfo = static_cast<NetwToMacControlInfo*>(msg->removeControlInfo());
+    Ieee802Ctrl* cInfo = static_cast<Ieee802Ctrl*>(msg->removeControlInfo());
 
-    debugEV <<"CInfo removed, mac addr="<< cInfo->getNextHopMac()<<endl;
-    encaps->setDestAddr(cInfo->getNextHopMac());
+    debugEV <<"CInfo removed, mac addr="<< cInfo->getDest()<<endl;
+    encaps->setDestAddr(cInfo->getDest());
 
     //delete the control info
     delete cInfo;

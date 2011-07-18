@@ -19,7 +19,7 @@
 #include <BaseArp.h>
 #include <BaseConnectionManager.h>
 #include <SimpleAddress.h>
-#include <NetwToMacControlInfo.h>
+#include <Ieee802Ctrl_m.h>
 
 Define_Module( BMacLayer )
 
@@ -639,12 +639,12 @@ bool BMacLayer::addToQueue(cMessage *msg)
 
 	MacPkt *macPkt = new MacPkt(msg->getName());
 	macPkt->setBitLength(headerLength);
-	NetwToMacControlInfo* cInfo
-			= static_cast<NetwToMacControlInfo*> (msg->removeControlInfo());
+	Ieee802Ctrl* cInfo
+			= static_cast<Ieee802Ctrl*> (msg->removeControlInfo());
 	//EV<<"CSMA received a message from upper layer, name is "
 	//  << msg->getName() <<", CInfo removed, mac addr="
 	//  << cInfo->getNextHopMac()<<endl;
-	MACAddress dest = cInfo->getNextHopMac();
+	MACAddress dest = cInfo->getDest();
 	macPkt->setDestAddr(dest);
 	delete cInfo;
 	macPkt->setSrcAddr(myMacAddr);

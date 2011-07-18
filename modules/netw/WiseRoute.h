@@ -35,7 +35,7 @@
 #include "BaseMacLayer.h"
 #include "SimTracer.h"
 #include "NetwControlInfo.h"
-#include "NetwToMacControlInfo.h"
+#include "Ieee802Ctrl_m.h"
 #include "MacToNetwControlInfo.h"
 
 #include <map>

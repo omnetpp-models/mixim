@@ -22,9 +22,10 @@
 
 #include "BaseMacLayer.h"
 #include "MacToNetwControlInfo.h"
-#include "NetwToMacControlInfo.h"
+#include "Ieee802Ctrl_m.h"
 #include "SimpleAddress.h"
 #include "AddressingInterface.h"
+#include <InterfaceTableAccess.h>
 #include <ChannelAccess.h>
 
 #include <cassert>
@@ -125,10 +126,10 @@ MacPkt* BaseMacLayer::encapsMsg(cPacket *netwPkt)
 
     // copy dest address from the Control Info attached to the network
     // message by the network layer
-    NetwToMacControlInfo* cInfo = static_cast<NetwToMacControlInfo*>(netwPkt->removeControlInfo());
+    Ieee802Ctrl* cInfo = static_cast<Ieee802Ctrl*>(netwPkt->removeControlInfo());
 
-    coreEV <<"CInfo removed, mac addr="<< cInfo->getNextHopMac()<<endl;
-    pkt->setDestAddr(cInfo->getNextHopMac());
+    coreEV <<"CInfo removed, mac addr="<< cInfo->getDest()<<endl;
+    pkt->setDestAddr(cInfo->getDest());
 
     //delete the control info
     delete cInfo;

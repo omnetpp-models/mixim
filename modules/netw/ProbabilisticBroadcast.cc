@@ -86,7 +86,9 @@ void ProbabilisticBroadcast::handleLowerMsg(cMessage* msg)
 		// Unknown message. Insert message in queue with random backoff broadcast delay.
 		// Because we got the message from lower layer, we need to create and add a new
 		// control info with the MAC destination address = broadcast address.
-		m->setControlInfo(new NetwToMacControlInfo(convertedMacBroadcastAddr));
+		Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+		ctrl->setDest(convertedMacBroadcastAddr);
+		m->setControlInfo(ctrl);
 		// before inserting message, update source address (for this hop, not the initial source)
 		m->setSrcAddr(myNetwAddr);
 		insertNewMessage(m);
@@ -129,7 +131,9 @@ void ProbabilisticBroadcast::handleSelfMsg(cMessage* msg)
 				// queue, it will be considered as dead and discarded.
 				pktCopy = static_cast<ProbabilisticBroadcastPkt*>(pkt->dup());
 				// control info is not duplicated with the message, so we have to re-create one here.
-				pktCopy->setControlInfo(new NetwToMacControlInfo(convertedMacBroadcastAddr));
+				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+				ctrl->setDest(convertedMacBroadcastAddr);
+				pktCopy->setControlInfo(ctrl);
 				// it the copy that is re-inserted into the queue so update the container accordingly
 				msgDesc->pkt = pktCopy;
 				// increment nbBcast field of the descriptor because at this point, it is sure that
@@ -296,7 +300,9 @@ ProbabilisticBroadcastPkt* ProbabilisticBroadcast::encapsMsg(cMessage* message)
 	pkt->setFinalDestAddr(bcastIpAddr);
 	pkt->setAppTtl(timeToLive);
 	pkt->setId(getNextID());
-	pkt->setControlInfo(new NetwToMacControlInfo(convertedMacBroadcastAddr));
+	Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+	ctrl->setDest(convertedMacBroadcastAddr);
+	pkt->setControlInfo(ctrl);
 	//encapsulate the application packet
 	pkt->encapsulate(msg);
 

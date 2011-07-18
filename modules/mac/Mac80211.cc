@@ -22,7 +22,7 @@
 #include "MacToPhyControlInfo.h"
 #include <MacToNetwControlInfo.h>
 #include <PhyToMacControlInfo.h>
-#include <NetwToMacControlInfo.h>
+#include <Ieee802Ctrl_m.h>
 #include "SimpleAddress.h"
 #include <FWMath.h>
 #include <Decider80211.h>
@@ -190,10 +190,10 @@ Mac80211Pkt *Mac80211::encapsMsg(cPacket * netw)
 
     // copy dest address from the Control Info attached to the network
     // mesage by the network layer
-    NetwToMacControlInfo* cInfo = static_cast<NetwToMacControlInfo*>(netw->removeControlInfo());
+    Ieee802Ctrl* cInfo = static_cast<Ieee802Ctrl*>(netw->removeControlInfo());
 
-    debugEV <<"CInfo removed, mac addr="<< cInfo->getNextHopMac()<<endl;
-    pkt->setDestAddr(cInfo->getNextHopMac());
+    debugEV <<"CInfo removed, mac addr="<< cInfo->getDest()<<endl;
+    pkt->setDestAddr(cInfo->getDest());
 
     //delete the control info
     delete cInfo;
@@ -228,7 +228,7 @@ void Mac80211::handleLowerMsg(cMessage *msg)
     int radioState = phy->getRadioState();
     if(radioState == Radio::RX) {
         // end of the reception
-    	debugEV << " handleLowerMsg frame " << af << " received\n";
+        debugEV << " handleLowerMsg frame " << af << " received from " << af->getSrcAddr() << " addressed to " << af->getDestAddr() << "\n";
         addNeighbor(af);
         if (contention->isScheduled()) {
             error("Gaack! I am changing the IFS on an ongoing contention");

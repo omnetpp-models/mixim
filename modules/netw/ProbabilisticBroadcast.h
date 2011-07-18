@@ -18,7 +18,7 @@
 #include "SimTracer.h"
 #include "ProbBcastNetwControlInfo.h"
 #include "MacToNetwControlInfo.h"
-#include "NetwToMacControlInfo.h"
+#include "Ieee802Ctrl_m.h"
 #include "BaseNetwLayer.h"
 
 using namespace std;

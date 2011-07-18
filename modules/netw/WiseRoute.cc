@@ -121,7 +121,9 @@ void WiseRoute::handleSelfMsg(cMessage* msg)
 		pkt->setSeqNum(floodSeqNumber);
 		floodSeqNumber++;
 		pkt->setIsFlood(1);
-		pkt->setControlInfo(new NetwToMacControlInfo(macBcastAddr));
+		Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+		ctrl->setDest(macBcastAddr);
+		pkt->setControlInfo(ctrl);
 		sendDown(pkt);
 		nbFloodsSent++;
 		nbRouteFloodsSent++;
@@ -170,9 +172,10 @@ void WiseRoute::handleLowerMsg(cMessage* msg)
 				// local hop source address.
 				msgCopy = check_and_cast<WiseRoutePkt*>(netwMsg->dup());
 				netwMsg->setSrcAddr(myNetwAddr);
-//				((NetwToMacControlInfo*) netwMsg->getControlInfo())->setNextHopMac(macBcastAddr);
 				netwMsg->removeControlInfo();
-				netwMsg->setControlInfo(new NetwToMacControlInfo(macBcastAddr));
+				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+				ctrl->setDest(macBcastAddr);
+				netwMsg->setControlInfo(ctrl);
 				netwMsg->setNbHops(netwMsg->getNbHops()+1);
 				sendDown(netwMsg);
 				nbDataPacketsForwarded++;
@@ -192,9 +195,10 @@ void WiseRoute::handleLowerMsg(cMessage* msg)
 			// not for me. if flood, forward as flood. else select a route
 			if (floodType == FORWARD) {
 				netwMsg->setSrcAddr(myNetwAddr);
-//				((NetwToMacControlInfo*) netwMsg->getControlInfo())->setNextHopMac(macBcastAddr);
 				netwMsg->removeControlInfo();
-				netwMsg->setControlInfo(new NetwToMacControlInfo(macBcastAddr));
+				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+				ctrl->setDest(macBcastAddr);
+				netwMsg->setControlInfo(ctrl);
 				netwMsg->setNbHops(netwMsg->getNbHops()+1);
 				sendDown(netwMsg);
 				nbDataPacketsForwarded++;
@@ -209,9 +213,10 @@ void WiseRoute::handleLowerMsg(cMessage* msg)
 				}
 				netwMsg->setSrcAddr(myNetwAddr);
 				netwMsg->setDestAddr(nextHop);
-//				((NetwToMacControlInfo*) netwMsg->getControlInfo())->setNextHopMac(arp->getMacAddr(nextHop));
 				netwMsg->removeControlInfo();
-				netwMsg->setControlInfo(new NetwToMacControlInfo(arp->getMacAddr(nextHop)));
+				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+				ctrl->setDest(arp->getMacAddr(nextHop));
+				netwMsg->setControlInfo(ctrl);
 				netwMsg->setNbHops(netwMsg->getNbHops()+1);
 				sendDown(netwMsg);
 				nbDataPacketsForwarded++;
@@ -274,7 +279,9 @@ void WiseRoute::handleUpperMsg(cMessage* msg)
 		nbPureUnicastSent++;
 		nextHopMacAddr = arp->getMacAddr(nextHopAddr);
 	}
-	pkt->setControlInfo(new NetwToMacControlInfo(nextHopMacAddr));
+	Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+	ctrl->setDest(nextHopMacAddr);
+	pkt->setControlInfo(ctrl);
 	assert(static_cast<cPacket*>(msg));
 	pkt->encapsulate(static_cast<cPacket*>(msg));
 	sendDown(pkt);

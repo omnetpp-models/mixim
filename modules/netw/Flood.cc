@@ -23,7 +23,7 @@
 #include "Flood.h"
 #include <NetwPkt_m.h>
 #include "NetwControlInfo.h"
-#include "NetwToMacControlInfo.h"
+#include "Ieee802Ctrl_m.h"
 #include <cassert>
 
 Define_Module(Flood)
@@ -158,7 +158,9 @@ void Flood::handleLowerMsg(cMessage* m) {
 				<<" > 1 -> rebroadcast msg & send to upper\n";
 				msg->setTtl( msg->getTtl()-1 );
 				dMsg = static_cast<NetwPkt*>(msg->dup());
-				dMsg->setControlInfo(new NetwToMacControlInfo(MACAddress::BROADCAST_ADDRESS));
+				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+				ctrl->setDest(MACAddress::BROADCAST_ADDRESS);
+				dMsg->setControlInfo(ctrl);
 				sendDown(dMsg);
 				nbDataPacketsForwarded++;
 			}
@@ -179,8 +181,9 @@ void Flood::handleLowerMsg(cMessage* m) {
 				msg->setTtl( msg->getTtl()-1 );
 				// needs to set the next hop address again to broadcast
 				msg->removeControlInfo();
-				msg->setControlInfo(new NetwToMacControlInfo(MACAddress::BROADCAST_ADDRESS));
-				//            EV << static_cast<NetwToMacControlInfo*>(msg->getControlInfo())->getNextHopMac() << "\n";
+				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+				ctrl->setDest(MACAddress::BROADCAST_ADDRESS);
+				msg->setControlInfo(ctrl);
 				sendDown( msg );
 				nbDataPacketsForwarded++;
 			}
@@ -266,8 +269,9 @@ NetwPkt* Flood::encapsMsg(cPacket *appPkt) {
            << " -> set destMac=L2BROADCAST\n";
         macAddr = MACAddress::BROADCAST_ADDRESS;
 
-
-    pkt->setControlInfo(new NetwToMacControlInfo(macAddr));
+	Ieee802Ctrl *ctrl = new Ieee802Ctrl();
+	ctrl->setDest(macAddr);
+    pkt->setControlInfo(ctrl);
 
     //encapsulate the application packet
     pkt->encapsulate(appPkt);

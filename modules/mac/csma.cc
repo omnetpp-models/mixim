@@ -33,7 +33,7 @@
 #include <BaseArp.h>
 #include <MacToPhyControlInfo.h>
 #include <PhyToMacControlInfo.h>
-#include <NetwToMacControlInfo.h>
+#include <Ieee802Ctrl_m.h>
 #include <MacToNetwControlInfo.h>
 #include <SimpleAddress.h>
 #include <BasePhyLayer.h>
@@ -189,10 +189,10 @@ void csma::handleUpperMsg(cMessage *msg) {
 	//MacPkt *macPkt = encapsMsg(msg);
 	MacPkt *macPkt = new MacPkt(msg->getName());
 	macPkt->setBitLength(headerLength);
-	NetwToMacControlInfo* cInfo =
-			static_cast<NetwToMacControlInfo*> (msg->removeControlInfo());
-	debugEV<<"CSMA received a message from upper layer, name is " << msg->getName() <<", CInfo removed, mac addr="<< cInfo->getNextHopMac()<<endl;
-	MACAddress dest = cInfo->getNextHopMac();
+	Ieee802Ctrl* cInfo =
+			static_cast<Ieee802Ctrl*> (msg->removeControlInfo());
+	debugEV<<"CSMA received a message from upper layer, name is " << msg->getName() <<", CInfo removed, mac addr="<< cInfo->getDest()<<endl;
+	MACAddress dest = cInfo->getDest();
 	macPkt->setDestAddr(dest);
 	delete cInfo;
 	macPkt->setSrcAddr(myMacAddr);
