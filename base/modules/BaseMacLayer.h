@@ -94,6 +94,11 @@ public:
     /** @brief Initialization of the module and some variables*/
     virtual void initialize(int);
 
+    /**
+     * @brief Returns the MAC address of this MAC module.
+     */
+    MACAddress getMACAddress() { return myMacAddr; }
+
 protected:
 
 	/**
