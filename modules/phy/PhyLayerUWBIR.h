@@ -126,7 +126,7 @@ public:
     void finish();
 
     // this function allows to include common xml documents for ned parameters as ned functions
-    static cDynamicExpression::Value ghassemzadehNLOSFunc(cComponent *context, cDynamicExpression::Value argv[], int argc) {
+    static cNEDValue ghassemzadehNLOSFunc(cComponent *context, cNEDValue argv[], int argc) {
       const char * ghassemzadehnlosxml =
     		  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     		  "<root>"
@@ -143,12 +143,12 @@ public:
     		  "</root>";
       cXMLParImpl xmlParser;
       xmlParser.parse(ghassemzadehnlosxml);  // from char* to xml
-      cDynamicExpression::Value parameters(xmlParser.xmlValue(NULL)); // from xml to Value
+      cNEDValue parameters(xmlParser.xmlValue(NULL)); // from xml to Value
       return parameters;
     }
-    typedef cDynamicExpression::Value (*fptr) (cComponent *context, cDynamicExpression::Value argv[], int argc);
+    typedef cNEDValue (*fptr) (cComponent *context, cNEDValue argv[], int argc);
     static fptr ghassemzadehNLOSFPtr;
-    //static cDynamicExpression::Value (*ghassemzadehNLOSFPtr) (cComponent *context, cDynamicExpression::Value argv[], int argc);
+    //static cNEDValue (*ghassemzadehNLOSFPtr) (cComponent *context, cNEDValue argv[], int argc);
 
 
 
