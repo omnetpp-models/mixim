@@ -82,7 +82,6 @@ const double BIGGER = 7.0;
  * unit test for constructors of class Coord
  *
  * - test default constructor
- * - test Coord(bool use2D)
  * - test Coord(x, y)
  * - test Coord(x, y, z)
  * - test Coord(Coord* other)
@@ -91,38 +90,18 @@ const double BIGGER = 7.0;
  * assumes correctness of following methods:
  * - getX(), getY(), getZ()
  * - operator=()
- * - is2D(), is3D()
  */
 void testConstructors() {
     
     // test default constructor
     Coord testCoord;
-    assertTrue("Default constructor creates 3D-Coord.", testCoord.is3D());
-    assertFalse("Default constructor creates no 2D-Coord.", testCoord.is2D());
     assertClose("x-value of default coordinate.", 0.0, testCoord.getX());
     assertClose("y-value of default coordinate.", 0.0, testCoord.getY());
     assertClose("z-value of default coordinate.", 0.0, testCoord.getZ());
 
-    //test Coord(bool use2D)
-    testCoord = Coord(false);
-    assertTrue("Coord(false) constructor creates 3D-Coord.", testCoord.is3D());
-    assertFalse("Coord(false) constructor creates no 2D-Coord.", testCoord.is2D());
-    assertClose("x-value of Coord(false).", 0.0, testCoord.getX());
-    assertClose("y-value of Coord(false).", 0.0, testCoord.getY());
-    assertClose("z-value of Coord(false).", 0.0, testCoord.getZ());
-
-    testCoord = Coord(true);
-    assertFalse("Coord(true) constructor creates no 3D-Coord.", testCoord.is3D());
-    assertTrue("Coord(true) constructor creates 2D-Coord.", testCoord.is2D());
-    assertClose("x-value of Coord(false).", 0.0, testCoord.getX());
-    assertClose("y-value of Coord(false).", 0.0, testCoord.getY());
-    assertClose("z-value of Coord(false).", Coord::UNDEFINED, testCoord.getZ());
-    
     //test Coord(x, y)
     
     testCoord = Coord(X, Y);
-    assertFalse("Coord(x, y) constructor creates no 3D-Coord.", testCoord.is3D());
-    assertTrue("Coord(x, y) constructor creates 2D-Coord.", testCoord.is2D());
     assertClose("x-value of Coord(x, y).", X, testCoord.getX());
     assertClose("y-value of Coord(x, y).", Y, testCoord.getY());
     assertClose("z-value of Coord(x, y).", Coord::UNDEFINED, testCoord.getZ());
@@ -130,8 +109,6 @@ void testConstructors() {
     //test Coord(x, y, z)
     
     testCoord = Coord(X, Y, Z);
-    assertTrue("Coord(x, y, z) constructor creates 3D-Coord.", testCoord.is3D());
-    assertFalse("Coord(x, y, z) constructor creates no 2D-Coord.", testCoord.is2D());
     assertClose("x-value of Coord(x, y, z).", X, testCoord.getX());
     assertClose("y-value of Coord(x, y, z).", Y, testCoord.getY());
     assertClose("z-value of Coord(x, y, z).", Z, testCoord.getZ());
@@ -139,31 +116,23 @@ void testConstructors() {
     //test Coord(Coord* other)
     //test Coord(Coord& other)
     Coord testCoord2(&testCoord);
-    assertTrue("(3D)Coord(Coord* other) constructor same dimension as other.",
-                testCoord.is3D() == testCoord2.is3D());
     assertClose("x-value of (3D)Coord(Coord* other).", testCoord.getX(), testCoord2.getX());
     assertClose("y-value of (3D)Coord(Coord* other).", testCoord.getY(), testCoord2.getY());
     assertClose("z-value of (3D)Coord(Coord* other).", testCoord.getZ(), testCoord2.getZ());
 
     testCoord2 = Coord(testCoord);
-    assertTrue("Coord(Coord& other) constructor same dimension as other.",
-                testCoord.is3D() == testCoord2.is3D());
     assertClose("x-value of (3D)Coord(Coord& other).", testCoord.getX(), testCoord2.getX());
     assertClose("y-value of (3D)Coord(Coord& other).", testCoord.getY(), testCoord2.getY());
     assertClose("z-value of (3D)Coord(Coord& other).", testCoord.getZ(), testCoord2.getZ());
 
     testCoord = Coord(X, Y);
     testCoord2 = Coord(&testCoord);
-    assertTrue("(2D)Coord(Coord* other) constructor same dimension as other.",
-                testCoord.is3D() == testCoord2.is3D());
     assertClose("x-value of (2D)Coord(Coord* other).", testCoord.getX(), testCoord2.getX());
     assertClose("y-value of (2D)Coord(Coord* other).", testCoord.getY(), testCoord2.getY());
     assertClose("z-value of (2D)Coord(Coord* other).", testCoord.getZ(), testCoord2.getZ());
 
     
     testCoord2 = Coord(testCoord);
-    assertTrue("(2D)Coord(Coord& other) constructor same dimension as other.",
-                testCoord.is3D() == testCoord2.is3D());
     assertClose("x-value of (2D)Coord(Coord& other).", testCoord.getX(), testCoord2.getX());
     assertClose("y-value of (2D)Coord(Coord& other).", testCoord.getY(), testCoord2.getY());
     assertClose("z-value of (2D)Coord(Coord& other).", testCoord.getZ(), testCoord2.getZ());
@@ -186,25 +155,21 @@ void testOperators() {
 	Coord b(X2, Y2, Z2);
 
 	Coord erg = a + b;
-	assertTrue("3D: Result of a + b is 3D", erg.is3D());
 	assertClose("3D: x-value of a + b", SUM_X, erg.getX());
 	assertClose("3D: y-value of a + b", SUM_Y, erg.getY());
 	assertClose("3D: z-value of a + b", SUM_Z, erg.getZ());
 
 	erg = a - b;
-	assertTrue("3D: Result of a - b is 3D", erg.is3D());
 	assertClose("3D: x-value of a - b", DIFF_X, erg.getX());
 	assertClose("3D: y-value of a - b", DIFF_Y, erg.getY());
 	assertClose("3D: z-value of a - b", DIFF_Z, erg.getZ());
 
 	erg = a * FAKT;
-	assertTrue("3D: Result of a * faktor is 3D", erg.is3D());
 	assertClose("3D: x-value of a * faktor", FAK_X, erg.getX());
 	assertClose("3D: y-value of a * faktor", FAK_Y, erg.getY());
 	assertClose("3D: z-value of a * faktor", FAK_Z, erg.getZ());
 
     erg = a / (1.0 / FAKT);
-	assertTrue("3D: Result of a / (1 / faktor) is 3D", erg.is3D());
 	assertClose("3D: x-value of a / (1 / faktor)", FAK_X, erg.getX());
 	assertClose("3D: y-value of a / (1 / faktor)", FAK_Y, erg.getY());
 	assertClose("3D: z-value of a / (1 / faktor)", FAK_Z, erg.getZ());
@@ -215,25 +180,21 @@ void testOperators() {
 	b = Coord(X2, Y2);
 
     erg = a + b;
-	assertTrue("2D: Result of a + b is 2D", erg.is2D());
 	assertClose("2D: x-value of a + b", SUM_X, erg.getX());
 	assertClose("2D: y-value of a + b", SUM_Y, erg.getY());
 	assertClose("2D: z-value UNDEFINED of a + b", Coord::UNDEFINED, erg.getZ());
 
 	erg = a - b;
-	assertTrue("2D: Result of a - b is 2D", erg.is2D());
 	assertClose("2D: x-value of a - b", DIFF_X, erg.getX());
 	assertClose("2D: y-value of a - b", DIFF_Y, erg.getY());
 	assertClose("2D: z-value UNDEFINED of a - b", Coord::UNDEFINED, erg.getZ());
 
 	erg = a * FAKT;
-	assertTrue("2D: Result of a * faktor is 2D", erg.is2D());
 	assertClose("2D: x-value of a * faktor", FAK_X, erg.getX());
 	assertClose("2D: y-value of a * faktor", FAK_Y, erg.getY());
 	assertClose("2D: z-value UNDEFINED of a * faktor", Coord::UNDEFINED, erg.getZ());
 
     erg = a / (1.0 / FAKT);
-	assertTrue("2D: Result of a / (1 / faktor) is 2D", erg.is2D());
 	assertClose("2D: x-value of a / (1 / faktor)", FAK_X, erg.getX());
 	assertClose("2D: y-value of a / (1 / faktor)", FAK_Y, erg.getY());
 	assertClose("2D: z-value UNDEFINED of a / (1 / faktor)", Coord::UNDEFINED, erg.getZ());

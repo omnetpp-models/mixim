@@ -34,16 +34,12 @@ private:
 	class GridCoord
 	{
 	public:
-		/** @brief Constant for undefined coordinates.*/
-		static const int UNDEFINED = 0;
 		/** @name Coordinates in the grid.*/
 		/*@{*/
 		int x;
 		int y;
 		int z;
 		/*@}*/
-		/** @brief Use 2D or 3D coordinates?*/
-		bool use2D;
 
 	public:
 		/**
@@ -51,19 +47,19 @@ private:
 		 * Creates a 3-dimensional coord.
 		 */
 		GridCoord()
-			:x(0), y(0), z(0), use2D(false) {};
+			:x(0), y(0), z(0) {};
 
 		/**
 		 * @brief Initialize a 2-dimensional GridCoord with x and y.
 		 */
 		GridCoord(int x, int y)
-			:x(x), y(y), z(UNDEFINED), use2D(true) {};
+			:x(x), y(y), z(0) {};
 
 		/**
 		 * @brief Initialize a 3-dimensional GridCoord with x, y and z.
 		 */
 		GridCoord(int x, int y, int z)
-			:x(x), y(y), z(z), use2D(false) {};
+			:x(x), y(y), z(z) {};
 
 		/**
 		 * @brief Simple copy-constructor.
@@ -72,7 +68,6 @@ private:
 			x = o.x;
 			y = o.y;
 			z = o.z;
-			use2D = o.use2D;
         }
 
 		/**
@@ -82,7 +77,6 @@ private:
 		 */
         GridCoord(const Coord& c, const Coord& gridCellSize = Coord(1.0,1.0,1.0)) {
             x = static_cast<int>(c.x / gridCellSize.x);
-            use2D = c.is2D();
             y = static_cast<int>(c.y / gridCellSize.y);
             z = static_cast<int>(c.z / gridCellSize.z);
         }
@@ -90,11 +84,7 @@ private:
         /** @brief Output string for this coordinate.*/
         std::string info() const {
 			std::stringstream os;
-			if (use2D) {
-				os << "(" << x << "," << y << ")";
-			} else {
-				os << "(" << x << "," << y << "," << z << ")";
-			}
+			os << "(" << x << "," << y << "," << z << ")";
 			return os.str();
 		}
 

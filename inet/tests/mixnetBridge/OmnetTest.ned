@@ -92,7 +92,6 @@ network Network extends BaseNetwork
                 playgroundSizeZ = 100m;
 				coreDebug = true;
 				useTorus = false;
-				use2D = true;
         }   
 }
 
@@ -110,6 +109,5 @@ network WrongWorldNetwork extends BaseNetwork
                 playgroundSizeZ = 100m;
 				coreDebug = true;
 				useTorus = false;
-				use2D = true;
         } 	
 }

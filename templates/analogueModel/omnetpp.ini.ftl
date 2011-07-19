@@ -16,7 +16,6 @@ network = ${amName}TestNetwork
 #			WorldUtility parameters                      #
 ##########################################################
 **.world.useTorus = false
-**.world.use2D = true
 
 ##########################################################
 #			         channel parameters                  #

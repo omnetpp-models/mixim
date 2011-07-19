@@ -15,7 +15,6 @@ network OmnetTestNetwork
                 playgroundSizeZ = 100m;
 				coreDebug = true;
 				useTorus = false;
-				use2D = true;
         }   
         
         test: OmnetTest {

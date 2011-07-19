@@ -46,9 +46,6 @@ protected:
     /** @brief Should the playground be treatend as a torus?*/
     bool useTorusFlag;
 
-    /** @brief Should the world be 2-dimensional? */
-    bool use2DFlag;
-
     /** @brief Provides a unique number for AirFrames per simulation */
     long airFrameId;
 
@@ -93,13 +90,6 @@ public:
 
 	/** @brief Random position somewhere in the playground */
 	virtual Coord getRandomPosition();
-
-    /** @brief Returns true if the world is 2-dimensional */
-    bool use2D()
-    {
-    	initializeIfNecessary();
-    	return use2DFlag;
-    }
 
     /** @brief Returns an Id for an AirFrame, at the moment simply an incremented long-value */
     long getUniqueAirFrameId()

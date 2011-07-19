@@ -224,9 +224,6 @@ void BaseConnectionManager::fillUnionWithNeighbors(CoordSet& gridUnion,
 												   GridCoord cell)
 {
 	for(int iz = (int)cell.z - 1; iz <= (int)cell.z + 1; iz++) {
-		if(iz != cell.z && cell.use2D) {
-			continue;
-		}
 		int cz = wrapIfTorus(iz, gridDim.z);
 		if(cz == -1) {
 			continue;
@@ -239,11 +236,7 @@ void BaseConnectionManager::fillUnionWithNeighbors(CoordSet& gridUnion,
 			for(int iy = (int)cell.y - 1; iy <= (int)cell.y + 1; iy++) {
 				int cy = wrapIfTorus(iy, gridDim.y);
 				if(cy != -1) {
-					if(cell.use2D) {
-						gridUnion.add(GridCoord(cx, cy));
-					} else {
-						gridUnion.add(GridCoord(cx, cy, cz));
-					}
+					gridUnion.add(GridCoord(cx, cy, cz));
 				}
 			}
 		}
