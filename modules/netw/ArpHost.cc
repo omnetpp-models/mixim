@@ -56,7 +56,7 @@ int ArpHost::getNetwAddr(const MACAddress macAddr)
     // modification by Jerome Rousselot, CSEM
     // assumes that addresses are equal to host IDs
     // and that mac addresses == net addresses
-    return (int)macAddr.raw();
+    return (int)macAddr.getInt();
 //    debugEV << "for host[" << simulation.getModule( macAddr )->getParentModule()->getIndex()
 //       << "]: macAddr " << macAddr << "; netw address "
 //       << simulation.getModule( macAddr )->getParentModule()->getSubmodule("nic")->getId() <<endl;

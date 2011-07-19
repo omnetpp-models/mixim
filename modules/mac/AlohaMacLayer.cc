@@ -29,10 +29,10 @@ Define_Module(AlohaMacLayer);
 
 void AlohaMacLayer::initialize(int stage) {
 	UWBIRMac::initialize(stage);
-	if(stage == 1 && myMacAddr != MACAddress((int64_t)0)) {
-            phy->setRadioState(Radio::TX);
-    } else if(stage == 1 && myMacAddr == MACAddress((int64_t)0)) {
-            phy->setRadioState(Radio::RX);
+	if(stage == 1 && myMacAddr != MACAddress()) {
+        phy->setRadioState(Radio::TX);
+    } else if(stage == 1 && myMacAddr == MACAddress()) {
+        phy->setRadioState(Radio::RX);
     }
 }
 
