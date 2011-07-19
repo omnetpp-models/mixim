@@ -81,10 +81,10 @@ private:
 		 * The dimension of the GridCoord depends on the Coord.
 		 */
         GridCoord(const Coord& c, const Coord& gridCellSize = Coord(1.0,1.0,1.0)) {
-            x = static_cast<int>(c.getX() / gridCellSize.getX());
-            y = static_cast<int>(c.getY() / gridCellSize.getY());
-            z = static_cast<int>(c.getZ() / gridCellSize.getZ());
+            x = static_cast<int>(c.x / gridCellSize.x);
             use2D = c.is2D();
+            y = static_cast<int>(c.y / gridCellSize.y);
+            z = static_cast<int>(c.z / gridCellSize.z);
         }
 
         /** @brief Output string for this coordinate.*/

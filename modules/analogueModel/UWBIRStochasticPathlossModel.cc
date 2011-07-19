@@ -67,10 +67,10 @@ void UWBIRStochasticPathlossModel::filterSignal(AirFrame *frame)
 		Coord receiverPos = receiverMobility->getCurrentPosition();
 		double distance = receiverPos.distance(senderPos);
 		/*
-		 srcPosX.record(senderPos.getX());
-		 srcPosY.record(senderPos.getY());
-		 dstPosX.record(receiverPos.getX());
-		 dstPosY.record(receiverPos.getY());
+		 srcPosX.record(senderPos.x);
+		 srcPosY.record(senderPos.y);
+		 dstPosX.record(receiverPos.x);
+		 dstPosY.record(receiverPos.y);
 		 distances.record(distance);
 		 */
 		// Compute pathloss
