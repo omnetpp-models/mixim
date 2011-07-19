@@ -6,6 +6,7 @@
  */
 
 #include "Decider80211.h"
+#include "INETDefs.h"
 #include <DeciderResult80211.h>
 #include <Mac80211Pkt_m.h>
 
@@ -139,10 +140,10 @@ bool Decider80211::packetOk(double snirMin, int lengthMPDU, double bitrate)
     }
     //if CCK modulation (modeled with 16-QAM)
     else if (bitrate == 5.5E+6) {
-        berMPDU = 2.0 * (1.0 - 1.0 / sqrt(pow(2.0, 4))) * FWMath::erfc(sqrt(2.0*snirMin * BANDWIDTH / bitrate));
+        berMPDU = 2.0 * (1.0 - 1.0 / sqrt(pow(2.0, 4))) * erfc(sqrt(2.0*snirMin * BANDWIDTH / bitrate));
     }
     else {                       // CCK, modelled with 256-QAM
-        berMPDU = 2.0 * (1.0 - 1.0 / sqrt(pow(2.0, 8))) * FWMath::erfc(sqrt(2.0*snirMin * BANDWIDTH / bitrate));
+        berMPDU = 2.0 * (1.0 - 1.0 / sqrt(pow(2.0, 8))) * erfc(sqrt(2.0*snirMin * BANDWIDTH / bitrate));
     }
 
     //probability of no bit error in the PLCP header
