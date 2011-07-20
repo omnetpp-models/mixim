@@ -1,10 +1,10 @@
 package org.mixim.modules.node;
 
+import inet.linklayer.IWirelessNic;
 import inet.mobility.IMobility;
 import org.mixim.base.modules.BaseArp;
 import org.mixim.base.modules.IBaseApplLayer;
 import org.mixim.base.modules.IBaseNetwLayer;
-import org.mixim.modules.nic.INic;
 
 
 //
@@ -38,7 +38,7 @@ module HostBasic
             parameters:
                 @display("p=60,108;i=block/layer");
         }
-        nic: <nicType> like INic {
+        nic: <nicType> like IWirelessNic {
             parameters:
                 @display("p=60,166;i=block/ifcard");
         }

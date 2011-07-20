@@ -12,14 +12,16 @@
 
 package org.mixim.modules.nic;
 
-import org.mixim.modules.phy.PhyLayerBattery;
+import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.LMacLayer;
+import org.mixim.modules.phy.PhyLayerBattery;
+
 
 //
 // This module implements a LMAC network interface card using
 // the "LMacLayer" MAC layer module
 //
-module NicLMAC like INic
+module NicLMAC like IWirelessNic
 {
     parameters:
         double sleepCurrent @unit(mA); // 20 µA

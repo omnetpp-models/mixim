@@ -19,8 +19,9 @@
 // **************************************************************************/
 package org.mixim.modules.nic;
 
-import org.mixim.modules.phy.PhyLayerBattery;
+import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.CSMA802154;
+import org.mixim.modules.phy.PhyLayerBattery;
 
 
 //
@@ -31,7 +32,7 @@ import org.mixim.modules.mac.CSMA802154;
 // "Nic802154_TI_CC2420_Decider.xml" from "modules/nic/" to your simulation directory.
 // @author Jerome Rousselot
 //
-module Nic802154_TI_CC1100 like INic
+module Nic802154_TI_CC1100 like IWirelessNic
 {
 	parameters:
         string connectionManagerName = default("");   //name of the ConnectionManager module

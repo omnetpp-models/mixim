@@ -15,14 +15,16 @@
 
 package org.mixim.modules.nic;
 
-import org.mixim.modules.phy.PhyLayerBattery;
+import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.BMacLayer;
+import org.mixim.modules.phy.PhyLayerBattery;
+
 
 //
 // This module implements a BMAC network interface card using
 // the "BMACLayer" MAC layer module
 //
-module NicBMAC like INic
+module NicBMAC like IWirelessNic
 {
     parameters:
         double sleepCurrent @unit(mA); // 20 µA

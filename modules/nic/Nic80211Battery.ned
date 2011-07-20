@@ -26,8 +26,10 @@
 
 package org.mixim.modules.nic;
 
+import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.Mac80211;
 import org.mixim.modules.phy.PhyLayerBattery;
+
 
 //
 // Based on Nic80211
@@ -40,7 +42,7 @@ import org.mixim.modules.phy.PhyLayerBattery;
 // parameters: note that the NIC module owns the hardware parameters
 // to allow external access/alternate implementations.
 //
-module Nic80211Battery like INic
+module Nic80211Battery like IWirelessNic
 {
     parameters:
         string connectionManagerName = default("");   //name of the ConnectionManager module

@@ -18,8 +18,10 @@
 // **************************************************************************/
 package org.mixim.modules.nic;
 
+import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.Mac80211;
 import org.mixim.modules.phy.PhyLayer;
+
 
 //
 // This NIC implements an 802.11 network interface card.
@@ -27,7 +29,7 @@ import org.mixim.modules.phy.PhyLayer;
 // @see Mac80211, Decider80211
 // @author Marc Loebbers, Karl Wessel (port for MiXiM)
 //
-module Nic80211 like INic
+module Nic80211 like IWirelessNic
 {
     parameters:
         string connectionManagerName = default("");   //name of the ConnectionManager module

@@ -18,8 +18,10 @@
 // **************************************************************************/
 package org.mixim.modules.nic;
 
+import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.Mac80211MultiChannel;
 import org.mixim.modules.phy.PhyLayerBattery;
+
 
 //
 // This NIC implements an 802.11 network interface card with multi channel 
@@ -29,7 +31,7 @@ import org.mixim.modules.phy.PhyLayerBattery;
 // @see Mac80211MultiChannel, Decider80211MultiChannel
 // @author Karl Wessel
 //
-module Nic80211MultiChannel like INic
+module Nic80211MultiChannel like IWirelessNic
 {
     parameters:
         //name of the ConnectionManager module

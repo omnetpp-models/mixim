@@ -1,7 +1,8 @@
 package org.mixim.modules.nic;
 
-import org.mixim.modules.phy.PhyLayerUWBIR;
+import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.AlohaMacLayer;
+import org.mixim.modules.phy.PhyLayerUWBIR;
 
 //
 // This NIC interface simulates an IEEE 802.15.4A UWB PHY
@@ -24,7 +25,7 @@ import org.mixim.modules.mac.AlohaMacLayer;
 // <a href="http://infoscience.epfl.ch/record/147987">http://infoscience.epfl.ch/record/147987</a> 
 //
 
-module Nic802154A like INic
+module Nic802154A like IWirelessNic
 {
     parameters:
         string connectionManagerName; 	//name of the ConnectionManager module

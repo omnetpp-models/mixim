@@ -3,7 +3,7 @@ package org.mixim.tests.nicTest;
 import org.mixim.modules.netw.ArpHost;
 import org.mixim.base.modules.BaseMobility;
 import org.mixim.base.modules.BaseUtility;
-import org.mixim.modules.nic.INic;
+import org.mixim.modules.nic.IWirelessNic;
 
 module TestHost
 {
@@ -29,7 +29,7 @@ module TestHost
                 @display("b=32,30;p=60,166");
         }
 
-        nic: <nicType> like INic {
+        nic: <nicType> like IWirelessNic {
             parameters:
                 @display("b=32,30;p=60,166;i=iface");
         }
