@@ -45,8 +45,8 @@ module HostBasic
     connections:
         nic.upperLayerOut --> net.lowerLayerIn;
         nic.upperLayerIn <-- net.lowerLayerOut;
-        nic.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> net.lowerControlIn;
-        nic.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- net.lowerControlOut;
+        // nic.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> net.lowerControlIn;
+        // nic.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- net.lowerControlOut;
 
         net.upperLayerOut --> appl.lowerLayerIn;
         net.upperLayerIn <-- appl.lowerLayerOut;

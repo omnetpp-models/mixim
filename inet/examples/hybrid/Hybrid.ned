@@ -1,7 +1,7 @@
 package mixnet.examples.hybrid;
 
 import inet.nodes.inet.StandardHost;
-import mixnet.nodes.Ieee80211Host;
+import inet.nodes.inet.WirelessHost;
 import mixnet.nodes.Ieee802154Host;
 import org.mixim.base.connectionManager.ConnectionManager;
 import org.mixim.base.modules.BaseWorldUtility;
@@ -30,9 +30,7 @@ network Hybrid
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
-
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
-
     submodules:
         world: BaseWorldUtility {
             parameters:
@@ -46,36 +44,29 @@ network Hybrid
             parameters:
                 @display("p=253,25");
         }
-
         lrwpanChannel: ConnectionManager {
             parameters:
                 @display("p=369,25");
         }
-
-
         etherHost: StandardHost {
             @display("r=,,#707070;p=38,132");
             gates:
                 ethg[1];
 
         }
-        wlanHost: Ieee80211Host {
+        wlanHost: WirelessHost {
             @display("r=,,#707070;p=166,181");
+            wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
-
         lrwpanHost: Ieee802154Host {
             @display("p=214,86");
         }
-
         hybridRouter: HybridRouter {
             @display("r=,,#707070;p=121,99;i=device/accesspoint");
             gates:
                 ethg[1];
 
         }
-
-
     connections:
         etherHost.ethg[0] <--> {  delay = 0.1us; } <--> hybridRouter.ethg[0];
-
 }

@@ -22,7 +22,7 @@
 package mixnet.examples.bulktransfer;
 
 import inet.networklayer.autorouting.ipv4.FlatNetworkConfigurator;
-import mixnet.nodes.Ieee80211Host;
+import inet.nodes.inet.WirelessHost;
 import org.mixim.base.connectionManager.ConnectionManager;
 import org.mixim.base.modules.BaseWorldUtility;
 
@@ -47,9 +47,8 @@ network BulkTransfer
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
-
+        **.wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
-
     submodules:
         world: BaseWorldUtility {
             parameters:
@@ -57,26 +56,24 @@ network BulkTransfer
                 playgroundSizeY = playgroundSizeY;
                 playgroundSizeZ = playgroundSizeZ;
                 @display("p=171,25");
-
         }
         connectionManager: ConnectionManager {
             parameters:
                 @display("p=66,25");
         }
-
-        client1: Ieee80211Host {
+        client1: WirelessHost {
             parameters:
                 @display("p=131,67");
         }
-        client2: Ieee80211Host {
+        client2: WirelessHost {
             parameters:
                 @display("p=337,67");
         }
-        client3: Ieee80211Host {
+        client3: WirelessHost {
             parameters:
                 @display("p=337,247");
         }
-        server: Ieee80211Host {
+        server: WirelessHost {
             parameters:
                 @display("p=131,247;i=device/pc2");
         }
@@ -86,4 +83,3 @@ network BulkTransfer
         }
     connections:
 }
-
