@@ -13,9 +13,9 @@
 #include <BaseModule.h>
 #include <NetwPkt_m.h>
 #include <SimpleAddress.h>
-#include <NetwToMacControlInfo.h>
 #include <MacToNetwControlInfo.h>
 #include <BaseMacLayer.h>
+#include <Ieee802Ctrl_m.h>
 
 /**
  * @brief This is an implementation of a simple network layer
@@ -56,7 +56,7 @@ protected:
 
 	unsigned long runningSeqNumber;
 
-	typedef std::map<int, int> RoutingTable;
+	typedef std::map<int, MACAddress> RoutingTable;
 
 	RoutingTable routingTable;
 
@@ -86,9 +86,9 @@ protected:
 		helloWorld->setSeqNum(runningSeqNumber++);
 		helloWorld->setTtl(maxTtl);
 
-		NetwToMacControlInfo* cInfo = new NetwToMacControlInfo(L2BROADCAST);
-
-		helloWorld->setControlInfo(cInfo);
+		Ieee802Ctrl *control = new Ieee802Ctrl();
+		control->setDest(MACAddress::BROADCAST_ADDRESS);
+		helloWorld->setControlInfo(control);
 
 		getNode()->bubble("Hello World!");
 
@@ -99,7 +99,7 @@ protected:
 		send(pkt, dataOut);
 	}
 
-	void forwardPacket(NetwPkt* pkt, int nextHop){
+	void forwardPacket(NetwPkt* pkt, MACAddress nextHop){
 		NetwPkt* fwd = new NetwPkt(pkt->getName(), pkt->getKind());
 
 		fwd->setDestAddr(pkt->getDestAddr());
@@ -107,9 +107,9 @@ protected:
 		fwd->setSeqNum(pkt->getSeqNum());
 		fwd->setTtl(pkt->getTtl() - 1);
 
-		NetwToMacControlInfo* cInfo = new NetwToMacControlInfo(nextHop);
-
-		fwd->setControlInfo(cInfo);
+        Ieee802Ctrl *control = new Ieee802Ctrl();
+        control->setDest(nextHop);
+		fwd->setControlInfo(control);
 
 		sendDown(fwd);
 	}
@@ -130,7 +130,7 @@ protected:
 			//if not add him with the mac address of the previous hop
 			MacToNetwControlInfo* cInfo = static_cast<MacToNetwControlInfo*>(pkt->getControlInfo());
 
-			int prevHop = cInfo->getLastHopMac();
+			MACAddress prevHop = cInfo->getLastHopMac();
 
 			routingTable[srcIP] = prevHop;
 
@@ -144,7 +144,7 @@ protected:
 		//hasn't exceeded yet forward it
 		if(isSwitch){
 			if(pkt->getTtl() > 0) {
-				forwardPacket(pkt, L2BROADCAST);
+				forwardPacket(pkt, MACAddress::BROADCAST_ADDRESS);
 				char buff[255];
 				sprintf(buff, "%d said hello!", srcIP);
 				getNode()->bubble(buff);
@@ -177,9 +177,9 @@ protected:
 		jabber->setSeqNum(runningSeqNumber++);
 		jabber->setTtl(maxTtl);
 
-		NetwToMacControlInfo* cInfo = new NetwToMacControlInfo(it->second);
-
-		jabber->setControlInfo(cInfo);
+        Ieee802Ctrl *control = new Ieee802Ctrl();
+        control->setDest(it->second);
+		jabber->setControlInfo(control);
 
 		char buff[255];
 		sprintf(buff, "Babbling with %d", it->first);
@@ -196,7 +196,7 @@ protected:
 				assert(pkt->getTtl() > 0);
 				assert(routingTable.count(pkt->getDestAddr()) > 0);
 
-				int nextHop = routingTable[pkt->getDestAddr()];
+				MACAddress nextHop = routingTable[pkt->getDestAddr()];
 
 				char buff[255];
 				sprintf(buff, "%d babbles with %d", pkt->getSrcAddr(), pkt->getDestAddr());

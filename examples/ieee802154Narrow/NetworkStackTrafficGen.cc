@@ -14,10 +14,10 @@
 //
 
 #include "NetworkStackTrafficGen.h"
-#include "NetwToMacControlInfo.h"
 #include <cassert>
 #include <Packet.h>
 #include <BaseMacLayer.h>
+#include <Ieee802Ctrl_m.h>
 
 
 Define_Module(NetworkStackTrafficGen);
@@ -117,7 +117,9 @@ void NetworkStackTrafficGen::sendBroadcast()
 	pkt->setSrcAddr(myNetwAddr);
 	pkt->setDestAddr(destination);
 
-	pkt->setControlInfo(new NetwToMacControlInfo(destination));
+	Ieee802Ctrl *control = new Ieee802Ctrl();
+	control->setDest(MACAddress::BROADCAST_ADDRESS);
+	pkt->setControlInfo(control);
 
 	Packet p(packetLength, 0, 1);
 	emit(catPacket, &p);

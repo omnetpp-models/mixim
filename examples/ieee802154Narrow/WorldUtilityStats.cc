@@ -31,7 +31,8 @@ void WorldUtilityStats::initialize(int stage)
 
 		//register for global stats to collect
 		Packet tmp(10);
-		catPacket = subscribe(this, &tmp);
+		catPacket = registerSignal("packet");
+		subscribe(catPacket, this);
 
 		sent.setName("Bits generated");
 		rcvd.setName("Bits received");
