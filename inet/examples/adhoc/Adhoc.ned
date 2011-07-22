@@ -7,8 +7,7 @@ import org.mixim.base.connectionManager.ConnectionManager;
 import org.mixim.base.modules.BaseWorldUtility;
 
 
-//Network for testing hosts containing an INET network stack,
-//a MiXiM NIC (802.11) and a MiXiM mobility module.
+//Network for testing hosts containing an INET network stack and a MiXiM 802.11 NIC.
 network Adhoc
 {
     parameters:

@@ -16,9 +16,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 
-
-
-
 package mixnet.examples.bulktransfer;
 
 import inet.networklayer.autorouting.ipv4.FlatNetworkConfigurator;
@@ -64,18 +61,22 @@ network BulkTransfer
         client1: WirelessHost {
             parameters:
                 @display("p=131,67");
+                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         client2: WirelessHost {
             parameters:
                 @display("p=337,67");
+                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         client3: WirelessHost {
             parameters:
                 @display("p=337,247");
+                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         server: WirelessHost {
             parameters:
                 @display("p=131,247;i=device/pc2");
+                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         configurator: FlatNetworkConfigurator {
             parameters:
