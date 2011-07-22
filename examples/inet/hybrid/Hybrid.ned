@@ -1,4 +1,4 @@
-package mixnet.examples.hybrid;
+package org.mixim.examples.inet.hybrid;
 
 import inet.nodes.inet.StandardHost;
 import inet.nodes.inet.WirelessHost;

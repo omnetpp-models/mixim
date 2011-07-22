@@ -1,4 +1,4 @@
-package mixnet.examples.adhoc;
+package org.mixim.examples.inet.adhoc;
 
 
 import inet.networklayer.autorouting.ipv4.FlatNetworkConfigurator;
