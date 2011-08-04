@@ -38,6 +38,7 @@
 class TestApplLayer : public BaseApplLayer
 {
   public:
+    TestApplLayer();
     virtual ~TestApplLayer();
 
     /** @brief Initialization of the module and some variables*/

@@ -27,6 +27,11 @@
 #include "BaseLayer.h"
 #include <assert.h>
 
+BaseLayer::BaseLayer()
+{
+    passedMsg = NULL;
+}
+
 /**
  * First we have to initialize the module from which we derived ours,
  * in this case BaseModule.

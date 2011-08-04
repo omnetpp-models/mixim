@@ -38,6 +38,7 @@
 
 class SimpleBattery: public BaseBattery {
 public:
+    SimpleBattery();
 	virtual ~SimpleBattery();
 	virtual void initialize(int);
 	virtual void handleMessage(cMessage*);

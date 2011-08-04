@@ -25,11 +25,18 @@
 Define_Module(SimpleBattery)
 ;
 
+SimpleBattery::SimpleBattery()
+{
+    timeout = NULL;
+    publish = NULL;
+    devices = NULL;
+    batteryState = NULL;
+}
+
 void SimpleBattery::initialize(int stage) {
 	BaseBattery::initialize(stage);
 
 	if (stage == 0) {
-
 		voltage = par("voltage");
 		nominalCapmAh = par("nominal");
 		if (nominalCapmAh <= 0) {
@@ -234,6 +241,7 @@ void SimpleBattery::handleHostState(const HostState& state)
 }
 
 void SimpleBattery::deductAndCheck() {
+    Enter_Method_Silent();
 	// already depleted, devices should have stopped sending drawMsg,
 	// but we catch any leftover messages in queue
 	if (residualCapacity <= 0) {

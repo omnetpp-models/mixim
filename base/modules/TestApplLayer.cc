@@ -25,6 +25,11 @@
 #include <SimpleAddress.h>
 
 
+TestApplLayer::TestApplLayer()
+{
+    delayTimer = NULL;
+}
+
 /**
  * First we have to initialize the module from which we derived ours,
  * in this case BasicModule.

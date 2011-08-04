@@ -60,6 +60,8 @@ class BaseLayer : public BatteryAccess
     int            hostId;
 
 public:
+    BaseLayer();
+    virtual ~BaseLayer();
     //Module_Class_Members(BaseLayer, BaseModule, 0 );
 
     /** @brief Initialization of the module and some variables*/
@@ -70,7 +72,6 @@ public:
 
     /** @brief Called when the simulation has finished.*/
 	virtual void finish();
-	virtual ~BaseLayer();
 
 protected:
     /**

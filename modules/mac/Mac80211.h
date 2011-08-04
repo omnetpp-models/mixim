@@ -84,6 +84,7 @@ protected:
     typedef std::list<NeighborEntry> NeighborList;
 
   public:
+    Mac80211();
     virtual ~Mac80211();
 
     virtual void initialize(int);

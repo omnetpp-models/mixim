@@ -31,6 +31,13 @@
 
 Define_Module(Mac80211);
 
+Mac80211::Mac80211()
+{
+    timeout = NULL;
+    nav = NULL;
+    contention = NULL;
+    endSifs = NULL;
+}
 
 void Mac80211::initialize(int stage)
 {
@@ -1274,9 +1281,9 @@ void Mac80211::addNeighbor(Mac80211Pkt *af) {
 Mac80211::~Mac80211() {
 	cancelAndDelete(timeout);
 	cancelAndDelete(nav);
-	if(!contention->isScheduled())
+	if(contention && !contention->isScheduled())
 		delete contention;
-	if(!endSifs->isScheduled())
+	if(endSifs && !endSifs->isScheduled())
 		delete endSifs;
 
 	MacPktList::iterator it;
