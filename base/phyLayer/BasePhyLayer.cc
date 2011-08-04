@@ -686,7 +686,7 @@ BasePhyLayer::~BasePhyLayer() {
 	 * get a pointer to the radios RSAM again to avoid deleting it,
 	 * it is not created by calling new (BasePhyLayer is not the owner)!
 	 */
-	AnalogueModel* rsamPointer = radio->getAnalogueModel();
+	AnalogueModel* rsamPointer = radio ? radio->getAnalogueModel() : 0;
 
 	//free AnalogueModels
 	for(AnalogueModelList::iterator it = analogueModels.begin();
