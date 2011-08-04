@@ -14,7 +14,7 @@
 // 
 
 #include "TestApp.h"
-#include "NetwToMacControlInfo.h"
+#include "Ieee802Ctrl_m.h"
 #include "SimpleAddress.h"
 
 Define_Module(TestApp);
@@ -55,7 +55,8 @@ void TestApp::finish()
 void TestApp::ping(int nr){
 	Enter_Method_Silent();
 	cPacket* p = new cPacket(("Ping Traffic #" + toString(nr)).c_str(), PING+nr, 5000);
-	NetwToMacControlInfo* cInfo = new NetwToMacControlInfo(myIndex - 1);
+	Ieee802Ctrl* cInfo = new Ieee802Ctrl();
+	cInfo->setDest(MACAddress(myIndex - 1));
 	p->setControlInfo(cInfo);
 	send(p, out);
 	assertMessage("Ping", PING+nr, in(0), in(5), "app" + toString(myIndex - 1));
@@ -65,7 +66,8 @@ void TestApp::ping(int nr){
 void TestApp::pong(){
 	Enter_Method_Silent();
 	cPacket* p = new cPacket("Ping Traffic", PONG, 5000);
-	NetwToMacControlInfo* cInfo = new NetwToMacControlInfo(myIndex + 1);
+	Ieee802Ctrl* cInfo = new Ieee802Ctrl();
+    cInfo->setDest(MACAddress(myIndex - 1));
 	p->setControlInfo(cInfo);
 	send(p, out);
 	assertMessage("Pong", PONG, in(0), in(5), "app" + toString(myIndex + 1));
@@ -206,7 +208,8 @@ void TestApp::continueIn(simtime_t time){
 void TestApp::sendPacket(int dest)
 {
 	cPacket* p = new cPacket("Test packet", TESTPACKET+myIndex, 5000);
-	NetwToMacControlInfo* cInfo = new NetwToMacControlInfo(dest);
+	Ieee802Ctrl* cInfo = new Ieee802Ctrl();
+    cInfo->setDest(MACAddress(dest));
 	p->setControlInfo(cInfo);
 	send(p, out);
 }

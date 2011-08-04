@@ -29,7 +29,7 @@ public:
 	}
 
 	virtual void finish() {
-		BaseModule::finish();
+		cComponent::finish();
 
 		assertTrue("Should have received at least one broadcast.", broadcastReceived);
 	}

@@ -1,5 +1,7 @@
 #/bin/bash
 
+export NEDPATH="../../base;../../modules;../../../inet/src"
+
 ./nicTest -c Test1 > out.tmp
 ./nicTest -c Test2 >> out.tmp
 ./nicTest -c Test3 >> out.tmp

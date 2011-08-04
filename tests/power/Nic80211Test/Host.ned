@@ -13,29 +13,23 @@
 // 802.11 module
 package org.mixim.tests.power.Nic80211Test;
 
-import org.mixim.modules.application.BurstApplLayerBattery;
-import org.mixim.base.modules.BaseNetwLayer;
-import org.mixim.modules.nic.Nic80211Battery;
+import inet.mobility.models.ConstSpeedMobility;
 import org.mixim.base.modules.BaseArp;
-import org.mixim.modules.mobility.ConstSpeedMobility;
-import org.mixim.modules.power.battery.SimpleBattery;
+import org.mixim.base.modules.BaseNetwLayer;
+import org.mixim.modules.application.BurstApplLayerBattery;
+import org.mixim.modules.nic.Nic80211Battery;
 import org.mixim.modules.power.battery.BatteryStats;
-import org.mixim.base.modules.BaseUtility;
+import org.mixim.modules.power.battery.SimpleBattery;
+
 
 module Host
-
 {
     parameters:
         @display("bgb=250,250,white,,;bgp=10,10");
+        @node();
     gates:
         input radioIn; // gate for sendDirect
-
     submodules:
-        blackboard: BaseUtility {
-            parameters:
-                @display("p=200,75;b=30,25");
-
-        }
         mobility: ConstSpeedMobility {
             parameters:
                 @display("p=200,150;b=30,25");
@@ -83,5 +77,4 @@ module Host
         net.upperControlIn <-- appl.lowerControlOut;
 
         radioIn --> nic.radioIn;
-
 }

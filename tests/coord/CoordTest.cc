@@ -88,54 +88,53 @@ const double BIGGER = 7.0;
  * - test Coord(Coord& other)
  *
  * assumes correctness of following methods:
- * - getX(), getY(), getZ()
  * - operator=()
  */
 void testConstructors() {
     
     // test default constructor
     Coord testCoord;
-    assertClose("x-value of default coordinate.", 0.0, testCoord.getX());
-    assertClose("y-value of default coordinate.", 0.0, testCoord.getY());
-    assertClose("z-value of default coordinate.", 0.0, testCoord.getZ());
+    assertClose("x-value of default coordinate.", 0.0, testCoord.x);
+    assertClose("y-value of default coordinate.", 0.0, testCoord.y);
+    assertClose("z-value of default coordinate.", 0.0, testCoord.z);
 
     //test Coord(x, y)
     
     testCoord = Coord(X, Y);
-    assertClose("x-value of Coord(x, y).", X, testCoord.getX());
-    assertClose("y-value of Coord(x, y).", Y, testCoord.getY());
-    assertClose("z-value of Coord(x, y).", Coord::UNDEFINED, testCoord.getZ());
+    assertClose("x-value of Coord(x, y).", X, testCoord.x);
+    assertClose("y-value of Coord(x, y).", Y, testCoord.y);
+    assertClose("z-value of Coord(x, y).", 0.0, testCoord.z);
     
     //test Coord(x, y, z)
     
     testCoord = Coord(X, Y, Z);
-    assertClose("x-value of Coord(x, y, z).", X, testCoord.getX());
-    assertClose("y-value of Coord(x, y, z).", Y, testCoord.getY());
-    assertClose("z-value of Coord(x, y, z).", Z, testCoord.getZ());
+    assertClose("x-value of Coord(x, y, z).", X, testCoord.x);
+    assertClose("y-value of Coord(x, y, z).", Y, testCoord.y);
+    assertClose("z-value of Coord(x, y, z).", Z, testCoord.z);
     
     //test Coord(Coord* other)
     //test Coord(Coord& other)
     Coord testCoord2(&testCoord);
-    assertClose("x-value of (3D)Coord(Coord* other).", testCoord.getX(), testCoord2.getX());
-    assertClose("y-value of (3D)Coord(Coord* other).", testCoord.getY(), testCoord2.getY());
-    assertClose("z-value of (3D)Coord(Coord* other).", testCoord.getZ(), testCoord2.getZ());
+    assertClose("x-value of (3D)Coord(Coord* other).", testCoord.x, testCoord2.x);
+    assertClose("y-value of (3D)Coord(Coord* other).", testCoord.y, testCoord2.y);
+    assertClose("z-value of (3D)Coord(Coord* other).", testCoord.z, testCoord2.z);
 
     testCoord2 = Coord(testCoord);
-    assertClose("x-value of (3D)Coord(Coord& other).", testCoord.getX(), testCoord2.getX());
-    assertClose("y-value of (3D)Coord(Coord& other).", testCoord.getY(), testCoord2.getY());
-    assertClose("z-value of (3D)Coord(Coord& other).", testCoord.getZ(), testCoord2.getZ());
+    assertClose("x-value of (3D)Coord(Coord& other).", testCoord.x, testCoord2.x);
+    assertClose("y-value of (3D)Coord(Coord& other).", testCoord.y, testCoord2.y);
+    assertClose("z-value of (3D)Coord(Coord& other).", testCoord.z, testCoord2.z);
 
     testCoord = Coord(X, Y);
     testCoord2 = Coord(&testCoord);
-    assertClose("x-value of (2D)Coord(Coord* other).", testCoord.getX(), testCoord2.getX());
-    assertClose("y-value of (2D)Coord(Coord* other).", testCoord.getY(), testCoord2.getY());
-    assertClose("z-value of (2D)Coord(Coord* other).", testCoord.getZ(), testCoord2.getZ());
+    assertClose("x-value of (2D)Coord(Coord* other).", testCoord.x, testCoord2.x);
+    assertClose("y-value of (2D)Coord(Coord* other).", testCoord.y, testCoord2.y);
+    assertClose("z-value of (2D)Coord(Coord* other).", testCoord.z, testCoord2.z);
 
     
     testCoord2 = Coord(testCoord);
-    assertClose("x-value of (2D)Coord(Coord& other).", testCoord.getX(), testCoord2.getX());
-    assertClose("y-value of (2D)Coord(Coord& other).", testCoord.getY(), testCoord2.getY());
-    assertClose("z-value of (2D)Coord(Coord& other).", testCoord.getZ(), testCoord2.getZ());
+    assertClose("x-value of (2D)Coord(Coord& other).", testCoord.x, testCoord2.x);
+    assertClose("y-value of (2D)Coord(Coord& other).", testCoord.y, testCoord2.y);
+    assertClose("z-value of (2D)Coord(Coord& other).", testCoord.z, testCoord2.z);
 
     std::cout << "Constructor tests successful." << std::endl;
     
@@ -146,7 +145,7 @@ void testConstructors() {
  *
  * - test plus, minus, scalar multiplication
  * - test in 2D/3D
- * - preserve UNDEFINED of z at 2D
+ * - preserve the value 0 for z at 2D
  */
 void testOperators() {
 
@@ -155,24 +154,24 @@ void testOperators() {
 	Coord b(X2, Y2, Z2);
 
 	Coord erg = a + b;
-	assertClose("3D: x-value of a + b", SUM_X, erg.getX());
-	assertClose("3D: y-value of a + b", SUM_Y, erg.getY());
-	assertClose("3D: z-value of a + b", SUM_Z, erg.getZ());
+	assertClose("3D: x-value of a + b", SUM_X, erg.x);
+	assertClose("3D: y-value of a + b", SUM_Y, erg.y);
+	assertClose("3D: z-value of a + b", SUM_Z, erg.z);
 
 	erg = a - b;
-	assertClose("3D: x-value of a - b", DIFF_X, erg.getX());
-	assertClose("3D: y-value of a - b", DIFF_Y, erg.getY());
-	assertClose("3D: z-value of a - b", DIFF_Z, erg.getZ());
+	assertClose("3D: x-value of a - b", DIFF_X, erg.x);
+	assertClose("3D: y-value of a - b", DIFF_Y, erg.y);
+	assertClose("3D: z-value of a - b", DIFF_Z, erg.z);
 
 	erg = a * FAKT;
-	assertClose("3D: x-value of a * faktor", FAK_X, erg.getX());
-	assertClose("3D: y-value of a * faktor", FAK_Y, erg.getY());
-	assertClose("3D: z-value of a * faktor", FAK_Z, erg.getZ());
+	assertClose("3D: x-value of a * faktor", FAK_X, erg.x);
+	assertClose("3D: y-value of a * faktor", FAK_Y, erg.y);
+	assertClose("3D: z-value of a * faktor", FAK_Z, erg.z);
 
     erg = a / (1.0 / FAKT);
-	assertClose("3D: x-value of a / (1 / faktor)", FAK_X, erg.getX());
-	assertClose("3D: y-value of a / (1 / faktor)", FAK_Y, erg.getY());
-	assertClose("3D: z-value of a / (1 / faktor)", FAK_Z, erg.getZ());
+	assertClose("3D: x-value of a / (1 / faktor)", FAK_X, erg.x);
+	assertClose("3D: y-value of a / (1 / faktor)", FAK_Y, erg.y);
+	assertClose("3D: z-value of a / (1 / faktor)", FAK_Z, erg.z);
 
     //2D
 
@@ -180,24 +179,24 @@ void testOperators() {
 	b = Coord(X2, Y2);
 
     erg = a + b;
-	assertClose("2D: x-value of a + b", SUM_X, erg.getX());
-	assertClose("2D: y-value of a + b", SUM_Y, erg.getY());
-	assertClose("2D: z-value UNDEFINED of a + b", Coord::UNDEFINED, erg.getZ());
+	assertClose("2D: x-value of a + b", SUM_X, erg.x);
+	assertClose("2D: y-value of a + b", SUM_Y, erg.y);
+	assertClose("2D: z-value 0 of a + b", 0.0, erg.z);
 
 	erg = a - b;
-	assertClose("2D: x-value of a - b", DIFF_X, erg.getX());
-	assertClose("2D: y-value of a - b", DIFF_Y, erg.getY());
-	assertClose("2D: z-value UNDEFINED of a - b", Coord::UNDEFINED, erg.getZ());
+	assertClose("2D: x-value of a - b", DIFF_X, erg.x);
+	assertClose("2D: y-value of a - b", DIFF_Y, erg.y);
+	assertClose("2D: z-value 0 of a - b", 0.0, erg.z);
 
 	erg = a * FAKT;
-	assertClose("2D: x-value of a * faktor", FAK_X, erg.getX());
-	assertClose("2D: y-value of a * faktor", FAK_Y, erg.getY());
-	assertClose("2D: z-value UNDEFINED of a * faktor", Coord::UNDEFINED, erg.getZ());
+	assertClose("2D: x-value of a * faktor", FAK_X, erg.x);
+	assertClose("2D: y-value of a * faktor", FAK_Y, erg.y);
+	assertClose("2D: z-value 0 of a * faktor", 0.0, erg.z);
 
     erg = a / (1.0 / FAKT);
-	assertClose("2D: x-value of a / (1 / faktor)", FAK_X, erg.getX());
-	assertClose("2D: y-value of a / (1 / faktor)", FAK_Y, erg.getY());
-	assertClose("2D: z-value UNDEFINED of a / (1 / faktor)", Coord::UNDEFINED, erg.getZ());
+	assertClose("2D: x-value of a / (1 / faktor)", FAK_X, erg.x);
+	assertClose("2D: y-value of a / (1 / faktor)", FAK_Y, erg.y);
+	assertClose("2D: z-value 0 of a / (1 / faktor)", 0.0, erg.z);
 
 	std::cout << "Operator tests successful." << std::endl;
 }
@@ -253,7 +252,7 @@ void testLength() {
     assertClose("3D: square length of (x, y, z)-vector.", XYZ_SQUARE_LENGTH, a.squareLength());
 
     //2D
-    a = Coord(true);
+    a = Coord();
     assertClose("2D: length of origin-vector.", 0.0, a.length());
     assertClose("2D: square length of origin-vector.", 0.0, a.squareLength());
 
@@ -353,7 +352,7 @@ void testIsInRectangle() {
 
 
 	//2D
-	upperLeftPG = Coord(true);
+	upperLeftPG = Coord();
 	lowerRightPG = Coord(PG_X, PG_Y);
 
 	inside = Coord(INSIDE, INSIDE);

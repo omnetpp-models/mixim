@@ -47,8 +47,8 @@ void DeviceDuty::initialize(int stage) {
 
 		period = par("period");
 
-		EV<< "dutyCycle0 = " << dutyCycle0*100 << "%, gap =" << gap
-		<< "%, dutyCycle1 = " << dutyCycle1*100 << "%, period ="
+		EV<< "dutyCycle0 = " << dutyCycle0*100 << "%, gap = " << gap
+		<< "%, dutyCycle1 = " << dutyCycle1*100 << "%, period = "
 		<< period << "s" << endl;
 
 		current0 = par("current0");
@@ -183,7 +183,7 @@ DeviceDuty::~DeviceDuty() {
 }
 
 void DeviceDuty::finish() {
-	BatteryAccess::finish();
+	cComponent::finish();
 	cancelAndDelete(on0);
 	cancelAndDelete(gap01);
 	cancelAndDelete(on1);

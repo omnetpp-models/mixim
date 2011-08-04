@@ -29,7 +29,7 @@ public:
 	}
 
 	virtual void finish() {
-		BaseModule::finish();
+		cComponent::finish();
 
 		assertFalse("Should have received no broadcast.", broadcastReceived);
 	}

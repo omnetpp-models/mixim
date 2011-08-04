@@ -1,5 +1,7 @@
 #/bin/bash
 
+export NEDPATH="../../base;../../modules;../../../inet/src"
+
 ./basePhyLayer -c Test1 > out.tmp
 ./basePhyLayer -c Test2 >> out.tmp
 ./basePhyLayer -c Test6 >> out.tmp

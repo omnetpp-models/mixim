@@ -1,5 +1,7 @@
 #/bin/bash
 
+export NEDPATH="../../base;../../modules;../../../inet/src"
+
 ./coord > out.tmp
 
 diff -I '^Assigned runID=' -I '^Loading NED files from'  -w exp-output out.tmp

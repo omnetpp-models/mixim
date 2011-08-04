@@ -22,6 +22,7 @@
 #define TEST_PHY_LAYER_H
 
 #include "ChannelAccess.h"
+#include <MACAddress.h>
 #include <MacPkt_m.h>
 #include <iostream>
 
@@ -63,7 +64,7 @@ public:
     virtual void handleMessage( cMessage* );
 
 	virtual void handleSelfMsg() { assertFalse("This phy layer expects no self-msg!", true); }
-	virtual void handleLowerMsg(int srcAddr) { assertFalse("This phy layer expects no msg!", true); }
+	virtual void handleLowerMsg(MACAddress srcAddr) { assertFalse("This phy layer expects no msg!", true); }
 
 protected:
 

@@ -1,23 +1,18 @@
 package org.mixim.tests.basePhyLayer;
 
-import org.mixim.base.modules.BaseMobility;
-import org.mixim.base.modules.BaseUtility;
+import inet.mobility.models.StationaryMobility;
 
 
 module TestHost
 {
     parameters:
         double numHosts; // total number of hosts in the network
-
         @display("bgb=180,200,white,,;bgp=10,10");
+        @node();
     gates:
         input radioIn;
 
     submodules:
-        utility: BaseUtility {
-            parameters:
-                @display("p=130,60;b=25,25,,black,,");
-        }
         mobility: StationaryMobility {
             parameters:
                 @display("p=130,130;i=cogwheel2");

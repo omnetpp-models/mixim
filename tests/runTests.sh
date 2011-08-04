@@ -1,20 +1,12 @@
 #/bin/bash
 
-
-
-echo ----------------Blackboard--------------------
-cd blackboard
-./runTest.sh
 echo -------------ConnectionManager----------------
-cd ../connectionManager
-./runTest.sh
-echo ----------------BaseMobility------------------
-cd ../baseMobility
+cd connectionManager
 ./runTest.sh
 echo ----------------BasePhyLayer------------------
 cd ../basePhyLayer
 ./runTest.sh
-echo ----------------DeciderTest------------------
+echo ------------------Decider---------------------
 cd ../decider
 ./runTest.sh
 echo -------------------Coord----------------------

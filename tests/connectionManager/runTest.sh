@@ -1,5 +1,7 @@
 #/bin/bash
 
+export NEDPATH="../../base;../../modules;../../../inet/src"
+
 ./connectionManager -c Test1 > out.tmp
 ./connectionManager -c Test2 >> out.tmp
 ./connectionManager -c Test3 >> out.tmp

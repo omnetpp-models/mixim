@@ -224,13 +224,15 @@ protected:
 		DimensionSet::reverse_iterator it = dims.rbegin();
 		assertEqual("first dimension should be freq.", d2, *it);
 		it++;
-		assertEqual("next dimension of freq should be freq.", d2, *it);
+		assertTrue("there should be no more dimensions", it == dims.rend());
 
 		dims.addDimension(d4);
 		it = dims.rbegin();
 		assertEqual("first dimension should be space.", d4, *it);
-		assertEqual("next dimension of freq should be freq.", d2, *(++it));
-		assertEqual("next dimension of space should be freq.", d2, *(++it));
+		it++;
+		assertEqual("next dimension of space should be freq.", d2, *it);
+		it++;
+        assertTrue("there should be no more dimensions", it == dims.rend());
 	}
 
 	void testArg() {

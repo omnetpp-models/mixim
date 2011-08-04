@@ -1,0 +1,10 @@
+radioState_dir: testUtils_dir
+channelInfo_dir: testUtils_dir
+power_dir: testUtils_dir
+mapping_dir: testUtils_dir
+nicTest_dir: testUtils_dir
+coord_dir: testUtils_dir
+basePhyLayer_dir: testUtils_dir
+decider_dir: testUtils_dir
+connectionManager_dir: testUtils_dir
+baseMobility_dir: testUtils_dir

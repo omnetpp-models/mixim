@@ -1726,11 +1726,6 @@ void DeciderTest::drawCurrent(double amount, int activity)
 	return;
 }
 
-BaseUtility* DeciderTest::getUtility()
-{
-	return 0;
-}
-
 BaseWorldUtility* DeciderTest::getWorldUtility()
 {
 	return 0;
