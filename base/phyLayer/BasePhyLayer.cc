@@ -845,10 +845,6 @@ void BasePhyLayer::drawCurrent(double amount, int activity) {
 	BatteryAccess::drawCurrent(amount, activity);
 }
 
-BaseUtility* BasePhyLayer::getUtility() {
-	return utility;
-}
-
 BaseWorldUtility* BasePhyLayer::getWorldUtility() {
 	return world;
 }

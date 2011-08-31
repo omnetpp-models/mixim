@@ -37,7 +37,7 @@ void TrafficGen::initialize(int stage)
 		nbPacketDropped = 0;
 
 		Packet p(1);
-		catPacket = world->getCategory(&p);
+		catPacket = registerSignal("packet");
 	} else if (stage == 1) {
 		if(burstSize > 0) {
 			remainingBurst = burstSize;
@@ -88,7 +88,7 @@ void TrafficGen::handleLowerMsg(cMessage *msg)
 {
 	cPacket* pkt = static_cast<cPacket*>(msg);
 	Packet p(pkt->getBitLength(), 1, 0);
-	world->publishBBItem(catPacket, &p, -1);
+	emit(catPacket, &p);
 
 	delete msg;
 	msg = 0;

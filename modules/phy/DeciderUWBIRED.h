@@ -21,7 +21,6 @@
 #include "AlohaMacLayer.h"
 #include "IEEE802154A.h"
 #include "UWBIRPacket.h"
-#include "BaseUtility.h"
 #include "MacToPhyInterface.h"
 
 using namespace std;
@@ -81,7 +80,6 @@ protected:
 	bool alwaysFailOnDataInterference;
 	UWBIRPacket packet;
 	int catUWBIRPacket;
-	BaseUtility* utility;
 	double epulseAggregate, enoiseAggregate;
 	map<Signal*, int> currentSignals;
 	cOutVector receivedPulses;
@@ -124,8 +122,7 @@ public:
 
 		receivedPulses.setName("receivedPulses");
 		syncThresholds.setName("syncThresholds");
-		utility = iface->getUtility();
-		catUWBIRPacket = utility->getCategory(&packet);
+		catUWBIRPacket = cComponent::registerSignal("packet");
 	};
 
 	virtual simtime_t processSignal(AirFrame* frame);

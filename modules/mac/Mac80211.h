@@ -104,8 +104,8 @@ protected:
 	virtual void handleLowerControl(cMessage*);
 
 
-    /** @brief Called by the Blackboard whenever a change occurs we're interested in */
-    //virtual void receiveBBItem(int category, const BBItem *details, int scopeModuleId);
+    /** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
+    //virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
     /** @brief handle end of contention */
     virtual void handleEndContentionTimer();

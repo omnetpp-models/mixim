@@ -91,7 +91,7 @@ simtime_t DeciderUWBIRED::handleHeaderOver(map<Signal*, int>::iterator& it) {
 			phy->sendControlMsg(syncFailureNotification);
 
 		}
-		utility->publishBBItem(catUWBIRPacket, &packet, -1); // scope = all == host
+		uwbiface->emit(catUWBIRPacket, &packet);
 
 	}
 	// in any case, look at that frame again when it is finished

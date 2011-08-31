@@ -63,7 +63,7 @@ void BMacLayer::initialize(int stage)
 		droppedPacket.setReason(DroppedPacket::NONE);
 		nicId = getParentModule()->getId();
 
-		catDroppedPacket = utility->getCategory(&droppedPacket);
+		catDroppedPacket = registerSignal("droppedPacket");
 		WATCH(macState);
     }
 
@@ -211,10 +211,9 @@ void BMacLayer::sendMacAck()
  * Handle own messages:
  * BMAC_WAKEUP: wake up the node, check the channel for some time.
  * BMAC_CHECK_CHANNEL: if the channel is free, check whether there is something
- * in the queue and switch the radio to TX. When switched to TX, (in
- * receiveBBItem), the node will start sending preambles for a full slot
- * duration. If the channel is busy, stay awake to receive message. Schedule a
- * timeout to handle false alarms.
+ * in the queue and switch the radio to TX. When switched to TX, the node will
+ * start sending preambles for a full slot duration. If the channel is busy,
+ * stay awake to receive message. Schedule a timeout to handle false alarms.
  * BMAC_SEND_PREAMBLES: sending of preambles over. Next time the data packet
  * will be send out (single one).
  * BMAC_TIMEOUT_DATA: timeout the node after a false busy channel alarm. Go
@@ -631,7 +630,7 @@ bool BMacLayer::addToQueue(cMessage *msg)
 		msg->setKind(PACKET_DROPPED);
 		sendControlUp(msg);
 		droppedPacket.setReason(DroppedPacket::QUEUE);
-		utility->publishBBItem(catDroppedPacket, &droppedPacket, nicId);
+		emit(catDroppedPacket, &droppedPacket);
 		nbDroppedDataPackets++;
 
 		return false;

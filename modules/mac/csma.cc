@@ -107,7 +107,7 @@ void csma::initialize(int stage) {
 		droppedPacket.setReason(DroppedPacket::NONE);
 		nicId = getParentModule()->getId();
 
-		catDroppedPacket = utility->getCategory(&droppedPacket);
+		catDroppedPacket = registerSignal("droppedPacket");
 
 		// initialize the timers
 		backoffTimer = new cMessage("timer-backoff");
@@ -236,7 +236,7 @@ void csma::updateStatusIdle(t_mac_event event, cMessage *msg) {
 			msg->setKind(PACKET_DROPPED);
 			sendControlUp(msg);
 			droppedPacket.setReason(DroppedPacket::QUEUE);
-			utility->publishBBItem(catDroppedPacket, &droppedPacket, nicId);
+			emit(catDroppedPacket, &droppedPacket);
 			updateMacState(IDLE_1);
 		}
 		break;
@@ -585,7 +585,7 @@ void csma::updateStatusNotIdle(cMessage *msg) {
 		msg->setKind(PACKET_DROPPED);
 		sendControlUp(msg);
 		droppedPacket.setReason(DroppedPacket::QUEUE);
-		utility->publishBBItem(catDroppedPacket, &droppedPacket, nicId);
+		emit(catDroppedPacket, &droppedPacket);
 	}
 
 }
@@ -852,16 +852,16 @@ void csma::handleLowerControl(cMessage *msg) {
  * Update the internal copies of interesting BB variables
  *
  */
-//void csma::receiveBBItem(int category, const BBItem *details, int scopeModuleId) {
+//virtual void csma::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) {
 //	Enter_Method_Silent();
-//	BasicLayer::receiveBBItem(category, details, scopeModuleId);
+//	BasicLayer::receiveSigna(source, signalID, obj);
 //
-//	if (category == catRadioState) {
+//	if (signalID == catRadioState) {
 //		radioState
-//				= static_cast<const RadioAccNoise3State *> (details)->getState();
+//				= static_cast<const RadioAccNoise3State *> (obj)->getState();
 //		// radio just told us its state
-//	} else if (category == catRSSI) {
-//		rssi = static_cast<const RSSI *> (details)->getRSSI();
+//	} else if (signalID == catRSSI) {
+//		rssi = static_cast<const RSSI *> (obj)->getRSSI();
 //		if (radioState == RadioAccNoise3State::RX) {
 //			// we could do something here if we wanted to.
 //		}

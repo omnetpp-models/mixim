@@ -49,7 +49,7 @@
  * @ingroup phyLayer
  * @ingroup baseModules
  **/
-class ChannelAccess : public BatteryAccess, protected MobilityAccess, protected cListener
+class ChannelAccess : public BatteryAccess, protected MobilityAccess
 {
 protected:
     /** @brief A signal used to subscribe to mobility state changes. */

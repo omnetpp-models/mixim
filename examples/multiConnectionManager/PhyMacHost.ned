@@ -3,7 +3,6 @@ package org.mixim.examples.multiConnectionManager;
 import inet.mobility.models.StationaryMobility;
 import org.mixim.base.modules.BaseArp;
 import org.mixim.base.modules.BaseNetwLayer;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.application.BurstApplLayer;
 
 
@@ -17,10 +16,6 @@ module PhyMacHost
         input radioIn;
 
     submodules:
-        utility: BaseUtility {
-            parameters:
-                @display("p=130,60;i=block/blackboard");
-        }
         mobility: StationaryMobility {
             parameters:
                 @display("p=130,130;i=block/cogwheel");

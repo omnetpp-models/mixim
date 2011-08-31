@@ -21,17 +21,14 @@
 #ifndef BASE_WORLD_UTIL_H
 #define BASE_WORLD_UTIL_H
 
-#include "Blackboard.h"
 #include "Coord.h"
 
 /**
- * @brief Provides information and utility methods as well as Blackboard
- * functionality for the whole simulation.
+ * @brief Provides information and utility methods for the whole simulation.
  *
- * @ingroup blackboard
  * @ingroup baseModules
  */
-class BaseWorldUtility : public Blackboard
+class BaseWorldUtility : public cSimpleModule
 {
 protected:
 	/**

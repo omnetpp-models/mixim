@@ -40,11 +40,9 @@ void BaseLayer::initialize(int stage)
         passedMsg = NULL;
         if (hasPar("stats") && par("stats").boolValue()) {
             passedMsg = new PassedMessage();
-            if (passedMsg != NULL) {
-                catPassedMsg          = utility->getCategory(passedMsg);
-                passedMsg->fromModule = getId();
-                hostId                = findHost()->getId();
-            }
+            catPassedMsg = registerSignal("passedMsg");
+            passedMsg->fromModule = getId();
+            hostId = findHost()->getId();
         }
         upperGateIn     = findGate("upperGateIn");
         upperGateOut    = findGate("upperGateOut");
@@ -130,10 +128,10 @@ void BaseLayer::recordPacket(PassedMessage::direction_t dir,
     if (passedMsg == NULL)
         return;
     passedMsg->direction = dir;
-    passedMsg->gateType  = gate;
-    passedMsg->kind      = msg->getKind();
-    passedMsg->name      = msg->getName();
-    utility->publishBBItem(catPassedMsg, passedMsg, hostId);
+    passedMsg->gateType = gate;
+    passedMsg->kind = msg->getKind();
+    passedMsg->name = msg->getName();
+    emit(catPassedMsg, passedMsg);
 }
 
 void BaseLayer::finish() {

@@ -21,7 +21,6 @@
 #define DroppedPacket_H
 
 #include <omnetpp.h>
-#include <BaseUtility.h>
 #include <sstream>
 
 /**
@@ -33,14 +32,10 @@
  *
  *
  * @ingroup utils
- * @ingroup blackboard
  * @author Andreas K�pke
- * @sa Blackboard
  */
-class  DroppedPacket : public BBItem
+class  DroppedPacket : public cObject
 {
-    BBITEM_METAINFO(BBItem);
-
  public:
     /** @brief Possible Reasons */
     enum Reasons
@@ -68,7 +63,7 @@ public:
     }
 
     /** @brief Constructor*/
-    DroppedPacket(Reasons r=NONE) : BBItem(), reason(r) {
+    DroppedPacket(Reasons r=NONE) : cObject(), reason(r) {
     };
 
     /** @brief Enables inspection */

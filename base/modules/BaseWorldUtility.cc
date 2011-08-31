@@ -32,8 +32,6 @@ BaseWorldUtility::BaseWorldUtility():
 {}
 
 void BaseWorldUtility::initialize(int stage) {
-	Blackboard::initialize(stage);
-
 	if (stage == 0) {
         initializeIfNecessary();
 	}
@@ -55,17 +53,17 @@ void BaseWorldUtility::initializeIfNecessary()
                            par("playgroundSizeY"),
                            par("playgroundSizeZ"));
 
-	if(playgroundSize.x <= 0) {
+	if(playgroundSize.x < 0) {
 		opp_error("Playground size in X direction is invalid: "\
-				  "(%f). Should be greater zero.", playgroundSize.x);
+				  "(%f). Should be greater than or equal to zero.", playgroundSize.x);
 	}
-	if(playgroundSize.y <= 0) {
+	if(playgroundSize.y < 0) {
 		opp_error("Playground size in Y direction is invalid: "\
-				  "(%f). Should be greater zero.", playgroundSize.y);
+				  "(%f). Should be greater than or equal to zero.", playgroundSize.y);
 	}
-	if(playgroundSize.z <= 0) {
+	if(playgroundSize.z < 0) {
 		opp_error("Playground size in Z direction is invalid: "\
-				  "(%f). Should be greater zero (or use 2D mode).", playgroundSize.z);
+				  "(%f). Should be greater than or equal to zero.", playgroundSize.z);
 	}
 
 	useTorusFlag = par("useTorus");

@@ -49,14 +49,13 @@ class BaseLayer : public BatteryAccess
     int upperControlOut;
     int lowerControlIn;
     int lowerControlOut;
-
     /*@}*/
 
-    /** @brief Blackboard category for PassedMessage BBItems.*/
-    int            catPassedMsg;
+    /** @brief Signal for PassedMessage.*/
+    int  catPassedMsg;
     /** @brief The last message passed through this layer. This variable will be only not NULL if we are
                in statistic recording mode.*/
-    PassedMessage* passedMsg;
+    PassedMessage *passedMsg;
     /** @brief This layers hosts id.*/
     int            hostId;
 
@@ -79,8 +78,8 @@ protected:
      * @brief Functions to be redefined by the programmer
      *
      * These are the functions provided to add own functionality to
-     * your modules. These functions are called whenever a blackboard
-     * message, a self message or a data message from the upper or
+     * your modules. These functions are called whenever
+     * a self message or a data message from the upper or
      * lower layer arrives respectively.
      *
      **/

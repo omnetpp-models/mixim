@@ -19,16 +19,14 @@
  **************************************************************************/
 
 #include "BaseModule.h"
-#include "BaseUtility.h"
 #include <cassert>
 
 BaseModule::BaseModule():
-	cSimpleModule(),
-	utility(NULL)
+	cSimpleModule()
 {}
 
 /**
- * Subscription to Blackboard should be in stage==0, and firing
+ * Subscription should be in stage==0, and firing
  * notifications in stage==1 or later.
  *
  * NOTE: You have to call this in the initialize() function of the
@@ -38,28 +36,16 @@ void BaseModule::initialize(int stage) {
     if (stage == 0) {
     	notAffectedByHostState = 	hasPar("notAffectedByHostState")
 								 && par("notAffectedByHostState").boolValue();
-
         hasPar("debug") ? debug = par("debug").boolValue() : debug = true;
-        utility = FindModule<BaseUtility*>::findSubModule(findHost());
-
-        if(!utility) {
-        	error("No BaseUtility module found!");
-        } 
-
         hostId = findHost()->getId();
-
-        /* host failure notification */
-		HostState hs;
-		hostStateCat = utility->subscribe(this, &hs, hostId);
+        subscribe("hostStateChanged", this);
     }
 }
 
-void BaseModule::receiveBBItem(int category, const BBItem *details, int scopeModuleId) {
+void BaseModule::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) {
 	Enter_Method_Silent();
-
-	if (category == hostStateCat) {
-
-		handleHostState(*(HostState*)details);
+	if (signalID == hostStateCat) {
+		handleHostState(*(HostState*)obj);
 	}
 }
 
@@ -80,7 +66,7 @@ void BaseModule::handleHostState(const HostState& state)
 void BaseModule::switchHostState(HostState::States state)
 {
 	HostState hostState(state);
-	utility->publishBBItem(hostStateCat, &hostState, hostId);
+	emit(hostStateCat, &hostState);
 }
 
 cModule *BaseModule::findHost(void)

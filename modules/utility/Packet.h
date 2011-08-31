@@ -20,22 +20,17 @@
 #define BBPACKET_H
 
 #include <omnetpp.h>
-#include "ImNotifiable.h"
 #include <sstream>
 
 /**
  * @brief Class that keeps track of the number of packets sent.
  *
- * @ingroup blackboard
  * @ingroup utils
  * @author Andreas K�pke, Karl Wessel
- * @sa Blackboard
  */
 
-class  Packet : public BBItem
+class  Packet : public cObject
 {
-    BBITEM_METAINFO(BBItem);
-
 protected:
     /** @brief number of packets generated. */
     long nbPacketsReceived;
@@ -50,7 +45,7 @@ public:
 
     /** @brief Constructor*/
     Packet(long bitLength, long rcvd=0, long sent=0) :
-	 BBItem(), nbPacketsReceived(rcvd), nbPacketsReceivedNoRS(rcvd), 
+	 cObject(), nbPacketsReceived(rcvd), nbPacketsReceivedNoRS(rcvd),
 	 nbPacketsSent(sent), packetBitLength(bitLength), sent(true), host(0) {
     };
 

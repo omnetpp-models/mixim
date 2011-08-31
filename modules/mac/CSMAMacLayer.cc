@@ -129,7 +129,7 @@ void CSMAMacLayer::handleUpperMsg(cMessage *msg)
 
         //TODO: send packet drop bb info
         //droppedPacket.setReason(DroppedPacket::QUEUE);
-        //utility->publishBBItem(catDroppedPacket, &droppedPacket, nicId);
+        //emitItem(catDroppedPacket, &droppedPacket);
     }
 }
 
@@ -264,7 +264,7 @@ void CSMAMacLayer::scheduleBackoff()
 
         //TODO: send packet drop bb info
         //droppedPacket.setReason(DroppedPacket::CHANNEL);
-        //bb->publishBBItem(catDroppedPacket, &droppedPacket, nicId);
+        //emit(catDroppedPacket, &droppedPacket);
     }
 
     if(macQueue.size() != 0) {

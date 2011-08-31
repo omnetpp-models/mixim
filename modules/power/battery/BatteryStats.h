@@ -42,7 +42,7 @@ class BatteryStats : public BaseModule
 public:
 	virtual void initialize( int );
 	virtual void handleMessage( cMessage* );
-	virtual void receiveBBItem(int category, const BBItem *details, int scopeModuleId);
+    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 	virtual void finish();
 
 	/** @brief invoked by the Battery Module's finish()
@@ -61,7 +61,7 @@ protected:
 	/** @brief Enable tracking of output vectors?*/
 	int doTimeSeries;
 
-	/** @brief Blackboard category for the BatteryStats BBItem.*/
+	/** @brief Signal for the BatteryStats.*/
 	int batteryCat;
 
 	/** @name Tracked statistic values.*/

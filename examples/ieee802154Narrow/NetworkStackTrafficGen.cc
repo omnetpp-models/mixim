@@ -42,7 +42,7 @@ void NetworkStackTrafficGen::initialize(int stage)
 		nbPacketDropped = 0;
 
 		Packet p(1);
-		catPacket = world->getCategory(&p);
+		catPacket = registerSignal("packet");
 	} else if (stage == 1) {
 		if(burstSize > 0) {
 			remainingBurst = burstSize;
@@ -93,7 +93,7 @@ void NetworkStackTrafficGen::handleSelfMsg(cMessage *msg)
 void NetworkStackTrafficGen::handleLowerMsg(cMessage *msg)
 {
 	Packet p(packetLength, 1, 0);
-	world->publishBBItem(catPacket, &p, -1);
+	emit(catPacket, &p);
 
 	delete msg;
 	msg = 0;
@@ -120,7 +120,7 @@ void NetworkStackTrafficGen::sendBroadcast()
 	pkt->setControlInfo(new NetwToMacControlInfo(destination));
 
 	Packet p(packetLength, 0, 1);
-	world->publishBBItem(catPacket, &p, -1);
+	emit(catPacket, &p);
 
 	sendDown(pkt);
 }

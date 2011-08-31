@@ -5,7 +5,6 @@ import mixnet.modules.MixnetBridge;
 
 import org.mixim.base.modules.BaseWorldUtility;
 import org.mixim.modules.netw.ArpHost;
-import org.mixim.base.modules.BaseUtility;
 
 
 simple OmnetTest {
@@ -63,10 +62,6 @@ module TestHost extends NoNICHost like IHost{
 
 module AddressingTestHost extends TestHost like IHost {
 	submodules:
-	    utility: BaseUtility {
-	        parameters:
-	            coreDebug = true;
-	    }
 	    addressing: ArpHost {
 	        parameters:
 	            coreDebug = true;

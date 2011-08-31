@@ -23,8 +23,10 @@ void phyPER::initialize(int stage)
 {
 	BaseModule::initialize(stage);
 	if(stage == 0) {
-		catPacket = utility->subscribe(this, &packet, -1);
-		catUWBIRPacket = utility->subscribe(this, &uwbirpacket, -1);
+		catPacket = registerSignal("packet");
+		subscribe(catPacket, this);
+		catUWBIRPacket = registerSignal("UWBIRPacket");
+		subscribe(catUWBIRPacket, this);
 		maiPER.setName("maiPER");
 		maiPERnoRS.setName("maiPERnoRS");
 		nbSyncAttempts = 0;
@@ -35,13 +37,13 @@ void phyPER::initialize(int stage)
 }
 
 
-void phyPER::receiveBBItem(int category, const BBItem * details, int scopeModuleId) {
-    if(category == catPacket) {
-    	packet = *(static_cast<const Packet*>(details));
+void phyPER::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) {
+    if(signalID == catPacket) {
+    	packet = *(static_cast<const Packet*>(obj));
     	nbRx = static_cast<long>(packet.getNbPacketsReceived());
     	nbRxnoRS = static_cast<long>(packet.getNbPacketsReceivedNoRS());
-    } else if(category == catUWBIRPacket) {
-    	uwbirpacket = *(static_cast<const UWBIRPacket*>(details));
+    } else if(signalID == catUWBIRPacket) {
+    	uwbirpacket = *(static_cast<const UWBIRPacket*>(obj));
     	nbSyncAttempts = static_cast<long>(uwbirpacket.getNbSyncAttempts());
     	nbSyncSuccesses = uwbirpacket.getNbSyncSuccesses();
     }
@@ -49,5 +51,4 @@ void phyPER::receiveBBItem(int category, const BBItem * details, int scopeModule
       maiPER.record( static_cast<double>(nbRx) / nbSyncAttempts );
       maiPERnoRS.record( static_cast<double>(nbRxnoRS) / nbSyncAttempts );
     }
-
 }

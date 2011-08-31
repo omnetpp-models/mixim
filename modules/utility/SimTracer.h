@@ -32,7 +32,6 @@
 #include <BaseLayer.h>
 #include <ConnectionManager.h>
 #include "Packet.h"
-# include "ImNotifiable.h"
 
 using namespace std;
 
@@ -41,7 +40,7 @@ using namespace std;
  * @ingroup utils
  * @author Jerome Rousselot
  */
-class SimTracer:public cSimpleModule, ImNotifiable
+class SimTracer: public cSimpleModule, cListener
 {
 
 public:
@@ -64,8 +63,8 @@ public:
   /** @brief Called by the MAC or NET layer to log the node position. */
   void logPosition(int node, double x, double y);
 
-  /** @brief Called by the Blackboard whenever a change occurs we're interested in */
-  virtual void receiveBBItem(int category, const BBItem * details, int scopeModuleId);
+  /** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
+  virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
   double getAvgSensorPowerConsumption();
 

@@ -18,7 +18,7 @@
  *              in the top level directory
  ***************************************************************************
  * part of:    MoBAN (Mobility Model for wireless Body Area Networks)
- * description:     Definition of the object for passing the posture info and reference point through the blackboard
+ * description:     Definition of the object for signalling the posture info and reference point through
  ***************************************************************************
  * Citation of the following publication is appreciated if you use MoBAN for
  * a publication of your own.
@@ -41,8 +41,7 @@
 
 #include <BaseWorldUtility.h>
 
-class BBMoBANMessage : public BBItem {
-    BBITEM_METAINFO(BBItem);
+class BBMoBANMessage : public cObject {
  public:
 	Coord position;
 	double speed;

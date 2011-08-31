@@ -5,10 +5,8 @@
 
 #include <string>
 #include <omnetpp.h>
-#include "ImNotifiable.h"
 
-class PassedMessage : public BBItem {
-    BBITEM_METAINFO(BBItem);
+class PassedMessage : public cObject {
  public:
     enum gates_t {
         UPPER_DATA,

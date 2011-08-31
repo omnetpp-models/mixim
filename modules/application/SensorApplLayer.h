@@ -22,7 +22,6 @@
 #define SENSOR_APPL_LAYER_H
 
 #include <map>
-#include "BaseUtility.h"
 #include "BaseModule.h"
 #include "BaseLayer.h"
 #include "NetwControlInfo.h"

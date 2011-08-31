@@ -2,7 +2,6 @@ package org.mixim.examples.baseNetwork;
 
 import inet.mobility.IMobility;
 import org.mixim.base.modules.BaseArp;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.base.modules.IBaseApplLayer;
 import org.mixim.base.modules.IBaseNetwLayer;
 
@@ -17,10 +16,6 @@ module BaseNode
     gates:
         input radioIn; // gate for sendDirect
     submodules:
-        utility: BaseUtility {
-            parameters:
-                @display("p=130,38;b=24,24,rect,black;i=block/blackboard");
-        }
         arp: BaseArp {
             parameters:
                 @display("p=130,108;b=24,24,rect,blue;i=block/process");

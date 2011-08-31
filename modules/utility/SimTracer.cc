@@ -55,7 +55,8 @@ void SimTracer::initialize(int stage)
     world = FindModule<BaseWorldUtility*>::findGlobalModule();
     //world = check_and_cast<BaseWorldUtility*>(cSimulation::getActiveSimulation()->getModuleByPath("sim.world"));
     if (world) {
-      catPacket = world->subscribe(this, &packet, -1);
+        catPacket = registerSignal("packet");
+        world->subscribe(catPacket, this);
     }
     else {
       error("No BaseWorldUtility module found, please check your ned configuration.");
@@ -155,10 +156,10 @@ void SimTracer::logPosition(int node, double x, double y)
 	treeFile << node << "[pos=\""<< x << ", " << y << "!\"];" << endl;
 }
 
-void SimTracer::receiveBBItem(int category, const BBItem * details,
-	       int scopeModuleId) {
-	if (category == catPacket) {
-		packet = *(static_cast<const Packet*>(details));
+void SimTracer::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
+{
+	if (signalID == catPacket) {
+		packet = *(static_cast<const Packet*>(obj));
 	//	nbApplPacketsSent = nbApplPacketsSent + packet.getNbPacketsSent();
 	//	nbApplPacketsReceived = nbApplPacketsReceived + packet.getNbPacketsReceived();
 		if(packet.isSent()) {

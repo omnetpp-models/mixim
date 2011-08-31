@@ -1,7 +1,6 @@
 package org.mixim.examples.analogueModels;
 
 import inet.mobility.IMobility;
-import org.mixim.base.modules.BaseUtility;
 
 
 module PhyMacHost
@@ -14,10 +13,6 @@ module PhyMacHost
         input radioIn;
 
     submodules:
-        utility: BaseUtility {
-            parameters:
-                @display("p=130,60;i=block/blackboard");
-        }
         mobility: <mobilityType> like IMobility {
             parameters:
                 @display("p=130,130;i=block/cogwheel");

@@ -71,7 +71,6 @@
 #include "UWBIRIEEE802154APathlossModel.h"
 #include "HostState.h"
 #include "MacToPhyControlInfo.h"
-#include "BaseUtility.h"
 
 
 class DeciderUWBIRED;

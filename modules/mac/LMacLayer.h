@@ -15,7 +15,6 @@
 #include <list>
 #include <DroppedPacket.h>
 #include <BaseMacLayer.h>
-#include <Blackboard.h>
 #include "LMacPkt_m.h"
 #include <SimpleAddress.h>
 

@@ -56,7 +56,6 @@ void SensorApplLayer::initialize(int stage) {
 		initializeDistribution(traffic);
 
 		delayTimer = new cMessage("appDelay", SEND_DATA_TIMER);
-		// Blackboard stuff:
 		hostID = getParentModule()->getId();
 
 		// get pointer to the world module
@@ -85,7 +84,7 @@ void SensorApplLayer::initialize(int stage) {
 			myAppAddr = netw->getId();
 		}
 		sentPackets = 0;
-		catPacket = world->getCategory(&packet);
+		catPacket = registerSignal("packet");
 
 		// first packet generation time is always chosen uniformly
 		// to avoid systematic collisions
@@ -173,7 +172,7 @@ void SensorApplLayer::handleLowerMsg(cMessage * msg) {
 		packet.setNbPacketsSent(0);
 		packet.setNbPacketsReceived(1);
 		packet.setHost(myAppAddr);
-		world->publishBBItem(catPacket, &packet, hostID);
+		emit(catPacket, &packet);
 		if (stats) {
 			simtime_t theLatency = m->getArrivalTime() - m->getCreationTime();
 			if(trace) {
@@ -252,7 +251,7 @@ void SensorApplLayer::sendData() {
 	packet.setNbPacketsSent(1);
 	packet.setNbPacketsReceived(0);
 	packet.setHost(myAppAddr);
-	world->publishBBItem(catPacket, &packet, hostID);
+	emit(catPacket, &packet);
 	sentPackets++;
 	scheduleNextPacket();
 }
@@ -279,7 +278,7 @@ void SensorApplLayer::finish() {
 		recordScalar("nbPacketsReceived", nbPacketsReceived);
 		latency.record();
 	}
-	BaseModule::finish();
+	cComponent::finish();
 }
 
 SensorApplLayer::~SensorApplLayer() {

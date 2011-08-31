@@ -20,20 +20,15 @@
 #define BBUWBIRPACKET_H
 
 #include <omnetpp.h>
-#include "ImNotifiable.h"
 #include <sstream>
 
 /**
  * @brief Class that keeps track of the number of packets sent.
  *
- * @ingroup blackboard
  * @author Andreas K�pke
- * @sa Blackboard
  */
-class  UWBIRPacket : public BBItem
+class  UWBIRPacket : public cObject
 {
-    BBITEM_METAINFO(BBItem)
-
 protected:
     /** @brief number of packets generated. */
     long nbSyncAttempts;
@@ -43,8 +38,7 @@ protected:
 public:
 
     /** @brief Constructor*/
-    UWBIRPacket() : BBItem(), nbSyncAttempts(0), nbSyncSuccesses(0), nbPacketsReceived(0) { };
-
+    UWBIRPacket() : cObject(), nbSyncAttempts(0), nbSyncSuccesses(0), nbPacketsReceived(0) { };
 
     double getNbPacketsReceived() const  {
         return nbPacketsReceived;

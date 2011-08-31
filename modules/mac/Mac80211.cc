@@ -1075,16 +1075,15 @@ Signal* Mac80211::createSignal(	simtime_t start, simtime_t length,
  * Handle change nofitications. In this layer it is usually
  * information about the radio channel, i.e. if it is IDLE etc.
  */
-//TODO: port bbitem handling
 /*
-void Mac80211::receiveBBItem(int category, const BBItem *details, int scopeModuleId)
+void Mac80211::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
 {
     Enter_Method_Silent();
-    BasicLayer::receiveBBItem(category, details, scopeModuleId);
+    BasicLayer::receiveSignal(category, details, scopeModuleId);
 
-    EV << simTime() << " receiveBBItem " << details->info() << endl;
-    if(category == catRadioState) {
-        radioState = static_cast<const RadioState *>(details)->getState();
+    EV << simTime() << " receiveSignal " << obj->info() << endl;
+    if(signalID == catRadioState) {
+        radioState = static_cast<const RadioState *>(obj)->getState();
         switch(radioState)
         {
         case RadioState::SWITCH_TO_SLEEP:
@@ -1098,7 +1097,7 @@ void Mac80211::receiveBBItem(int category, const BBItem *details, int scopeModul
             switching = false;
             break;
         default:
-            error("Mac80211::receiveBBItem unknown radio state");
+            error("Mac80211::receiveSignal unknown radio state");
             break;
         }
     }

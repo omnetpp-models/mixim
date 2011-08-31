@@ -25,11 +25,9 @@
 #include <sstream>
 #include <omnetpp.h>
 
-#include "ImNotifiable.h"
 #include "FindModule.h"
 
 #include "HostState.h"
-#include "BaseUtility.h"
 
 #ifndef debugEV
 #define debugEV_clear (ev.isDisabled()||!debug) ? ev : ev
@@ -42,11 +40,9 @@
 #endif
 
 /**
- * @brief Base class for all simple modules of a host that want to have
- * access to the BaseUtility module.
+ * @brief Base class for all simple modules of a host.
  *
- * BaseModule listens for HostState changes broadcasted over BaseUtility
- * and calls its own "handleHostState()" method. This method raises
+ * This method raises
  * an error if the host state changes to something else than ACTIVE.
  * Therefore that a sub-classing module can be used in a simulation
  * where the host state can change it has to override that method
@@ -68,7 +64,6 @@
  * its sub class "BatteryAccess" which extends BaseModule by several
  * methods for accessing the battery module.
  *
- * @see BaseUtility
  * @see BatteryAccess
  *
  * @ingroup baseModules
@@ -76,15 +71,10 @@
  * @author Steffen Sroka
  * @author Andreas Koepke
  */
-class BaseModule: public cSimpleModule, public ImNotifiable {
+class BaseModule: public cSimpleModule, public cListener {
   protected:
-    /** @brief Cached pointer to the utility module*/
-    BaseUtility *utility;
-
     /** @brief Debug switch for all other modules*/
     bool debug;
-
-
 
 	/** @brief Stores if this module is affected by changes in the
 	 * hosts state. If not explicitly set this module has to capture
@@ -112,9 +102,6 @@ protected:
 	/**
 	 * @brief Switches the host to the passed state.
 	 *
-	 * This is a convenience method for publishing the host state to
-	 * BaseUtility.
-	 *
 	 * If the hosts state is switched to anything else than "ACTIVE" every
 	 * module of the host has to handle this explicitly (see method
 	 * "handleHostState()")!
@@ -137,8 +124,8 @@ protected:
     /**
      * @brief Divide initialization into two stages
      *
-     * In the first stage (stage==0), modules subscribe to notification
-     * categories at Blackboard. The first notifications (e.g. about the initial
+     * In the first stage (stage==0), modules subscribe to notification.
+     * The first notifications (e.g. about the initial
      * values of some variables such as RadioState) should take place earliest
      * in the second stage (stage==1), when everyone interested in them has
      * already subscribed.
@@ -167,12 +154,12 @@ protected:
     };
 
     /**
-     * @brief Called by the Blackboard whenever a change of a category occurs
-     * to which we have subscribed. Redefined from ImNotifiable.
+     * @brief Called by the signaling mechanism whenever a change of a category occurs
+     * to which we have subscribed.
      * In this base class just handle the host state switching and
      * some debug notifications
      */
-    virtual void receiveBBItem(int category, const BBItem *details, int scopeModuleId);
+    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 };
 
 #endif

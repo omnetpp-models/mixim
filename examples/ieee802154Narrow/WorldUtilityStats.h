@@ -20,16 +20,15 @@
 #include <BaseWorldUtility.h>
 
 /**
- * @brief Collects global statistics (like channel usage) from the
- * global blackboard.
+ * @brief Collects global statistics (like channel usage).
  *
  * @ingroup exampleIEEE802154Narrow
  */
 class WorldUtilityStats : public BaseWorldUtility,
-						  public ImNotifiable
+						  public cListener
 {
 protected:
-	/** @brief BBItem category for Packets*/
+	/** @brief Signal for Packets*/
 	int catPacket;
 
 	/** @brief Stores the number of bits sent */
@@ -48,7 +47,7 @@ protected:
     virtual void initialize(int stage);
 
 public:
-	virtual void receiveBBItem(int category, const BBItem *details, int scopeModuleId);
+    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
 	virtual void finish();
 };

@@ -145,15 +145,10 @@
  *
  * \image html MiximBasics.png
  *
- * BaseUtility is responsible for broadcasting information (BBItems) between the different modules
- * which have to implement the ImNotifiable interface.
- *
- * IMobility is responsible for position and movement of a host and provides this information
- * as Move for other modules by using BaseUtility.
+ * IMobility is responsible for position and movement of a host.
  *
  * BaseConnectionManager is responsible for keeping track of the hosts which are
- * in range of every other host. To do this it gets the position of the hosts by
- * listening for Move changes at BaseUtility.
+ * in range of every other host.
  *
  * At last BasePhyLayer uses the ChannelAccess interface provided by BaseConnectionManager
  * to send its packets to every other host in range.
@@ -163,21 +158,6 @@
 /**
  * @defgroup baseModules baseModules - base module classes of MiXiM
  * @ingroup base
- */
-
-/**
- * @defgroup blackboard BaseUtility - blackboard related stuff
- * @ingroup base
- *
- * Besides keeping the current position of its host it is mainly responsible for providing a black
- * board like interface on which other modules of a host can publish and subscribe information.
- *
- * \image html BaseUtility.png
- *
- * To publish an information on the "black board" a module has to express that information
- * as a subclass of BBitem.
- *
- * To subscribe for information a module has to implement the ImNotifiable interface.
  */
 
 /**
@@ -294,8 +274,8 @@
  *
  * \image html power.png "Classes handling power consumption and host state"
  *
- * Every BaseModule automatically receives HostState changes published by BaseUtilities
- * blackboard functionality. BaseModule itself raises an error inside "handleHostState()"
+ * Every BaseModule automatically receives HostState changes by the signaling mechanism.
+ * BaseModule itself raises an error inside "handleHostState()"
  * method if the hosts state changes to something else then active. This means every
  * host module (which derives from BaseModule) has to override this method if it wants
  * to work with host states other then active (like sleep, or off).

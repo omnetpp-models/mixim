@@ -12,7 +12,6 @@
 #include <omnetpp.h>
 
 #include "AirFrame_m.h"
-#include "BaseUtility.h"
 #include "BaseWorldUtility.h"
 
 /**
@@ -111,11 +110,6 @@ public:
 	 * Does nothing if no Battery module in simulation is present.
 	 */
 	virtual void drawCurrent(double amount, int activity) = 0;
-
-	/**
-	 * @brief Returns a pointer to the hosts utility-module.
-	 */
-	virtual BaseUtility* getUtility() = 0;
 
 	/**
 	 * @brief Returns a pointer to the simulations world-utility-module.

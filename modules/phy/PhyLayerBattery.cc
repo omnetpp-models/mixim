@@ -93,11 +93,12 @@ void PhyLayerBattery::drawCurrent(double amount, int activity) {
 }
 
 void PhyLayerBattery::handleUpperMessage(cMessage* msg) {
-	if (utility->getHostState().get() == HostState::FAILED) {
-		coreEV<< "host has FAILED, dropping msg " << msg->getName() << endl;
-		delete msg;
-		return;
-	}
+// TODO: revive
+//	if (HostStateAccess().get().getCurrentState() == HostState::FAILED) {
+//		coreEV<< "host has FAILED, dropping msg " << msg->getName() << endl;
+//		delete msg;
+//		return;
+//	}
 
 	MacPkt* pkt = static_cast<MacPkt*>(msg);
 	MacToPhyControlInfo* cInfo = static_cast<MacToPhyControlInfo*>(pkt->getControlInfo());
@@ -112,11 +113,11 @@ void PhyLayerBattery::handleUpperMessage(cMessage* msg) {
 }
 
 void PhyLayerBattery::handleAirFrame(cMessage* msg) {
-	if (utility->getHostState().get() == HostState::FAILED) {
-		coreEV<< "host has FAILED, dropping msg " << msg->getName() << endl;
-		delete msg;
-		return;
-	}
+//	if (HostStateAccess().get().getCurrentState() == HostState::FAILED) {
+//		coreEV<< "host has FAILED, dropping msg " << msg->getName() << endl;
+//		delete msg;
+//		return;
+//	}
 
 	PhyLayer::handleAirFrame(msg);
 

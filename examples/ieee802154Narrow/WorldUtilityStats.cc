@@ -39,13 +39,12 @@ void WorldUtilityStats::initialize(int stage)
 }
 
 
-void WorldUtilityStats::receiveBBItem(int category, const BBItem *details, int scopeModuleId)
+void WorldUtilityStats::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
 {
 	Enter_Method_Silent();
-
-	if(category == catPacket)
+	if(signalID == catPacket)
 	{
-		const Packet* p = static_cast<const Packet*>(details);
+		const Packet* p = static_cast<const Packet*>(obj);
 		double nbBitsSent = p->getNbBitsSent();
 		double nbBitsRcvd = p->getNbBitsReceived();
 		bitsSent += nbBitsSent;

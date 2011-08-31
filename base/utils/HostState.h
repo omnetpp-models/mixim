@@ -14,7 +14,7 @@
 #ifndef HOSTSTATE_H
 #define HOSTSTATE_H
 
-#include "ImNotifiable.h"
+#include <omnetpp.h>
 
 /**
  * @brief HostState is published by the battery to announce host failure
@@ -29,12 +29,9 @@
  * restart).
  *
  * @ingroup power
- * @ingroup blackboard
  */
-class HostState : public BBItem
+class HostState : public cObject
 {
-    BBITEM_METAINFO(BBItem)
-
 public:
     /**
      * @brief Possible host states.

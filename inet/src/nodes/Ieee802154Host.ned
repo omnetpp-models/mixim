@@ -12,7 +12,6 @@ import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
 import inet.transport.tcp.TCP;
 import inet.transport.udp.UDP;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic802154_TI_CC2420;
 import org.mixim.modules.power.battery.BatteryStats;
 import org.mixim.modules.power.battery.SimpleBattery;
@@ -49,9 +48,6 @@ module Ieee802154Host
         }
         battery: SimpleBattery {
             @display("p=60,176;i=block/control");
-        }
-        utility: BaseUtility {
-            @display("p=147,41");
         }
         mobility: <mobilityType> like IMobility {
             parameters:

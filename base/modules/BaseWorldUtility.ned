@@ -4,7 +4,7 @@ package org.mixim.base.modules;
 // Provides utility methods and information used by
 // the whole network as well as simulation wide
 // black board functionality.
-simple BaseWorldUtility extends Blackboard
+simple BaseWorldUtility
 {
     parameters:
         @class(BaseWorldUtility);

@@ -1,7 +1,6 @@
 package org.mixim.modules.node;
 
 import inet.mobility.models.StationaryMobility;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.application.TestApplication;
 import org.mixim.modules.netw.ArpHost;
 import org.mixim.modules.netw.DummyRoute;
@@ -45,10 +44,6 @@ module Host802154A
         input radioIn;
 
     submodules:
-        utility: BaseUtility {
-            parameters:
-                @display("p=292,60;i=block/blackboard");
-        }
         stats: phyPER {
             @display("p=202,257");
         }

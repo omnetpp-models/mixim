@@ -4,7 +4,6 @@
 #include <list>
 #include <PhyUtils.h>
 #include <BaseMacLayer.h>
-#include <BaseUtility.h>
 #include <MacPkt_m.h>
 #include <SimpleAddress.h>
 #include <MacToPhyInterface.h>

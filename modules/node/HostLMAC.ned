@@ -1,7 +1,6 @@
 package org.mixim.modules.node;
 
 import inet.mobility.IMobility;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.base.modules.IBaseApplLayer;
 import org.mixim.base.modules.IBaseNetwLayer;
 import org.mixim.modules.netw.ArpHost;
@@ -23,10 +22,6 @@ module HostLMAC
     gates:
         input radioIn; // gate for sendDirect
     submodules:
-        utility: BaseUtility {
-            parameters:
-                @display("p=186,38;b=24,24,rect,black;i=block/blackboard");
-        }
         arp: ArpHost {
             parameters:
                 @display("p=186,101;b=24,24,rect,blue;i=block/process");

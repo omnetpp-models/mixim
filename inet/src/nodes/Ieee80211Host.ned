@@ -12,7 +12,6 @@ import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
 import inet.transport.tcp.TCP;
 import inet.transport.udp.UDP;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic80211;
 
 
@@ -38,9 +37,6 @@ module Ieee80211Host
         inout ethg[] @labels(EtherFrame-conn);
         input radioIn @directIn;
     submodules:
-        utility: BaseUtility {
-            @display("p=147,41");
-        }
         mobility: <mobilityType> like IMobility {
             parameters:
                 @display("p=147,128");

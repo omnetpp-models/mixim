@@ -1,7 +1,6 @@
 package org.mixim.modules.node;
 
 import inet.mobility.models.StationaryMobility;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.base.modules.IBaseNetwLayer;
 import org.mixim.modules.application.SensorApplLayer;
 import org.mixim.modules.netw.ArpHost;
@@ -41,10 +40,6 @@ module Host802154_2400MHz
         input radioIn;
 
     submodules:
-        utility: BaseUtility {
-            parameters:
-                @display("p=292,60;i=block/blackboard");
-        }
         batteryStats: BatteryStats {
             @display("p=292,257;i=block/circle");
             detail = default(false);

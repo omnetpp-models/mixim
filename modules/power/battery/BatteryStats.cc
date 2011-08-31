@@ -48,7 +48,8 @@ void BatteryStats::initialize(int stage)
     if (doTimeSeries) {
       int scopeHost = (this->findHost())->getId();
       BatteryState bs;
-      batteryCat = utility->subscribe(this, &bs, scopeHost);
+      batteryCat = registerSignal("batteryStateChanged");
+      findHost()->subscribe(batteryCat, this);
 
       // suggest enabling only residualVec (omnetpp.ini), unless
       // others are of interest
@@ -110,19 +111,19 @@ void BatteryStats::detail(DeviceEntry *devices, int numDevices)
   }
 }
 
-void BatteryStats::receiveBBItem(int category, const BBItem *details, int scopeModuleId)
+void BatteryStats::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
 {
     Enter_Method_Silent();
-    BaseModule::receiveBBItem(category, details, scopeModuleId);
+    BaseModule::receiveSignal(source, signalID, obj);
 
-    if (category == batteryCat) {
+    if (signalID == batteryCat) {
       double residualCapacity;
       double relativeCapacity;
 
       // battery time series never publishes capacity < 0, just 0
-      residualCapacity = ((BatteryState *)details)->getAbs();
+      residualCapacity = ((BatteryState *)obj)->getAbs();
       residualVec.record(residualCapacity);
-      relativeCapacity = ((BatteryState *)details)->getRel();
+      relativeCapacity = ((BatteryState *)obj)->getRel();
       relativeVec.record(relativeCapacity);
 
       // for comparison, also get the estimated residual capacity

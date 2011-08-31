@@ -20,7 +20,6 @@
 
 #include <omnetpp.h>
 #include <BaseModule.h>
-#include <BaseUtility.h>
 #include "Packet.h"
 #include "UWBIRPacket.h"
 
@@ -45,9 +44,8 @@ class phyPER : public  BaseModule
 
     phyPER(): packet(100) {}
 
-	/** @brief Called by the Blackboard whenever a change occurs we're interested in */
-	virtual void receiveBBItem(int category, const BBItem * details, int scopeModuleId);
-
+	/** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
+    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 };
 
 #endif

@@ -7,7 +7,6 @@ import inet.mobility.models.StationaryMobility;
 import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
-import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic80211;
 import org.mixim.modules.nic.Nic802154_TI_CC2420;
 import org.mixim.modules.power.battery.BatteryStats;
@@ -37,9 +36,6 @@ module HybridRouter
         }
         battery: SimpleBattery {
             @display("p=314,49;i=block/control");
-        }
-        utility: BaseUtility {
-            @display("p=155,49");
         }
         mobility: StationaryMobility {
             parameters:
