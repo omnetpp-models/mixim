@@ -170,9 +170,9 @@ protected:
 
     RadioUWBIR* uwbradio;
     /**
-     * called by Blackboard to inform of changes
+     * called by the signalling mechanism to inform of changes
      */
-    virtual void receiveBBItem(int category, const BBItem *details, int scopeModuleId);
+    void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
     virtual void handleAirFrame(cMessage* msg);
 

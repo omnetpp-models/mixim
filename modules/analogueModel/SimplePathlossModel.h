@@ -93,9 +93,6 @@ protected:
     /** @brief carrier frequency needed for calculation */
     double carrierFrequency;
 
-    /** @brief stores my Move pattern */
-    const Move& myMove;
-
 	/** @brief Information needed about the playground */
 	const bool useTorus;
 
@@ -107,7 +104,7 @@ protected:
 
 public:
 	/**
-	 * @brief Initializes the analogue model. myMove and playgroundSize
+	 * @brief Initializes the analogue model. playgroundSize
 	 * need to be valid as long as this instance exists.
 	 *
 	 * The constructor needs some specific knowledge in order to create
@@ -116,17 +113,15 @@ public:
 	 * @param alpha the coefficient alpha (specified e.g. in config.xml and
 	 * 				passed in constructor call)
 	 * @param carrierFrequency the carrier frequency
-	 * @param myMove a pointer to the hosts move pattern
 	 * @param useTorus information about the playground the host is moving in
 	 * @param playgroundSize information about the playground the host is
 	 * 						 moving in
 	 * @param debug display debug messages?
 	 */
-	SimplePathlossModel(double alpha, double carrierFrequency, const Move* myMove,
+	SimplePathlossModel(double alpha, double carrierFrequency,
 					bool useTorus, const Coord& playgroundSize, bool debug):
 		pathLossAlphaHalf(alpha * 0.5),
 		carrierFrequency(carrierFrequency),
-		myMove(*myMove),
 		useTorus(useTorus),
 		playgroundSize(playgroundSize),
 		debug(debug)

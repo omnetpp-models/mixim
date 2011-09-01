@@ -28,6 +28,7 @@
 #include <algorithm>
 
 #include "WiseRoute.h"
+#include "MobilityAccess.h"
 #include <cassert>
 
 Define_Module(WiseRoute);
@@ -83,22 +84,17 @@ void WiseRoute::initialize(int stage)
 		if (routeFloodsInterval > 0 && myNetwAddr==sinkAddress)
 			scheduleAt(simTime() + uniform(0.5, 1.5), routeFloodTimer);
 
-		if(useSimTracer) {
-		  // Get a handle to the tracer module
-		  tracer = FindModule<SimTracer*>::findGlobalModule(); 
-		  //const char *tracerModulePath = "sim.simTracer";
-		  //cModule *modp = simulation.getModuleByPath(tracerModulePath);
-		  //tracer = check_and_cast<SimTracer *>(modp);
-		  if (!tracer) {
-			error("No SimTracer module found, please check your ned configuration.");
-		  }
-		  // log node position
-		  // currently not used
-		  /*cModule* mobilityModule = getParentModule()->getSubmodule("mobility");
-		  if (mobilityModule) {
-			BaseMobility* mobility = check_and_cast<BaseMobility*>(mobilityModule);
-			tracer->logPosition(myNetwAddr, mobility->getX(), mobility->getY());
-		  }*/
+		if (useSimTracer) {
+            // Get a handle to the tracer module
+            tracer = FindModule<SimTracer*>::findGlobalModule();
+            //const char *tracerModulePath = "sim.simTracer";
+            //cModule *modp = simulation.getModuleByPath(tracerModulePath);
+            //tracer = check_and_cast<SimTracer *>(modp);
+            if (!tracer)
+                error("No SimTracer module found, please check your ned configuration.");
+	        // log node position
+            Coord pos = MobilityAccess().get()->getCurrentPosition();
+            tracer->logPosition(myNetwAddr, pos.x, pos.y);
 		}
 	}
 }

@@ -31,13 +31,16 @@ void SimplePathlossModel::filterSignal(Signal& s){
 	simtime_t sStart = s.getSignalStart();
 	simtime_t sEnd = s.getSignalLength() + sStart;
 
-	/** claim the Move pattern of the sender from the Signal */
-	Coord sendersPos = s.getMove().getPositionAt(sStart);
-	Coord myPos = myMove.getPositionAt(sStart);
+	/** claim the move pattern of the sender from the Signal */
+	assert(sStart == simTime());
+	IMobility *senderMobility = ((ChannelAccess *)frame->getSenderModule())->getMobilityModule();
+	IMobility *receiverMobility = ((ChannelAccess *)frame->getArrivalModule())->getMobilityModule();
+	Coord sendersPos = senderMobility->getCurrentPosition();
+	Coord receiverPos = receiverMobility->getCurrentPosition();
 
 	/** Calculate the distance factor */
-	double sqrDistance = useTorus ? myPos.sqrTorusDist(sendersPos, playgroundSize)
-								  : myPos.sqrdist(sendersPos);
+	double sqrDistance = useTorus ? receiverPos.sqrTorusDist(sendersPos, playgroundSize)
+								  : receiverPos.sqrdist(sendersPos);
 
 	splmEV << "sqrdistance is: " << sqrDistance << endl;
 
@@ -74,7 +77,7 @@ void SimplePathlossModel::filterSignal(Signal& s){
 	s.addAttenuation(attMapping);
 }
 
-double SimplePathlossModel::calcPathloss(const Coord& myPos, const Coord& sendersPos)
+double SimplePathlossModel::calcPathloss(const Coord& receiverPos, const Coord& sendersPos)
 {
 	/*
 	 * maybe we can reuse an already calculated value for the square-distance
@@ -85,10 +88,10 @@ double SimplePathlossModel::calcPathloss(const Coord& myPos, const Coord& sender
 
 	if (useTorus)
 	{
-		sqrdistance = myPos.sqrTorusDist(sendersPos, playgroundSize);
+		sqrdistance = receiverPos.sqrTorusDist(sendersPos, playgroundSize);
 	} else
 	{
-		sqrdistance = myPos.sqrdist(sendersPos);
+		sqrdistance = receiverPos.sqrdist(sendersPos);
 	}
 
 	splmEV << "sqrdistance is: " << sqrdistance << endl;

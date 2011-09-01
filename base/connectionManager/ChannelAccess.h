@@ -28,11 +28,11 @@
 #include <vector>
 
 #include "BatteryAccess.h"
-#include "Move.h"
 #include "BaseWorldUtility.h"
 #include "AirFrame_m.h"
 
 #include "BaseConnectionManager.h"
+#include "MobilityAccess.h"
 
 /**
  * @brief Basic class for all physical layers, please don't touch!!
@@ -49,9 +49,12 @@
  * @ingroup phyLayer
  * @ingroup baseModules
  **/
-class ChannelAccess : public BatteryAccess
+class ChannelAccess : public BatteryAccess, protected MobilityAccess, protected cListener
 {
 protected:
+    /** @brief A signal used to subscribe to position changes. */
+    static simsignal_t positionChangedSignal;
+
     /** @brief use sendDirect or not?*/
     bool useSendDirect;
 
@@ -63,11 +66,6 @@ protected:
 
 	/** @brief Defines if the physical layer should simulate propagation delay.*/
 	bool usePropagationDelay;
-
-    /** @brief Last move of this host */
-    Move move;
-    /** @brief category number given by bb for RSSI */
-    int catMove;
 
     /** @brief Is this module already registered with ConnectionManager? */
     bool isRegistered;
@@ -103,7 +101,7 @@ public:
 	 */
 	static BaseConnectionManager* getConnectionManager(cModule* nic);
 
-    /** @brief Register with ConnectionManager and subscribe to hostPos
+    /** @brief Register with ConnectionManager.
      *
 	 * Upon initialization ChannelAccess registers the nic parent module
 	 * to have all its connections handeled by ConnectionManager
@@ -111,13 +109,17 @@ public:
     virtual void initialize(int stage);
 
     /**
-     * @brief Called by Blackboard to inform of changes
+     * @brief Called by the signalling mechanism to inform of changes.
      *
-	 * ChannelAccess is subscribed to position changes and informs the
-	 * ConnectionManager
-	 */
-    virtual void receiveBBItem(int category, const BBItem *details, int scopeModuleId);
+     * ChannelAccess is subscribed to position changes and informs the
+     * ConnectionManager.
+     */
+    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
+
+    /**
+     * @brief Returns the host's mobility module.
+     */
+    virtual IMobility *getMobilityModule() { return MobilityAccess::get(); }
 };
 
 #endif
-

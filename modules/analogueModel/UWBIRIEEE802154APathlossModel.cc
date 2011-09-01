@@ -208,12 +208,12 @@ void UWBIRIEEE802154APathlossModel::filterSignal(Signal& s) {
 
 
     // compute distance
-    Move srcMove = s.getMove();
-    Coord srcCoord, rcvCoord;
-    distance = 0;
-    srcCoord = srcMove.getPositionAt(s.getSignalStart());
-    rcvCoord = move->getPositionAt(s.getSignalStart());
-    distance = rcvCoord.distance(srcCoord);
+    assert(signal.getReceptionStart() == simTime());
+    IMobility *senderMobility = ((ChannelAccess*)frame->getSenderModule())->getMobilityModule();
+    IMobility *receiverMobility = ((ChannelAccess*)frame->getArrivalModule())->getMobilityModule();
+    Coord senderPos = senderMobility->getCurrentPosition();
+    Coord receiverPos = receiverMobility->getCurrentPosition();
+    double distance = receiverPos.distance(senderPos);
 
 	// Total radiated power Prx at that distance  [W]
     //double attenuation = 0.5 * ntx * nrx * cfg.PL0 / pow(distance / d0, cfg.n);

@@ -418,9 +418,6 @@ protected:
 	// flag to signal whether sendUp() has been called by decider
 	bool sendUpCalled;
 
-	// dummy move
-	Move move;
-
 	// minimal world for testing purposes
 	TestWorld* world;
 

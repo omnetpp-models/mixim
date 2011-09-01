@@ -518,9 +518,6 @@ AirFrame *BasePhyLayer::encapsMsg(cPacket *macPkt)
 	// make sure we really obtained a pointer to an instance
 	assert(s);
 
-	// put host move pattern to Signal
-	s->setMove(move);
-
 	// set the members
 	assert(s->getSignalLength() > 0);
 	frame->setDuration(s->getSignalLength());

@@ -41,12 +41,12 @@ public:
 		TimeMapping<Linear>* attMapping = new TimeMapping<Linear> ();
 
 		// Determine distance between sender and receiver
-		Move srcMove = s.getMove();
-		Coord srcCoord, rcvCoord;
-		double distance = 0;
-		srcCoord = srcMove.getPositionAt(s.getSignalStart());
-		rcvCoord = move->getPositionAt(s.getSignalStart());
-		distance = rcvCoord.distance(srcCoord);
+		assert(s.getReceptionStart() == simTime());
+		IMobility *senderMobility = ((ChannelAccess *)frame->getSenderModule())->getMobilityModule();
+		IMobility *receiverMobility = ((ChannelAccess *)frame->getArrivalModule())->getMobilityModule();
+		Coord senderPos = senderMobility->getCurrentPosition();
+		Coord receiverPos = receiverMobility->getCurrentPosition();
+		double distance = senderPos.distance(receiverPos);
 
 		Argument arg;
 		attMapping->setValue(arg, 4*PI*pow(distance, 2));

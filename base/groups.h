@@ -117,7 +117,7 @@
  *
  * The following diagrams give an overview of the functionality of a mobility-module.
  *
- * \image html Mobility.png "Activity diagram: an overview on how movement-updates in BaseMobility work"
+ * \image html Mobility.png "Activity diagram: an overview on how movement-updates in MobilityBase work"
  *
  * \image html makeMove.png "Sequence diagram: call-hierarchy when move-message is processed"
  *
@@ -148,7 +148,7 @@
  * BaseUtility is responsible for broadcasting information (BBItems) between the different modules
  * which have to implement the ImNotifiable interface.
  *
- * BaseMobility is responsible for position and movement of a host and provides this information
+ * IMobility is responsible for position and movement of a host and provides this information
  * as Move for other modules by using BaseUtility.
  *
  * BaseConnectionManager is responsible for keeping track of the hosts which are

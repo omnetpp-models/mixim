@@ -29,7 +29,6 @@
 #include <omnetpp.h>
 
 #include <BaseNetwLayer.h>
-#include <BaseMobility.h>
 #include <fstream>
 #include "WiseRoutePkt_m.h"
 #include "MacPkt_m.h"

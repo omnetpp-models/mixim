@@ -153,11 +153,3 @@ void Signal::setBitrate(Mapping *bitrate)
 
 	this->bitrate = bitrate;
 }
-
-void Signal::setMove(Move& move) {
-	senderMovement = move;
-}
-
-Move Signal::getMove() const{
-	return senderMovement;
-}

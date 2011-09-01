@@ -2,7 +2,6 @@
 #define SIGNAL_H_
 
 #include <omnetpp.h>
-#include "Move.h"
 #include "Mapping.h"
 #include <list>
 
@@ -11,10 +10,9 @@
  * signal of an AirFrame.
  *
  * This includes start, duration and propagation delay of the signal,
- * the sender hosts move pattern as well as Mappings which represent
- * the transmission power, bitrate, attenuations caused by effects of
- * the channel on the signal during its transmission and the
- * receiving power.
+ * Mappings which represent the transmission power, bitrate, attenuations
+ * caused by effects of the channel on the signal during its transmission
+ * and the receiving power.
  *
  * Note: Although the Signal itself has a startTime parameter the Mappings
  * it contains should use absolute time positions to store the values at
@@ -22,8 +20,7 @@
  *
  * The Signal is created at the senders MAC layer which has to define
  * the TX-power- and the bitrate Mapping.
- * The sender hosts move pattern as well as start and duration is
- * added at the senders physical layer.
+ * Sending start time and duration is added at the sender's physical layer.
  * Attenuation Mappings are added to the Signal by the
  * AnalogueModels of the receivers physical layer.
  * The RX-power Mapping is calculated on demand by multiplying the
@@ -51,8 +48,6 @@ protected:
 	/** @brief The propagation delay of the transmission. */
 	simtime_t propDelay;
 
-	/** @brief The movement of the sending host.*/
-	Move senderMovement;
 
 	/** @brief Stores the function which describes the power of the signal*/
 	ConstMapping* power;
@@ -118,14 +113,10 @@ public:
 	simtime_t getSignalStart() const;
 
 	/**
-	 * @brief Returns the movement of the sending host.
 	 */
-	Move getMove() const;
 
 	/**
-	 * @brief Sets the movement of the sending host.
 	 */
-	void setMove(Move& move);
 
 	/**
 	 * @brief Returns the length of the signal transmission.

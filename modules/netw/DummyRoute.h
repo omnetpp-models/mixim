@@ -21,7 +21,6 @@
 #include "BaseMacLayer.h"
 #include "SimTracer.h"
 #include "NetwControlInfo.h"
-#include "BaseMobility.h"
 #include "BaseNetwLayer.h"
 
 #include <map>

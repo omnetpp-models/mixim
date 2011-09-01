@@ -27,10 +27,12 @@
 
 
 #include "ChannelAccess.h"
-
-#include "Move.h"
+#include "MobilityAccess.h"
+#include "Coord.h"
 
 #include <cassert>
+
+simsignal_t ChannelAccess::positionChangedSignal = SIMSIGNAL_NULL;
 
 BaseConnectionManager* ChannelAccess::getConnectionManager(cModule* nic)
 {
@@ -52,14 +54,12 @@ void ChannelAccess::initialize( int stage )
 	BatteryAccess::initialize(stage);
 
     if( stage == 0 ){
+        positionChangedSignal = registerSignal("positionChanged");
+        findHost()->subscribe(positionChangedSignal, this);
         hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
-
         cModule* nic = getParentModule();
 		cc = getConnectionManager(nic);
-
         if( cc == 0 ) error("Could not find connectionmanager module");
-        // subscribe to position changes
-        catMove = utility->subscribe(this, &move, findHost()->getId());
         isRegistered = false;
     }
 
@@ -127,44 +127,30 @@ void ChannelAccess::sendToChannel(cPacket *msg)
     }
 }
 
-
-void ChannelAccess::receiveBBItem(int category, const BBItem *details, int scopeModuleId)
-{
-	BatteryAccess::receiveBBItem(category, details, scopeModuleId);
-
-    if(category == catMove)
-    {
-        Move m(*static_cast<const Move*>(details));
-
-        if(isRegistered) {
-            cc->updateNicPos(getParentModule()->getId(), &m.getStartPos());
-        }
-        else {
-            // register the nic with ConnectionManager
-            // returns true, if sendDirect is used
-            useSendDirect = cc->registerNic(getParentModule(), this, &m.getStartPos());
-            isRegistered = true;
-        }
-        move = m;
-        coreEV<<"new HostMove: "<<move.info()<<endl;
-    }
-}
-
 simtime_t ChannelAccess::calculatePropagationDelay(const NicEntry* nic) {
 	if(!usePropagationDelay)
 		return 0;
-
-	//receiver host move
-	const Move& recvPos = nic->chAccess->move;
-
-	// this is the time point when the transmission starts
-	simtime_t actualTime = simTime();
-
-	// this time-point is used to calculate the distance between sending and receiving host
-	double distance = move.getPositionAt(actualTime).distance(recvPos.getPositionAt(actualTime));
-
+	IMobility *senderMobility = ((ChannelAccess *)this)->getMobilityModule();
+	IMobility *receiverMobility = ((ChannelAccess *)nic->nicPtr)->getMobilityModule();
+    Coord senderPos = senderMobility->getCurrentPosition();
+    Coord receiverPos = receiverMobility->getCurrentPosition();
+	double distance = receiverPos.distance(senderPos);
 	simtime_t delay = distance / BaseWorldUtility::speedOfLight;
 	return delay;
 }
 
+void ChannelAccess::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
+{
+	if (signalID == positionChangedSignal) {
+		Coord *coord = static_cast<Coord*>(obj);
 
+		if(isRegistered) {
+			cc->updateNicPos(getParentModule()->getId(), coord);
+		}
+		else {
+			// register the nic with ConnectionManager, returns true, if sendDirect is used
+			useSendDirect = cc->registerNic(getParentModule(), this, coord);
+			isRegistered = true;
+		}
+	}
+}

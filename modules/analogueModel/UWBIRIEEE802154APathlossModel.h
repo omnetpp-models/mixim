@@ -27,7 +27,6 @@
 #include "BaseWorldUtility.h"
 #include "IEEE802154A.h"
 //#include "AlohaMacLayer.h"
-#include "Move.h"
 #include "SimpleTimeConstMapping.h"
 #include <math.h>
 #include <limits>
@@ -68,9 +67,9 @@ public:
 	/*
 	 * @brief Default constructor.
 	 */
-    UWBIRIEEE802154APathlossModel(int _channelModel, double _threshold, const Move* _move, bool shadowing=true):
+    UWBIRIEEE802154APathlossModel(int _channelModel, double _threshold, bool shadowing=true):
     	channelModel(_channelModel), tapThreshold(_threshold), doShadowing(shadowing),
-    	doSmallScaleShadowing(false), move(_move), nbCalls(0)  {
+    	doSmallScaleShadowing(false), nbCalls(0)  {
     	// Check that this model is supported
     	assert(implemented_CMs[channelModel]);
     	// load the model parameters
@@ -160,7 +159,6 @@ protected:
     static const double nrx;
 
 
-    const Move* move;
     TimeMapping<Linear>* newTxPower;
     ConstMapping* txPower;
     Argument arg;

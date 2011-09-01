@@ -105,9 +105,6 @@ protected:
 	/** @brief Delay on a fading path. */
 	simtime_t* delay;
 
-	/** @brief HostMove of this analogue models host. */
-	Move* hostMove;
-
 	/** @brief Carrier frequency to be used. */
 	double carrierFrequency;
 
@@ -117,12 +114,11 @@ protected:
 public:
 	/**
 	 * @brief Takes the number of fading paths, the maximum delay
-	 * on a path, the hosts move, the carrier frequency used and the
-	 * interval in which to defien attenuation entries in.	 *
+	 * on a path, the carrier frequency used and the interval in
+	 * which to defien attenuation entries in.	 *
 	 */
 	JakesFading(int fadingPaths, simtime_t delayRMS,
-				Move* hostMove, double carrierFrequency,
-				simtime_t interval);
+				double carrierFrequency, simtime_t interval);
 	virtual ~JakesFading();
 
 	virtual void filterSignal(Signal& s);

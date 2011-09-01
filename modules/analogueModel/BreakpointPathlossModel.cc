@@ -10,12 +10,16 @@ void BreakpointPathlossModel::filterSignal(Signal& s) {
 	simtime_t sEnd = s.getSignalLength() + sStart;
 
 	/** claim the Move pattern of the sender from the Signal */
-	Coord sendersPos = s.getMove().getPositionAt(sStart);
-	Coord myPos = myMove.getPositionAt(sStart);
+	assert(sStart == simTime());
+	assert(false); // TODO: get the mobilities
+	IMobility *senderMobility = ((ChannelAccess*)frame->getSenderModule())->getMobilityModule();
+	IMobility *receiverMobility = ((ChannelAccess*)frame->getArrivalModule())->getMobilityModule();
+	Coord sendersPos = senderMobility->getCurrentPosition();
+	Coord receiverPos = receiverMobility->getCurrentPosition();
 
 	/** Calculate the distance factor */
-	double distance = useTorus ? myPos.sqrTorusDist(sendersPos, playgroundSize)
-								  : myPos.sqrdist(sendersPos);
+	double distance = useTorus ? receiverPos.sqrTorusDist(sendersPos, playgroundSize)
+								  : receiverPos.sqrdist(sendersPos);
 	distance = sqrt(distance);
 	debugEV << "distance is: " << distance << endl;
 

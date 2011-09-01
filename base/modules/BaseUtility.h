@@ -34,19 +34,9 @@
 class BaseUtility : public Blackboard,
 					public ImNotifiable
 {
-private:
-    /**
-     * The position of the Host. This coordinate is
-     * synchronized with BaseMobility.
-     */
-    Coord pos;
-
 protected:
 	/** @brief Function to get a pointer to the host module*/
 	cModule *findHost(void);
-
-    /** @brief BBItem category number of Move*/
-    int catMove;
 
     /** @brief BBItem category number of HostState*/
     int catHostState;
@@ -69,17 +59,6 @@ public:
     /** @brief Initializes mobility model parameters.*/
     virtual void initialize(int);
 
-    /** @brief Get current position
-     *
-     * NOTE: This method can't provide the correct host position during
-     *       initialization, but only after initialization.
-     *
-     *       A module which needs the position during initialization can
-     *       instead subscribe to the BBItem-category for 'Move' in order to
-     *       receive position information during the initialization.
-     */
-    const Coord* getPos() {return &pos;}
-
     /** @brief Get the current HostState
      *
      * NOTE: The correct host state is available from initialization-stage 1.
@@ -87,8 +66,7 @@ public:
     const HostState& getHostState() { return hostState; }
 
     /**
-     * @brief Receive Moves and HostStates from BaseUtility to synchronize
-     * hostPosition and -state.
+     * @brief Receive HostStates from BaseUtility to synchronize state.
      */
     virtual void receiveBBItem(int category, const BBItem *details, int scopeModuleId);
 };
