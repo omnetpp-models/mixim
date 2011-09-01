@@ -1,7 +1,7 @@
 package org.mixim.examples.ieee802154Narrow;
 
 import org.mixim.base.connectionManager.ConnectionManager;
-import org.mixim.base.modules.BaseWorldUtility;
+
 
 //
 //This example shows how to use MiXiMs implementation of the ieee802154

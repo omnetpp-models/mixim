@@ -1,7 +1,7 @@
 package org.mixim.examples.ieee802154Narrow;
 
+import inet.mobility.models.StationaryMobility;
 import org.mixim.base.modules.BaseArp;
-import org.mixim.base.modules.BaseMobility;
 import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.nic.Nic802154_TI_CC2420;
 import org.mixim.modules.power.battery.BatteryStats;
@@ -28,7 +28,7 @@ module PhyMacHost
             parameters:
                 @display("p=205,146;i=block/blackboard");
         }
-        mobility: BaseMobility {
+        mobility: StationaryMobility {
             parameters:
                 @display("p=205,81;i=block/cogwheel");
         }

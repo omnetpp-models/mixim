@@ -34,7 +34,7 @@ module Ieee80211Host
         string udpAppType = default("");
         bool IPForward = default(false);
         string routingFile = default("");
-        string mobilityType = default("inet.mobility.NoMobility");
+        string mobilityType = default("StationaryMobility");
     gates:
         inout pppg[] @labels(PPPFrame-conn);
         inout ethg[] @labels(EtherFrame-conn);

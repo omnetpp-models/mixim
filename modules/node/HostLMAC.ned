@@ -1,11 +1,14 @@
 package org.mixim.modules.node;
 
-import org.mixim.modules.power.battery.SimpleBattery;
-import org.mixim.modules.power.battery.BatteryStats;
-import org.mixim.modules.nic.NicLMAC;
-
-import org.mixim.base.modules.*;
+import inet.mobility.IMobility;
+import org.mixim.base.modules.BaseUtility;
+import org.mixim.base.modules.IBaseApplLayer;
+import org.mixim.base.modules.IBaseNetwLayer;
 import org.mixim.modules.netw.ArpHost;
+import org.mixim.modules.nic.NicLMAC;
+import org.mixim.modules.power.battery.BatteryStats;
+import org.mixim.modules.power.battery.SimpleBattery;
+
 
 //
 // Example host module using a LMAC Network interface card.
@@ -28,7 +31,7 @@ module HostLMAC
             parameters:
                 @display("p=186,101;b=24,24,rect,blue;i=block/process");
         }
-        mobility: <mobType> like IBaseMobility {
+        mobility: <mobType> like IMobility {
             parameters:
                 @display("p=186,166;i=block/cogwheel");
         }

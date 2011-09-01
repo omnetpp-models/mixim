@@ -19,7 +19,7 @@ module TestHost
             parameters:
                 @display("p=130,60;b=25,25,,black,,");
         }
-        mobility: BaseMobility {
+        mobility: StationaryMobility {
             parameters:
                 @display("p=130,130;i=cogwheel2");
         }

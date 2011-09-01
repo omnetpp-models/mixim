@@ -1,9 +1,9 @@
 package org.mixim.examples.multiConnectionManager;
 
-import org.mixim.base.modules.BaseMobility;
-import org.mixim.base.modules.BaseUtility;
+import inet.mobility.models.StationaryMobility;
 import org.mixim.base.modules.BaseArp;
 import org.mixim.base.modules.BaseNetwLayer;
+import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.application.BurstApplLayer;
 
 
@@ -21,7 +21,7 @@ module PhyMacHost
             parameters:
                 @display("p=130,60;i=block/blackboard");
         }
-        mobility: BaseMobility {
+        mobility: StationaryMobility {
             parameters:
                 @display("p=130,130;i=block/cogwheel");
         }

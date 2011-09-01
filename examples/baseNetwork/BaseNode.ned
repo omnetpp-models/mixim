@@ -1,6 +1,11 @@
 package org.mixim.examples.baseNetwork;
 
-import org.mixim.base.modules.*;
+import inet.mobility.IMobility;
+import org.mixim.base.modules.BaseArp;
+import org.mixim.base.modules.BaseUtility;
+import org.mixim.base.modules.IBaseApplLayer;
+import org.mixim.base.modules.IBaseNetwLayer;
+
 
 module BaseNode
 {
@@ -20,7 +25,7 @@ module BaseNode
             parameters:
                 @display("p=130,108;b=24,24,rect,blue;i=block/process");
         }
-        mobility: <mobType> like IBaseMobility {
+        mobility: <mobType> like IMobility {
             parameters:
                 @display("p=130,172;i=block/cogwheel");
         }

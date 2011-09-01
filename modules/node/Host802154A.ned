@@ -1,19 +1,20 @@
 package org.mixim.modules.node;
 
-import org.mixim.base.modules.BaseMobility;
+import inet.mobility.models.StationaryMobility;
 import org.mixim.base.modules.BaseUtility;
 import org.mixim.modules.application.TestApplication;
-import org.mixim.modules.netw.DummyRoute;
 import org.mixim.modules.netw.ArpHost;
-import org.mixim.modules.utility.phyPER;
+import org.mixim.modules.netw.DummyRoute;
 import org.mixim.modules.nic.Nic802154A;
-import org.mixim.modules.power.battery.SimpleBattery;
 import org.mixim.modules.power.battery.BatteryStats;
+import org.mixim.modules.power.battery.SimpleBattery;
+import org.mixim.modules.utility.phyPER;
+
 
 //
 // This host NED module models a host using an IEEE 802.15.4A correlation receiver.
 // 
-// @author JÃ©rÃ´me Rousselot
+// @author Jérôme Rousselot
 // 
 // Citation of the following publication is appreciated if you use the MiXiM UWB PHY model
 // for a publication of your own.
@@ -57,7 +58,7 @@ module Host802154A
         battery: SimpleBattery {
             @display("p=292,186;i=block/control");
         }
-        mobility: BaseMobility {
+        mobility: StationaryMobility {
             parameters:
                 @display("p=292,120;i=block/cogwheel");
         }

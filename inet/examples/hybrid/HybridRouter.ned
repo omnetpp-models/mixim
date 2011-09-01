@@ -3,7 +3,7 @@ package mixnet.examples.hybrid;
 import inet.base.NotificationBoard;
 import inet.linklayer.ethernet.EthernetInterface;
 import inet.linklayer.ppp.PPPInterface;
-import inet.mobility.NoMobility;
+import inet.mobility.models.StationaryMobility;
 import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.ipv4.RoutingTable;
 import inet.nodes.inet.NetworkLayer;
@@ -43,7 +43,7 @@ module HybridRouter
         utility: BaseUtility {
             @display("p=155,49");
         }
-        mobility: NoMobility {
+        mobility: StationaryMobility {
             parameters:
                 @display("p=155,119");
         }
