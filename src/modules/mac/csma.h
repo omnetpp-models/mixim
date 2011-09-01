@@ -33,6 +33,8 @@
 #include <sstream>
 #include <vector>
 #include <list>
+
+#include "MiXiMDefs.h"
 #include "BaseMacLayer.h"
 #include <DroppedPacket.h>
 #include <MacPkt_m.h>
@@ -51,7 +53,7 @@
  *
  * \image html csmaFSM.png "CSMA Mac-Layer - finite state machine"
  */
-class  csma : public BaseMacLayer
+class MIXIM_API  csma : public BaseMacLayer
 {
   public:
 

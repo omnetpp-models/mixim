@@ -13,6 +13,7 @@
 #include <map>
 #include <math.h>
 
+#include "MiXiMDefs.h"
 #include "Mapping.h"
 #include "AirFrame_m.h"
 #include "MacPkt_m.h"
@@ -50,7 +51,7 @@ class PhyLayerUWBIR;
  * @ingroup ieee802154a
  * @ingroup decider
 */
-class DeciderUWBIREDSync: public DeciderUWBIRED {
+class MIXIM_API DeciderUWBIREDSync: public DeciderUWBIRED {
 public:
 	DeciderUWBIREDSync(DeciderToPhyInterface* iface,
 				PhyLayerUWBIR* _uwbiface,

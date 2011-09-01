@@ -25,9 +25,11 @@
 #ifndef _IEEE802154A_H
 #define	_IEEE802154A_H
 
-#include "Signal_.h"
 #include <vector>
 #include <utility>
+
+#include "MiXiMDefs.h"
+#include "Signal_.h"
 
 using namespace std;
 
@@ -41,7 +43,7 @@ using namespace std;
  *
  * @ingroup ieee802154a
  */
-class IEEE802154A {
+class MIXIM_API IEEE802154A {
 public:
 	/**@brief bit rate (850 kbps) */
     static const int mandatory_bitrate;

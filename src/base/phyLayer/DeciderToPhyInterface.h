@@ -11,6 +11,7 @@
 #include <list>
 #include <omnetpp.h>
 
+#include "MiXiMDefs.h"
 #include "AirFrame_m.h"
 #include "BaseWorldUtility.h"
 
@@ -33,7 +34,7 @@ class DeciderResult;
  *
  * @ingroup decider
  */
-class DeciderToPhyInterface
+class MIXIM_API DeciderToPhyInterface
 {
 public:
 	/**

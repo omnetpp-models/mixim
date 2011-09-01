@@ -22,6 +22,8 @@
 #define SENSOR_APPL_LAYER_H
 
 #include <map>
+
+#include "MiXiMDefs.h"
 #include "BaseModule.h"
 #include "BaseLayer.h"
 #include "NetwControlInfo.h"
@@ -50,7 +52,7 @@ using namespace std;
  * @ingroup applLayer
  * @author Amre El-Hoiydi, Jérôme Rousselot
  **/
-class SensorApplLayer:public BaseLayer
+class MIXIM_API SensorApplLayer:public BaseLayer
 {
 public:
 

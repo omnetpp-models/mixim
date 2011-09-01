@@ -12,6 +12,7 @@
 #include <set>
 #include <map>
 
+#include "MiXiMDefs.h"
 #include "ProbabilisticBroadcastPkt_m.h"
 #include "MacPkt_m.h"
 #include "BaseMacLayer.h"
@@ -33,7 +34,7 @@ using namespace std;
  * @ingroup netwLayer
  * @author Damien Piguet
  **/
-class ProbabilisticBroadcast : public BaseNetwLayer
+class MIXIM_API ProbabilisticBroadcast : public BaseNetwLayer
 {
 public:
 

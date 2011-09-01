@@ -19,8 +19,10 @@
 #ifndef BBPACKET_H
 #define BBPACKET_H
 
-#include <omnetpp.h>
 #include <sstream>
+#include <omnetpp.h>
+
+#include "MiXiMDefs.h"
 
 /**
  * @brief Class that keeps track of the number of packets sent.
@@ -29,7 +31,7 @@
  * @author Andreas K�pke, Karl Wessel
  */
 
-class  Packet : public cObject
+class MIXIM_API  Packet : public cObject
 {
 protected:
     /** @brief number of packets generated. */

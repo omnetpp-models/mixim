@@ -22,6 +22,8 @@
 #define MAC_80211_H
 
 #include <list>
+
+#include "MiXiMDefs.h"
 #include <BaseMacLayer.h>
 #include <Mac80211Pkt_m.h>
 #include <Consts80211.h>
@@ -36,7 +38,7 @@
  * @ingroup ieee80211
  * @author David Raguin, Karl Wessel (port for MiXiM)
  */
-class  Mac80211 : public BaseMacLayer
+class MIXIM_API  Mac80211 : public BaseMacLayer
 {
 public:
 

@@ -507,10 +507,10 @@ public:
 template<class Key, class V,
 		 class Container = std::map<Key, V>,
 		 class Interpolator = NextSmaller<Key, V, typename Container::value_type, typename Container::const_iterator> >
-class InterpolateableIterator:public ConstInterpolateableIterator<Key, V,
-																		typename Container::value_type,
-																		typename Container::iterator,
-																		Interpolator>
+class InterpolateableIterator: public ConstInterpolateableIterator<Key, V,
+                                                                   typename Container::value_type,
+                                                                   typename Container::iterator,
+                                                                   Interpolator>
 {
 protected:
 	typedef typename Container::value_type value_type;

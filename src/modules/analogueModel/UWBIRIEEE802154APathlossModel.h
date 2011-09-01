@@ -21,6 +21,7 @@
 #ifndef _UWBIRIEEE802154APATHLOSSMODEL_H
 #define	_UWBIRIEEE802154APATHLOSSMODEL_H
 
+#include "MiXiMDefs.h"
 #include "AnalogueModel.h"
 #include "MappingUtils.h"
 #include "Signal_.h"
@@ -60,7 +61,7 @@
  * @ingroup analogueModels
  * @ingroup ieee802154a
  */
-class UWBIRIEEE802154APathlossModel : public AnalogueModel {
+class MIXIM_API UWBIRIEEE802154APathlossModel : public AnalogueModel {
 
 public:
 

@@ -19,6 +19,8 @@
 #include <omnetpp.h>
 #include <csma.h>
 
+#include "MiXiMDefs.h"
+
 /**
  * @brief Extends "csma" module by some statistics send
  * up to the upper layer.
@@ -29,7 +31,7 @@
  * @author Jerome Rousselot, Amre El-Hoiydi, Marc Loebbers, Yosia Hadisusanto, Andreas Koepke
  * @author Karl Wessel (port for MiXiM)
  */
-class CSMA802154 : public csma
+class MIXIM_API CSMA802154 : public csma
 {
 protected:
     virtual void initialize(int stage);

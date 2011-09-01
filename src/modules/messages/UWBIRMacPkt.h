@@ -2,12 +2,14 @@
 #ifndef UWBIRMACPKT_
 #define UWBIRMACPKT_
 
-#include "UWBIRMacPkt_m.h"
 #include <list>
+
+#include "MiXiMDefs.h"
+#include "UWBIRMacPkt_m.h"
 
 using namespace std;
 
-class UWBIRMacPkt : public UWBIRMacPkt_Base
+class MIXIM_API UWBIRMacPkt : public UWBIRMacPkt_Base
 {
    public:
      UWBIRMacPkt(const char *name=NULL, int kind=0) : UWBIRMacPkt_Base(name,kind) {}

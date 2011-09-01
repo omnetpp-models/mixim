@@ -20,6 +20,8 @@
 #include <sstream>
 #include <vector>
 #include <list>
+
+#include "MiXiMDefs.h"
 #include "BaseMacLayer.h"
 #include <DroppedPacket.h>
 #include <MacPkt_m.h>
@@ -53,7 +55,7 @@
  * @author Anna Foerster
  *
  */
-class  BMacLayer : public BaseMacLayer
+class MIXIM_API  BMacLayer : public BaseMacLayer
 {
   public:
 	virtual ~BMacLayer();

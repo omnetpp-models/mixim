@@ -20,6 +20,7 @@
 #ifndef INTENSITYMODEL_H_
 #define INTENSITYMODEL_H_
 
+#include "MiXiMDefs.h"
 #include "AnalogueModel.h"
 #include "Mapping.h"
 #include "Signal_.h"
@@ -34,7 +35,7 @@
  *
  * @ingroup analogueModels
  */
-class IntensityModel : public AnalogueModel {
+class MIXIM_API IntensityModel : public AnalogueModel {
 
 public:
 	IntensityModel() { }

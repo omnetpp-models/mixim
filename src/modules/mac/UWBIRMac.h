@@ -33,6 +33,7 @@
 #ifndef UWBIRMAC_H
 #define UWBIRMAC_H
 
+#include "MiXiMDefs.h"
 #include "BaseMacLayer.h"
 #include "Decider.h"
 #include "MacToPhyControlInfo.h"
@@ -61,7 +62,7 @@ using namespace std;
  * @ingroup ieee802154a
  * @ingroup macLayer
  */
-class UWBIRMac : public BaseMacLayer {
+class MIXIM_API UWBIRMac : public BaseMacLayer {
 
 public:
 

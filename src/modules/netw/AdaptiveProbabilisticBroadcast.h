@@ -8,6 +8,7 @@
 #ifndef ADAPTIVEPROBABILISTICBROADCAST_H_
 #define ADAPTIVEPROBABILISTICBROADCAST_H_
 
+#include "MiXiMDefs.h"
 #include "ProbabilisticBroadcast.h"
 
 using namespace std;
@@ -21,7 +22,7 @@ using namespace std;
  * @ingroup netwLayer
  * @author Dimitris Kotsakos, George Alyfantis, Damien Piguet
  **/
-class AdaptiveProbabilisticBroadcast : public ProbabilisticBroadcast
+class MIXIM_API AdaptiveProbabilisticBroadcast : public ProbabilisticBroadcast
 {
 public:
 

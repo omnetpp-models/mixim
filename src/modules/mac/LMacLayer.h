@@ -13,6 +13,8 @@
 #define LMAC_LAYER_H
 
 #include <list>
+
+#include "MiXiMDefs.h"
 #include <DroppedPacket.h>
 #include <BaseMacLayer.h>
 #include "LMacPkt_m.h"
@@ -62,7 +64,7 @@
  *
  * @ingroup macLayer
  **/
-class  LMacLayer : public BaseMacLayer
+class MIXIM_API  LMacLayer : public BaseMacLayer
 {
   public:
 	/** @brief Clean up messges.*/

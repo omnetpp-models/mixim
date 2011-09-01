@@ -16,6 +16,7 @@
 #ifndef PHYLAYERBATTERY_H_
 #define PHYLAYERBATTERY_H_
 
+#include "MiXiMDefs.h"
 #include "PhyLayer.h"
 #include "Decider80211Battery.h"
 #include "HostState.h"
@@ -50,7 +51,7 @@
  * @ingroup power
  * @ingroup phyLayer
  */
-class PhyLayerBattery : public PhyLayer{
+class MIXIM_API PhyLayerBattery : public PhyLayer{
 protected:
 	/** @brief Number of power consuming activities (accounts).*/
 	int numActivities;

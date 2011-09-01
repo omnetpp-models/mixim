@@ -20,8 +20,10 @@
 #ifndef DroppedPacket_H
 #define DroppedPacket_H
 
-#include <omnetpp.h>
 #include <sstream>
+#include <omnetpp.h>
+
+#include "MiXiMDefs.h"
 
 /**
  * @brief May be published by MAC lyer to indicate why a packet was dropped
@@ -34,7 +36,7 @@
  * @ingroup utils
  * @author Andreas K�pke
  */
-class  DroppedPacket : public cObject
+class MIXIM_API  DroppedPacket : public cObject
 {
  public:
     /** @brief Possible Reasons */

@@ -20,6 +20,7 @@
 #ifndef _UWBIRPATHLOSSMODEL_H
 #define	_UWBIRPATHLOSSMODEL_H
 
+#include "MiXiMDefs.h"
 #include "AnalogueModel.h"
 #include "Mapping.h"
 #include "Signal_.h"
@@ -50,7 +51,7 @@
  * @ingroup ieee802154a
  * @ingroup analogueModels
  */
-class UWBIRStochasticPathlossModel : public AnalogueModel {
+class MIXIM_API UWBIRStochasticPathlossModel : public AnalogueModel {
 
 public:
 

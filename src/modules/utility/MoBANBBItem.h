@@ -39,9 +39,10 @@
  *
  **************************************************************************/
 
+#include "MiXiMDefs.h"
 #include <BaseWorldUtility.h>
 
-class BBMoBANMessage : public cObject {
+class MIXIM_API BBMoBANMessage : public cObject {
  public:
 	Coord position;
 	double speed;

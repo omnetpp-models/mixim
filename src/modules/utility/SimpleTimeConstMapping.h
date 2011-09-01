@@ -21,12 +21,14 @@
 #ifndef _SIMPLETIMECONSTMAPPING_H
 #define _SIMPLETIMECONSTMAPPING_H
 
+#include "MiXiMDefs.h"
+
 /**
  * @brief TODO: short description for this class
  *
  * @ingroup mapping
  */
-class SimpleTimeConstMapping: public SimpleConstMapping {
+class MIXIM_API SimpleTimeConstMapping: public SimpleConstMapping {
 
 protected:
 	double myValue;

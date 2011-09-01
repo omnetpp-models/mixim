@@ -6,7 +6,9 @@
 #include <string>
 #include <omnetpp.h>
 
-class PassedMessage : public cObject {
+#include "MiXiMDefs.h"
+
+class MIXIM_API PassedMessage : public cObject {
  public:
     enum gates_t {
         UPPER_DATA,

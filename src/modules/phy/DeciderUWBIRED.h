@@ -13,6 +13,7 @@
 #include <map>
 #include <math.h>
 
+#include "MiXiMDefs.h"
 #include "Signal_.h"
 #include "Mapping.h"
 #include "AirFrame_m.h"
@@ -62,7 +63,7 @@ class PhyLayerUWBIR;
  * @ingroup ieee802154a
  * @ingroup decider
 */
-class DeciderUWBIRED: public Decider {
+class MIXIM_API DeciderUWBIRED: public Decider {
 private:
 	bool trace, stats;
 	long nbRandomBits;

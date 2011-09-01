@@ -15,6 +15,7 @@
 #include <omnetpp.h>
 
 //#include <fstream>
+#include "MiXiMDefs.h"
 #include "BaseLayer.h"
 #include "NetwPkt_m.h"
 #include "MacPkt_m.h"
@@ -36,7 +37,7 @@ using namespace std;
  * @author Jerome Rousselot
  **/
 
-class DummyRoute : public BaseNetwLayer
+class MIXIM_API DummyRoute : public BaseNetwLayer
 {
 public:
     /** @brief Initialization of the module and some variables*/

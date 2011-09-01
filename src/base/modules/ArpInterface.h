@@ -8,8 +8,9 @@
 #ifndef ARPINTERFACE_H_
 #define ARPINTERFACE_H_
 
-
 #include <MACAddress.h>
+
+#include "MiXiMDefs.h"
 
 
 /**
@@ -23,7 +24,7 @@
  *
  * @author Karl Wessel
  */
-class ArpInterface {
+class MIXIM_API ArpInterface {
 public:
 	/** @brief returns a L2 address to a given L3 address.*/
     virtual MACAddress getMacAddr(const int netwAddr) = 0;

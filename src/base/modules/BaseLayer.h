@@ -23,6 +23,7 @@
 #ifndef BASE_LAYER_H
 #define BASE_LAYER_H
 
+#include "MiXiMDefs.h"
 #include "BatteryAccess.h"
 #include "PassedMessage.h"
 
@@ -35,7 +36,7 @@
  * @ingroup baseModules
  * @author Andreas Koepke
  */
-class BaseLayer : public BatteryAccess
+class MIXIM_API BaseLayer : public BatteryAccess
 {
  protected:
 

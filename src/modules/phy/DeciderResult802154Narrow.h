@@ -8,6 +8,7 @@
 #ifndef DECIDERRESULT802154NARROW_H_
 #define DECIDERRESULT802154NARROW_H_
 
+#include "MiXiMDefs.h"
 #include <Decider.h>
 
 /**
@@ -16,7 +17,7 @@
  * @ingroup decider
  * @ingroup ieee802154
  */
-class DeciderResult802154Narrow : public DeciderResult {
+class MIXIM_API DeciderResult802154Narrow : public DeciderResult {
 protected:
 	/** @brief Stores the bit-rate of the transmission of the packet */
 	double bitrate;

@@ -28,6 +28,7 @@
 
 #include <omnetpp.h>
 
+#include "MiXiMDefs.h"
 #include <BaseNetwLayer.h>
 #include <fstream>
 #include "WiseRoutePkt_m.h"
@@ -58,7 +59,7 @@ using namespace std;
  * @ingroup netwLayer
  * @author Jerome Rousselot
  **/
-class WiseRoute : public BaseNetwLayer
+class MIXIM_API WiseRoute : public BaseNetwLayer
 {
 public:
     /** @brief Initialization of the module and some variables*/

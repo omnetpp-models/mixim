@@ -24,6 +24,8 @@
 #define BASE_MAC_LAYER_H
 
 #include <omnetpp.h>
+
+#include "MiXiMDefs.h"
 #include "BaseLayer.h"
 //#include "BaseArp.h"
 #include <MacPkt_m.h>
@@ -39,7 +41,7 @@
  * @ingroup baseModules
  * @author Daniel Willkomm, Karl Wessel
  */
-class BaseMacLayer : public BaseLayer
+class MIXIM_API BaseMacLayer : public BaseLayer
 {
 public:
 	/** @brief Message kinds used by this layer.*/

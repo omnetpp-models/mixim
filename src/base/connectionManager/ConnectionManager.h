@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 
+#include "MiXiMDefs.h"
 #include "BaseConnectionManager.h"
 
 /**
@@ -16,7 +17,7 @@
  *
  * @ingroup connectionManager
  */
-class ConnectionManager : public BaseConnectionManager
+class MIXIM_API ConnectionManager : public BaseConnectionManager
 {
 protected:
 

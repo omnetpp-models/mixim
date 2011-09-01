@@ -8,6 +8,7 @@
 #ifndef DECIDER802154NARROW_H_
 #define DECIDER802154NARROW_H_
 
+#include "MiXiMDefs.h"
 #include <BaseDecider.h>
 #include <BaseArp.h>
 
@@ -18,7 +19,7 @@
  * @ingroup ieee802154
  * @author Jerome Rousselot, Amre El-Hoiydi, Marc Loebbers, Karl Wessel (port for MiXiM)
  */
-class Decider802154Narrow: public BaseDecider {
+class MIXIM_API Decider802154Narrow: public BaseDecider {
 public:
 	enum Decider802154NarrowControlKinds {
 		RECEPTION_STARTED=LAST_BASE_DECIDER_CONTROL_KIND,

@@ -2,6 +2,8 @@
 #define CSMAMAC_LAYER_H
 
 #include <list>
+
+#include "MiXiMDefs.h"
 #include <PhyUtils.h>
 #include <BaseMacLayer.h>
 #include <MacPkt_m.h>
@@ -47,7 +49,7 @@
  * @ingroup csma
  * @author Marc L�bbers, Yosia Hadisusanto, Andreas Koepke, Karl Wessel
  */
-class  CSMAMacLayer : public BaseMacLayer
+class MIXIM_API CSMAMacLayer : public BaseMacLayer
 {
   public:
 	virtual ~CSMAMacLayer();

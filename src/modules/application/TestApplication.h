@@ -2,6 +2,8 @@
 #define TEST_APPLICATION_H
 
 #include <omnetpp.h>
+
+#include "MiXiMDefs.h"
 #include "BaseModule.h"
 #include "NetwControlInfo.h"
 #include "Signal_.h"
@@ -11,7 +13,7 @@
 #include "MacToPhyInterface.h"
 #include "Mapping.h"
 
-class TestApplication : public BaseModule {
+class MIXIM_API TestApplication : public BaseModule {
 
 
     public:

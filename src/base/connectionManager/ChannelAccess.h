@@ -27,6 +27,7 @@
 #include <omnetpp.h>
 #include <vector>
 
+#include "MiXiMDefs.h"
 #include "BatteryAccess.h"
 #include "BaseWorldUtility.h"
 #include "AirFrame_m.h"
@@ -49,7 +50,7 @@
  * @ingroup phyLayer
  * @ingroup baseModules
  **/
-class ChannelAccess : public BatteryAccess, protected MobilityAccess
+class MIXIM_API ChannelAccess : public BatteryAccess, protected MobilityAccess
 {
 protected:
     /** @brief A signal used to subscribe to mobility state changes. */

@@ -15,8 +15,9 @@
 
 
 #include <omnetpp.h>
-#include "BaseModule.h"
 
+#include "MiXiMDefs.h"
+#include "BaseModule.h"
 #include "SimpleBattery.h"
 #include "BatteryState.h"
 #include "DeviceEntry.h"
@@ -36,7 +37,7 @@
  *
  * @ingroup power
  */
-class BatteryStats : public BaseModule
+class MIXIM_API BatteryStats : public BaseModule
 {
 
 public:

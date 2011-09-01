@@ -65,6 +65,7 @@
 #ifndef UWBIR_PHY_LAYER_H
 #define UWBIR_PHY_LAYER_H
 
+#include "MiXiMDefs.h"
 #include "PhyLayerBattery.h"
 #include "RadioUWBIR.h"
 #include "UWBIRStochasticPathlossModel.h"
@@ -114,7 +115,7 @@ class DeciderUWBIREDSync;
  * @ingroup phyLayer
  * @ingroup power
  */
-class PhyLayerUWBIR : public BasePhyLayer
+class MIXIM_API PhyLayerUWBIR : public BasePhyLayer
 {
 	friend class DeciderUWBIRED;
 

@@ -20,6 +20,7 @@
 #ifndef BASE_ARP_H
 #define BASE_ARP_H
 
+#include "MiXiMDefs.h"
 #include <ArpInterface.h>
 #include <AddressingInterface.h>
 #include <BaseModule.h>
@@ -48,9 +49,9 @@
  *
  * @author Daniel Willkomm
  **/
-class BaseArp : public ArpInterface,
-				public AddressingInterface,
-				public BaseModule
+class MIXIM_API BaseArp : public ArpInterface,
+                          public AddressingInterface,
+                          public BaseModule
 {
 	/** @brief Is core debugging enabled?*/
 	bool coreDebug;

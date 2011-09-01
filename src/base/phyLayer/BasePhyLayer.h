@@ -1,6 +1,7 @@
 #ifndef BASEPHYLAYER_
 #define BASEPHYLAYER_
 
+#include "MiXiMDefs.h"
 #include "ChannelAccess.h"
 #include "DeciderToPhyInterface.h"
 #include "MacToPhyInterface.h"
@@ -65,9 +66,9 @@
  * @ingroup phyLayer
  * @ingroup baseModules
  */
-class BasePhyLayer: public ChannelAccess,
-					public DeciderToPhyInterface,
-					public MacToPhyInterface {
+class MIXIM_API BasePhyLayer: public ChannelAccess,
+                              public DeciderToPhyInterface,
+                              public MacToPhyInterface {
 
 protected:
 

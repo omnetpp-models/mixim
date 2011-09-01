@@ -2,13 +2,14 @@
 #ifndef AGGR_PKT_
 #define AGGR_PKT_
 
-#include "AggrPkt_m.h"
-
 #include <list>
+
+#include "MiXiMDefs.h"
+#include "AggrPkt_m.h"
 
 using namespace std;
 
-class AggrPkt : public AggrPkt_Base
+class MIXIM_API AggrPkt : public AggrPkt_Base
 {
   public:
     AggrPkt(const char *name=NULL, int kind=0) : AggrPkt_Base(name,kind) {}

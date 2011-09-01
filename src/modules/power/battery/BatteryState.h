@@ -14,8 +14,10 @@
 #ifndef BATTERYSTATE_H
 #define BATTERYSTATE_H
 
-#include <omnetpp.h>
 #include <sstream>
+#include <omnetpp.h>
+
+#include "MiXiMDefs.h"
 
 /**
  * @brief residual capacity of battery
@@ -26,7 +28,7 @@
  *
  * @ingroup power
  */
-class BatteryState : public cObject
+class MIXIM_API BatteryState : public cObject
 {
 protected:
   /** @brief nominal battery capacity in mW-s (mA-s at nominal voltage) */

@@ -16,6 +16,8 @@
 
 #include <omnetpp.h>
 
+#include "MiXiMDefs.h"
+
 /**
  * @brief HostState is published by the battery to announce host failure
  *
@@ -30,7 +32,7 @@
  *
  * @ingroup power
  */
-class HostState : public cObject
+class MIXIM_API HostState : public cObject
 {
 public:
     /**

@@ -21,6 +21,7 @@
 #ifndef ARP_HOST_H
 #define ARP_HOST_H
 
+#include "MiXiMDefs.h"
 #include <ArpInterface.h>
 #include <AddressingInterface.h>
 #include <BaseModule.h>
@@ -38,7 +39,7 @@
  *
  * @author Jerome Rousselot
  **/
-class ArpHost : public ArpInterface,
+class MIXIM_API ArpHost : public ArpInterface,
 				public AddressingInterface,
 				public BaseModule
 {

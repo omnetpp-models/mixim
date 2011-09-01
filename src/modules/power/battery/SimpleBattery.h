@@ -14,6 +14,8 @@
 #define BATTERY_H
 
 #include <omnetpp.h>
+
+#include "MiXiMDefs.h"
 #include "BaseBattery.h"
 
 #include "BatteryState.h"
@@ -36,7 +38,7 @@
  * @author Karl Wessel (port for MiXiM)
  */
 
-class SimpleBattery: public BaseBattery {
+class MIXIM_API SimpleBattery: public BaseBattery {
 public:
     SimpleBattery();
 	virtual ~SimpleBattery();

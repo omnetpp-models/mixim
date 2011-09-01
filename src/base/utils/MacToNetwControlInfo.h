@@ -17,6 +17,8 @@
 #define MACTONETWCONTROLINFO_H_
 
 #include <omnetpp.h>
+
+#include "MiXiMDefs.h"
 #include <MACAddress.h>
 
 /**
@@ -31,7 +33,7 @@
  *
  * @author Karl Wessel
  */
-class MacToNetwControlInfo : public cObject {
+class MIXIM_API MacToNetwControlInfo : public cObject {
 protected:
 	/** @brief The bit error rate for this packet.*/
 	double bitErrorRate;

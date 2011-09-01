@@ -25,8 +25,8 @@
 #include <sstream>
 #include <omnetpp.h>
 
+#include "MiXiMDefs.h"
 #include "FindModule.h"
-
 #include "HostState.h"
 
 #ifndef debugEV
@@ -71,7 +71,7 @@
  * @author Steffen Sroka
  * @author Andreas Koepke
  */
-class BaseModule: public cSimpleModule, public cListener {
+class MIXIM_API BaseModule: public cSimpleModule, public cListener {
   protected:
     /** @brief Debug switch for all other modules*/
     bool debug;

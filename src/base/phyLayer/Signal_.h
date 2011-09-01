@@ -1,9 +1,11 @@
 #ifndef SIGNAL_H_
 #define SIGNAL_H_
 
-#include <omnetpp.h>
-#include "Mapping.h"
 #include <list>
+#include <omnetpp.h>
+
+#include "MiXiMDefs.h"
+#include "Mapping.h"
 
 /**
  * @brief The signal class stores the physical representation of the
@@ -28,7 +30,7 @@
  *
  * @ingroup phyLayer
  */
-class Signal {
+class MIXIM_API Signal {
 public:
 	/**
 	 * @brief Shortcut type for a concatenated Mapping using multiply operator.

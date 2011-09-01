@@ -24,6 +24,8 @@
 #define BASE_APPL_LAYER_H
 
 #include <assert.h>
+
+#include "MiXiMDefs.h"
 #include "BaseLayer.h"
 #include "ApplPkt_m.h"
 
@@ -40,7 +42,7 @@
  *
  * @author Daniel Willkomm
  **/
-class BaseApplLayer : public BaseLayer
+class MIXIM_API BaseApplLayer : public BaseLayer
 {
 public:
 	/** @brief The message kinds this layer uses.*/

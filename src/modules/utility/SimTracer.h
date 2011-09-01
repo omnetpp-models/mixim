@@ -28,6 +28,8 @@
 #include <fstream>
 #include <vector>
 #include <map>
+
+#include "MiXiMDefs.h"
 #include <BaseWorldUtility.h>
 #include <BaseLayer.h>
 #include <ConnectionManager.h>
@@ -40,7 +42,7 @@ using namespace std;
  * @ingroup utils
  * @author Jerome Rousselot
  */
-class SimTracer: public cSimpleModule, cListener
+class MIXIM_API SimTracer: public cSimpleModule, cListener
 {
 
 public:

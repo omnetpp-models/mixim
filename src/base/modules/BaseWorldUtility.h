@@ -21,6 +21,7 @@
 #ifndef BASE_WORLD_UTIL_H
 #define BASE_WORLD_UTIL_H
 
+#include "MiXiMDefs.h"
 #include "Coord.h"
 
 /**
@@ -28,7 +29,7 @@
  *
  * @ingroup baseModules
  */
-class BaseWorldUtility : public cSimpleModule
+class MIXIM_API BaseWorldUtility : public cSimpleModule
 {
 protected:
 	/**
