@@ -5,11 +5,12 @@
 *.ilk
 *.exe
 *.lib
+*.dll
 .pydevproject
 .settings
 .tstamp
+.tkenvrc
 env.sh
-makefrag.vc
 **/Makefile
 Makefile.vc
 /*/Makefile.vc
@@ -26,7 +27,6 @@ Makefile
 ieee802154a/ieee802154a
 results
 examples/**/figures
-examples/**/.tkenvrc
 examples/**/MiXiM
 tests/baseMobility/baseMobility
 tests/basePhyLayer/basePhyLayer

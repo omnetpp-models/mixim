@@ -1,0 +1,5 @@
+Nic80211Test_dir: utils_dir
+deviceTest_dir: utils_dir
+deviceTestAccts_dir: utils_dir
+deviceTestAll_dir: utils_dir
+deviceTestMulti_dir: utils_dir
