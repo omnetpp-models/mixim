@@ -39,8 +39,8 @@ simple BasePhyLayer
 		int initialRadioChannel = default(0);  // Initial radio channel.
 
     gates:
-        input upperGateIn; 	// from the MAC layer
-        output upperGateOut; 	// to the MAC layer
+        input upperLayerIn; 	// from the MAC layer
+        output upperLayerOut; 	// to the MAC layer
 
         input upperControlIn; 	// control from the MAC layer        
         output upperControlOut; 	// control to the MAC layer

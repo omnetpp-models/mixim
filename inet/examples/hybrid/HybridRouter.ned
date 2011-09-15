@@ -103,16 +103,16 @@ module HybridRouter
 
         wlanRadioIn --> wlan.radioIn;
 
-        wlan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
-        wlan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
+        wlan.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
+        wlan.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
         // wlan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> wlanBridge.lowerControlIn;
         // wlan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- wlanBridge.lowerControlOut;
 
 
         lrwpanRadioIn --> lrwpan.radioIn;
 
-        lrwpan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))+1];
-        lrwpan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))+1];
+        lrwpan.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))+1];
+        lrwpan.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))+1];
         // lrwpan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> lrwpanBridge.lowerControlIn;
         // lrwpan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- lrwpanBridge.lowerControlOut;
 }

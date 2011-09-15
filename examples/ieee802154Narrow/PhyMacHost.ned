@@ -39,8 +39,8 @@ module PhyMacHost
                 @display("b=32,30;p=80,233;i=block/ifcard");
         }
     connections:
-        nic.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> appl.lowerGateIn;
-        nic.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- appl.lowerGateOut;
+        nic.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> appl.lowerGateIn;
+        nic.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- appl.lowerGateOut;
         nic.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> appl.lowerControlIn;
         nic.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- appl.lowerControlOut;
         radioIn --> nic.radioIn;

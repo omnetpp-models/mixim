@@ -49,9 +49,9 @@ module Nic802154_TI_CC2420 like INic
 		double txRxCurrent @unit(mA) = 18.8 mA; // idem
 		
     gates:
-        input upperGateIn; // from upper layers
+        input upperLayerIn; // from upper layers
         input radioIn; // to receive AirFrames
-        output upperGateOut; // to upper layers
+        output upperLayerOut; // to upper layers
         output upperControlOut; // control connection
         input upperControlIn;
 
@@ -92,14 +92,14 @@ module Nic802154_TI_CC2420 like INic
 
         radioIn --> phy.radioIn;
 
-        phy.upperGateIn <-- { @display("m=m,25,0,25,0"); } <-- mac.lowerGateOut;
-        phy.upperGateOut --> { @display("m=m,73,0,50,50"); } --> mac.lowerGateIn;
+        phy.upperLayerIn <-- { @display("m=m,25,0,25,0"); } <-- mac.lowerGateOut;
+        phy.upperLayerOut --> { @display("m=m,73,0,50,50"); } --> mac.lowerGateIn;
         phy.upperControlOut --> mac.lowerControlIn;
         phy.upperControlIn <-- mac.lowerControlOut;
 
-        mac.upperGateOut --> upperGateOut;
+        mac.upperLayerOut --> upperLayerOut;
         mac.upperControlOut --> upperControlOut;
-        mac.upperGateIn <-- upperGateIn;
+        mac.upperLayerIn <-- upperLayerIn;
         mac.upperControlIn <-- upperControlIn;
 
 }

@@ -134,8 +134,8 @@ module Ieee80211Host
 
         radioIn --> wlan.radioIn;
 
-        wlan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
-        wlan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
+        wlan.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
+        wlan.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
         // wlan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> bridge.lowerControlIn;
         // wlan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- bridge.lowerControlOut;
 }

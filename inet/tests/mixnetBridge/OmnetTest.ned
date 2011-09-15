@@ -46,8 +46,8 @@ module NoNICHost like IHost{
         }
         
     connections allowunconnected:
-        bridge.upperGateOut --> testModule.fromUpperBridge;
-        bridge.upperGateIn <-- testModule.toUpperBridge;
+        bridge.upperLayerOut --> testModule.fromUpperBridge;
+        bridge.upperLayerIn <-- testModule.toUpperBridge;
 }
 
 module TestHost extends NoNICHost like IHost{

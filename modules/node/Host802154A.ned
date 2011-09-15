@@ -76,13 +76,13 @@ module Host802154A
         }
 
     connections:
-        net.lowerGateOut --> nic.upperGateIn;
-        net.lowerGateIn <-- nic.upperGateOut;
+        net.lowerGateOut --> nic.upperLayerIn;
+        net.lowerGateIn <-- nic.upperLayerOut;
         net.lowerControlOut --> nic.upperControlIn;
         net.lowerControlIn <-- nic.upperControlOut;
 
-        net.upperGateOut --> app.lowerGateIn;
-        net.upperGateIn <-- app.lowerGateOut;
+        net.upperLayerOut --> app.lowerGateIn;
+        net.upperLayerIn <-- app.lowerGateOut;
         net.upperControlOut --> app.lowerControlIn;
         net.upperControlIn <-- app.lowerControlOut;
 

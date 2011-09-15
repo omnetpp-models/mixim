@@ -55,8 +55,8 @@ module Nic80211Battery like INic
 
         @display("i=block/ifcard");
     gates:
-        input upperGateIn; // to upper layers
-        output upperGateOut; // from upper layers
+        input upperLayerIn; // to upper layers
+        output upperLayerOut; // from upper layers
         output upperControlOut; // control information 
         input upperControlIn; // control information 
         input radioIn; // radioIn gate for sendDirect
@@ -96,14 +96,14 @@ module Nic80211Battery like INic
 
     connections:
         radioIn --> phy.radioIn;
-        phy.upperGateIn <-- { @display("m=m,25,0,25,0"); } <-- mac.lowerGateOut;
-        phy.upperGateOut --> { @display("m=m,73,0,50,50"); } --> mac.lowerGateIn;
+        phy.upperLayerIn <-- { @display("m=m,25,0,25,0"); } <-- mac.lowerGateOut;
+        phy.upperLayerOut --> { @display("m=m,73,0,50,50"); } --> mac.lowerGateIn;
         phy.upperControlOut --> mac.lowerControlIn;
         phy.upperControlIn <-- mac.lowerControlOut;
 
-        mac.upperGateOut --> upperGateOut;
+        mac.upperLayerOut --> upperLayerOut;
         mac.upperControlOut --> upperControlOut;
-        mac.upperGateIn <-- upperGateIn;
+        mac.upperLayerIn <-- upperLayerIn;
         mac.upperControlIn <-- upperControlIn;
 }
 

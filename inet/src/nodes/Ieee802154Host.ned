@@ -146,8 +146,8 @@ module Ieee802154Host
 
         radioIn --> lrwpan.radioIn;
 
-        lrwpan.upperGateOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
-        lrwpan.upperGateIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
+        lrwpan.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> networkLayer.ifIn[(sizeof(pppg)+sizeof(ethg))];
+        lrwpan.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- networkLayer.ifOut[(sizeof(pppg)+sizeof(ethg))];
         // lrwpan.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> bridge.lowerControlIn;
         // lrwpan.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- bridge.lowerControlOut;
 }

@@ -48,8 +48,8 @@ void BasePhyLayer::initialize(int stage) {
 		gate("radioIn")->setDeliverOnReceptionStart(true);
 
 		//get gate ids
-		upperGateIn = findGate("upperGateIn");
-        upperGateOut = findGate("upperGateOut");
+		upperLayerIn = findGate("upperLayerIn");
+        upperLayerOut = findGate("upperLayerOut");
         upperControlOut = findGate("upperControlOut");
         upperControlIn = findGate("upperControlIn");
 
@@ -337,7 +337,7 @@ void BasePhyLayer::handleMessage(cMessage* msg) {
 		handleSelfMessage(msg);
 
 	//MacPkts <- MacToPhyControlInfo
-	} else if(msg->getArrivalGateId() == upperGateIn) {
+	} else if(msg->getArrivalGateId() == upperLayerIn) {
 		handleUpperMessage(msg);
 
 	//controlmessages
@@ -628,7 +628,7 @@ void BasePhyLayer::sendControlMessageUp(cMessage* msg) {
 }
 
 void BasePhyLayer::sendMacPktUp(cMessage* pkt) {
-	send(pkt, upperGateOut);
+	send(pkt, upperLayerOut);
 }
 
 void BasePhyLayer::sendMessageDown(AirFrame* msg) {

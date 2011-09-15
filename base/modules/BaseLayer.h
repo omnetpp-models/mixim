@@ -41,8 +41,8 @@ class BaseLayer : public BatteryAccess
 
     /** @name gate ids*/
     /*@{*/
-    int upperGateIn;
-    int upperGateOut;
+    int upperLayerIn;
+    int upperLayerOut;
     int lowerGateIn;
     int lowerGateOut;
     int upperControlIn;
@@ -130,7 +130,7 @@ protected:
 
     /** @brief Sends a message to the upper layer
      *
-     * Short hand for send(msg, upperGateOut);
+     * Short hand for send(msg, upperLayerOut);
      * You have to take care of decapsulation and deletion of
      * superflous frames. We recommend that you use a pair of
      * functions decapsMsg/encapsMsg.

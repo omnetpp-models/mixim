@@ -79,18 +79,18 @@ module Host802154_2400MHz
         }
 
     connections:
-        net.lowerGateOut --> nic.upperGateIn;
-        net.lowerGateIn <-- nic.upperGateOut;
+        net.lowerGateOut --> nic.upperLayerIn;
+        net.lowerGateIn <-- nic.upperLayerOut;
         net.lowerControlOut --> nic.upperControlIn;
         net.lowerControlIn <-- nic.upperControlOut;
 
-        net.upperGateOut --> transport.lowerGateIn;
-        net.upperGateIn <-- transport.lowerGateOut;
+        net.upperLayerOut --> transport.lowerGateIn;
+        net.upperLayerIn <-- transport.lowerGateOut;
         net.upperControlOut --> transport.lowerControlIn;
         net.upperControlIn <-- transport.lowerControlOut;
 
-        transport.upperGateOut --> app.lowerGateIn;
-        transport.upperGateIn <-- app.lowerGateOut;
+        transport.upperLayerOut --> app.lowerGateIn;
+        transport.upperLayerIn <-- app.lowerGateOut;
         transport.upperControlOut --> app.lowerControlIn;
         transport.upperControlIn <-- app.lowerControlOut;
 

@@ -24,8 +24,8 @@ simple BaseLayer
         bool notAffectedByHostState = default(false);
         
     gates:
-        input upperGateIn; // from upper layer
-        output upperGateOut; // to uppe layer
+        input upperLayerIn; // from upper layer
+        output upperLayerOut; // to uppe layer
         input upperControlIn; // control from upper layer
         output upperControlOut; // control to upper layer
         input lowerGateIn; // from lower layer
