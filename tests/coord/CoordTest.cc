@@ -313,42 +313,42 @@ void testDistance() {
 }
 
 /**
- * Unit test for isInRectangle method of class Coord
+ * Unit test for isInBoundary method of class Coord
  *
  * - test at playground border(should be inside)
  * - test outside playground
  * - test inside playground
  * - test 2D/3D
  */
-void testIsInRectangle() {
+void testIsInBoundary() {
 
 	//3D
 	Coord upperLeftPG;
 	Coord lowerRightPG(PG_X, PG_Y, PG_Z);
 
 	Coord inside(INSIDE, INSIDE, INSIDE);
-	assertTrue("3D: inside is inside of playground.", inside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertTrue("3D: inside is inside of playground.", inside.isInBoundary(upperLeftPG, lowerRightPG));
 
 	Coord border(BORDER, INSIDE, INSIDE);
-	assertTrue("3D: border-x is inside of playground.", border.isInRectangle(upperLeftPG, lowerRightPG));
+	assertTrue("3D: border-x is inside of playground.", border.isInBoundary(upperLeftPG, lowerRightPG));
 	border = Coord(INSIDE, BORDER, INSIDE);
-	assertTrue("3D: border-y is inside of playground.", border.isInRectangle(upperLeftPG, lowerRightPG));
+	assertTrue("3D: border-y is inside of playground.", border.isInBoundary(upperLeftPG, lowerRightPG));
 	border = Coord(INSIDE, INSIDE, BORDER);
-	assertTrue("3D: border-z is inside of playground.", border.isInRectangle(upperLeftPG, lowerRightPG));
+	assertTrue("3D: border-z is inside of playground.", border.isInBoundary(upperLeftPG, lowerRightPG));
 
 	Coord outside(SMALLER, INSIDE, INSIDE);
-	assertFalse("3D: smaller-x is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("3D: smaller-x is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 	outside = Coord(INSIDE, SMALLER, INSIDE);
-	assertFalse("3D: smaller-y is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("3D: smaller-y is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 	outside = Coord(INSIDE, INSIDE, SMALLER);
-	assertFalse("3D: smaller-z is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("3D: smaller-z is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 
 	outside = Coord(BIGGER, INSIDE, INSIDE);
-	assertFalse("3D: bigger-x is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("3D: bigger-x is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 	outside = Coord(INSIDE, BIGGER, INSIDE);
-	assertFalse("3D: bigger-y is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("3D: bigger-y is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 	outside = Coord(INSIDE, INSIDE, BIGGER);
-	assertFalse("3D: bigger-z is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("3D: bigger-z is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 
 
 	//2D
@@ -356,22 +356,22 @@ void testIsInRectangle() {
 	lowerRightPG = Coord(PG_X, PG_Y);
 
 	inside = Coord(INSIDE, INSIDE);
-	assertTrue("2D: inside is inside of playground.", inside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertTrue("2D: inside is inside of playground.", inside.isInBoundary(upperLeftPG, lowerRightPG));
 
 	border = Coord(BORDER, INSIDE);
-	assertTrue("2D: border-x is inside of playground.", border.isInRectangle(upperLeftPG, lowerRightPG));
+	assertTrue("2D: border-x is inside of playground.", border.isInBoundary(upperLeftPG, lowerRightPG));
 	border = Coord(INSIDE, BORDER);
-	assertTrue("2D: border-y is inside of playground.", border.isInRectangle(upperLeftPG, lowerRightPG));
+	assertTrue("2D: border-y is inside of playground.", border.isInBoundary(upperLeftPG, lowerRightPG));
 	
 	outside = Coord(SMALLER, INSIDE);
-	assertFalse("2D: smaller-x is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("2D: smaller-x is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 	outside = Coord(INSIDE, SMALLER);
-	assertFalse("2D: smaller-y is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("2D: smaller-y is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 	
 	outside = Coord(BIGGER, INSIDE);
-	assertFalse("2D: bigger-x is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));
+	assertFalse("2D: bigger-x is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));
 	outside = Coord(INSIDE, BIGGER);
-	assertFalse("2D: bigger-y is outside of playground.", outside.isInRectangle(upperLeftPG, lowerRightPG));	
+	assertFalse("2D: bigger-y is outside of playground.", outside.isInBoundary(upperLeftPG, lowerRightPG));	
 
 	std::cout << "Is in rectangle test successful." << std::endl;
 }
@@ -384,7 +384,7 @@ protected:
 	    testCompareOperators();
 	    testLength();
 	    testDistance();
-	    testIsInRectangle();
+	    testIsInBoundary();
 
 	    testsExecuted = true;
 	}
