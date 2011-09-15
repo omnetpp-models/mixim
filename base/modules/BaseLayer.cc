@@ -46,8 +46,8 @@ void BaseLayer::initialize(int stage)
         }
         upperLayerIn  = findGate("upperLayerIn");
         upperLayerOut = findGate("upperLayerOut");
-        lowerGateIn     = findGate("lowerGateIn");
-        lowerGateOut    = findGate("lowerGateOut");
+        lowerLayerIn  = findGate("lowerLayerIn");
+        lowerLayerOut = findGate("lowerLayerOut");
         upperControlIn  = findGate("upperControlIn");
         upperControlOut = findGate("upperControlOut");
         lowerControlIn  = findGate("lowerControlIn");
@@ -80,7 +80,7 @@ void BaseLayer::handleMessage(cMessage* msg)
     } else if(msg->getArrivalGateId()==lowerControlIn){
         recordPacket(PassedMessage::INCOMING,PassedMessage::LOWER_CONTROL,msg);
         handleLowerControl(msg);
-    } else if(msg->getArrivalGateId()==lowerGateIn) {
+    } else if(msg->getArrivalGateId()==lowerLayerIn) {
         recordPacket(PassedMessage::INCOMING,PassedMessage::LOWER_DATA,msg);
         handleLowerMsg(msg);
     }
@@ -104,7 +104,7 @@ void BaseLayer::handleMessage(cMessage* msg)
 
 void BaseLayer::sendDown(cMessage *msg) {
     recordPacket(PassedMessage::OUTGOING,PassedMessage::LOWER_DATA,msg);
-    send(msg, lowerGateOut);
+    send(msg, lowerLayerOut);
 }
 
 void BaseLayer::sendUp(cMessage *msg) {

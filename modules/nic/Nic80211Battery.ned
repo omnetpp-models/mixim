@@ -96,8 +96,8 @@ module Nic80211Battery like INic
 
     connections:
         radioIn --> phy.radioIn;
-        phy.upperLayerIn <-- { @display("m=m,25,0,25,0"); } <-- mac.lowerGateOut;
-        phy.upperLayerOut --> { @display("m=m,73,0,50,50"); } --> mac.lowerGateIn;
+        phy.upperLayerIn <-- { @display("m=m,25,0,25,0"); } <-- mac.lowerLayerOut;
+        phy.upperLayerOut --> { @display("m=m,73,0,50,50"); } --> mac.lowerLayerIn;
         phy.upperControlOut --> mac.lowerControlIn;
         phy.upperControlIn <-- mac.lowerControlOut;
 

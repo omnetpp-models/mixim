@@ -11,8 +11,8 @@ moduleinterface IBaseNetwLayer
         output upperLayerOut; // to application layer
         input upperControlIn; // control from application layer
         output upperControlOut; // control to application layer
-        input lowerGateIn; // from NIC
-        output lowerGateOut; // to NIC
+        input lowerLayerIn; // from NIC
+        output lowerLayerOut; // to NIC
         input lowerControlIn; // control from NIC
         output lowerControlOut; // control to NIC
 }

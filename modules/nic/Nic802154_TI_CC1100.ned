@@ -85,8 +85,8 @@ module Nic802154_TI_CC1100 like INic
 
         radioIn --> phy.radioIn;
 
-        phy.upperLayerIn <-- { @display("m=m,25,0,25,0"); } <-- mac.lowerGateOut;
-        phy.upperLayerOut --> { @display("m=m,73,0,50,50"); } --> mac.lowerGateIn;
+        phy.upperLayerIn <-- { @display("m=m,25,0,25,0"); } <-- mac.lowerLayerOut;
+        phy.upperLayerOut --> { @display("m=m,73,0,50,50"); } --> mac.lowerLayerIn;
         phy.upperControlOut --> mac.lowerControlIn;
         phy.upperControlIn <-- mac.lowerControlOut;
 

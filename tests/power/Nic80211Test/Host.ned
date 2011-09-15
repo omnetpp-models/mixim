@@ -72,13 +72,13 @@ module Host
 
         }
     connections:
-        nic.upperLayerOut --> net.lowerGateIn;
-        nic.upperLayerIn <-- net.lowerGateOut;
+        nic.upperLayerOut --> net.lowerLayerIn;
+        nic.upperLayerIn <-- net.lowerLayerOut;
         nic.upperControlOut --> net.lowerControlIn;
         nic.upperControlIn <-- net.lowerControlOut;
 
-        net.upperLayerOut --> appl.lowerGateIn;
-        net.upperLayerIn <-- appl.lowerGateOut;
+        net.upperLayerOut --> appl.lowerLayerIn;
+        net.upperLayerIn <-- appl.lowerLayerOut;
         net.upperControlOut --> appl.lowerControlIn;
         net.upperControlIn <-- appl.lowerControlOut;
 

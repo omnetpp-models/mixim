@@ -14,8 +14,8 @@ void TestMacLayer::initialize(int stage) {
 
 		myIndex = findHost()->getIndex();
 
-		dataOut = findGate("lowerGateOut");
-		dataIn = findGate("lowerGateIn");
+		dataOut = findGate("lowerLayerOut");
+		dataIn = findGate("lowerLayerIn");
 
 		controlOut = findGate("lowerControlOut");
 		controlIn = findGate("lowerControlIn");

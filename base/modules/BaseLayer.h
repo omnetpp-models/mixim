@@ -43,8 +43,8 @@ class BaseLayer : public BatteryAccess
     /*@{*/
     int upperLayerIn;
     int upperLayerOut;
-    int lowerGateIn;
-    int lowerGateOut;
+    int lowerLayerIn;
+    int lowerLayerOut;
     int upperControlIn;
     int upperControlOut;
     int lowerControlIn;
@@ -121,7 +121,7 @@ protected:
 
     /** @brief Sends a message to the lower layer
      *
-     * Short hand for send(msg, lowerGateOut);
+     * Short hand for send(msg, lowerLayerOut);
      *
      * You have to take care of encapsulation We recommend that you
      * use a pair of functions called encapsMsg/decapsMsg.

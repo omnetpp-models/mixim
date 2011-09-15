@@ -54,8 +54,8 @@ module TestHost extends NoNICHost like IHost{
     submodules:
         
     connections:
-        testModule.toLowerBridge --> { @display("ls=black;m=m,25,50,25,0"); } --> bridge.lowerGateIn;
-        testModule.fromLowerBridge <-- { @display("ls=black;m=m,15,50,15,0"); } <-- bridge.lowerGateOut;
+        testModule.toLowerBridge --> { @display("ls=black;m=m,25,50,25,0"); } --> bridge.lowerLayerIn;
+        testModule.fromLowerBridge <-- { @display("ls=black;m=m,15,50,15,0"); } <-- bridge.lowerLayerOut;
         testModule.toCtrlLowerBridge --> { @display("ls=red;m=m,75,50,75,0"); } --> bridge.lowerControlIn;
         testModule.fromCtrlLowerBridge <-- { @display("ls=red;m=m,85,0,85,0"); } <-- bridge.lowerControlOut;
 }

@@ -56,8 +56,8 @@ module NicBMAC like INic
         mac.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> upperControlOut;
         mac.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- upperControlIn;
 
-        phy.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> mac.lowerGateIn;
-        phy.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- mac.lowerGateOut;
+        phy.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> mac.lowerLayerIn;
+        phy.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- mac.lowerLayerOut;
         phy.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> mac.lowerControlIn;
         phy.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- mac.lowerControlOut;
 

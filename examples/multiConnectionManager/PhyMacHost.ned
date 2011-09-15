@@ -35,13 +35,13 @@ module PhyMacHost
                 @display("b=32,30;p=60,166;i=block/ifcard");
         }
     connections:
-        nic.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> net.lowerGateIn;
-        nic.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- net.lowerGateOut;
+        nic.upperLayerOut --> { @display("ls=black;m=m,25,50,25,0"); } --> net.lowerLayerIn;
+        nic.upperLayerIn <-- { @display("ls=black;m=m,15,50,15,0"); } <-- net.lowerLayerOut;
         nic.upperControlOut --> { @display("ls=red;m=m,75,50,75,0"); } --> net.lowerControlIn;
         nic.upperControlIn <-- { @display("ls=red;m=m,85,0,85,0"); } <-- net.lowerControlOut;
 
-        net.upperLayerOut --> appl.lowerGateIn;
-        net.upperLayerIn <-- appl.lowerGateOut;
+        net.upperLayerOut --> appl.lowerLayerIn;
+        net.upperLayerIn <-- appl.lowerLayerOut;
         net.upperControlOut --> appl.lowerControlIn;
         net.upperControlIn <-- appl.lowerControlOut;
 
