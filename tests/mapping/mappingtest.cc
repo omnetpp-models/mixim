@@ -125,7 +125,7 @@ void assertEqualNotSmaller(std::string msg, T& v1, T& v2){
 
 
 
-class OmnetTest:public SimpleTest {
+class MappingTest:public SimpleTest {
 protected:
 	std::map<double, std::map<simtime_t, Argument> > a;
 	std::map<simtime_t, Argument> t;
@@ -179,7 +179,7 @@ protected:
 
 	Mapping* createMappingBuffer;
 public:
-	OmnetTest():
+	MappingTest():
 		SimpleTest(),
 		time(Dimension::time_static()), freq("frequency"), channel(freq), space("space"),
 		A(freq, space), createMappingBuffer(0){
@@ -193,7 +193,7 @@ public:
 		t = a[3.0];
 	}
 
-	virtual ~OmnetTest() {
+	virtual ~MappingTest() {
 		if(createMappingBuffer)
 			delete createMappingBuffer;
 	}
@@ -2483,4 +2483,4 @@ protected:
 	}
 };
 
-Define_Module(OmnetTest);
+Define_Module(MappingTest);
