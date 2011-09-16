@@ -13,7 +13,6 @@ void BreakpointPathlossModel::filterSignal(AirFrame *frame) {
 
 	/** claim the Move pattern of the sender from the Signal */
 	assert(sStart == simTime());
-	assert(false); // TODO: get the mobilities
 	IMobility *senderMobility = ((ChannelAccess*)frame->getSenderModule())->getMobilityModule();
 	IMobility *receiverMobility = ((ChannelAccess*)frame->getArrivalModule())->getMobilityModule();
 	Coord sendersPos = senderMobility->getCurrentPosition();

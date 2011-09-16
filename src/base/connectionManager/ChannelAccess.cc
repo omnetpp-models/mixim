@@ -131,7 +131,7 @@ simtime_t ChannelAccess::calculatePropagationDelay(const NicEntry* nic) {
 	if(!usePropagationDelay)
 		return 0;
 	IMobility *senderMobility = ((ChannelAccess *)this)->getMobilityModule();
-	IMobility *receiverMobility = ((ChannelAccess *)nic->nicPtr)->getMobilityModule();
+	IMobility *receiverMobility = nic->chAccess->getMobilityModule();
     Coord senderPos = senderMobility->getCurrentPosition();
     Coord receiverPos = receiverMobility->getCurrentPosition();
 	double distance = receiverPos.distance(senderPos);
