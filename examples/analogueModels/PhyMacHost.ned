@@ -9,6 +9,7 @@ module PhyMacHost
         double numHosts; // total number of hosts in the network
         string mobilityType = default("StationaryMobility"); // how the node moves around. see: inet.mobility
         @display("bgb=180,200,white,,;bgp=10,10");
+        @node();
     gates:
         input radioIn;
 

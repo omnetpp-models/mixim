@@ -19,6 +19,7 @@ module HostLMAC
         string netwType; //type of the network layer
         string mobType; //type of the mobility module
         @display("bgb=244,294,white");
+        @node();
     gates:
         input radioIn; // gate for sendDirect
     submodules:

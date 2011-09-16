@@ -34,8 +34,8 @@ module Host802154_2400MHz
     parameters:
         double numHosts; // total number of hosts in the network
         string netwType = default("DummyRoute"); //type of the network layer
-
         @display("bgb=356,318,white;bgp=10,10;b=40,40,rect;i=device/usb");
+        @node();
     gates:
         input radioIn;
 

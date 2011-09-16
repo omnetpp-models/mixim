@@ -8,8 +8,8 @@ module PhyMacHost
 {
     parameters:
         double numHosts; // total number of hosts in the network
-
         @display("bgb=180,200,white,,;bgp=10,10");
+        @node();
     gates:
         input radioIn;
 

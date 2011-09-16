@@ -13,6 +13,7 @@ module BaseNode
         string netwType; //type of the network layer
         string mobType; //type of the mobility module
         @display("bgb=,,white,,");
+        @node();
     gates:
         input radioIn; // gate for sendDirect
     submodules:

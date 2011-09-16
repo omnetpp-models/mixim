@@ -17,6 +17,7 @@ module Host80211
         string netwType; //type of the network layer
         string mobType; //type of the mobility module
         @display("bgb=40,,white;i=device/laptop;b=40,40,rect");
+        @node();
     gates:
         input radioIn; // gate for sendDirect
     submodules:
