@@ -1,8 +1,8 @@
 #/bin/bash
 
-export NEDPATH="../../base;../../modules;../../../inet/src"
+export PATH="$PATH:../../src:../../../inet/src:../../../omnetpp/bin"
 
-./channelInfo > out.tmp
+../tests > out.tmp
 
 diff -I '^Assigned runID=' -I '^Loading NED files from' -w exp-output out.tmp
 

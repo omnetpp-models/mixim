@@ -1,14 +1,12 @@
 #/bin/bash
 
-export NEDPATH="../../base;../../modules;../../../inet/src"
+export PATH="$PATH:../../src:../../../inet/src:../../../omnetpp/bin"
 
-./basePhyLayer -c Test1 > out.tmp
-./basePhyLayer -c Test2 >> out.tmp
-./basePhyLayer -c Test6 >> out.tmp
-./basePhyLayer -c Test7 >> out.tmp
+../tests -c Test1 > out.tmp
+../tests -c Test2 >> out.tmp
+../tests -c Test6 >> out.tmp
+../tests -c Test7 >> out.tmp
 
 diff -I '^Assigned runID=' -I '^Loading NED files from' -w exp-output out.tmp
 
 rm -f out.tmp
-
-

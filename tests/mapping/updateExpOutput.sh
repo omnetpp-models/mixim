@@ -1,7 +1,5 @@
 #/bin/bash
 
-./mapping > exp-output
+export PATH="$PATH:../../src:../../../inet/src:../../../omnetpp/bin"
 
-
-
-
+../tests > exp-output

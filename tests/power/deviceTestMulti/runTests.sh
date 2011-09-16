@@ -1,7 +1,7 @@
-export NEDPATH="../../../base;../../../modules;../../../../inet/src"
+export PATH="$PATH:../../../src:../../../../inet/src:../../../../omnetpp/bin"
+
 rm *.vec results/*.sca
 for i in One Two Three Four
 do
- ./deviceTestMulti -c $i -u Cmdenv
+ ../../tests -c $i
 done
-

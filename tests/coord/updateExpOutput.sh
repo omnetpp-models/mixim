@@ -1,7 +1,5 @@
 #/bin/bash
 
-./coord > exp-output
+export PATH="$PATH:../../src:../../../inet/src:../../../omnetpp/bin"
 
-
-
-
+../test > exp-output

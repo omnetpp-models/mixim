@@ -1,15 +1,13 @@
 #/bin/bash
 
-export NEDPATH="../../base;../../modules;../../../inet/src"
+export PATH="$PATH:../../src:../../../inet/src:../../../omnetpp/bin"
 
-./nicTest -c Test1 > out.tmp
-./nicTest -c Test2 >> out.tmp
-./nicTest -c Test3 >> out.tmp
-./nicTest -c Test4 >> out.tmp
-./nicTest -c Test5 >> out.tmp
+../tests -c Test1 > out.tmp
+../tests -c Test2 >> out.tmp
+../tests -c Test3 >> out.tmp
+../tests -c Test4 >> out.tmp
+../tests -c Test5 >> out.tmp
 
 diff -I '^Assigned runID=' -I '^Loading NED files from' -w exp-output out.tmp
 
 rm -f out.tmp
-
-
