@@ -56,7 +56,8 @@ void TestApp::ping(int nr){
 	Enter_Method_Silent();
 	cPacket* p = new cPacket(("Ping Traffic #" + toString(nr)).c_str(), PING+nr, 5000);
 	Ieee802Ctrl* cInfo = new Ieee802Ctrl();
-	cInfo->setDest(MACAddress(myIndex - 1));
+	TestApp *destApp = manager->getModule<TestApp>("app" + toString(myIndex - 1));
+	cInfo->setDest(destApp->mac->getMACAddress());
 	p->setControlInfo(cInfo);
 	send(p, out);
 	assertMessage("Ping", PING+nr, in(0), in(5), "app" + toString(myIndex - 1));
@@ -67,7 +68,8 @@ void TestApp::pong(){
 	Enter_Method_Silent();
 	cPacket* p = new cPacket("Ping Traffic", PONG, 5000);
 	Ieee802Ctrl* cInfo = new Ieee802Ctrl();
-    cInfo->setDest(MACAddress(myIndex - 1));
+	TestApp *destApp = manager->getModule<TestApp>("app" + toString(myIndex + 1));
+	cInfo->setDest(destApp->mac->getMACAddress());
 	p->setControlInfo(cInfo);
 	send(p, out);
 	assertMessage("Pong", PONG, in(0), in(5), "app" + toString(myIndex + 1));
