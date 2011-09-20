@@ -54,10 +54,15 @@ void BaseMacLayer::initialize(int stage)
     	// see if there is an addressing module available
 		// otherwise use NIC modules id as MAC address
 		AddressingInterface* addrScheme = FindModule<AddressingInterface*>::findSubModule(findHost());
-		if(addrScheme) {
+		if(addrScheme)
 			myMacAddr = addrScheme->myMacAddr(this);
-		} else {
-			myMacAddr = MACAddress(getParentModule()->getId());
+		else {
+		    const char *addressString = par("address").stringValue();
+		    if (!strcmp(addressString, "auto"))
+		        myMacAddr = MACAddress(getParentModule()->getId());
+		    else
+		        myMacAddr.setAddress(addressString);
+		    par("address").setStringValue(myMacAddr.str().c_str());
 		}
 		registerInterface();
     }
