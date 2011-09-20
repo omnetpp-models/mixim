@@ -34,11 +34,13 @@ BaseModule::BaseModule():
  */
 void BaseModule::initialize(int stage) {
     if (stage == 0) {
-    	notAffectedByHostState = 	hasPar("notAffectedByHostState")
+        notAffectedByHostState = hasPar("notAffectedByHostState")
 								 && par("notAffectedByHostState").boolValue();
         hasPar("debug") ? debug = par("debug").boolValue() : debug = true;
-        hostId = findHost()->getId();
-        subscribe("hostStateChanged", this);
+        cModule *host = findHost();
+        hostId = host->getId();
+        host->subscribe("hostStateChanged", this);
+        hostStateCat = registerSignal("hostStateChanged");
     }
 }
 

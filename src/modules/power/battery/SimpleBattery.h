@@ -110,7 +110,6 @@ protected:
 	 * @brief everyone should subscribe to this*/
 	/*@{*/
 	int scopeHost;
-	int hostStateCat;
 	HostState hostState;
 	/*@}*/
 

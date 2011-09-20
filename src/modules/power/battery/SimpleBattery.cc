@@ -87,7 +87,6 @@ void SimpleBattery::initialize(int stage) {
 
 		// publish battery depletion on hostStateCat
 		scopeHost = (this->findHost())->getId();
-		hostStateCat = registerSignal("hostStateChanged");
 
 		// periodically publish residual capacity on batteryCat
 		if (publishDelta < 1 || publishTime> 0)
