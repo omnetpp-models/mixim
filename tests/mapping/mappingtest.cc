@@ -1735,7 +1735,7 @@ protected:
 
 		Argument pos0(0.5);
 
-		TestSimpleConstMapping simple1(DimensionSet(Dimension::time));
+		TestSimpleConstMapping simple1(DimensionSet::timeDomain);
 
 		simple1.initializeArguments(pos0, pos1, pos1);
 
