@@ -1,4 +1,5 @@
 #include "SimplePathlossModel.h"
+#include "ChannelAccess.h"
 
 #define splmEV (ev.isDisabled()||!debug) ? ev : ev << "PhyLayer(SimplePathlossModel): "
 
@@ -30,8 +31,8 @@ void SimplePathlossModel::filterSignal(AirFrame *frame)
     Signal& signal = frame->getSignal();
 
 	/** Get start of the signal */
-	simtime_t sStart = s.getSignalStart();
-	simtime_t sEnd = s.getSignalLength() + sStart;
+	simtime_t sStart = signal.getReceptionStart();
+	simtime_t sEnd = signal.getReceptionEnd();
 
 	/** claim the move pattern of the sender from the Signal */
 	assert(sStart == simTime());

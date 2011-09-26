@@ -29,12 +29,12 @@ void RandomFrequencyOnlyModel::filterSignal(AirFrame *frame){
 
 	/* Get start and end of the signal to avoid unnecessary calculation
 	 * of attenuation.*/
-	simtime_t sStart = s.getSignalStart();
+	simtime_t sStart = signal.getReceptionStart();
 
 	// Since this mapping does not depend on time, we just set values for
 	// the first entry in time-dimension (start of the Signal)
 	/*
-	simtime_t sEnd = sStart + s.getSignalLength();
+	simtime_t sEnd = signal.getReceptionEnd();
 
 	simtime_t interval = 0.01; //lets use constant intervals for entries in time
 	*/

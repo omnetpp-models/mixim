@@ -8,8 +8,8 @@ void BreakpointPathlossModel::filterSignal(AirFrame *frame) {
     Signal& signal = frame->getSignal();
 
 	/** Get start of the signal */
-	simtime_t sStart = s.getSignalStart();
-	simtime_t sEnd = s.getSignalLength() + sStart;
+	simtime_t sStart = signal.getReceptionStart();
+	simtime_t sEnd = signal.getReceptionEnd();
 
 	/** claim the Move pattern of the sender from the Signal */
 	assert(sStart == simTime());

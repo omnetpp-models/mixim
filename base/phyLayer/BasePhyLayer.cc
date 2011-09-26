@@ -392,10 +392,10 @@ void BasePhyLayer::handleAirFrameStartReceive(AirFrame* frame) {
 
 	if(usePropagationDelay) {
 		Signal& s = frame->getSignal();
-		simtime_t delay = simTime() - s.getSignalStart();
+		simtime_t delay = simTime() - s.getSendingStart();
 		s.setPropagationDelay(delay);
 	}
-	assert(frame->getSignal().getSignalStart() == simTime());
+	assert(frame->getSignal().getReceptionStart() == simTime());
 
 	filterSignal(frame);
 
@@ -409,7 +409,7 @@ void BasePhyLayer::handleAirFrameStartReceive(AirFrame* frame) {
 	} else {
 		Signal& signal = frame->getSignal();
 
-		simtime_t signalEndTime = signal.getSignalStart() + frame->getDuration();
+		simtime_t signalEndTime = signal.getReceptionStart() + frame->getDuration();
 		frame->setState(END_RECEIVE);
 
 		sendSelfMessage(frame, signalEndTime);
@@ -421,8 +421,8 @@ void BasePhyLayer::handleAirFrameReceiving(AirFrame* frame) {
 	Signal& signal = frame->getSignal();
 	simtime_t nextHandleTime = decider->processSignal(frame);
 
-	assert(signal.getSignalLength() == frame->getDuration());
-	simtime_t signalEndTime = signal.getSignalStart() + frame->getDuration();
+	assert(signal.getDuration() == frame->getDuration());
+	simtime_t signalEndTime = signal.getReceptionStart() + frame->getDuration();
 
 	//check if this is the end of the receiving process
 	if(simTime() >= signalEndTime) {
@@ -519,8 +519,8 @@ AirFrame *BasePhyLayer::encapsMsg(cPacket *macPkt)
 	assert(s);
 
 	// set the members
-	assert(s->getSignalLength() > 0);
-	frame->setDuration(s->getSignalLength());
+	assert(s->getDuration() > 0);
+	frame->setDuration(s->getDuration());
 	// copy the signal into the AirFrame
 	frame->setSignal(*s);
 	//set priority of AirFrames above the normal priority to ensure

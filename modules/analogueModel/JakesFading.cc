@@ -85,13 +85,13 @@ JakesFading::~JakesFading() {
 void JakesFading::filterSignal(AirFrame *frame)
 {
 	Signal& signal = frame->getSignal();
-	simtime_t start = s.getSignalStart();
-	simtime_t end = start + s.getSignalLength();
 	IMobility *senderMobility = ((ChannelAccess *)frame->getSenderModule())->getMobilityModule();
 	IMobility *receiverMobility = ((ChannelAccess *)frame->getArrivalModule())->getMobilityModule();
 	double relSpeed = (senderMobility->getCurrentSpeed()
 					   - receiverMobility->getCurrentSpeed()).length();
 
+	simtime_t start = signal.getReceptionStart();
+	simtime_t end = signal.getReceptionEnd();
 
 	signal.addAttenuation(new JakesFadingMapping(this, relSpeed,
 												Argument(start),

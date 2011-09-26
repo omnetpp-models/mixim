@@ -5,8 +5,8 @@ using namespace std;
 void RadioStateAnalogueModel::filterSignal(AirFrame *frame)
 {
     Signal& signal = frame->getSignal();
-	simtime_t start = s.getSignalStart();
-	simtime_t end = start + s.getSignalLength();
+	simtime_t start = signal.getReceptionStart();
+	simtime_t end = signal.getReceptionEnd();
 
 	RSAMMapping* attMapping = new RSAMMapping(this, start, end);
 	signal.addAttenuation(attMapping);

@@ -28,9 +28,9 @@ double LogNormalShadowing::randomLogNormalGain() const {
 }
 
 void LogNormalShadowing::filterSignal(AirFrame *frame) {
-	simtime_t start = s.getSignalStart();
     Signal& signal = frame->getSignal();
-	simtime_t end = start + s.getSignalLength();
+	simtime_t start = signal.getReceptionStart();
+	simtime_t end = signal.getReceptionEnd();
 
 	Mapping* att = MappingUtils::createMapping(dimensions, Mapping::LINEAR);
 

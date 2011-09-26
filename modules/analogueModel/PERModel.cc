@@ -2,8 +2,8 @@
 
 void PERModel::filterSignal(AirFrame *frame) {
     Signal& signal = frame->getSignal();
-	simtime_t start = s.getSignalStart();
-	simtime_t end = start + s.getSignalLength();
+	simtime_t start = signal.getReceptionStart();
+	simtime_t end = signal.getReceptionEnd();
 
 	double attenuationFactor = 1;  // no attenuation
 	if(packetErrorRate > 0 && uniform(0, 1) < packetErrorRate) {

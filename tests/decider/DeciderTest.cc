@@ -130,7 +130,7 @@ AirFrame *DeciderTest::addAirFrameToPool(simtime_t start, simtime_t payloadStart
 	AirFrame* frame = new AirFrame(0, MacToPhyInterface::AIR_FRAME);
 
 	// set the members
-	frame->setDuration(s->getSignalLength());
+	frame->setDuration(s->getDuration());
 	// copy the signal into the AirFrame
 	frame->setSignal(*s);
 
@@ -159,7 +159,7 @@ AirFrame *DeciderTest::addAirFrameToPool(simtime_t start, simtime_t end, double 
 	AirFrame* frame = new AirFrame(0, MacToPhyInterface::AIR_FRAME);
 
 	// set the members
-	frame->setDuration(s->getSignalLength());
+	frame->setDuration(s->getDuration());
 	// copy the signal into the AirFrame
 	frame->setSignal(*s);
 
@@ -427,8 +427,7 @@ void DeciderTest::fillAirFramesOnChannel()
 	{
 		Signal& s = (*it)->getSignal();
 
-		if(s.getSignalStart() <= testTime
-		   && testTime <= s.getSignalStart() + s.getSignalLength())
+		if(s.getReceptionStart() <= testTime && testTime <= s.getReceptionEnd())
 		{
 			airFramesOnChannel.push_back(*it);
 		}
@@ -462,7 +461,7 @@ AirFrame* DeciderTest::createTestAirFrame(int i)
 {
 	// parameters needed
 	simtime_t signalStart = -1;
-	simtime_t signalLength = -1;
+	simtime_t signalDuration = -1;
 	// values for header/payload
 	std::pair<double, double> transmissionPower(0, 0);
 	std::pair<double, double> bitrate(0, 0);
@@ -472,31 +471,31 @@ AirFrame* DeciderTest::createTestAirFrame(int i)
 	switch (i) {
 		case 1:
 			signalStart = t1;
-			signalLength = (t7-t1);
+			signalDuration = (t7-t1);
 			transmissionPower.first = TXpower1;
 			bitrate.first = bitrate9600;
 			break;
 		case 2:
 			signalStart = t3;
-			signalLength = (t9-t3);
+			signalDuration = (t9-t3);
 			transmissionPower.first = TXpower2;
 			bitrate.first = bitrate9600;
 			break;
 		case 3:
 			signalStart = t3;
-			signalLength = (t5-t3);
+			signalDuration = (t5-t3);
 			transmissionPower.first = TXpower3;
 			bitrate.first = bitrate9600;
 			break;
 		case 4:
 			signalStart = t5;
-			signalLength = (t6-t5);
+			signalDuration = (t6-t5);
 			transmissionPower.first = TXpower4;
 			bitrate.first = bitrate9600;
 			break;
 		case 5:
 			signalStart = t1;
-			signalLength = (t5-t1);
+			signalDuration = (t5-t1);
 
 			switch (currentTestCase) {
 				case TEST_SNR_THRESHOLD_ACCEPT:
@@ -534,7 +533,7 @@ AirFrame* DeciderTest::createTestAirFrame(int i)
 			break;
 		case 6:
 			signalStart = t0;
-			signalLength = (t1-t0);
+			signalDuration = (t1-t0);
 			transmissionPower.first = TXpower6;
 			bitrate.first = bitrate9600;
 			break;
@@ -545,10 +544,10 @@ AirFrame* DeciderTest::createTestAirFrame(int i)
 	// --- Mac-Layer's tasks
 
 	// create Signal containing TXpower- and bitrate-mapping
-	Signal* s = createSignal(signalStart, signalLength, transmissionPower, bitrate, i, payloadStart);
+	Signal* s = createSignal(signalStart, signalDuration, transmissionPower, bitrate, i, payloadStart);
 
 	// just a bypass attenuation, that has no effect on the TXpower
-	//Mapping* bypassMap = createConstantMapping(signalStart, signalStart + signalLength, noAttenuation);
+	//Mapping* bypassMap = createConstantMapping(signalStart, signalStart + signalDuration, noAttenuation);
 	//s->addAttenuation(bypassMap);
 
 	// --- Phy-Layer's tasks
@@ -557,7 +556,7 @@ AirFrame* DeciderTest::createTestAirFrame(int i)
 	AirFrame* frame = new AirFrame(0, MacToPhyInterface::AIR_FRAME);
 
 	// set the members
-	frame->setDuration(s->getSignalLength());
+	frame->setDuration(s->getDuration());
 	// copy the signal into the AirFrame
 	frame->setSignal(*s);
 
@@ -800,8 +799,8 @@ void DeciderTest::getChannelInfo(simtime_t from, simtime_t to, AirFrameVector& o
 
 				// test whether Decider asks for the duration-interval of the processed AirFrame
 				assertTrue( "Decider demands ChannelInfo for the duration of the AirFrame",
-						(from == signal.getSignalStart()) &&
-						(to == (signal.getSignalStart() + signal.getSignalLength())) );
+						(from == signal.getReceptionStart()) &&
+						(to == signal.getReceptionEnd()) );
 
 				assertEqual( "Decider demands ChannelInfo for current test-timepoint (end of AirFrame)", getSimTime() , to);
 
@@ -1069,8 +1068,7 @@ void DeciderTest::executeSNRNewTestCase()
 			ev << log("Trying to receive TestAirFrame 3") << endl;
 			nextHandoverTime = decider->processSignal(TestAF3);
 			Signal& signal3 = TestAF3->getSignal();
-			assertTrue("TestAirFrame 3 can be received, end-time is returned",
-					(nextHandoverTime == signal3.getSignalStart() + signal3.getSignalLength()));
+			assertTrue("TestAirFrame 3 can be received, end-time is returned", (nextHandoverTime == signal3.getReceptionEnd()));
 
 
 			// try to receive another AirFrame at the same time, whose signal not too weak
@@ -1135,8 +1133,7 @@ void DeciderTest::executeSNRNewTestCase()
 			ev << log("Trying to immediately receive TestAirFrame 4") << endl;
 			nextHandoverTime = decider->processSignal(TestAF4);
 			Signal& signal4 = TestAF4->getSignal();
-			assertTrue("TestAirFrame 4 can be received, end-time is returned",
-					(nextHandoverTime == signal4.getSignalStart() + signal4.getSignalLength()));
+			assertTrue("TestAirFrame 4 can be received, end-time is returned", (nextHandoverTime == signal4.getReceptionEnd()));
 
 
 

@@ -226,7 +226,7 @@ void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame)
     //attenuation = attenuation /(4*PI*pow(distance, cfg.n));
     // create mapping
     SimpleTimeConstMapping* attMapping = new SimpleTimeConstMapping(
-    		attenuation, s.getSignalStart(), s.getSignalStart()+s.getSignalLength());
+    		attenuation, signal.getReceptionStart(), signal.getReceptionEnd());
 
     signal.addAttenuation(attMapping);
 

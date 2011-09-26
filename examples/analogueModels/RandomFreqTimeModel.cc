@@ -30,8 +30,8 @@ void RandomFreqTimeModel::filterSignal(AirFrame *frame) {
 	/* Get start and end of the signal to avoid unnecessary calculation
 	 * of attenuation. (Normally we don't wan't to attenuate the signal
 	 * outside its start and end time since it probably isn't defined there.*/
-	simtime_t sStart = s.getSignalStart();
-	simtime_t sEnd = sStart + s.getSignalLength();
+	simtime_t sStart = signal.getReceptionStart();
+	simtime_t sEnd = signal.getReceptionEnd();
 
 	simtime_t interval = (sEnd - sStart) / 10.0; //lets divide it into 10 steps
 
