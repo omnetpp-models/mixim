@@ -2106,10 +2106,10 @@ protected:
 								double offset = 1.0)
 	{
 		Mapping* res = MappingUtils::createMapping(domain);
-		unsigned int numDims = domain.size();
+		int numDims = domain.size();
 
 		//for each entry i
-		for(int i = 0; i < pow(size, numDims); ++i) {
+		for(int i = 0; i < pow((double)size, numDims); ++i) {
 			Argument pos(domain);
 			int d = numDims; 	//the current dimension counter
 			int remain = i; //stores the remainder used to convert the entry
@@ -2120,13 +2120,13 @@ protected:
 			for(DimensionSet::iterator it = domain.begin(); it != domain.end(); ++it)
 			{
 				--d;
-				unsigned int coord = floor(remain / pow(size, d));
+				unsigned int coord = floor(remain / pow((double)size, d));
 				val *= coord + 1;
 				if(it == domain.begin())
 					pos.setTime((double)coord + offset);
 				else
 					pos.setArgValue(*it, (double)coord + offset);
-				remain = remain % (int)pow(size, d);
+				remain = remain % (int)pow((double)size, d);
 			}
 			res->setValue(pos, val);
 		}
