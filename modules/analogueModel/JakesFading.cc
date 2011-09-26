@@ -15,6 +15,7 @@
 
 #include "JakesFading.h"
 #include <BaseWorldUtility.h>
+#include "ChannelAccess.h"
 
 DimensionSet JakesFadingMapping::dimensions(Dimension::time_static());
 
@@ -81,8 +82,9 @@ JakesFading::~JakesFading() {
 	delete[] angleOfArrival;
 }
 
-void JakesFading::filterSignal(Signal& s)
+void JakesFading::filterSignal(AirFrame *frame)
 {
+	Signal& signal = frame->getSignal();
 	simtime_t start = s.getSignalStart();
 	simtime_t end = start + s.getSignalLength();
 	IMobility *senderMobility = ((ChannelAccess *)frame->getSenderModule())->getMobilityModule();
@@ -90,8 +92,9 @@ void JakesFading::filterSignal(Signal& s)
 	double relSpeed = (senderMobility->getCurrentSpeed()
 					   - receiverMobility->getCurrentSpeed()).length();
 
-	s.addAttenuation(new JakesFadingMapping(this, relSpeed,
-											Argument(start),
-											interval,
-											Argument(end)));
+
+	signal.addAttenuation(new JakesFadingMapping(this, relSpeed,
+												Argument(start),
+												interval,
+												Argument(end)));
 }

@@ -1,6 +1,7 @@
 #include "PERModel.h"
 
-void PERModel::filterSignal(Signal& s) {
+void PERModel::filterSignal(AirFrame *frame) {
+    Signal& signal = frame->getSignal();
 	simtime_t start = s.getSignalStart();
 	simtime_t end = start + s.getSignalLength();
 
@@ -12,7 +13,7 @@ void PERModel::filterSignal(Signal& s) {
 	TimeMapping<Linear>* attMapping = new TimeMapping<Linear> ();
 	Argument arg;
 	attMapping->setValue(arg, attenuationFactor);
-	s.addAttenuation(attMapping);
+	signal.addAttenuation(attMapping);
 }
 
 

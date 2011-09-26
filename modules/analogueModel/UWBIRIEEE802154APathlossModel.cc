@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "UWBIRIEEE802154APathlossModel.h"
+#include "ChannelAccess.h"
 
 const double UWBIRIEEE802154APathlossModel::PL0 = 0.000040738; // -43.9 dB
 const double UWBIRIEEE802154APathlossModel::pathloss_exponent = 1.79;
@@ -174,13 +175,15 @@ const UWBIRIEEE802154APathlossModel::CMconfig UWBIRIEEE802154APathlossModel::CMc
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}  // CM9
 };
 
-void UWBIRIEEE802154APathlossModel::filterSignal(Signal& s) {
+void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame)
+{
+    Signal& signal = frame->getSignal();
     // We create a new "fake" txPower to add multipath taps
     // and then attenuation is applied to all pulses.
 
 	// (1) Power Delay Profile realization
 
-    txPower = s.getTransmissionPower();
+    txPower = signal.getTransmissionPower();
     newTxPower = new TimeMapping<Linear>(); //dynamic_cast<TimeMapping<Linear>*> (txPower->clone()); // create working copy
     pulsesIter = newTxPower->createIterator(); // create an iterator that we will use many times in addEchoes
     // generate number of clusters for this channel (channel coherence time > packet air time)
@@ -204,7 +207,7 @@ void UWBIRIEEE802154APathlossModel::filterSignal(Signal& s) {
     }
     delete iter;
     delete pulsesIter;
-    s.setTransmissionPower(newTxPower);
+    signal.setTransmissionPower(newTxPower);
 
 
     // compute distance
@@ -225,7 +228,7 @@ void UWBIRIEEE802154APathlossModel::filterSignal(Signal& s) {
     SimpleTimeConstMapping* attMapping = new SimpleTimeConstMapping(
     		attenuation, s.getSignalStart(), s.getSignalStart()+s.getSignalLength());
 
-    s.addAttenuation(attMapping);
+    signal.addAttenuation(attMapping);
 
 }
 

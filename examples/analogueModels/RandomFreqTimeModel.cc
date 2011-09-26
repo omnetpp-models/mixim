@@ -6,8 +6,8 @@
  * put some random attenuations over time and frequency into
  * the attenuation mapping.
  */
-void RandomFreqTimeModel::filterSignal(Signal& s){
-
+void RandomFreqTimeModel::filterSignal(AirFrame *frame) {
+    Signal& signal = frame->getSignal();
 
 	/* At first get a new instance of the default Mapping implementation
 	 * which is able to represent our attenuation mapping.
@@ -67,5 +67,5 @@ void RandomFreqTimeModel::filterSignal(Signal& s){
 	}
 
 	//at last add the created attenuation mapping to the signal
-	s.addAttenuation(attMapping);
+	signal.addAttenuation(attMapping);
 }

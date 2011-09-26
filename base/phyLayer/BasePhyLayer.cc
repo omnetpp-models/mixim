@@ -397,7 +397,7 @@ void BasePhyLayer::handleAirFrameStartReceive(AirFrame* frame) {
 	}
 	assert(frame->getSignal().getSignalStart() == simTime());
 
-	filterSignal(frame->getSignal());
+	filterSignal(frame);
 
 	if(decider && isKnownProtocolId(frame->getProtocolId())) {
 		frame->setState(RECEIVING);
@@ -644,13 +644,9 @@ void BasePhyLayer::sendSelfMessage(cMessage* msg, simtime_t time) {
 }
 
 
-void BasePhyLayer::filterSignal(Signal& s) {
-	for(AnalogueModelList::const_iterator it = analogueModels.begin();
-		it != analogueModels.end(); it++) {
-
-		AnalogueModel* tmp = *it;
-		tmp->filterSignal(s);
-	}
+void BasePhyLayer::filterSignal(AirFrame *frame) {
+	for(AnalogueModelList::const_iterator it = analogueModels.begin(); it != analogueModels.end(); it++)
+		(*it)->filterSignal(frame);
 }
 
 //--Destruction--------------------------------

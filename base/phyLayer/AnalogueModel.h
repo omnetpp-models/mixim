@@ -1,7 +1,7 @@
 #ifndef ANALOGUEMODEL_
 #define ANALOGUEMODEL_
 
-#include "Signal_.h"
+#include "AirFrame_m.h"
 
 /**
  * @brief Interface for the analogue models of the physical layer.
@@ -25,10 +25,10 @@ public:
 	/**
 	 * @brief Has to be overriden by every implementation.
 	 *
-	 * Filters a specified Signal by adding an attenuation
+	 * Filters a specified AirFrame's Signal by adding an attenuation
 	 * over time to the Signal.
 	 */
-	virtual void filterSignal(Signal& s) = 0;
+	virtual void filterSignal(AirFrame *frame) = 0;
 };
 
 #endif /*ANALOGUEMODEL_*/

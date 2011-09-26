@@ -25,7 +25,9 @@ double SimplePathlossConstMapping::getValue(const Argument& pos) const
 
 
 
-void SimplePathlossModel::filterSignal(Signal& s){
+void SimplePathlossModel::filterSignal(AirFrame *frame)
+{
+    Signal& signal = frame->getSignal();
 
 	/** Get start of the signal */
 	simtime_t sStart = s.getSignalStart();
@@ -60,7 +62,7 @@ void SimplePathlossModel::filterSignal(Signal& s){
 	splmEV << "distance factor is: " << distFactor << endl;
 
 	//is our signal to attenuate defined over frequency?
-	bool hasFrequency = s.getTransmissionPower()->getDimensionSet().hasDimension(Dimension::frequency);
+	bool hasFrequency = signal.getTransmissionPower()->getDimensionSet().hasDimension(Dimension::frequency);
 	splmEV << "Signal contains frequency dimension: " << (hasFrequency ? "yes" : "no") << endl;
 
 	const DimensionSet& domain = hasFrequency ? DimensionSet::timeFreqDomain : DimensionSet::timeDomain;
@@ -74,7 +76,7 @@ void SimplePathlossModel::filterSignal(Signal& s){
 													distFactor);
 
 	/* at last add the created attenuation mapping to the signal */
-	s.addAttenuation(attMapping);
+	signal.addAttenuation(attMapping);
 }
 
 double SimplePathlossModel::calcPathloss(const Coord& receiverPos, const Coord& sendersPos)

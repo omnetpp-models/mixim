@@ -24,6 +24,7 @@
 #include "Mapping.h"
 #include "Signal_.h"
 #include "BaseWorldUtility.h"
+#include "MobilityAccess.h"
 #include <math.h>
 
 #define PI 3.1415926
@@ -37,7 +38,8 @@ class IntensityModel : public AnalogueModel {
 
 public:
 	IntensityModel() { }
-	void filterSignal(Signal& s) {
+	void filterSignal(AirFrame *frame) {
+		Signal& signal = frame->getSignal();
 		TimeMapping<Linear>* attMapping = new TimeMapping<Linear> ();
 
 		// Determine distance between sender and receiver

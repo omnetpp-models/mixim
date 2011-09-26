@@ -86,7 +86,7 @@ public:
     	pathlosses.setName("pathloss");
     }
 
-    void filterSignal(Signal& s);
+    void filterSignal(AirFrame *frame);
 
 protected:
     double pathloss_exponent;

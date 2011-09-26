@@ -1,9 +1,11 @@
 #include "BreakpointPathlossModel.h"
+#include "ChannelAccess.h"
 
 #define debugEV (ev.isDisabled()||!debug) ? ev : ev << "PhyLayer(BreakpointPathlossModel): "
 
 
-void BreakpointPathlossModel::filterSignal(Signal& s) {
+void BreakpointPathlossModel::filterSignal(AirFrame *frame) {
+    Signal& signal = frame->getSignal();
 
 	/** Get start of the signal */
 	simtime_t sStart = s.getSignalStart();
@@ -54,5 +56,5 @@ void BreakpointPathlossModel::filterSignal(Signal& s) {
 	attMapping->setValue(arg, attenuation);
 
 	/* at last add the created attenuation mapping to the signal */
-	s.addAttenuation(attMapping);
+	signal.addAttenuation(attMapping);
 }

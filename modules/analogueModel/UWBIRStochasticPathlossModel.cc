@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "UWBIRStochasticPathlossModel.h"
+#include "ChannelAccess.h"
 
 //const double UWBIRStochasticPathlossModel::Gtx = 0.9, UWBIRStochasticPathlossModel::Grx = 0.9, UWBIRStochasticPathlossModel::ntx = 0.9, UWBIRStochasticPathlossModel::nrx = 0.9;
 const double UWBIRStochasticPathlossModel::Gtx = 1, UWBIRStochasticPathlossModel::Grx = 1, UWBIRStochasticPathlossModel::ntx = 1, UWBIRStochasticPathlossModel::nrx = 1;
@@ -38,7 +39,9 @@ double UWBIRStochasticPathlossModel::simtruncnormal(double mean, double stddev, 
     return res;
 }
 
-void UWBIRStochasticPathlossModel::filterSignal(Signal& s) {
+void UWBIRStochasticPathlossModel::filterSignal(AirFrame *frame)
+{
+    Signal& signal = frame->getSignal();
 
 	if (isEnabled) {
 		// Initialize objects and variables
@@ -76,7 +79,7 @@ void UWBIRStochasticPathlossModel::filterSignal(Signal& s) {
 		//attenuation = attenuation / (4*PI*pow(distance, gamma));
 		// Store scalar mapping
 		attMapping->setValue(arg, attenuation);
-		s.addAttenuation(attMapping);
+		signal.addAttenuation(attMapping);
 	}
 }
 
