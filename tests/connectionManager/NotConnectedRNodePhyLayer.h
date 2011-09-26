@@ -29,7 +29,7 @@ public:
 	}
 
 	virtual void finish() {
-		CMPhyLayer::finish();
+		BaseModule::finish();
 
 		assertFalse("Should have received no broadcast.", broadcastReceived);
 	}
