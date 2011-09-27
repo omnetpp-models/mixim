@@ -3,6 +3,7 @@
 
 #include <map>
 #include <algorithm>
+#include <assert.h>
 
 /**
  * @brief Represents an interpolated value of any type.
@@ -246,7 +247,15 @@ public:
 	static double linearInterpolation(const Key& t,
 									  const Key& t0, const Key& t1,
 									  const V& v0, const V& v1){
-		return v0 + (v1 - v0) * (double)((t - t0) / (t1 - t0));
+        assert(t0 <= t && t <= t1);
+        if (t0 == t1) {
+            assert(v0 == v1);
+            return v0;
+        }
+        else {
+            double mu = (t - t0) / (t1 - t0);
+            return v0 * (1 - mu) + v1 * mu;
+        }
 	}
 
 	interpolated operator()(const InputIterator& first,
