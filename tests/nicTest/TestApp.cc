@@ -85,7 +85,7 @@ void TestApp::testRun1(int stage)
 {
 	Enter_Method_Silent();
 	const double min = 0.0025;
-	const double max = 0.0037;
+	const double max = 0.0038; // Note: it was 0.0037 but it's unclear what did that mean
 
 	if(stage == 0) { //@app1
 //planTest("1.1", "A same channel but different time as B");
