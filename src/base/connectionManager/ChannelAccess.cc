@@ -27,8 +27,7 @@
 
 
 #include "ChannelAccess.h"
-#include "MobilityAccess.h"
-#include "Coord.h"
+#include "IMobility.h"
 
 #include <cassert>
 
@@ -142,14 +141,15 @@ simtime_t ChannelAccess::calculatePropagationDelay(const NicEntry* nic) {
 void ChannelAccess::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
 {
 	if (signalID == mobilityStateChangedSignal) {
-		Coord *coord = static_cast<Coord*>(obj);
+        IMobility *mobility = check_and_cast<IMobility*>(obj);
+        Coord pos = mobility->getCurrentPosition();
 
 		if(isRegistered) {
-			cc->updateNicPos(getParentModule()->getId(), coord);
+			cc->updateNicPos(getParentModule()->getId(), &pos);
 		}
 		else {
 			// register the nic with ConnectionManager, returns true, if sendDirect is used
-			useSendDirect = cc->registerNic(getParentModule(), this, coord);
+			useSendDirect = cc->registerNic(getParentModule(), this, &pos);
 			isRegistered = true;
 		}
 	}
