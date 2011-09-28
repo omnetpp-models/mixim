@@ -38,7 +38,7 @@ protected:
 		return findHost()->getIndex();
 	};
 
-	void sendDown(int destAddr) {
+	void sendDown(MACAddress destAddr) {
 		MacPkt* m = new MacPkt;
 		m->setDestAddr(destAddr);
 		m->setSrcAddr(myAddr());

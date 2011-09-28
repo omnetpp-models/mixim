@@ -34,7 +34,7 @@ public:
 		assertTrue("Should have received at least one broadcast.", broadcastReceived);
 	}
 protected:
-	virtual void handleLowerMsg( int srcAddr) {
+	virtual void handleLowerMsg(MACAddress srcAddr) {
 		broadcastReceived = true;
 
 		ev << "Connected R-Node " << myAddr() << ": got broadcast message from " << srcAddr << endl;

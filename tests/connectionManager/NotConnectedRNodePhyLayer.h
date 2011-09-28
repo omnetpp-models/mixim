@@ -35,7 +35,7 @@ public:
 	}
 
 protected:
-	virtual void handleLowerMsg( int srcAddr) {
+	virtual void handleLowerMsg(MACAddress srcAddr) {
 		ev << "Not Connected R-Node " << myAddr() << ": got broadcast message from " << srcAddr << endl;
 
 		broadcastReceived = true;

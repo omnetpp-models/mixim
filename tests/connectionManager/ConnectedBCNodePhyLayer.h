@@ -36,7 +36,7 @@ public:
 					broadcastAnswered);
 	}
 protected:
-	virtual void handleLowerMsg(int srcAddr) {
+	virtual void handleLowerMsg(MACAddress srcAddr) {
 		broadcastAnswered = true;
 		ev << "Connected BC-Node " << myAddr() << ": got answer message from " << srcAddr << endl;
 	}
