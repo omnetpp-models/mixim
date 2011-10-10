@@ -1,5 +1,6 @@
 <buildspec version="4.0">
-<dir makemake-options="--deep -o examples -O out -lmixim --meta:auto-include-path --meta:export-library --meta:use-exported-libs --meta:feature-cflags --meta:feature-ldflags" path="examples" type="makemake"/>
-<dir makemake-options="--deep -o tests -O out -lmixim --meta:auto-include-path --meta:export-library --meta:use-exported-libs --meta:feature-cflags --meta:feature-ldflags" path="tests" type="makemake"/>
-<dir makemake-options="--deep --make-so -O out -pMIXIM --meta:auto-include-path --meta:export-library --meta:use-exported-libs --meta:feature-cflags --meta:feature-ldflags" path="src" type="makemake"/>
+<dir makemake-options="--nolink -O out --meta:recurse --meta:auto-include-path --meta:export-library --meta:use-exported-libs --meta:feature-cflags --meta:feature-ldflags" path="." type="makemake"/>
+<dir makemake-options="--deep -O out -lMiXiM --meta:auto-include-path --meta:export-library --meta:use-exported-libs --meta:feature-cflags --meta:feature-ldflags" path="examples" type="makemake"/>
+<dir makemake-options="--deep -O out -lMiXiM --meta:auto-include-path --meta:export-library --meta:use-exported-libs --meta:feature-cflags --meta:feature-ldflags" path="tests" type="makemake"/>
+<dir makemake-options="--deep --make-so -O out --meta:auto-include-path --meta:export-library --meta:use-exported-libs --meta:feature-cflags --meta:feature-ldflags" path="src" type="makemake"/>
 </buildspec>
