@@ -691,8 +691,7 @@ simtime_t csma::scheduleBackoff() {
 	case EXPONENTIAL:
 	{
 		int BE = std::min(macMinBE + NB, macMaxBE);
-		double d = std::pow((double) 2, (int) BE);
-		int v = (int) d - 1;
+		int v = (1 << BE) - 1;
 		int r = intuniform(0, v, 0);
 		backoffTime = r * aUnitBackoffPeriod;
 
