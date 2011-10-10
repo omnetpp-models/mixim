@@ -22,6 +22,9 @@
 
 Define_Module(ArpHost);
 
+#define LL INT64_PRINTF_FORMAT
+
+
 void ArpHost::initialize(int stage) {
 	BaseModule::initialize(stage);
     if(stage==0) {
@@ -49,7 +52,7 @@ MACAddress ArpHost::getMacAddr(const int netwAddr)
 int ArpHost::getNetwAddr(const MACAddress macAddr)
 {
     if(debug) {
-        Enter_Method("getNetwAddr(%d)",macAddr);
+        Enter_Method("getNetwAddr(" LL ")",macAddr.getInt());
     } else {
         Enter_Method_Silent();
     }
