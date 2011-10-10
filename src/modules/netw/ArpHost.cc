@@ -34,11 +34,7 @@ void ArpHost::initialize(int stage) {
 
 MACAddress ArpHost::getMacAddr(const int netwAddr)
 {
-    if(debug) {
-        Enter_Method("getMacAddr(%d)",netwAddr);
-    } else {
-        Enter_Method_Silent();
-    }
+    Enter_Method("getMacAddr(%d)",netwAddr);
     // modification by Jerome Rousselot, CSEM
     // assumes that addresses are equal to host IDs
     // and that mac addresses == net addresses
@@ -51,11 +47,7 @@ MACAddress ArpHost::getMacAddr(const int netwAddr)
 
 int ArpHost::getNetwAddr(const MACAddress macAddr)
 {
-    if(debug) {
-        Enter_Method("getNetwAddr(" LL ")",macAddr.getInt());
-    } else {
-        Enter_Method_Silent();
-    }
+    Enter_Method("getNetwAddr(" LL ")",macAddr.getInt());
     // modification by Jerome Rousselot, CSEM
     // assumes that addresses are equal to host IDs
     // and that mac addresses == net addresses
