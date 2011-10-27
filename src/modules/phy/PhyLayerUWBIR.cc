@@ -1,11 +1,16 @@
 #include "PhyLayerUWBIR.h"
+
 #include <cassert>
+
+#include "DeciderUWBIREDSyncOnAddress.h"
+#include "DeciderUWBIREDSync.h"
 #include "MacToUWBIRPhyControlInfo.h"
 #include "AirFrameUWBIR_m.h"
+#include "BaseWorldUtility.h"
 
 Define_Module(PhyLayerUWBIR);
 
-//cNEDValue (PhyLayerUWBIR::*ghassemzadehNLOSFPtr) (cComponent *context, cNEDValue argv[], int argc) = &ghassemzadehNLOSFunc;
+//t_dynamic_expression_value (PhyLayerUWBIR::*ghassemzadehNLOSFPtr) (cComponent *context, t_dynamic_expression_value argv[], int argc) = &ghassemzadehNLOSFunc;
 PhyLayerUWBIR::fptr ghassemzadehNLOSFPtr = &PhyLayerUWBIR::ghassemzadehNLOSFunc;
 Define_NED_Function(ghassemzadehNLOSFPtr, "xml ghassemzadehNLOS()");
 
@@ -215,13 +220,13 @@ Decider* PhyLayerUWBIR::getDeciderFromName(std::string name, ParameterMap& param
 	}
 
 	if (name == "DeciderUWBIREDSyncOnAddress") {
-		int addr;
+		LAddress::L2Type addr;
 		it = params.find("addr");
 		if (it == params.end()) {
 			error(
 					"Could not find required int parameter <addr> in the decider xml configuration file.");
 		}
-		addr = it->second.longValue();
+		addr = LAddress::L2Type(it->second.longValue());
 		uwbdecider = new DeciderUWBIREDSyncOnAddress(this, this, syncThreshold,
 				syncAlwaysSucceeds, stats, trace, addr, alwaysFailOnDataInterference);
 	}
@@ -298,6 +303,7 @@ void PhyLayerUWBIR::setSwitchingCurrent(int from, int to) {
 			// ! transitions between rx and sync should be immediate
 		default:
 			opp_error("Unknown radio switch! From RX to %d", to);
+			break;
 		}
 		break;
 
@@ -311,6 +317,7 @@ void PhyLayerUWBIR::setSwitchingCurrent(int from, int to) {
 			break;
 		default:
 			opp_error("Unknown radio switch! From TX to %d", to);
+			break;
 		}
 		break;
 
@@ -324,11 +331,13 @@ void PhyLayerUWBIR::setSwitchingCurrent(int from, int to) {
 			break;
 		default:
 			opp_error("Unknown radio switch! From SLEEP to %d", to);
+			break;
 		}
 		break;
 
 	default:
 		opp_error("Unknown radio state: %d", from);
+		break;
 	}
 
 	BatteryAccess::drawCurrent(current, act);
@@ -347,6 +356,7 @@ void PhyLayerUWBIR::setRadioCurrent(int rs) {
 		break;
 	case RadioUWBIR::SYNC:
 		BatteryAccess::drawCurrent(syncCurrent, SYNC_ACCT);
+		break;
 	default:
 		break;
 	}
@@ -395,13 +405,9 @@ AirFrame *PhyLayerUWBIR::encapsMsg(cPacket *macPkt)
 	// create the new AirFrame
 	AirFrameUWBIR* frame = new AirFrameUWBIR("airframe", AIR_FRAME);
 
-	MacToUWBIRPhyControlInfo* macToPhyCI = static_cast<MacToUWBIRPhyControlInfo*>(ctrlInfo);
-
-
-
 	// Retrieve the pointer to the Signal-instance from the ControlInfo-instance.
 	// We are now the new owner of this instance.
-	Signal* s = macToPhyCI->retrieveSignal();
+	Signal* s = MacToUWBIRPhyControlInfo::getSignalFromControlInfo(ctrlInfo);
 	// make sure we really obtained a pointer to an instance
 	assert(s);
 
@@ -419,22 +425,15 @@ AirFrame *PhyLayerUWBIR::encapsMsg(cPacket *macPkt)
 	frame->setBitLength(headerLength);
 	frame->setId(world->getUniqueAirFrameId());
 	frame->setChannel(radio->getCurrentChannel());
-	frame->setCfg(macToPhyCI->getConfig());
-
-
+	frame->setCfg(MacToUWBIRPhyControlInfo::getConfigFromControlInfo(ctrlInfo));
 
 	// pointer and Signal not needed anymore
 	delete s;
 	s = 0;
 
-
-
-
 	// delete the Control info
-	delete macToPhyCI;
-	macToPhyCI = 0;
+	delete ctrlInfo;
 	ctrlInfo = 0;
-
 
 	frame->encapsulate(macPkt);
 

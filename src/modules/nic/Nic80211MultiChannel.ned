@@ -22,7 +22,6 @@ import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.Mac80211MultiChannel;
 import org.mixim.modules.phy.PhyLayerBattery;
 
-
 //
 // This NIC implements an 802.11 network interface card with multi channel 
 // support and power consumption.

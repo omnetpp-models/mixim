@@ -24,10 +24,11 @@
 #include <list>
 
 #include "MiXiMDefs.h"
-#include <BaseMacLayer.h>
-#include <Mac80211Pkt_m.h>
-#include <Consts80211.h>
-#include <ChannelSenseRequest_m.h>
+#include "BaseMacLayer.h"
+#include "Consts80211.h"
+#include "Mac80211Pkt_m.h"
+
+class ChannelSenseRequest;
 
 /**
  * @brief An implementation of the 802.11b MAC.
@@ -76,10 +77,10 @@ protected:
     /** @brief Data about a neighbor host.*/
     struct NeighborEntry {
     	/** @brief The neighbors address.*/
-    	MACAddress address;
-        int fsc;
-        simtime_t age;
-        double bitrate;
+    	LAddress::L2Type address;
+        int              fsc;
+        simtime_t        age;
+        double           bitrate;
     };
 
     /** @brief Type for a list of NeighborEntries.*/
@@ -107,14 +108,11 @@ protected:
 	virtual void handleLowerControl(cMessage*);
 
 
-    /** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
-    //virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
-
     /** @brief handle end of contention */
     virtual void handleEndContentionTimer();
 
     /** @brief handle a message that is not for me or errornous*/
-    void handleMsgNotForMe(cMessage *af, simtime_t duration);
+    void handleMsgNotForMe(cMessage *af, simtime_t_cref duration);
     /** @brief handle a message that was meant for me*/
     void handleMsgForMe(Mac80211Pkt*);
     // ** @brief handle a Broadcast message*/
@@ -194,13 +192,13 @@ protected:
     void suspendContention();
 
     /** @brief figure out at which bitrate to send to this particular destination */
-    double retrieveBitrate(MACAddress destAddress);
+    double retrieveBitrate(const LAddress::L2Type& destAddress);
 
     /** @brief add a new entry to the neighbor list */
     void addNeighbor(Mac80211Pkt *af);
 
     /** @brief find a neighbor based on his address */
-    NeighborList::iterator findNeighbor(MACAddress address)  {
+    NeighborList::iterator findNeighbor(const LAddress::L2Type& address)  {
         NeighborList::iterator it;
         for(it = neighbors.begin(); it != neighbors.end(); ++it) {
             if(it->address == address) break;
@@ -229,12 +227,12 @@ protected:
      *
      * Used during contend state to check if the channel is free.
      */
-    void senseChannelWhileIdle(simtime_t duration);
+    void senseChannelWhileIdle(simtime_t_cref duration);
 
     /**
      * @brief Creates the signal to be used for a packet to be sent.
      */
-    Signal* createSignal(simtime_t start, simtime_t length, double power, double bitrate);
+    Signal* createSignal(simtime_t_cref start, simtime_t_cref length, double power, double bitrate);
 
 protected:
 

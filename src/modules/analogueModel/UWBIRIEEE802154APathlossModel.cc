@@ -19,7 +19,12 @@
  ***************************************************************************/
 
 #include "UWBIRIEEE802154APathlossModel.h"
-#include "ChannelAccess.h"
+
+#include <map>
+#include <limits>
+
+#include "IEEE802154A.h"
+#include "AirFrame_m.h"
 
 const double UWBIRIEEE802154APathlossModel::PL0 = 0.000040738; // -43.9 dB
 const double UWBIRIEEE802154APathlossModel::pathloss_exponent = 1.79;
@@ -175,13 +180,15 @@ const UWBIRIEEE802154APathlossModel::CMconfig UWBIRIEEE802154APathlossModel::CMc
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}  // CM9
 };
 
-void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame)
+void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
 {
     Signal& signal = frame->getSignal();
     // We create a new "fake" txPower to add multipath taps
     // and then attenuation is applied to all pulses.
 
-	// (1) Power Delay Profile realization
+    // (1) Power Delay Profile realization
+    using std::max;
+    using std::pow;
 
     txPower = signal.getTransmissionPower();
     newTxPower = new TimeMapping<Linear>(); //dynamic_cast<TimeMapping<Linear>*> (txPower->clone()); // create working copy
@@ -189,7 +196,7 @@ void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame)
     // generate number of clusters for this channel (channel coherence time > packet air time)
     L = max(1, poisson(cfg.Lmean));
     // Choose block shadowing
-    S = pow(10,(normal(0, cfg.sigma_s)/10));
+    S = pow(10.,(normal(0, cfg.sigma_s)/10.));
 
     // Loop on each value of the original mapping and generate multipath echoes
     ConstMappingIterator* iter = txPower->createConstIterator();
@@ -210,15 +217,7 @@ void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame)
     signal.setTransmissionPower(newTxPower);
 
 
-    // compute distance
-    assert(signal.getReceptionStart() == simTime());
-    IMobility *senderMobility = ((ChannelAccess*)frame->getSenderModule())->getMobilityModule();
-    IMobility *receiverMobility = ((ChannelAccess*)frame->getArrivalModule())->getMobilityModule();
-    Coord senderPos = senderMobility->getCurrentPosition();
-    Coord receiverPos = receiverMobility->getCurrentPosition();
-    double distance = receiverPos.distance(senderPos);
-
-	// Total radiated power Prx at that distance  [W]
+    // Total radiated power Prx at that distance  [W]
     //double attenuation = 0.5 * ntx * nrx * cfg.PL0 / pow(distance / d0, cfg.n);
     double attenuation = getPathloss(fc, BW);
     pathlosses.record(attenuation);
@@ -232,7 +231,10 @@ void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame)
 
 }
 
-void UWBIRIEEE802154APathlossModel::addEchoes(simtime_t pulseStart) {
+void UWBIRIEEE802154APathlossModel::addEchoes(simtime_t_cref pulseStart) {
+    using std::map;
+    using std::numeric_limits;
+
 	// statistics
 	nbCalls = nbCalls + 1;
 	double power = 0;
@@ -243,8 +245,8 @@ void UWBIRIEEE802154APathlossModel::addEchoes(simtime_t pulseStart) {
     if(doShadowing) {
     	pulseEnergy = pulseEnergy - S;
     }
-    simtime_t tau_kl = 0;
-    simtime_t fromClusterStart = 0;
+    simtime_t tau_kl = SIMTIME_ZERO;
+    simtime_t fromClusterStart = SIMTIME_ZERO;
     // start time of cluster number "cluster"
     clusterStart = 0;
     gamma_l = cfg.gamma_0;
@@ -256,7 +258,7 @@ void UWBIRIEEE802154APathlossModel::addEchoes(simtime_t pulseStart) {
     double mfactor = 0;
     double mmean = 0, msigma = 0;
     bool firstTap = true;
-    simtime_t echoEnd = 0;
+    simtime_t echoEnd = SIMTIME_ZERO;
     for (int cluster = 0; cluster < L; cluster++) {
         while (moreTaps) {
             // modify newTxPower

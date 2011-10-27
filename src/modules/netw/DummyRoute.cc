@@ -8,14 +8,18 @@
  * description: Adaptor module that simply "translates" netwControlInfo to macControlInfo
  *
  **************************************************************************/
+#include "DummyRoute.h"
 
 #include <limits>
 #include <algorithm>
-
-#include "DummyRoute.h"
-#include "DummyRoutePkt_m.h"
-#include <Ieee802Ctrl_m.h>
 #include <cassert>
+
+#include "DummyRoutePkt_m.h"
+#include "NetwControlInfo.h"
+#include "ArpInterface.h"
+#include "NetwPkt_m.h"
+
+using std::endl;
 
 Define_Module(DummyRoute);
 
@@ -44,16 +48,15 @@ void DummyRoute::handleLowerControl(cMessage *msg) {
 void DummyRoute::handleUpperMsg(cMessage* msg) {
 //	NetwControlInfo* cInfo =
 //			dynamic_cast<NetwControlInfo*> (msg->removeControlInfo());
-//	int nextHopMacAddr;
+//	LAddress::L2Type nextHopMacAddr;
 //	if (cInfo == 0) {
 //		EV<<"DummyRoute warning: Application layer did not specifiy a destination L3 address\n"
 //	       << "\tusing broadcast address instead\n";
-//		nextHopMacAddr = 0;
+//		nextHopMacAddr = LAddress::L2BROADCAST;
 //	} else {
-//		nextHopMacAddr = cInfo->getNetwAddr();
+//		nextHopMacAddr = arp->getMacAddr(cInfo->getNetwAddr());
 //	}
-//	nextHopMacAddr = cInfo->getNetwAddr();
-//	msg->setControlInfo(new Ieee802Ctrl(nextHopMacAddr));
+//	LAddress::setL3ToL2ControlInfo(msg, myNetwAddr, nextHopMacAddr);
 	sendDown(encapsMsg(check_and_cast<cPacket*>(msg)));
 }
 
@@ -61,23 +64,23 @@ void DummyRoute::finish() {
 }
 
 NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt) {
-    MACAddress macAddr;
-    int netwAddr;
+    LAddress::L2Type macAddr;
+    LAddress::L3Type netwAddr;
 
     debugEV <<"in encaps...\n";
 
     DummyRoutePkt *pkt = new DummyRoutePkt(appPkt->getName(), appPkt->getKind());
     pkt->setBitLength(headerLength);
 
-    NetwControlInfo* cInfo = dynamic_cast<NetwControlInfo*>(appPkt->removeControlInfo());
+    cObject* cInfo = appPkt->removeControlInfo();
 
-    if(cInfo == 0){
+    if(cInfo == NULL){
 	  EV << "warning: Application layer did not specifiy a destination L3 address\n"
 	   << "\tusing broadcast address instead\n";
-	  netwAddr = L3BROADCAST;
+	  netwAddr = LAddress::L3BROADCAST;
     } else {
-	  debugEV <<"CInfo removed, netw addr="<< cInfo->getNetwAddr()<<endl;
-        netwAddr = cInfo->getNetwAddr();
+	  debugEV <<"CInfo removed, netw addr="<< NetwControlInfo::getAddressFromControlInfo( cInfo ) << endl;
+	  netwAddr = NetwControlInfo::getAddressFromControlInfo( cInfo );
 	  delete cInfo;
     }
 
@@ -85,19 +88,17 @@ NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt) {
     pkt->setSrcAddr(myNetwAddr);
     pkt->setDestAddr(netwAddr);
     debugEV << " netw "<< myNetwAddr << " sending packet" <<endl;
-    if(netwAddr == L3BROADCAST) {
+    if(LAddress::isL3Broadcast(netwAddr)) {
         debugEV << "sendDown: nHop=L3BROADCAST -> message has to be broadcasted"
            << " -> set destMac=L2BROADCAST\n";
-        macAddr = MACAddress::BROADCAST_ADDRESS;
+        macAddr = LAddress::L2BROADCAST;
     }
     else{
         debugEV <<"sendDown: get the MAC address\n";
         macAddr = arp->getMacAddr(netwAddr);
     }
 
-    Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-    ctrl->setDest(macAddr);
-    pkt->setControlInfo(ctrl);
+    setDownControlInfo(pkt, macAddr);
 
     //encapsulate the application packet
     pkt->encapsulate(appPkt);
@@ -107,7 +108,7 @@ NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt) {
 
 cMessage* DummyRoute::decapsMsg(NetwPkt *msg) {
 	cMessage *m = msg->decapsulate();
-	m->setControlInfo(new NetwControlInfo(msg->getSrcAddr()));
+	setUpControlInfo(m, msg->getSrcAddr());
 		// delete the netw packet
 	delete msg;
 	return m;

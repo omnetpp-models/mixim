@@ -3,7 +3,6 @@
 #ifndef PASSED_MESSAGE_H
 #define PASSED_MESSAGE_H
 
-#include <string>
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"

@@ -1,5 +1,10 @@
 #include "SNRThresholdDecider.h"
 
+#include <cassert>
+
+#include "AirFrame_m.h"
+#include "Mapping.h"
+
 simtime_t SNRThresholdDecider::processNewSignal(AirFrame* frame)
 {
 	//the rssi level changes therefore we need to check if we can
@@ -45,7 +50,7 @@ simtime_t SNRThresholdDecider::processNewSignal(AirFrame* frame)
 }
 
 // TODO: for now we check a larger mapping within an interval
-bool SNRThresholdDecider::checkIfAboveThreshold(Mapping* map, simtime_t start, simtime_t end)
+bool SNRThresholdDecider::checkIfAboveThreshold(Mapping* map, simtime_t_cref start, simtime_t_cref end)
 {
 	assert(map);
 

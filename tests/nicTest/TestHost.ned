@@ -4,7 +4,6 @@ import inet.linklayer.IWirelessNic;
 import inet.mobility.models.StationaryMobility;
 import org.mixim.modules.netw.ArpHost;
 
-
 module TestHost
 {
     parameters:
@@ -33,4 +32,6 @@ module TestHost
         radioIn --> nic.radioIn;
         app.out --> nic.upperLayerIn;
         app.in <-- nic.upperLayerOut;
+        app.controlOut --> nic.upperControlIn;
+        app.controlIn <-- nic.upperControlOut;
 }

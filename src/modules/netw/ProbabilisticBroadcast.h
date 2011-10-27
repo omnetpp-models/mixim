@@ -8,22 +8,12 @@
 #ifndef PROBABILISTICBROADCAST_H_
 #define PROBABILISTICBROADCAST_H_
 
-#include <fstream>
 #include <set>
 #include <map>
 
 #include "MiXiMDefs.h"
 #include "ProbabilisticBroadcastPkt_m.h"
-#include "MacPkt_m.h"
-#include "BaseMacLayer.h"
-#include "SimTracer.h"
-#include "ProbBcastNetwControlInfo.h"
-#include "MacToNetwControlInfo.h"
-#include "Ieee802Ctrl_m.h"
 #include "BaseNetwLayer.h"
-
-using namespace std;
-
 
 /**
  * @brief This class offers a data dissemination service using
@@ -64,8 +54,8 @@ protected:
 		                                        // time by its creator.
 	} tMsgDesc;
 
-	typedef set<unsigned int> MsgIdSet;
-	typedef multimap<simtime_t, tMsgDesc*> TimeMsgMap;
+	typedef std::set<unsigned int> MsgIdSet;
+	typedef std::multimap<simtime_t, tMsgDesc*> TimeMsgMap;
 
 	/** @brief Handle messages from upper layer */
     virtual void handleUpperMsg(cMessage* msg);
@@ -91,7 +81,7 @@ protected:
      *  @param bcastDelay relative (to now) simulator time of next broadcast attempt.
      *  @param msg descriptor of the message to insert in the queue.
      **/
-	virtual void insertMessage(simtime_t bcastDelay, tMsgDesc* msgDesc);
+	virtual void insertMessage(simtime_t_cref bcastDelay, tMsgDesc* msgDesc);
 
 	/** @brief Returns the descriptor of the first message in the queue,
 	 *         then remove its pointer from the queue and its id from the
@@ -186,9 +176,6 @@ protected:
     MsgIdSet knownMsgIds;
     TimeMsgMap msgQueue;
     MsgIdSet debugMsgIdSet;
-
-    // keep MAC broadcast address at class level:
-    MACAddress convertedMacBroadcastAddr;
 
     // variables for statistics
     long nbDataPacketsReceived; // total number of received packets from lower layer

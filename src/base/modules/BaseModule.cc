@@ -19,10 +19,20 @@
  **************************************************************************/
 
 #include "BaseModule.h"
+
 #include <cassert>
+
+#include "FindModule.h"
+
+// Could not initialize simsignal_t it here!? I got the POST_MODEL_CHANGE id!?
+const simsignalwrap_t BaseModule::catHostStateSignal = simsignalwrap_t(MIXIM_SIGNAL_HOSTSTATE_NAME);
 
 BaseModule::BaseModule():
 	cSimpleModule()
+{}
+
+BaseModule::BaseModule(unsigned stacksize):
+	cSimpleModule(stacksize)
 {}
 
 /**
@@ -37,17 +47,20 @@ void BaseModule::initialize(int stage) {
         notAffectedByHostState = hasPar("notAffectedByHostState")
 								 && par("notAffectedByHostState").boolValue();
         hasPar("debug") ? debug = par("debug").boolValue() : debug = true;
-        cModule *host = findHost();
-        hostId = host->getId();
-        host->subscribe("hostStateChanged", this);
-        hostStateCat = registerSignal("hostStateChanged");
+        findHost()->subscribe(catHostStateSignal, this);
     }
 }
 
 void BaseModule::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) {
 	Enter_Method_Silent();
-	if (signalID == hostStateCat) {
-		handleHostState(*(HostState*)obj);
+	if (signalID == catHostStateSignal) {
+		const HostState *const pHostState = dynamic_cast<const HostState *const>(obj);
+		if (pHostState) {
+			handleHostState(*pHostState);
+		}
+		else {
+			opp_warning("Got catHostStateSignal but obj was not a HostState pointer?");
+		}
 	}
 }
 
@@ -68,12 +81,17 @@ void BaseModule::handleHostState(const HostState& state)
 void BaseModule::switchHostState(HostState::States state)
 {
 	HostState hostState(state);
-	emit(hostStateCat, &hostState);
+	emit(catHostStateSignal, &hostState);
 }
 
-cModule *BaseModule::findHost(void)
+cModule *const BaseModule::findHost(void)
 {
-   return FindModule<>::findHost(this);
+	return FindModule<>::findHost(this);
+}
+
+const cModule *const BaseModule::findHost(void) const
+{
+	return FindModule<>::findHost(this);
 }
 
 
@@ -104,7 +122,7 @@ cModule *BaseModule::findHost(void)
 //};
 
 
-std::string BaseModule::logName(void)
+std::string BaseModule::logName(void) const
 {
         std::ostringstream ost;
 	if (hasPar("logName")) // let modules override
@@ -113,7 +131,7 @@ std::string BaseModule::logName(void)
 	}
 	else
 	{
-		cModule *parent = findHost();
+		const cModule *const parent = findHost();
 		parent->hasPar("logName") ?
 			ost << parent->par("logName").stringValue() : ost << parent->getName();
 		ost << "[" << parent->getIndex() << "]";

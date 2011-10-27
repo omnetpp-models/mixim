@@ -20,10 +20,10 @@
 // **************************************************************************/
 
 cplusplus {{
-    #include "MACAddress.h"
+    #include "SimpleAddress.h"
 }}
 
-class MACAddress extends void;
+class LAddress::L2Type extends void;
 
 // A basic MAC (Media Access Control) packet format definition
 // 
@@ -34,7 +34,7 @@ class MACAddress extends void;
 // @author Daniel Willkomm
 packet MacPkt
 {
-    MACAddress destAddr; // destination mac address
-    MACAddress srcAddr;  // source mac address
-    long sequenceId; // Sequence Number to detect duplicate messages
+    LAddress::L2Type destAddr; // destination mac address
+    LAddress::L2Type srcAddr;  // source mac address
+    long             sequenceId; // Sequence Number to detect duplicate messages
 }

@@ -23,14 +23,7 @@
 
 #include "MiXiMDefs.h"
 #include "AnalogueModel.h"
-#include "MappingUtils.h"
-#include "Signal_.h"
-#include "BaseWorldUtility.h"
-#include "IEEE802154A.h"
-//#include "AlohaMacLayer.h"
 #include "SimpleTimeConstMapping.h"
-#include <math.h>
-#include <limits>
 
 /**
  * @brief This class implements the IEEE 802.15.4A Channel Model[1] in the MiXiM
@@ -78,11 +71,12 @@ public:
     	averagePowers.setName("averagePower");
     	pathlosses.setName("pathloss");
     }
+    virtual ~UWBIRIEEE802154APathlossModel() {}
 
     /*
      * @brief Applies the model to an incoming AirFrame's Signal.
      */
-    void filterSignal(AirFrame *frame);
+    void filterSignal(AirFrame *, const Coord&, const Coord&);
 
     /*@brief Utility function to use a Rayleigh random variable
      *
@@ -159,7 +153,6 @@ protected:
     static const double ntx;
     static const double nrx;
 
-
     TimeMapping<Linear>* newTxPower;
     ConstMapping* txPower;
     Argument arg;
@@ -185,7 +178,7 @@ protected:
     /*
      * Generates taps for the considered pulse, with the current channel parameters
      */
-    void addEchoes(simtime_t pulseStart);
+    void addEchoes(simtime_t_cref pulseStart);
 
     /*
      * @brief Computes the pathloss as a function of center frequency and bandwidth given in MHz

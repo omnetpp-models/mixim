@@ -14,7 +14,10 @@
 //
 
 #include "PhyLayerBattery.h"
+
 #include "Decider80211MultiChannel.h"
+#include "MacToPhyControlInfo.h"
+#include "MacPkt_m.h"
 
 Define_Module(PhyLayerBattery);
 
@@ -160,6 +163,7 @@ void PhyLayerBattery::setSwitchingCurrent(int from, int to) {
 			break;
 		default:
 			opp_error("Unknown radio switch! From RX to %d", to);
+			break;
 		}
 		break;
 
@@ -173,6 +177,7 @@ void PhyLayerBattery::setSwitchingCurrent(int from, int to) {
 			break;
 		default:
 			opp_error("Unknown radio switch! From TX to %d", to);
+			break;
 		}
 		break;
 
@@ -186,11 +191,13 @@ void PhyLayerBattery::setSwitchingCurrent(int from, int to) {
 			break;
 		default:
 			opp_error("Unknown radio switch! From SLEEP to %d", to);
+			break;
 		}
 		break;
 
 	default:
 		opp_error("Unknown radio state: %d", from);
+		break;
 	}
 
 	BatteryAccess::drawCurrent(current, act);

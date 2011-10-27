@@ -1,10 +1,14 @@
 #include "BasePhyLayer.h"
-#include "BaseWorldUtility.h"
+
+#include <cxmlelement.h>
 
 #include "MacToPhyControlInfo.h"
 #include "PhyToMacControlInfo.h"
-
-
+#include "FindModule.h"
+#include "AnalogueModel.h"
+#include "Decider.h"
+#include "BaseWorldUtility.h"
+#include "BaseConnectionManager.h"
 
 //introduce BasePhyLayer as module to OMNet
 Define_Module(BasePhyLayer);
@@ -20,7 +24,8 @@ BasePhyLayer::BasePhyLayer():
 	decider(0),
 	radioSwitchingOverTimer(0),
 	txOverTimer(0),
-	world(0)
+	headerLength(-1),
+	world(NULL)
 {}
 
 template<class T> T BasePhyLayer::readPar(const char* parName, const T defaultValue){
@@ -49,20 +54,20 @@ void BasePhyLayer::initialize(int stage) {
 
 		//get gate ids
 		upperLayerIn = findGate("upperLayerIn");
-        upperLayerOut = findGate("upperLayerOut");
-        upperControlOut = findGate("upperControlOut");
-        upperControlIn = findGate("upperControlIn");
+		upperLayerOut = findGate("upperLayerOut");
+		upperControlOut = findGate("upperControlOut");
+		upperControlIn = findGate("upperControlIn");
 
 		//read simple ned-parameters
 		//	- initialize basic parameters
-        if(par("useThermalNoise").boolValue()) {
+		if(par("useThermalNoise").boolValue()) {
 			double thermalNoiseVal = FWMath::dBm2mW(par("thermalNoise").doubleValue());
 			thermalNoise = new ConstantSimpleConstMapping(DimensionSet::timeDomain,
 														  thermalNoiseVal);
 		} else {
 			thermalNoise = 0;
 		}
-        headerLength = par("headerLength").longValue();
+		headerLength = par("headerLength").longValue();
 		sensitivity = par("sensitivity").doubleValue();
 		sensitivity = FWMath::dBm2mW(sensitivity);
 		maxTXPower = par("maxTXPower").doubleValue();
@@ -508,13 +513,9 @@ AirFrame *BasePhyLayer::encapsMsg(cPacket *macPkt)
 	// create the new AirFrame
 	AirFrame* frame = new AirFrame(macPkt->getName(), AIR_FRAME);
 
-	MacToPhyControlInfo* macToPhyCI = static_cast<MacToPhyControlInfo*>(ctrlInfo);
-
-
-
 	// Retrieve the pointer to the Signal-instance from the ControlInfo-instance.
 	// We are now the new owner of this instance.
-	Signal* s = macToPhyCI->retrieveSignal();
+	Signal* s = MacToPhyControlInfo::getSignalFromControlInfo(ctrlInfo);
 	// make sure we really obtained a pointer to an instance
 	assert(s);
 
@@ -538,16 +539,9 @@ AirFrame *BasePhyLayer::encapsMsg(cPacket *macPkt)
 	delete s;
 	s = 0;
 
-
-
 	// delete the Control info
-	delete macToPhyCI;
-	macToPhyCI = 0;
+	delete ctrlInfo;
 	ctrlInfo = 0;
-
-
-
-
 
 	frame->encapsulate(macPkt);
 
@@ -636,7 +630,7 @@ void BasePhyLayer::sendMessageDown(AirFrame* msg) {
 	sendToChannel(msg);
 }
 
-void BasePhyLayer::sendSelfMessage(cMessage* msg, simtime_t time) {
+void BasePhyLayer::sendSelfMessage(cMessage* msg, simtime_t_cref time) {
 	//TODO: maybe delete this method because it doesn't makes much sense,
 	//		or change it to "scheduleIn(msg, timeDelta)" which schedules
 	//		a message to +timeDelta from current time
@@ -645,8 +639,21 @@ void BasePhyLayer::sendSelfMessage(cMessage* msg, simtime_t time) {
 
 
 void BasePhyLayer::filterSignal(AirFrame *frame) {
+	if (analogueModels.empty())
+		return;
+
+	ChannelAccess *const senderModule   = dynamic_cast<ChannelAccess *const>(frame->getSenderModule());
+	ChannelAccess *const receiverModule = dynamic_cast<ChannelAccess *const>(frame->getArrivalModule());
+	//const simtime_t      sStart         = frame->getSignal().getReceptionStart();
+
+	assert(senderModule); assert(receiverModule);
+
+	/** claim the Move pattern of the sender from the Signal */
+	Coord           sendersPos  = senderModule->getMobilityModule()->getCurrentPosition(/*sStart*/);
+	Coord           receiverPos = receiverModule->getMobilityModule()->getCurrentPosition(/*sStart*/);
+
 	for(AnalogueModelList::const_iterator it = analogueModels.begin(); it != analogueModels.end(); it++)
-		(*it)->filterSignal(frame);
+		(*it)->filterSignal(frame, sendersPos, receiverPos);
 }
 
 //--Destruction--------------------------------
@@ -686,7 +693,7 @@ BasePhyLayer::~BasePhyLayer() {
 	 * get a pointer to the radios RSAM again to avoid deleting it,
 	 * it is not created by calling new (BasePhyLayer is not the owner)!
 	 */
-	AnalogueModel* rsamPointer = radio ? radio->getAnalogueModel() : 0;
+	AnalogueModel* rsamPointer = radio ? radio->getAnalogueModel() : NULL;
 
 	//free AnalogueModels
 	for(AnalogueModelList::iterator it = analogueModels.begin();
@@ -764,7 +771,9 @@ ChannelState BasePhyLayer::getChannelState() {
 
 int BasePhyLayer::getPhyHeaderLength() {
 	Enter_Method_Silent();
-	return par("headerLength").longValue();
+	if (headerLength < 0)
+	    return par("headerLength").longValue();
+	return headerLength;
 }
 
 void BasePhyLayer::setCurrentRadioChannel(int newRadioChannel) {
@@ -787,11 +796,11 @@ int BasePhyLayer::getNbRadioChannels() {
 
 //--DeciderToPhyInterface implementation------------
 
-void BasePhyLayer::getChannelInfo(simtime_t from, simtime_t to, AirFrameVector& out) {
+void BasePhyLayer::getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out) {
 	channelInfo.getAirFrames(from, to, out);
 }
 
-ConstMapping* BasePhyLayer::getThermalNoise(simtime_t from, simtime_t to) {
+ConstMapping* BasePhyLayer::getThermalNoise(simtime_t_cref from, simtime_t_cref to) {
 	if(thermalNoise)
 		thermalNoise->initializeArguments(Argument(from));
 
@@ -815,9 +824,7 @@ void BasePhyLayer::sendUp(AirFrame* frame, DeciderResult* result) {
 
 	assert(packet);
 
-	PhyToMacControlInfo* ctrlInfo = new PhyToMacControlInfo(result);
-
-	packet->setControlInfo(ctrlInfo);
+	setUpControlInfo(packet, result);
 
 	sendMacPktUp(packet);
 }
@@ -836,7 +843,7 @@ void BasePhyLayer::cancelScheduledMessage(cMessage* msg) {
 	}
 }
 
-void BasePhyLayer::rescheduleMessage(cMessage* msg, simtime_t t) {
+void BasePhyLayer::rescheduleMessage(cMessage* msg, simtime_t_cref t) {
 	cancelScheduledMessage(msg);
 	scheduleAt(t, msg);
 }
@@ -851,4 +858,12 @@ BaseWorldUtility* BasePhyLayer::getWorldUtility() {
 
 void BasePhyLayer::recordScalar(const char *name, double value, const char *unit) {
 	ChannelAccess::recordScalar(name, value, unit);
+}
+
+/**
+ * Attaches a "control info" (PhyToMac) structure (object) to the message pMsg.
+ */
+cObject *const BasePhyLayer::setUpControlInfo(cMessage *const pMsg, DeciderResult *const pDeciderResult)
+{
+	return PhyToMacControlInfo::setControlInfo(pMsg, pDeciderResult);
 }

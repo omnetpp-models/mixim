@@ -19,10 +19,13 @@
  ***************************************************************************
  * part of:    Modifications to the MF-2 framework by CSEM
  **************************************************************************/
-
-
 #include "SimTracer.h"
 
+#include "FindModule.h"
+#include "BaseLayer.h"
+
+using std::map;
+using std::string;
 
 Define_Module(SimTracer);
 
@@ -33,7 +36,6 @@ void SimTracer::initialize(int stage)
 {
   cSimpleModule::initialize(stage);
   if (stage == 0) {
-
 	char treeName[250];
 	int n;
 	n = sprintf(treeName, "results/tree-%d.txt",
@@ -55,8 +57,7 @@ void SimTracer::initialize(int stage)
     world = FindModule<BaseWorldUtility*>::findGlobalModule();
     //world = check_and_cast<BaseWorldUtility*>(cSimulation::getActiveSimulation()->getModuleByPath("sim.world"));
     if (world) {
-        catPacket = registerSignal("packet");
-        world->subscribe(catPacket, this);
+        world->subscribe(BaseLayer::catPacketSignal, this);
     }
     else {
       error("No BaseWorldUtility module found, please check your ned configuration.");
@@ -124,7 +125,7 @@ void SimTracer::namLog(string namString)
 }
 
 void SimTracer::radioEnergyLog(unsigned long mac, int state,
-			       simtime_t duration, double power, double newPower)
+			       simtime_t_cref duration, double power, double newPower)
 {
   Enter_Method_Silent();
   /*
@@ -144,21 +145,14 @@ void SimTracer::radioEnergyLog(unsigned long mac, int state,
   }
 }
 
-
-
-void SimTracer::logLink(int parent, int child)
-{
-  treeFile << "   " << parent << " -- " << child << " ;" << endl;
-}
-
-void SimTracer::logPosition(int node, double x, double y)
+void SimTracer::logPosition(int node, double x, double y, double z)
 {
 	treeFile << node << "[pos=\""<< x << ", " << y << "!\"];" << endl;
 }
 
 void SimTracer::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
 {
-	if (signalID == catPacket) {
+	if (signalID == BaseLayer::catPacketSignal) {
 		packet = *(static_cast<const Packet*>(obj));
 	//	nbApplPacketsSent = nbApplPacketsSent + packet.getNbPacketsSent();
 	//	nbApplPacketsReceived = nbApplPacketsReceived + packet.getNbPacketsReceived();

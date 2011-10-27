@@ -19,7 +19,6 @@ import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.csma;
 import org.mixim.modules.phy.PhyLayer;
 
-
 //
 // This module implements a CSMA network interface card using
 // the "csma" MAC layer module

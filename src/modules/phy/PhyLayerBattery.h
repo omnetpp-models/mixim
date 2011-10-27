@@ -18,9 +18,10 @@
 
 #include "MiXiMDefs.h"
 #include "PhyLayer.h"
-#include "Decider80211Battery.h"
 #include "HostState.h"
-#include "MacToPhyControlInfo.h"
+
+class MacToPhyControlInfo;
+class MacPkt;
 
 /**
  * @brief Extends PhyLayer by adding power consumption for tx, rx and idle.

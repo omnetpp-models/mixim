@@ -34,7 +34,7 @@
  *
  *
  * @ingroup utils
- * @author Andreas K�pke
+ * @author Andreas Koepke
  */
 class MIXIM_API  DroppedPacket : public cObject
 {

@@ -21,12 +21,17 @@
 
 
 #include "BaseNetwLayer.h"
-#include "NetwControlInfo.h"
-#include "Ieee802Ctrl_m.h"
-#include "BaseMacLayer.h"
-#include "AddressingInterface.h"
 
 #include <cassert>
+
+#include "NetwControlInfo.h"
+#include "BaseMacLayer.h"
+#include "AddressingInterface.h"
+#include "SimpleAddress.h"
+#include "FindModule.h"
+#include "NetwPkt_m.h"
+#include "ArpInterface.h"
+#include "NetwToMacControlInfo.h"
 
 Define_Module(BaseNetwLayer);
 
@@ -47,9 +52,9 @@ void BaseNetwLayer::initialize(int stage)
         if(addrScheme) {
         	myNetwAddr = addrScheme->myNetwAddr(this);
         } else {
-        	myNetwAddr = getId();
+        	myNetwAddr = LAddress::L3Type( getId() );
         }
-        coreEV << " myNetwAddr " << myNetwAddr << endl;
+        coreEV << " myNetwAddr " << myNetwAddr << std::endl;
     }
 }
 
@@ -59,7 +64,7 @@ void BaseNetwLayer::initialize(int stage)
 cMessage* BaseNetwLayer::decapsMsg(NetwPkt *msg)
 {
     cMessage *m = msg->decapsulate();
-    m->setControlInfo(new NetwControlInfo(msg->getSrcAddr()));
+    setUpControlInfo(m, msg->getSrcAddr());
     // delete the netw packet
     delete msg;
     return m;
@@ -71,42 +76,40 @@ cMessage* BaseNetwLayer::decapsMsg(NetwPkt *msg)
  * header fields.
  **/
 NetwPkt* BaseNetwLayer::encapsMsg(cPacket *appPkt) {
-	MACAddress macAddr;
-    int netwAddr;
+    LAddress::L2Type macAddr;
+    LAddress::L3Type netwAddr;
 
     coreEV <<"in encaps...\n";
 
     NetwPkt *pkt = new NetwPkt(appPkt->getName(), appPkt->getKind());
     pkt->setBitLength(headerLength);
 
-    NetwControlInfo* cInfo = dynamic_cast<NetwControlInfo*>(appPkt->removeControlInfo());
+    cObject* cInfo = appPkt->removeControlInfo();
 
-    if(cInfo == 0){
+    if(cInfo == NULL){
 	EV << "warning: Application layer did not specifiy a destination L3 address\n"
 	   << "\tusing broadcast address instead\n";
-	netwAddr = L3BROADCAST;
+	netwAddr = LAddress::L3BROADCAST;
     } else {
-	coreEV <<"CInfo removed, netw addr="<< cInfo->getNetwAddr()<<endl;
-        netwAddr = cInfo->getNetwAddr();
+	coreEV <<"CInfo removed, netw addr="<< NetwControlInfo::getAddressFromControlInfo( cInfo ) << std::endl;
+        netwAddr = NetwControlInfo::getAddressFromControlInfo( cInfo );
 	delete cInfo;
     }
 
     pkt->setSrcAddr(myNetwAddr);
     pkt->setDestAddr(netwAddr);
-    coreEV << " netw "<< myNetwAddr << " sending packet" <<endl;
-    if(netwAddr == L3BROADCAST) {
+    coreEV << " netw "<< myNetwAddr << " sending packet" <<std::endl;
+    if(LAddress::isL3Broadcast( netwAddr )) {
         coreEV << "sendDown: nHop=L3BROADCAST -> message has to be broadcasted"
            << " -> set destMac=L2BROADCAST\n";
-        macAddr = MACAddress::BROADCAST_ADDRESS;
+        macAddr = LAddress::L2BROADCAST;
     }
     else{
         coreEV <<"sendDown: get the MAC address\n";
         macAddr = arp->getMacAddr(netwAddr);
     }
 
-    Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-    ctrl->setDest(macAddr);
-    pkt->setControlInfo(ctrl);
+    setDownControlInfo(pkt, macAddr);
 
     //encapsulate the application packet
     pkt->encapsulate(appPkt);
@@ -125,7 +128,7 @@ NetwPkt* BaseNetwLayer::encapsMsg(cPacket *appPkt) {
 void BaseNetwLayer::handleLowerMsg(cMessage* msg)
 {
     NetwPkt *m = static_cast<NetwPkt *>(msg);
-    coreEV << " handling packet from " << m->getSrcAddr() << endl;
+    coreEV << " handling packet from " << m->getSrcAddr() << std::endl;
     sendUp(decapsMsg(m));
 }
 
@@ -165,7 +168,24 @@ void BaseNetwLayer::handleLowerControl(cMessage* msg)
 		break;
 	default:
 		EV << "BaseNetwLayer does not handle control messages called "
-		   << msg->getName() << endl;
+		   << msg->getName() << std::endl;
 		delete msg;
+		break;
 	}
+}
+
+/**
+ * Attaches a "control info" structure (object) to the down message pMsg.
+ */
+cObject *const BaseNetwLayer::setDownControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr)
+{
+	return NetwToMacControlInfo::setControlInfo(pMsg, pDestAddr);
+}
+
+/**
+ * Attaches a "control info" structure (object) to the up message pMsg.
+ */
+cObject *const BaseNetwLayer::setUpControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr)
+{
+	return NetwControlInfo::setControlInfo(pMsg, pSrcAddr);
 }

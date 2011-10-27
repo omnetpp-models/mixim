@@ -14,9 +14,13 @@
 //
 
 #include "CSMA802154.h"
-#include <DeciderResult802154Narrow.h>
-#include <PhyToMacControlInfo.h>
-#include <MacToNetwControlInfo.h>
+
+#include <cassert>
+
+#include "DeciderResult802154Narrow.h"
+#include "PhyToMacControlInfo.h"
+#include "MacToNetwControlInfo.h"
+#include "MacPkt_m.h"
 
 Define_Module(CSMA802154);
 

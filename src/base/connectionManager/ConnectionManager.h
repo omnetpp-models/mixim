@@ -1,9 +1,6 @@
 #ifndef CONNECTIONMANAGER_H_
 #define CONNECTIONMANAGER_H_
 
-#include <vector>
-#include <list>
-
 #include "MiXiMDefs.h"
 #include "BaseConnectionManager.h"
 

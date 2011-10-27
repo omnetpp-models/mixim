@@ -36,8 +36,9 @@
 
 #include "MiXiMDefs.h"
 #include "BaseMacLayer.h"
-#include <DroppedPacket.h>
-#include <MacPkt_m.h>
+#include "DroppedPacket.h"
+
+class MacPkt;
 
 /**
  * @brief Generic CSMA Mac-Layer.
@@ -58,7 +59,7 @@ class MIXIM_API  csma : public BaseMacLayer
   public:
 
 
-	~csma();
+	virtual ~csma();
 
     /** @brief Initialization of the module and some variables*/
     virtual void initialize(int);
@@ -250,17 +251,11 @@ class MIXIM_API  csma : public BaseMacLayer
     /** @brief Inspect reasons for dropped packets */
     DroppedPacket droppedPacket;
 
-    /** @brief plus category from BB */
-    int catDroppedPacket;
-
     /** @brief publish dropped packets nic wide */
     int nicId;
 
     /** @brief The bit length of the ACK packet.*/
     int ackLength;
-
-    /** @brief This MAC layers MAC address.*/
-    //int macaddress;
 
 
 protected:
@@ -278,7 +273,7 @@ protected:
 	void manageQueue();
 	void updateMacState(t_mac_states newMacState);
 
-	void attachSignal(MacPkt* mac, simtime_t startTime);
+	void attachSignal(MacPkt* mac, simtime_t_cref startTime);
 	void manageMissingAck(t_mac_event event, cMessage *msg);
 	void startTimer(t_mac_timer timer);
 
@@ -289,10 +284,10 @@ protected:
 
 	//sequence number for sending, map for the general case with more senders
 	//also in initialisation phase multiple potential parents
-	std::map<MACAddress, unsigned long> SeqNrParent; //parent -> sequence number
+	std::map<LAddress::L2Type, unsigned long> SeqNrParent; //parent -> sequence number
 
 	//sequence numbers for receiving
-	std::map<MACAddress, unsigned long> SeqNrChild; //child -> sequence number
+	std::map<LAddress::L2Type, unsigned long> SeqNrChild; //child -> sequence number
 
 };
 

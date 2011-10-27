@@ -24,22 +24,18 @@
  ***************************************************************************
  * part of:    Modifications to the MF-2 framework by CSEM
  **************************************************************************/
-
 #include "csma.h"
-#include "FWMath.h"
-#include <cassert>
-#include <BaseDecider.h>
-#include <DeciderResult802154Narrow.h>
-#include <BaseArp.h>
-#include <MacToPhyControlInfo.h>
-#include <PhyToMacControlInfo.h>
-#include <Ieee802Ctrl_m.h>
-#include <MacToNetwControlInfo.h>
-#include <SimpleAddress.h>
-#include <BasePhyLayer.h>
 
-#include <BaseConnectionManager.h>
-//#include <Consts802154.h>
+#include <cassert>
+
+#include "FWMath.h"
+#include "BaseDecider.h"
+#include "DeciderResult802154Narrow.h"
+#include "BaseArp.h"
+#include "BasePhyLayer.h"
+#include "BaseConnectionManager.h"
+#include "FindModule.h"
+#include "MacPkt_m.h"
 
 Define_Module(csma);
 
@@ -106,8 +102,6 @@ void csma::initialize(int stage) {
 
 		droppedPacket.setReason(DroppedPacket::NONE);
 		nicId = getParentModule()->getId();
-
-		catDroppedPacket = registerSignal("droppedPacket");
 
 		// initialize the timers
 		backoffTimer = new cMessage("timer-backoff");
@@ -189,10 +183,9 @@ void csma::handleUpperMsg(cMessage *msg) {
 	//MacPkt *macPkt = encapsMsg(msg);
 	MacPkt *macPkt = new MacPkt(msg->getName());
 	macPkt->setBitLength(headerLength);
-	Ieee802Ctrl* cInfo =
-			static_cast<Ieee802Ctrl*> (msg->removeControlInfo());
-	debugEV<<"CSMA received a message from upper layer, name is " << msg->getName() <<", CInfo removed, mac addr="<< cInfo->getDest()<<endl;
-	MACAddress dest = cInfo->getDest();
+	cObject *const cInfo = msg->removeControlInfo();
+	debugEV<<"CSMA received a message from upper layer, name is " << msg->getName() <<", CInfo removed, mac addr="<< getUpperDestinationFromControlInfo(cInfo) << endl;
+	LAddress::L2Type dest = getUpperDestinationFromControlInfo(cInfo);
 	macPkt->setDestAddr(dest);
 	delete cInfo;
 	macPkt->setSrcAddr(myMacAddr);
@@ -236,7 +229,7 @@ void csma::updateStatusIdle(t_mac_event event, cMessage *msg) {
 			msg->setKind(PACKET_DROPPED);
 			sendControlUp(msg);
 			droppedPacket.setReason(DroppedPacket::QUEUE);
-			emit(catDroppedPacket, &droppedPacket);
+			emit(BaseLayer::catDroppedPacketSignal, &droppedPacket);
 			updateMacState(IDLE_1);
 		}
 		break;
@@ -273,6 +266,7 @@ void csma::updateStatusIdle(t_mac_event event, cMessage *msg) {
 		break;
 	default:
 		fsmError(event, msg);
+		break;
 	}
 }
 
@@ -331,15 +325,13 @@ void csma::updateStatusBackoff(t_mac_event event, cMessage *msg) {
 		break;
 	default:
 		fsmError(event, msg);
+		break;
 	}
 }
 
-void csma::attachSignal(MacPkt* mac, simtime_t startTime) {
+void csma::attachSignal(MacPkt* mac, simtime_t_cref startTime) {
 	simtime_t duration = (mac->getBitLength() + phyHeaderLength)/bitrate;
-	Signal* s = createSignal(startTime, duration, txPower, bitrate);
-	MacToPhyControlInfo* cinfo = new MacToPhyControlInfo(s);
-
-	mac->setControlInfo(cinfo);
+	setDownControlInfo(mac, createSignal(startTime, duration, txPower, bitrate));
 }
 
 void csma::updateStatusCCA(t_mac_event event, cMessage *msg) {
@@ -432,6 +424,7 @@ void csma::updateStatusCCA(t_mac_event event, cMessage *msg) {
 		break;
 	default:
 		fsmError(event, msg);
+		break;
 	}
 }
 
@@ -442,7 +435,7 @@ void csma::updateStatusTransmitFrame(t_mac_event event, cMessage *msg) {
 		phy->setRadioState(Radio::RX);
 
 		bool expectAck = useMACAcks;
-		if (packet->getDestAddr() != MACAddress::BROADCAST_ADDRESS) {
+		if (!LAddress::isL2Broadcast(packet->getDestAddr())) {
 			//unicast
 			debugEV << "(4) FSM State TRANSMITFRAME_4, "
 			   << "EV_FRAME_TRANSMITTED [Unicast]: ";
@@ -495,12 +488,14 @@ void csma::updateStatusWaitAck(t_mac_event event, cMessage *msg) {
 	case EV_BROADCAST_RECEIVED:
 	case EV_FRAME_RECEIVED:
 		sendUp(decapsMsg(static_cast<MacPkt*>(msg)));
+		break;
 	case EV_DUPLICATE_RECEIVED:
 		debugEV << "Error ! Received a frame during SIFS !" << endl;
 		delete msg;
 		break;
 	default:
 		fsmError(event, msg);
+		break;
 	}
 
 }
@@ -553,6 +548,7 @@ void csma::updateStatusSIFS(t_mac_event event, cMessage *msg) {
 		break;
 	default:
 		fsmError(event, msg);
+		break;
 	}
 }
 
@@ -585,7 +581,7 @@ void csma::updateStatusNotIdle(cMessage *msg) {
 		msg->setKind(PACKET_DROPPED);
 		sendControlUp(msg);
 		droppedPacket.setReason(DroppedPacket::QUEUE);
-		emit(catDroppedPacket, &droppedPacket);
+		emit(BaseLayer::catDroppedPacketSignal, &droppedPacket);
 	}
 
 }
@@ -621,6 +617,7 @@ void csma::executeMac(t_mac_event event, cMessage *msg) {
 			break;
 		default:
 			EV << "Error in CSMA FSM: an unknown state has been reached. macState=" << macState << endl;
+			break;
 		}
 	}
 }
@@ -716,6 +713,7 @@ simtime_t csma::scheduleBackoff() {
 	}
 	default:
 		error("Unknown backoff method!");
+		break;
 	}
 
 	nbBackoffs = nbBackoffs + 1;
@@ -747,10 +745,10 @@ void csma::handleSelfMsg(cMessage *msg) {
  * frame. Generates the corresponding event.
  */
 void csma::handleLowerMsg(cMessage *msg) {
-	MacPkt *macPkt = static_cast<MacPkt *> (msg);
-	MACAddress src = macPkt->getSrcAddr();
-	MACAddress dest = macPkt->getDestAddr();
-	long ExpectedNr = 0;
+	MacPkt*                 macPkt     = static_cast<MacPkt *> (msg);
+	const LAddress::L2Type& src        = macPkt->getSrcAddr();
+	const LAddress::L2Type& dest       = macPkt->getDestAddr();
+	long                    ExpectedNr = 0;
 
 	debugEV<< "Received frame name= " << macPkt->getName()
 	<< ", myState=" << macState << " src=" << macPkt->getSrcAddr()
@@ -823,7 +821,7 @@ void csma::handleLowerMsg(cMessage *msg) {
 			}
 		}
 	}
-	else if (dest == MACAddress::BROADCAST_ADDRESS) {
+	else if (LAddress::isL2Broadcast(dest)) {
 		executeMac(EV_BROADCAST_RECEIVED, macPkt);
 	} else {
 		debugEV << "packet not for me, deleting...\n";
@@ -847,31 +845,10 @@ void csma::handleLowerControl(cMessage *msg) {
 	delete msg;
 }
 
-/**
- * Update the internal copies of interesting BB variables
- *
- */
-//virtual void csma::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) {
-//	Enter_Method_Silent();
-//	BasicLayer::receiveSigna(source, signalID, obj);
-//
-//	if (signalID == catRadioState) {
-//		radioState
-//				= static_cast<const RadioAccNoise3State *> (obj)->getState();
-//		// radio just told us its state
-//	} else if (signalID == catRSSI) {
-//		rssi = static_cast<const RSSI *> (obj)->getRSSI();
-//		if (radioState == RadioAccNoise3State::RX) {
-//			// we could do something here if we wanted to.
-//		}
-//	}
-//}
-
 cPacket *csma::decapsMsg(MacPkt * macPkt) {
 	cPacket * msg = macPkt->decapsulate();
-	MacToNetwControlInfo* info = new MacToNetwControlInfo(macPkt->getSrcAddr());
+	setUpControlInfo(msg, macPkt->getSrcAddr());
 
-	msg->setControlInfo(info);
 	return msg;
 }
 

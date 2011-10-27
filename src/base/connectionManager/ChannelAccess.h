@@ -27,13 +27,25 @@
 #include <omnetpp.h>
 #include <vector>
 
+#ifdef MIXIM_INET
+#include <MobilityAccess.h> // INET
+typedef MobilityAccess ChannelMobilityAccessType;
+typedef IMobility*     ChannelMobilityPtrType;
+#endif
+
 #include "MiXiMDefs.h"
 #include "BatteryAccess.h"
-#include "BaseWorldUtility.h"
-#include "AirFrame_m.h"
 
-#include "BaseConnectionManager.h"
-#include "MobilityAccess.h"
+#ifndef MIXIM_INET
+#include "FindModule.h"
+#include "BaseMobility.h"
+typedef AccessModuleWrap<BaseMobility>                ChannelMobilityAccessType;
+typedef typename ChannelMobilityAccessType::wrapType* ChannelMobilityPtrType;
+#endif
+
+class NicEntry;
+class BaseConnectionManager;
+class BaseWorldUtility;
 
 /**
  * @brief Basic class for all physical layers, please don't touch!!
@@ -50,28 +62,28 @@
  * @ingroup phyLayer
  * @ingroup baseModules
  **/
-class MIXIM_API ChannelAccess : public BatteryAccess, protected MobilityAccess
+class MIXIM_API ChannelAccess : public BatteryAccess, protected ChannelMobilityAccessType
 {
 protected:
-    /** @brief A signal used to subscribe to mobility state changes. */
-    static simsignal_t mobilityStateChangedSignal;
+	/** @brief A signal used to subscribe to mobility state changes. */
+	const static simsignalwrap_t mobilityStateChangedSignal;
 
-    /** @brief use sendDirect or not?*/
-    bool useSendDirect;
+	/** @brief use sendDirect or not?*/
+	bool useSendDirect;
 
-    /** @brief Pointer to the PropagationModel module*/
-    BaseConnectionManager* cc;
+	/** @brief Pointer to the PropagationModel module*/
+	BaseConnectionManager* cc;
 
-    /** @brief debug this core module? */
-    bool coreDebug;
+	/** @brief debug this core module? */
+	bool coreDebug;
 
 	/** @brief Defines if the physical layer should simulate propagation delay.*/
 	bool usePropagationDelay;
 
-    /** @brief Is this module already registered with ConnectionManager? */
-    bool isRegistered;
+	/** @brief Is this module already registered with ConnectionManager? */
+	bool isRegistered;
 
-    /** @brief Pointer to the World Utility, to obtain some global information*/
+	/** @brief Pointer to the World Utility, to obtain some global information*/
 	BaseWorldUtility* world;
 
 protected:
@@ -102,25 +114,26 @@ public:
 	 */
 	static BaseConnectionManager* getConnectionManager(cModule* nic);
 
-    /** @brief Register with ConnectionManager.
-     *
+	/** @brief Register with ConnectionManager.
+	 *
 	 * Upon initialization ChannelAccess registers the nic parent module
 	 * to have all its connections handeled by ConnectionManager
 	 **/
-    virtual void initialize(int stage);
+	virtual void initialize(int stage);
 
-    /**
-     * @brief Called by the signalling mechanism to inform of changes.
-     *
-     * ChannelAccess is subscribed to position changes and informs the
-     * ConnectionManager.
-     */
-    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
+	/**
+	 * @brief Called by the signalling mechanism to inform of changes.
+	 *
+	 * ChannelAccess is subscribed to position changes and informs the
+	 * ConnectionManager.
+	 */
+	virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
-    /**
-     * @brief Returns the host's mobility module.
-     */
-    virtual IMobility *getMobilityModule() { return MobilityAccess::get(); }
+	/**
+	 * @brief Returns the host's mobility module.
+	 */
+	virtual ChannelMobilityPtrType getMobilityModule() { return ChannelMobilityAccessType::get(this); }
 };
 
 #endif
+

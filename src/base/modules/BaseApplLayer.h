@@ -27,8 +27,7 @@
 
 #include "MiXiMDefs.h"
 #include "BaseLayer.h"
-#include "ApplPkt_m.h"
-
+#include "SimpleAddress.h"
 
 /**
  * @brief Base class for the application layer
@@ -65,6 +64,10 @@ protected:
 
 public:
 	//Module_Class_Members(BaseApplLayer, BaseLayer, 0);
+	BaseApplLayer() : BaseLayer()
+	{}
+	BaseApplLayer(unsigned stacksize) : BaseLayer(stacksize)
+	{}
 
 	/** @brief Initialization of the module and some variables*/
 	virtual void initialize(int);
@@ -138,15 +141,15 @@ protected:
 	/*@}*/
 
 	/** @brief Sends a message delayed to the lower layer*/
-	void sendDelayedDown(cMessage *, simtime_t);
+	void sendDelayedDown(cMessage *, simtime_t_cref);
 
 	/**
 	 * @brief Return my application layer address
 	 *
 	 * We use the node module index as application address
 	 **/
-	virtual const int myApplAddr() {
-		return getParentModule()->getIndex();
+	virtual const LAddress::L3Type myApplAddr() const {
+		return LAddress::L3Type( getParentModule()->getIndex() );
 	};
 
 };

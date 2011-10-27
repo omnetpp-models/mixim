@@ -11,7 +11,6 @@
 
 #include "MiXiMDefs.h"
 #include "DeciderToPhyInterface.h"
-#include "Signal_.h"
 #include "ChannelSenseRequest_m.h"
 #include "ChannelState.h"
 

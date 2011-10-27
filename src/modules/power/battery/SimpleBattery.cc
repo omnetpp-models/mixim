@@ -17,13 +17,12 @@
  * notification on battery depletion, and provides time series and
  * summary information to Battery Stats module.
  */
+#include "SimpleBattery.h"
 
 #include "FWMath.h"
-#include "SimpleBattery.h"
 #include "BatteryStats.h"
 
-Define_Module(SimpleBattery)
-;
+Define_Module(SimpleBattery);
 
 SimpleBattery::SimpleBattery()
 {
@@ -86,12 +85,7 @@ void SimpleBattery::initialize(int stage) {
 		scheduleAt(simTime() + resolution, timeout);
 
 		// publish battery depletion on hostStateCat
-		scopeHost = (this->findHost())->getId();
-
 		// periodically publish residual capacity on batteryCat
-		if (publishDelta < 1 || publishTime> 0)
-		batteryCat = registerSignal("batteryStateChanged");
-
 		numDevices = hasPar("numDevices") ? par("numDevices") : 0;
 		if (numDevices == 0) {
 			EV << "Warning: no devices attached to battery\n";
@@ -104,11 +98,11 @@ void SimpleBattery::initialize(int stage) {
 
 	if (stage == 1) {
 		hostState.set(HostState::ACTIVE);
-		emit(hostStateCat, &hostState);
+		emit(catHostStateSignal, &hostState);
 
 		if (publishDelta < 1 || publishTime> 0 ) {
 			batteryState->set(residualCapacity);
-			emit(batteryCat, batteryState);
+			emit(BatteryStats::catBatteryStateSignal, batteryState);
 		}
 	}
 }
@@ -218,7 +212,7 @@ void SimpleBattery::handleMessage(cMessage *msg) {
 
 		case PUBLISH:
 			// publish the state to the BatteryStats module
-			emit(batteryCat, batteryState);
+			emit(BatteryStats::catBatteryStateSignal, batteryState);
 			lastPublishCapacity = residualCapacity;
 
 			scheduleAt(simTime() + publishTime, publish);
@@ -281,12 +275,12 @@ void SimpleBattery::deductAndCheck() {
 
 		// announce hostState
 		hostState.set(HostState::FAILED);
-		emit(hostStateCat, &hostState);
+		emit(catHostStateSignal, &hostState);
 
 		// final battery level announcement
 		if (publishDelta < 1 || publishTime> 0) {
 			batteryState->set(0);
-			emit(batteryCat, batteryState);
+			emit(BatteryStats::catBatteryStateSignal, batteryState);
 			// cancelEvent(publish);
 		}
 
@@ -301,7 +295,7 @@ void SimpleBattery::deductAndCheck() {
 
 		// publish the battery capacity if it changed by more than delta
 		if ((lastPublishCapacity - residualCapacity)/capacity >= publishDelta) {
-			emit(batteryCat, batteryState);
+			emit(BatteryStats::catBatteryStateSignal, batteryState);
 			lastPublishCapacity = residualCapacity;
 		}
 	}

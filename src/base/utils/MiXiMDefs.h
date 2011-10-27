@@ -19,6 +19,7 @@
 #define __MIXIM_MIXIMDEFS_H
 
 #include <omnetpp.h>
+#include "miximkerneldefs.h"
 
 #if defined(MIXIM_EXPORT)
 #  define MIXIM_API OPP_DLLEXPORT
@@ -27,5 +28,35 @@
 #else
 #  define MIXIM_API
 #endif
+
+/**
+ * @brief Helper function to initialize signal change identifier on use and
+ *        not on initializing static sections.
+ */
+class MIXIM_API simsignalwrap_t {
+private:
+	mutable volatile simsignal_t ssChangeSignal;
+	const char *const            sSignalName;
+public:
+	simsignalwrap_t(const char *const pSignalName)
+	  : ssChangeSignal(SIMSIGNAL_NULL)
+	  , sSignalName(pSignalName)
+	{}
+
+	/** Cast operator to simsignal_t, we initialize the signal here if it is empty ;). */
+	operator simsignal_t () const {
+		if (ssChangeSignal == SIMSIGNAL_NULL && sSignalName != NULL) {
+			ssChangeSignal = cComponent::registerSignal(sSignalName);
+			// opp_warning("%d = cComponent::registerSignal(\"%s\")", ssChangeSignal, sSignalName);
+		}
+		return ssChangeSignal;
+	}
+private:
+	// not allowed
+	simsignalwrap_t()
+	  : ssChangeSignal(SIMSIGNAL_NULL)
+	  , sSignalName(NULL)
+	{}
+};
 
 #endif

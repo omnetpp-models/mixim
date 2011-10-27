@@ -25,12 +25,12 @@
 
 
 #include "BaseLayer.h"
+
 #include <assert.h>
 
-BaseLayer::BaseLayer()
-{
-    passedMsg = NULL;
-}
+const simsignalwrap_t BaseLayer::catPassedMsgSignal     = simsignalwrap_t(MIXIM_SIGNAL_PASSEDMSG_NAME);
+const simsignalwrap_t BaseLayer::catPacketSignal        = simsignalwrap_t(MIXIM_SIGNAL_PACKET_NAME);
+const simsignalwrap_t BaseLayer::catDroppedPacketSignal = simsignalwrap_t(MIXIM_SIGNAL_DROPPEDPACKET_NAME);
 
 /**
  * First we have to initialize the module from which we derived ours,
@@ -45,9 +45,9 @@ void BaseLayer::initialize(int stage)
         passedMsg = NULL;
         if (hasPar("stats") && par("stats").boolValue()) {
             passedMsg = new PassedMessage();
-            catPassedMsg = registerSignal("passedMsg");
-            passedMsg->fromModule = getId();
-            hostId = findHost()->getId();
+            if (passedMsg != NULL) {
+                passedMsg->fromModule = getId();
+            }
         }
         upperLayerIn  = findGate("upperLayerIn");
         upperLayerOut = findGate("upperLayerOut");
@@ -122,7 +122,7 @@ void BaseLayer::sendControlUp(cMessage *msg) {
     if (gate(upperControlOut)->isPathOK())
         send(msg, upperControlOut);
     else {
-        EV << "BaseLayer: upperControlOut is not connected; dropping message\n";
+        EV << "BaseLayer: upperControlOut is not connected; dropping message" << std::endl;
         delete msg;
     }
 }
@@ -132,7 +132,7 @@ void BaseLayer::sendControlDown(cMessage *msg) {
     if (gate(lowerControlOut)->isPathOK())
         send(msg, lowerControlOut);
     else {
-        EV << "BaseLayer: lowerControlOut is not connected; dropping message\n";
+        EV << "BaseLayer: lowerControlOut is not connected; dropping message" << std::endl;
         delete msg;
     }
 }
@@ -146,7 +146,7 @@ void BaseLayer::recordPacket(PassedMessage::direction_t dir,
     passedMsg->gateType = gate;
     passedMsg->kind = msg->getKind();
     passedMsg->name = msg->getName();
-    emit(catPassedMsg, passedMsg);
+    emit(catPassedMsgSignal, passedMsg);
 }
 
 void BaseLayer::finish() {

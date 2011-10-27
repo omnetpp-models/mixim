@@ -7,6 +7,10 @@
 
 #include "BaseDecider.h"
 
+#include <cassert>
+
+#include "AirFrame_m.h"
+
 simtime_t BaseDecider::processSignal(AirFrame* frame) {
 
 	assert(frame);
@@ -68,6 +72,12 @@ simtime_t BaseDecider::processSignalEnd(AirFrame* frame) {
 
 	return notAgain;
 }
+
+simtime_t BaseDecider::processUnknownSignal(AirFrame* frame) {
+	opp_error("Unknown state for the AirFrame with ID %d", frame->getId());
+	return notAgain;
+}
+
 
 ChannelState BaseDecider::getChannelState() {
 
@@ -185,18 +195,13 @@ simtime_t BaseDecider::canAnswerCSR(const CSRInfo& requestInfo)
 	return requestInfo.second + requestInfo.first->getSenseTimeout();
 }
 
-double BaseDecider::calcChannelSenseRSSI(simtime_t start, simtime_t end) {
+double BaseDecider::calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref end) {
 	Mapping* rssiMap = calculateRSSIMapping(start, end);
 
 	// the sensed RSSI-value is the maximum value between (and including) the interval-borders
-	double rssi = MappingUtils::findMax(*rssiMap, Argument(start), Argument(end));
-
-	//"findMax()" returns "-DBL_MAX" on empty mappings
-	if (rssi < 0)
-		rssi = 0;
+	Mapping::argument_value_t rssi = MappingUtils::findMax(*rssiMap, Argument(start), Argument(end), Argument::MappedZero /* the value if no maximum will be found */);
 
 	delete rssiMap;
-
 	return rssi;
 }
 
@@ -228,7 +233,7 @@ Mapping* BaseDecider::calculateSnrMapping(AirFrame* frame)
 	assert(recvPowerMap);
 
 	//TODO: handle noise of zero (must not devide with zero!)
-	Mapping* snrMap = MappingUtils::divide( *recvPowerMap, *noiseMap, 0.0 );
+	Mapping* snrMap = MappingUtils::divide( *recvPowerMap, *noiseMap, Argument::MappedZero );
 
 	delete noiseMap;
 	noiseMap = 0;
@@ -236,15 +241,15 @@ Mapping* BaseDecider::calculateSnrMapping(AirFrame* frame)
 	return snrMap;
 }
 
-void BaseDecider::getChannelInfo(simtime_t start, simtime_t end,
-								 AirFrameVector& out)
+void BaseDecider::getChannelInfo(simtime_t_cref start, simtime_t_cref end,
+                                 AirFrameVector& out)
 {
 	phy->getChannelInfo(start, end, out);
 }
 
-Mapping* BaseDecider::calculateRSSIMapping(	simtime_t start,
-										simtime_t end,
-										AirFrame* exclude)
+Mapping* BaseDecider::calculateRSSIMapping( simtime_t_cref start,
+                                            simtime_t_cref end,
+                                            AirFrame*      exclude)
 {
 	if(exclude)
 		deciderEV << "Creating RSSI map excluding AirFrame with id " << exclude->getId() << endl;
@@ -259,7 +264,7 @@ Mapping* BaseDecider::calculateRSSIMapping(	simtime_t start,
 	//TODO: create a "MappingUtils:createMappingFrom()"-method and use it here instead
 	//of abusing the add method
 	// create an empty mapping
-	Mapping* resultMap = MappingUtils::createMapping(0.0, DimensionSet::timeDomain);
+	Mapping* resultMap = MappingUtils::createMapping(Argument::MappedZero, DimensionSet::timeDomain);
 
 	//add thermal noise
 	ConstMapping* thermalNoise = phy->getThermalNoise(start, end);
@@ -300,7 +305,7 @@ Mapping* BaseDecider::calculateRSSIMapping(	simtime_t start,
 				<< ". Starts at " << signal.getReceptionStart()
 				<< " and ends at " << signal.getReceptionEnd() << endl;
 
-		Mapping* resultMapNew = MappingUtils::add( *recvPowerMap, *resultMap, 0.0 );
+		Mapping* resultMapNew = MappingUtils::add( *recvPowerMap, *resultMap, Argument::MappedZero );
 
 		// discard old mapping
 		delete resultMap;

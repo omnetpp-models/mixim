@@ -20,8 +20,12 @@
  ***************************************************************************/
 
 #include "AlohaMacLayer.h"
+
 #include <iostream>
-#include <Ieee802Ctrl_m.h>
+
+#include "UWBIRMacPkt_m.h"
+#include "UWBIRMacPkt.h"
+#include "MacToPhyInterface.h"
 
 using namespace std;
 
@@ -29,9 +33,9 @@ Define_Module(AlohaMacLayer);
 
 void AlohaMacLayer::initialize(int stage) {
 	UWBIRMac::initialize(stage);
-	if(stage == 1 && myMacAddr != MACAddress()) {
+	if(stage == 1 && myMacAddr != LAddress::L2NULL) {
         phy->setRadioState(Radio::TX);
-    } else if(stage == 1 && myMacAddr == MACAddress()) {
+    } else if(stage == 1 && myMacAddr == LAddress::L2NULL) {
         phy->setRadioState(Radio::RX);
     }
 }
@@ -59,10 +63,10 @@ MacPkt* AlohaMacLayer::encapsMsg(cPacket *msg) {
 
     // copy dest address from the Control Info attached to the network
     // mesage by the network layer
-    Ieee802Ctrl* cInfo = static_cast<Ieee802Ctrl*>(msg->removeControlInfo());
+    cObject *const cInfo = msg->removeControlInfo();
 
-    debugEV <<"CInfo removed, mac addr="<< cInfo->getDest()<<endl;
-    encaps->setDestAddr(cInfo->getDest());
+    debugEV <<"CInfo removed, mac addr="<< getUpperDestinationFromControlInfo(cInfo) << endl;
+    encaps->setDestAddr(getUpperDestinationFromControlInfo(cInfo));
 
     //delete the control info
     delete cInfo;
@@ -90,21 +94,21 @@ void AlohaMacLayer::handleLowerMsg(cMessage *msg) {
     UWBIRMacPkt *mac = static_cast<UWBIRMacPkt *>(msg);
 
     if(validatePacket(mac)) {
-        MACAddress dest = mac->getDestAddr();
-        MACAddress src = mac->getSrcAddr();
+        const LAddress::L2Type& dest = mac->getDestAddr();
+        const LAddress::L2Type& src  = mac->getSrcAddr();
         if ((dest == myMacAddr)) {
         	debugEV << "message with mac addr " << src
                     << " for me (dest=" << dest
-                    << ") -> forward packet to upper layer\n";
+                    << ") -> forward packet to upper layer" << std::endl;
             sendUp(decapsMsg(mac));
         } else {
         	debugEV << "message with mac addr " << src
                     << " not for me (dest=" << dest
-                    << ") -> delete (my MAC=" << myMacAddr << ")\n";
+                    << ") -> delete (my MAC=" << myMacAddr << ")" << std::endl;
             delete mac;
         }
     } else {
-    	debugEV << "Errors in message ; dropping mac packet." << endl;
+    	debugEV << "Errors in message ; dropping mac packet." << std::endl;
         delete mac;
     }
 }

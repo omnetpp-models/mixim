@@ -6,12 +6,12 @@
 #include <set>
 #include <string>
 #include <algorithm>
-#include <assert.h>
-#include <FWMath.h>
+#include <cassert>
+#include <sstream>
+#include <iomanip>
 
 #include "MiXiMDefs.h"
 #include "Interpolation.h"
-
 
 /**
  * @brief Specifies a dimension for mappings (like time, frequency, etc.)
@@ -29,11 +29,15 @@
  * @ingroup mapping
  */
 class MIXIM_API Dimension {
-protected:
+public:
 	/** @brief Type for map from dimension name to ID.*/
-	typedef std::map<std::string, int>DimensionIDMap;
+	typedef std::map<std::string, int>   DimensionIDMap;
+	typedef DimensionIDMap::key_type     DimensionNameType;
+	typedef DimensionIDMap::mapped_type  DimensionIdType;
+protected:
 	/** @brief Type for map from ID to dimension name.*/
-	typedef std::map<int, std::string>DimensionNameMap;
+	typedef std::map< DimensionIdType
+			        , DimensionNameType> DimensionNameMap;
 
 	/**
 	 * @brief stores the registered dimensions ids.
@@ -57,16 +61,16 @@ protected:
 	 * Uses "construct-on-first-use" idiom to ensure correct initialization
 	 * of static members.
 	 */
-	static int& nextFreeID();
+	static DimensionIdType& nextFreeID();
 
 	/**
 	 * @brief Returns an instance of dimension which represents
 	 * the dimension with the passed name.
 	 */
-	static int getDimensionID(const std::string& name);
+	static int getDimensionID(const DimensionNameType& name);
 
 	/** @brief The unique id of the dimension this instance represents.*/
-	int id;
+	DimensionIdType id;
 
 protected:
 
@@ -88,7 +92,7 @@ public:
 	 * @brief Creates a new dimension instance representing the
 	 * dimension with the passed name.
 	 */
-	Dimension(const std::string& name);
+	Dimension(const DimensionNameType& name);
 
 	/**
 	 * @brief Shortcut to the time Dimension, same as 'Dimension("time")',
@@ -126,7 +130,7 @@ public:
 	/** @brief Sorting operator by dimension ID.*/
 	bool operator<=(const Dimension& other) const { return id <= other.id; }
 	/** @brief Sorting operator by dimension ID.*/
-	bool operator>(const Dimension& other) const { return id > other.id; }
+	bool operator>(const Dimension& other) const  { return id  > other.id; }
 	/** @brief Sorting operator by dimension ID.*/
 	bool operator>=(const Dimension& other) const { return id >= other.id; }
 	/** @brief Sorting operator by dimension ID.*/
@@ -135,7 +139,7 @@ public:
 	/**
 	 * @brief Returns the name of this dimension.
 	 */
-	std::string getName() const{
+	DimensionNameType getName() const{
 		static DimensionNameMap& dimensionNames = Dimension::dimensionNames();
 		return dimensionNames.find(id)->second;
 	}
@@ -148,7 +152,7 @@ public:
 	 * provide a sorting of dimensions.
 	 * Note: The "time"-dimension will always have the ID zero.
 	 */
-	int getID() const { return id; }
+	DimensionIdType getID() const { return id; }
 
 	/** @brief Output operator for a dimension.*/
 	friend std::ostream& operator<<(std::ostream& out, const Dimension& d) {
@@ -188,14 +192,14 @@ public:
 	 * @brief Creates a new DimensionSet with the passed Dimension as
 	 * initial Dimension
 	 */
-	DimensionSet(const Dimension& d){
+	DimensionSet(const DimensionSet::value_type& d){
 		this->insert(d);
 	}
 	/**
 	 * @brief Creates a new DimensionSet with the passed Dimensions as
 	 * initial Dimensions (convenience method)
 	 */
-	DimensionSet(const Dimension& d1, const Dimension& d2){
+	DimensionSet(const DimensionSet::value_type& d1, const DimensionSet::value_type& d2){
 		this->insert(d1);
 		this->insert(d2);
 	}
@@ -203,7 +207,7 @@ public:
 	 * @brief Creates a new DimensionSet with the passed Dimensions as
 	 * initial Dimensions (convenience method)
 	 */
-	DimensionSet(const Dimension& d1, const Dimension& d2, const Dimension& d3){
+	DimensionSet(const DimensionSet::value_type& d1, const DimensionSet::value_type& d2, const DimensionSet::value_type& d3){
 		this->insert(d1);
 		this->insert(d2);
 		this->insert(d3);
@@ -243,14 +247,14 @@ public:
 	/**
 	 * @brief Adds the passed dimension to the DimensionSet.
 	 */
-	void addDimension(const Dimension& d) {
+	void addDimension(const DimensionSet::value_type& d) {
 		this->insert(d);
 	}
 
 	/**
 	 * @brief Returns true if the passed Dimension is inside this DimensionSet.
 	 */
-	bool hasDimension(const Dimension& d) const{
+	bool hasDimension(const DimensionSet::value_type& d) const{
 		return this->count(d) > 0;
 	}
 
@@ -277,23 +281,30 @@ public:
  * @author Karl Wessel
  * @ingroup mapping
  */
-class MIXIM_API Argument{
-protected:
+class MIXIM_API Argument {
+public:
+	typedef DimensionSet::value_type key_type;
+	typedef double                   mapped_type;
+	typedef const mapped_type        mapped_type_cref;
 
-	/** @brief Stores the time dimension in Omnets time type */
-	simtime_t time;
+	/** @brief Zero value of a Argument value. */
+	const static mapped_type         MappedZero;
+	/** @brief One value of a Argument value. */
+	const static mapped_type         MappedOne;
+protected:
+	typedef std::pair<key_type, mapped_type> value_type;
+	typedef std::list<value_type>			 value_list_type;
+	/** @brief Stores the time dimension in Omnet's time type */
+	simtime_t       time;
 
 	/** @brief Maps the dimensions of this Argument to their values. */
-	std::pair<Dimension, double> values[10];
-
-	/** @brief The number of Dimensions this Argument has. */
-	unsigned int count;
+	value_list_type values;
 
 public:
 	/** @brief Iterator type for this set.*/
-	typedef std::pair<Dimension, double>* iterator;
+	typedef value_list_type::iterator       iterator;
 	/** @brief Const-iterator type for this set.*/
-	typedef const std::pair<Dimension, double>* const_iterator;
+	typedef value_list_type::const_iterator const_iterator;
 
 protected:
 	/**
@@ -309,37 +320,37 @@ protected:
 	 *
 	 * The method returns the position inside the array the value was inserted.
 	 */
-	iterator insertValue(iterator pos, const Dimension& dim, double value, bool ignoreUnknown = false);
+	iterator insertValue(iterator pos, const Argument::key_type& dim, Argument::mapped_type_cref value, bool ignoreUnknown = false);
 
 public:
 	/**
 	 * @brief Initialize this argument with the passed value for
 	 * the time dimension.
 	 */
-	Argument(simtime_t timeVal = 0);
+	Argument(simtime_t_cref timeVal = 0);
 
 	/**
 	 * @brief Initializes the Argument with the dimensions of the
 	 * passed DimensionSet set to zero, and the passed value for the
 	 * time (or zero, if omitted).
 	 */
-	Argument(const DimensionSet& dims, simtime_t timeVal = 0);
+	Argument(const DimensionSet& dims, simtime_t_cref timeVal = SIMTIME_ZERO);
 
 	/**
 	 * @brief Returns the time value of this argument.
 	 */
-	simtime_t getTime() const;
+	simtime_t_cref getTime() const;
 
 	/**
 	 * @brief Changes the time value of this argument.
 	 */
-	void setTime(simtime_t time);
+	void setTime(simtime_t_cref time);
 
 	/**
 	 * @brief Returns true if this Argument has a value for the
 	 * passed Dimension.
 	 */
-	bool hasArgVal(const Dimension& dim) const;
+	bool hasArgVal(const Argument::key_type& dim) const;
 
 	/**
 	 * @brief Returns the value for the specified dimension.
@@ -350,7 +361,7 @@ public:
 	 * Returns zero if no value with the specified dimension
 	 * is set for this argument.
 	 */
-	double getArgValue(const Dimension& dim) const;
+	mapped_type getArgValue(const Argument::key_type& dim) const;
 
 	/**
 	 * @brief Changes the value for the specified dimension.
@@ -361,7 +372,7 @@ public:
 	 * If the argument doesn't already contain a value for the
 	 * specified dimension the new dimension is added.
 	 */
-	void setArgValue(const Dimension& dim, double value);
+	void setArgValue(const Argument::key_type& dim, Argument::mapped_type_cref value);
 
 	/**
 	 * @brief Update the values of this Argument with the values
@@ -398,7 +409,7 @@ public:
 	 * the same dimensions and their values don't differ more
 	 * then a specific epsilon.
 	 */
-	bool isClose(const Argument& o, double epsilon = 0.000001) const;
+	bool isClose(const Argument& o, Argument::mapped_type_cref epsilon = Argument::mapped_type(0.000001)) const;
 
 	/**
 	 * @brief Returns true if this Argument is smaller then the
@@ -426,7 +437,7 @@ public:
 	 *
 	 * See "operator<" for definition of smaller, equal and bigger.
 	 */
-	double compare(const Argument& o, const DimensionSet& dims) const;
+	int compare(const Argument& o, const DimensionSet& dims) const;
 
 	/**
 	 * @brief Returns the dimensions this argument is defined over
@@ -438,8 +449,8 @@ public:
 	DimensionSet getDimensions() const {
 		DimensionSet res(Dimension::time_static());
 
-		for(unsigned int i = 0; i < count; i++)
-			res.addDimension(values[i].first);
+		for (const_iterator it = begin(); it != end(); ++it)
+			res.addDimension(it->first);
 
 		return res;
 	}
@@ -450,10 +461,12 @@ public:
 	 * Produces output of form "(x1, x2, x3, <...>)".
 	 */
 	friend std::ostream& operator<<(std::ostream& out, const Argument& d) {
+		using std::operator<<;
+
 		out << "(" << d.time;
 
-		for(unsigned int i = 0; i < d.count; i++){
-			out << ", " << d.values[i].second;
+		for (const_iterator it = d.begin(); it != d.end(); ++it) {
+			out << ", " << it->second;
 		}
     	return (out << ")");
     }
@@ -467,45 +480,45 @@ public:
 	/**
 	 * @brief Returns an iterator to the first argument value in this Argument.
 	 */
-	iterator begin() { return values; }
+	iterator begin() { return values.begin(); }
 	/**
 	 * @brief Returns an iterator to the first argument value in this Argument.
 	 */
-	const_iterator begin() const { return values; }
+	const_iterator begin() const { return values.begin(); }
 
 
 	/**
 	 * @brief Returns an iterator to the value behind the last argument value.
 	 */
-	iterator end() { return values + count; }
+	iterator end() { return values.end(); }
 	/**
 	 * @brief Returns an iterator to the value behind the last argument value.
 	 */
-	const_iterator end() const { return values + count; }
+	const_iterator end() const { return values.end(); }
 
 	/**
 	 * @brief Returns an iterator to the Argument value for the passed Dimension.
 	 *
 	 * Returns end() if there is no Argument for that dimension.
 	 */
-	iterator find(const Dimension& dim);
+	iterator find(const Argument::key_type& dim);
 	/**
 	 * @brief Returns an iterator to the Argument value for the passed Dimension.
 	 *
 	 * Returns end() if there is no Argument for that dimension.
 	 */
-	const_iterator find(const Dimension& dim) const;
+	const_iterator find(const Argument::key_type& dim) const;
 
 	/**
 	 * @brief Returns an iterator to the first Argument value which dimension
 	 * compares greater or equal to the passed Dimension.
 	 */
-	iterator lower_bound(const Dimension& dim);
+	iterator lower_bound(const Argument::key_type& dim);
 	/**
 	 * @brief Returns an iterator to the first Argument value which dimension
 	 * compares greater or equal to the passed Dimension.
 	 */
-	const_iterator lower_bound(const Dimension& dim) const;
+	const_iterator lower_bound(const Argument::key_type& dim) const;
 };
 
 /**
@@ -542,6 +555,9 @@ class NoNextIteratorException {};
  * @ingroup mapping
  */
 class MIXIM_API ConstMappingIterator {
+public:
+	typedef Argument::mapped_type      argument_value_t;
+	typedef Argument::mapped_type_cref argument_value_cref_t;
 public:
 	virtual ~ConstMappingIterator() {}
 
@@ -612,41 +628,74 @@ public:
 	 * The complexity of this method should be constant for every
 	 * implementation.
 	 */
-	virtual double getValue() const = 0;
+	virtual argument_value_t getValue() const = 0;
 };
 
 class Mapping;
 
+namespace mixim { namespace math {
+
+template<typename T, bool B = std::numeric_limits<T>::has_infinity>
+struct mW2dBm {
+};
+
+template<typename T>
+struct mW2dBm<T,false> {
+	inline T operator()(const T& mW) {
+		return (10 * log10(mW));
+	}
+};
+
+template<typename T>
+struct mW2dBm<T,true> {
+	inline T operator()(const T& mW) {
+		typedef std::numeric_limits<T> tnumlimits_for_v;
+		// we have possible infinity values, so that we can do some checks
+		const T    cInf   = tnumlimits_for_v::infinity();
+		const bool bIsInf = (mW == cInf) || (tnumlimits_for_v::is_signed ? (mW == -cInf) : false);
+
+		if ( bIsInf ) {
+			return mW;
+		}
+		return (10 * log10(mW));
+	}
+};
+
+};};
+
 /**
  * @brief Represents a not changeable mapping (mathematical function)
- * from domain with at least the time to  a double value.
+ * from domain with at least the time to  a Argument::mapped_type value.
  *
  * This class is an interface which describes a mapping (math.)
  * from a arbitrary dimensional domain (represented by a DimensionSet)
- * to a double value.
+ * to a Argument::mapped_type value.
  *
  * @author Karl Wessel
  * @ingroup mapping
  */
 class MIXIM_API ConstMapping {
+public:
+	typedef Argument::mapped_type      argument_value_t;
+	typedef Argument::mapped_type_cref argument_value_cref_t;
 protected:
 	/** @brief The dimensions of this mappings domain.*/
 	DimensionSet dimensions;
 
 private:
 	template<class T>
-	std::string toString(T v, unsigned int length){
-		char* tmp = new char[255];
-		sprintf(tmp, "%.2f", v);
+	std::string toString(T v, unsigned int length) const {
+		std::stringstream osToStr(std::stringstream::out);
 
-		std::string result(tmp);
-		delete[] tmp;
-		while(result.length() < length)
-			result += " ";
-		return result;
+		using std::operator<<;
+
+		osToStr << std::fixed; osToStr.precision(2); osToStr.width(length);
+		osToStr << std::right << v;
+
+		return osToStr.str();
 	}
 
-	std::string toString(simtime_t v, unsigned int length){
+	std::string toString(simtime_t_cref v, unsigned int length) const {
 		return toString(SIMTIME_DBL(v), length);
 	}
 
@@ -678,7 +727,7 @@ public:
 	 *
 	 * The complexity of this method depends on the actual implementation.
 	 */
-	virtual double getValue(const Argument& pos) const = 0;
+	virtual argument_value_t getValue(const Argument& pos) const = 0;
 
 	/**
 	 * @brief Returns a pointer of a new Iterator which is able to iterate
@@ -686,7 +735,7 @@ public:
 	 *
 	 * See class ConstIterator for details.
 	 */
-	virtual ConstMappingIterator* createConstIterator() = 0;
+	virtual ConstMappingIterator* createConstIterator() const = 0;
 
 	/**
 	 * @brief Returns a pointer of a new Iterator which is able to iterate
@@ -694,7 +743,7 @@ public:
 	 *
 	 * See class ConstIterator for details.
 	 */
-	virtual ConstMappingIterator* createConstIterator(const Argument& pos) = 0;
+	virtual ConstMappingIterator* createConstIterator(const Argument& pos) const = 0;
 
 	/**
 	 * @brief returns a deep copy of this mapping instance.
@@ -705,7 +754,7 @@ public:
 	 * @brief Returns the value of this Mapping at the position specified
 	 * by the passed Argument.
 	 */
-	double operator[](const Argument& pos) const {
+	argument_value_t operator[](const Argument& pos) const {
 		return getValue(pos);
 	}
 
@@ -723,18 +772,34 @@ public:
 	 * the job.
 	 */
 	template<class stream>
-	void print(stream& out) {
-		ConstMapping& m = *this;
-		Dimension otherDim;
-		const DimensionSet& dims = m.getDimensionSet();
-		out << "Mapping domain: time";
+	void print(stream& out) const {
+		const ConstMapping&      m = *this;
+		DimensionSet::value_type otherDim;
+		const DimensionSet&      dims = m.getDimensionSet();
+
+		using std::operator<<;
+
+		std::stringstream osDimHead(std::stringstream::out);
+		bool              bTimeIsIn = false;
 		for(DimensionSet::iterator it = dims.begin(); it != dims.end(); ++it) {
 			if(*it != Dimension::time){
 				otherDim = *it;
-				out << ", " << *it;
+				if (!osDimHead.str().empty())
+					osDimHead << ", ";
+				osDimHead << *it;
 			}
+			else
+				bTimeIsIn = true;
 		}
-		out << endl;
+		if (bTimeIsIn || !osDimHead.str().empty()) {
+			out << "Mapping domain: ";
+			if (bTimeIsIn) {
+				out << "time";
+				if (!osDimHead.str().empty())
+					out << ", ";
+			}
+			out << osDimHead.str() << endl;
+		}
 
 		ConstMappingIterator* it = m.createConstIterator();
 
@@ -746,12 +811,18 @@ public:
 		Argument min = it->getPosition();
 		Argument max = it->getPosition();
 
-		std::set<simtime_t> timePositions;
-		std::set<double> otherPositions;
+		typedef std::set<simtime_t>         t_time_container_type;
+		typedef std::set<argument_value_t>	t_value_container_type;
+
+		t_time_container_type  timePositions;
+		t_value_container_type otherPositions;
+		std::size_t            iMaxHeaderItemLen = m.toString(it->getPosition().getTime() * 1000, 2).length();
+		std::size_t            iMaxLeftItemLen   = 5;
 
 		timePositions.insert(it->getPosition().getTime());
 		if(dims.size() == 2){
 			otherPositions.insert(it->getPosition().begin()->second);
+			iMaxLeftItemLen = std::max(iMaxLeftItemLen, m.toString(it->getPosition().begin()->second, 2).length());
 		}
 
 		while(it->hasNext()) {
@@ -763,9 +834,12 @@ public:
 
 			timePositions.insert(pos.getTime());
 
+			iMaxHeaderItemLen = std::max(iMaxHeaderItemLen, m.toString(pos.getTime() * 1000, 2).length());
+
 			for(Argument::const_iterator itA = pos.begin(); itA != pos.end(); ++itA) {
-				if(dims.size() == 2){
+				if(dims.size() == 2) {
 					otherPositions.insert(itA->second);
+					iMaxLeftItemLen = std::max(iMaxLeftItemLen, m.toString(itA->second, 2).length());
 				}
 				min.setArgValue(itA->first, std::min(min.getArgValue(itA->first), itA->second));
 				max.setArgValue(itA->first, std::max(max.getArgValue(itA->first), itA->second));
@@ -778,48 +852,57 @@ public:
 			return;
 		}
 
-		out << "------+---------------------------------------------------------" << endl;
-		out << "o\\t   | ";
-		std::set<simtime_t>::const_iterator tIt;
-		for(tIt = timePositions.begin();
-			tIt != timePositions.end(); ++tIt)
-		{
-			out << m.toString(*tIt * 1000, 6) << " ";
+		t_time_container_type::const_iterator tIt;
+		std::stringstream                     osBorder(std::stringstream::out);
+		std::stringstream                     osHeader(std::stringstream::out);
+		mixim::math::mW2dBm<argument_value_t> fctor2dBm;
+
+		for(tIt = timePositions.begin(); tIt != timePositions.end(); ++tIt) {
+			osHeader << m.toString(*tIt * 1000, iMaxHeaderItemLen) << osHeader.fill();
 		}
-		out << endl;
-		out << "------+---------------------------------------------------------" << endl;
+		osBorder.fill('-');
+		osBorder << std::setw(iMaxLeftItemLen) << "" << osBorder.fill() << "+" << osBorder.fill() << std::setw(osHeader.str().length()) << "";
+
+		out << osBorder.str() << std::endl;
+		out << std::setw(iMaxLeftItemLen) << std::left << "o\\t" << out.fill() << "|" << out.fill();
+		out << osHeader.str() << std::endl;
+		out << osBorder.str() << std::endl;
 
 		it = m.createConstIterator();
 
-
 		if(dims.size() == 1) {
-			out << "value" << " | ";
+			out << std::setw(iMaxLeftItemLen) << "value" << out.fill() << "|" << out.fill();
 			while(it->inRange()) {
-				out << m.toString(FWMath::mW2dBm(it->getValue()), 6) << " ";
-
+				out << m.toString(fctor2dBm(it->getValue()), iMaxHeaderItemLen) << out.fill();
 				if(!it->hasNext()) {
 					break;
 				}
 				it->next();
 			}
 		} else {
+			t_value_container_type::const_iterator fIt = otherPositions.begin();
+
 			tIt = timePositions.begin();
-			std::set<double>::const_iterator fIt = otherPositions.begin();
-			out << m.toString(*fIt, 5) << " | ";
+			out << m.toString(*fIt, iMaxLeftItemLen) << out.fill() << "|" << out.fill();
 			while(it->inRange()) {
 				if(*fIt != it->getPosition().getArgValue(otherDim)) {
 					++fIt;
-					out << endl << m.toString(*fIt, 5) << " | ";
+					out << std::endl << m.toString(*fIt, iMaxLeftItemLen) << out.fill() << "|" << out.fill();
 					tIt = timePositions.begin();
 					assert(*fIt == it->getPosition().getArgValue(otherDim));
 				}
 
-				while(*tIt < it->getPosition().getTime()){
+				while( tIt != timePositions.end() && *tIt < it->getPosition().getTime() ) {
+					// blank item because the header time does not match
 					++tIt;
-					out << "      ";
+					out << std::setw(iMaxHeaderItemLen+1) << "";
+				}
+				if ( tIt != timePositions.end() ) {
+					// jump to next header item
+					++tIt;
 				}
 
-				out << m.toString(FWMath::mW2dBm(it->getValue()), 6) << " ";
+				out << m.toString(fctor2dBm(it->getValue()), iMaxHeaderItemLen) << out.fill();
 
 				if(!it->hasNext()) {
 					break;
@@ -827,8 +910,11 @@ public:
 				it->next();
 			}
 		}
-		out << endl << "------+---------------------------------------------------------" << endl;
-
+		out << std::endl << osBorder.str() << std::endl;
+	}
+	friend std::ostream& operator<<(std::ostream& out, const ConstMapping& rMapToPrint) {
+		rMapToPrint.print(out);
+		return (out);
 	}
 };
 
@@ -847,7 +933,6 @@ public:
  * @ingroup mapping
  */
 class MIXIM_API MappingIterator:public ConstMappingIterator {
-
 public:
 	virtual ~MappingIterator() {}
 	/**
@@ -857,13 +942,13 @@ public:
 	 * Implementations of this method should provide constant
 	 * complexity.
 	 */
-	virtual void setValue(double value) = 0;
+	virtual void setValue(argument_value_cref_t value) = 0;
 };
 
 
 /**
  * @brief Represents a changeable mapping (mathematical function)
- * from at least time to double.
+ * from at least time to Argument::mapped_type.
  *
  * This class extends the ConstMapping interface with write access.
  *
@@ -911,7 +996,7 @@ public:
 	 *
 	 * The complexity of this method depends on the implementation.
 	 */
-	virtual void setValue(const Argument& pos, double value) = 0;
+	virtual void setValue(const Argument& pos, argument_value_cref_t value) = 0;
 
 	/**
 	 * @brief Appends the passed value at the passed position to the mapping.
@@ -926,7 +1011,7 @@ public:
 	 * faster than the "setValue()" method. Otherwise this method just
 	 * calls the "setValue()"-method implementation.
 	 */
-	virtual void appendValue(const Argument& pos, double value) {
+	virtual void appendValue(const Argument& pos, argument_value_cref_t value) {
 		setValue(pos, value);
 	}
 
@@ -950,8 +1035,8 @@ public:
 	 *
 	 * Override this method if your ConstIterator differs from the normal iterator.
 	 */
-	virtual ConstMappingIterator* createConstIterator() {
-		return createIterator();
+	virtual ConstMappingIterator* createConstIterator() const {
+		return dynamic_cast<ConstMappingIterator*>( const_cast<Mapping*>(this)->createIterator() );
 	}
 
 	/**
@@ -960,8 +1045,8 @@ public:
 	 *
 	 * Override this method if your ConstIterator differs from the normal iterator.
 	 */
-	virtual ConstMappingIterator* createConstIterator(const Argument& pos) {
-		return createIterator(pos);
+	virtual ConstMappingIterator* createConstIterator(const Argument& pos) const {
+		return dynamic_cast<ConstMappingIterator*>( const_cast<Mapping*>(this)->createIterator(pos) );
 	}
 
 
@@ -1002,22 +1087,24 @@ public:
  */
 class MIXIM_API SimpleConstMappingIterator:public ConstMappingIterator {
 protected:
+	/** @brief Type for a set of Arguments defining key entries.*/
+	typedef std::set<Argument>       KeyEntrySet;
+	/** @brief Type of a key entries item.*/
+	typedef KeyEntrySet::value_type  KeyEntryType;
+
 	/** @brief The underlying ConstMapping to iterate over. */
-	ConstMapping* mapping;
+	const ConstMapping *const   mapping;
 
 	/** @brief The dimensions of the underlying ConstMapping.*/
-	DimensionSet dimensions;
+	const DimensionSet&         dimensions;
 
 	/** @brief The current position of the iterator.*/
-	Argument position;
-
-	/** @brief Type for a set of Arguments defining key entries.*/
-	typedef std::set<Argument> KeyEntrySet;
+	KeyEntryType                position;
 
 	/** @brief A pointer to a set of Arguments defining the positions to
 	 * iterate over.
 	 */
-	const KeyEntrySet* keyEntries;
+	const KeyEntrySet*          keyEntries;
 
 	/** @brief An iterator over the key entry set which defines the next bigger
 	 * entry of the current position.*/
@@ -1032,9 +1119,9 @@ public:
 	 * Note: The pointer to the key entries has to be valid as long as the
 	 * iterator exists.
 	 */
-	SimpleConstMappingIterator(ConstMapping* mapping,
-							   const std::set<Argument>* keyEntries,
-							   const Argument& start);
+	SimpleConstMappingIterator(const ConstMapping*                            mapping,
+	                           const SimpleConstMappingIterator::KeyEntrySet* keyEntries,
+	                           const Argument&                                start);
 
 	/**
 	 * @brief Initializes the ConstIterator for the passed ConstMapping,
@@ -1043,8 +1130,8 @@ public:
 	 * Note: The pointer to the key entries has to be valid as long as the
 	 * iterator exists.
 	 */
-	SimpleConstMappingIterator(ConstMapping* mapping,
-							   const std::set<Argument>* keyEntries);
+	SimpleConstMappingIterator(const ConstMapping*                            mapping,
+	                           const SimpleConstMappingIterator::KeyEntrySet* keyEntries);
 
 	/**
 	 * @brief Returns the next position a call to "next()" would iterate to.
@@ -1056,7 +1143,6 @@ public:
 	virtual const Argument& getNextPosition() const {
 		if(nextEntry == keyEntries->end())
 			throw NoNextIteratorException();
-
 		return *nextEntry;
 	}
 
@@ -1152,7 +1238,7 @@ public:
 	 * This method has the same complexity as the "getValue()" method of the
 	 * underlying mapping.
 	 */
-	virtual double getValue() const { return mapping->getValue(position); }
+	virtual argument_value_t getValue() const { return mapping->getValue(position); }
 };
 
 /**
@@ -1205,7 +1291,7 @@ public:
 	 *
 	 * This method asserts that the mapping had been fully initialized.
 	 */
-	virtual ConstMappingIterator* createConstIterator() {
+	virtual ConstMappingIterator* createConstIterator() const {
 		return new SimpleConstMappingIterator(this, &keyEntries);
 	}
 
@@ -1215,7 +1301,7 @@ public:
 	 *
 	 * This method asserts that the mapping had been fully initialized.
 	 */
-	virtual ConstMappingIterator* createConstIterator(const Argument& pos) {
+	virtual ConstMappingIterator* createConstIterator(const Argument& pos) const {
 		return new SimpleConstMappingIterator(this, &keyEntries, pos);
 	}
 
@@ -1309,7 +1395,7 @@ public:
 	 * This method has to be implemented by every subclass and should
 	 * only have constant complexity.
 	 */
-	virtual double getValue(const Argument& pos) const = 0;
+	virtual argument_value_t getValue(const Argument& pos) const = 0;
 
 	/**
 	 * @brief creates a clone of this mapping.

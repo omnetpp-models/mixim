@@ -8,7 +8,6 @@ import org.mixim.modules.nic.NicBMAC;
 import org.mixim.modules.power.battery.BatteryStats;
 import org.mixim.modules.power.battery.SimpleBattery;
 
-
 //
 // Example host module using a BMAC Network interface card.
 //

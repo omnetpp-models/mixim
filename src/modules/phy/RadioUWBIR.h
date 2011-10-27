@@ -12,8 +12,7 @@
 
 #include "MiXiMDefs.h"
 #include "PhyUtils.h"
-#include "BasePhyLayer.h"
-#include "UWBIRIEEE802154APathlossModel.h"
+#include "PhyLayerUWBIR.h"
 
 /**
  * @brief This class extends the basic radio model.
@@ -57,7 +56,7 @@ public:
 	 * reception, transmission and sleep.
 	 */
 
-	virtual simtime_t switchTo(int newState, simtime_t now) {
+	virtual simtime_t switchTo(int newState, simtime_t_cref now) {
 		// state must be one of sleep, receive or transmit (not sync)
 		//assert(newState != Radio::SYNC);
 		if(newState == state || (newState == RadioUWBIR::RX && state == RadioUWBIR::SYNC)) {
@@ -71,7 +70,7 @@ public:
 		}
 	}
 
-	virtual simtime_t reallySwitchTo(int newState, simtime_t now) {
+	virtual simtime_t reallySwitchTo(int newState, simtime_t_cref now) {
 		// set the nextState to the newState and the current state to SWITCHING
 		nextState = newState;
 		int lastState = state;
@@ -86,16 +85,14 @@ public:
 
 protected:
 
-	RadioUWBIR(int numRadioStates,bool recordStats, int initialState, double minAtt = 1.0, double maxAtt = 0.0)
+	RadioUWBIR(int numRadioStates,bool recordStats, int initialState, Argument::mapped_type_cref minAtt = Argument::MappedOne, Argument::mapped_type_cref maxAtt = Argument::MappedZero)
 	:Radio(numRadioStates, recordStats, initialState, minAtt, maxAtt) {	}
 
-	virtual double mapStateToAtt(int state)
+	virtual Argument::mapped_type_cref mapStateToAtt(int state)
 	{
-		if (state == RadioUWBIR::RX || state == RadioUWBIR::SYNC)
-		{
+		if (state == RadioUWBIR::RX || state == RadioUWBIR::SYNC) {
 			return minAtt;
-		} else
-		{
+		} else {
 			return maxAtt;
 		}
 	}
@@ -105,7 +102,7 @@ private:
 	 * @brief Called by the decider through the phy layer to announce that
 	 * the radio has locked on a frame and is attempting reception.
 	 */
-	virtual void startReceivingFrame(simtime_t now) {
+	virtual void startReceivingFrame(simtime_t_cref now) {
 		assert(state == RadioUWBIR::SYNC);
 		state = RadioUWBIR::SWITCHING;
 		nextState = RadioUWBIR::RX;
@@ -116,7 +113,7 @@ private:
 		 * the radio has finished receiving a frame and is attempting to
 		 * synchronize on incoming frames.
 		 */
-	virtual void finishReceivingFrame(simtime_t now) {
+	virtual void finishReceivingFrame(simtime_t_cref now) {
 		assert(state == RadioUWBIR::RX);
 		state = RadioUWBIR::SWITCHING;
 		nextState = RadioUWBIR::SYNC;

@@ -13,8 +13,8 @@
 package org.mixim.tests.power.deviceTest;
 
 import org.mixim.tests.power.utils.DeviceDutySimple;
-import org.mixim.modules.power.battery.SimpleBattery;
 import org.mixim.tests.power.utils.Subscriber;
+import org.mixim.modules.power.battery.SimpleBattery;
 import org.mixim.modules.power.battery.BatteryStats;
 
 module SimpleHost

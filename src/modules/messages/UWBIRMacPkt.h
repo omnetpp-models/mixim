@@ -7,8 +7,6 @@
 #include "MiXiMDefs.h"
 #include "UWBIRMacPkt_m.h"
 
-using namespace std;
-
 class MIXIM_API UWBIRMacPkt : public UWBIRMacPkt_Base
 {
    public:
@@ -24,7 +22,7 @@ class MIXIM_API UWBIRMacPkt : public UWBIRMacPkt_Base
      virtual void pushBitvalue(bool bitValue);
      virtual bool popBitValue();
      virtual bool isEmpty();
-     list<bool> bitValues;
+     std::list<bool> bitValues;
 };
 
 #endif

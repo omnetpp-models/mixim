@@ -18,8 +18,6 @@
  * description: basic MAC layer class
  *              subclass to create your own MAC layer
  **************************************************************************/
-
-
 #ifndef BASE_MAC_LAYER_H
 #define BASE_MAC_LAYER_H
 
@@ -27,10 +25,13 @@
 
 #include "MiXiMDefs.h"
 #include "BaseLayer.h"
-//#include "BaseArp.h"
-#include <MacPkt_m.h>
-#include <MacToPhyInterface.h>
-#include <BaseConnectionManager.h>
+#include "SimpleAddress.h"
+#include "MappingBase.h"
+
+class BaseConnectionManager;
+class MacPkt;
+class MacToPhyInterface;
+class Signal;
 
 /**
  * @brief A very simple MAC module template which provides de- and
@@ -44,28 +45,29 @@
 class MIXIM_API BaseMacLayer : public BaseLayer
 {
 public:
-	/** @brief Message kinds used by this layer.*/
-	enum BaseMacMessageKinds {
-		/** Stores the id on which classes extending BaseMac should
-		 * continue their own message kinds.*/
-		LAST_BASE_MAC_MESSAGE_KIND = 23000,
-	};
-	/** @brief Control message kinds used by this layer.*/
-	enum BaseMacControlKinds {
-		/** Indicates the end of a transmission*/
-		TX_OVER = 23500,
-		/** Tells the netw layer that a packet to be sent has been dropped.*/
-		PACKET_DROPPED,
-		/** Stores the id on which classes extending BaseMac should
-		 * continue their own control kinds.*/
-		LAST_BASE_MAC_CONTROL_KIND,
-	};
+    /** @brief Message kinds used by this layer.*/
+    enum BaseMacMessageKinds {
+        /** Stores the id on which classes extending BaseMac should
+         * continue their own message kinds.*/
+        LAST_BASE_MAC_MESSAGE_KIND = 23000,
+    };
+    /** @brief Control message kinds used by this layer.*/
+    enum BaseMacControlKinds {
+        /** Indicates the end of a transmission*/
+        TX_OVER = 23500,
+        /** Tells the netw layer that a packet to be sent has been dropped.*/
+        PACKET_DROPPED,
+        /** Stores the id on which classes extending BaseMac should
+         * continue their own control kinds.*/
+        LAST_BASE_MAC_CONTROL_KIND,
+    };
+
 protected:
 
-	/** @brief Handler to the physical layer.*/
-	MacToPhyInterface* phy;
+    /** @brief Handler to the physical layer.*/
+    MacToPhyInterface* phy;
 
-	/** @brief Pointer to the arp module*/
+    /** @brief Pointer to the arp module*/
     //BaseArp* arp;
 
     /**
@@ -74,9 +76,9 @@ protected:
     int headerLength;
 
     /**
-     * @brief MAC address (simply module id)
+     * @brief MAC address.
      **/
-    MACAddress myMacAddr;
+    LAddress::L2Type myMacAddr;
 
     /** @brief debug this core module? */
     bool coreDebug;
@@ -92,6 +94,14 @@ protected:
 
 public:
     //Module_Class_Members( BaseMacLayer, BaseLayer, 0 );
+    BaseMacLayer() 
+      : BaseLayer()
+      , phy(NULL)
+    {}
+    BaseMacLayer(unsigned stacksize) 
+      : BaseLayer(stacksize)
+      , phy(NULL)
+    {}
 
     /** @brief Initialization of the module and some variables*/
     virtual void initialize(int);
@@ -99,11 +109,11 @@ public:
     /**
      * @brief Returns the MAC address of this MAC module.
      */
-    MACAddress getMACAddress() { return myMacAddr; }
+    const LAddress::L2Type& getMACAddress() { return myMacAddr; }
 
 protected:
 
-	/**
+    /**
      * @brief Registers this bridge's NIC with INET's InterfaceTable.
      */
     virtual void registerInterface();
@@ -157,7 +167,7 @@ protected:
      * transmission-power is still zero at the exact start and end.
      * Please see the method MappingUtils::addDiscontinuity for the reason.
      */
-    virtual Signal* createSignal(simtime_t start, simtime_t length, double power, double bitrate);
+    virtual Signal* createSignal(simtime_t_cref start, simtime_t_cref length, double power, double bitrate);
 
     /**
      * @brief Creates a simple Mapping with a constant curve
@@ -165,27 +175,66 @@ protected:
      *
      * Used by "createSignal" to create the bitrate mapping.
      */
-    Mapping* createConstantMapping(simtime_t start, simtime_t end, double value);
+    Mapping* createConstantMapping(simtime_t_cref start, simtime_t_cref end, Argument::mapped_type_cref value);
 
     /**
-	 * @brief Creates a simple Mapping with a constant curve
-	 * progression at the passed value and discontinuities at the boundaries.
-	 *
-	 * Used by "createSignal" to create the power mapping.
-	 */
-    Mapping* createRectangleMapping(simtime_t start, simtime_t end, double value);
+     * @brief Creates a simple Mapping with a constant curve
+     * progression at the passed value and discontinuities at the boundaries.
+     *
+     * Used by "createSignal" to create the power mapping.
+     */
+    Mapping* createRectangleMapping(simtime_t_cref start, simtime_t_cref end, Argument::mapped_type_cref value);
 
     /**
      * @brief Creates a Mapping defined over time and frequency with
      * constant power in a certain frequency band.
      */
-    ConstMapping* createSingleFrequencyMapping(simtime_t start, simtime_t end, double centerFreq, double bandWith, double value);
+    ConstMapping* createSingleFrequencyMapping(simtime_t_cref start, simtime_t_cref end, Argument::mapped_type_cref centerFreq, Argument::mapped_type_cref bandWith, Argument::mapped_type_cref value);
 
     /**
      * @brief Returns a pointer to this MACs NICs ConnectionManager module.
      * @return pointer to the connection manager module
      */
     BaseConnectionManager* getConnectionManager();
+
+    /**
+     * @brief Extracts the MAC address from the "control info" structure (object).
+     *
+     * Extract the destination MAC address from the "control info" which was prev. set by NetwToMacControlInfo::setControlInfo().
+     *
+     * @param pCtrlInfo	The "control info" structure (object) prev. set by NetwToMacControlInfo::setControlInfo().
+     * @return The MAC address of message receiver.
+     */
+    virtual const LAddress::L2Type& getUpperDestinationFromControlInfo(const cObject *const pCtrlInfo);
+
+    /**
+     * @brief Attaches a "control info" (MacToNetw) structure (object) to the message pMsg.
+     *
+     * This is most useful when passing packets between protocol layers
+     * of a protocol stack, the control info will contain the destination MAC address.
+     *
+     * The "control info" object will be deleted when the message is deleted.
+     * Only one "control info" structure can be attached (the second
+     * setL3ToL2ControlInfo() call throws an error).
+     *
+     * @param pMsg		The message where the "control info" shall be attached.
+     * @param pSrcAddr	The MAC address of the message receiver.
+     */
+    virtual cObject *const setUpControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr);
+    /**
+     * @brief Attaches a "control info" (MacToPhy) structure (object) to the message pMsg.
+     *
+     * This is most useful when passing packets between protocol layers
+     * of a protocol stack, the control info will contain the signal.
+     *
+     * The "control info" object will be deleted when the message is deleted.
+     * Only one "control info" structure can be attached (the second
+     * setL3ToL2ControlInfo() call throws an error).
+     *
+     * @param pMsg		The message where the "control info" shall be attached.
+     * @param pSignal	The signal which should be send.
+     */
+    virtual cObject *const setDownControlInfo(cMessage *const pMsg, Signal *const pSignal);
 };
 
 #endif

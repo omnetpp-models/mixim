@@ -1,5 +1,12 @@
 #include "TestMacLayer.h"
-#include <DeciderToPhyInterface.h>
+
+#include <sstream>
+
+#include "DeciderToPhyInterface.h"
+#include "MacPkt_m.h"
+#include "FindModule.h"
+#include "MacToPhyControlInfo.h"
+
 Define_Module(TestMacLayer);
 
 //---omnetpp part----------------------
@@ -228,7 +235,8 @@ void TestMacLayer::testRun5(int stage, const cMessage* msg)
 	switch (stage) {
 		case 0:
 			testGetChannelStateWithBD();
-			// NOTE: there is no break here!
+			testChannelSenseWithBD();
+			break;
 		case 1:
 			// testSwitchRadio(stage);
 			testChannelSenseWithBD();
@@ -447,7 +455,10 @@ void TestMacLayer::testChannelInfo(int stage) {
 	case 1:
 	    break;
 	default:
-		fail("TestChannelInfo: Unknown stage.");
+		std::stringstream sBuf;
+
+		sBuf << "TestChannelInfo: Unknown stage (" << stage << ").";
+		fail(sBuf.str());
 		break;
 	}
 	//displayPassed = false;
@@ -490,7 +501,10 @@ void TestMacLayer::testSending1(int stage, const cMessage* lastMsg) {
 		break;
 	}
 	default:
-		fail("Unknown stage");
+		std::stringstream sBuf;
+
+		sBuf << "Unknown stage (" << stage << ").";
+		fail(sBuf.str());
 		break;
 	}
 }
@@ -510,7 +524,7 @@ void TestMacLayer::testGetChannelStateWithBD()
 
 //---utilities------------------------------
 
-void TestMacLayer::continueIn(simtime_t time){
+void TestMacLayer::continueIn(simtime_t_cref time){
 	scheduleAt(simTime() + time, new cMessage(0, 23242));
 	waitForMessage(	"Waiting for " + toString(time) + "s.",
 					23242,
@@ -535,11 +549,9 @@ void TestMacLayer::sendDown(MacPkt* pkt) {
 	send(pkt, dataOut);
 }
 
-MacPkt* TestMacLayer::createMacPkt(simtime_t length) {
-	Signal* s = new Signal(simTime(), length);
-	MacToPhyControlInfo* ctrl = new MacToPhyControlInfo(s);
+MacPkt* TestMacLayer::createMacPkt(simtime_t_cref length) {
 	MacPkt* res = new MacPkt();
-	res->setControlInfo(ctrl);
 	res->setKind(TEST_MACPKT);
+	MacToPhyControlInfo::setControlInfo(res, new Signal(simTime(), length));
 	return res;
 }

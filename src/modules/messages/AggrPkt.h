@@ -7,8 +7,6 @@
 #include "MiXiMDefs.h"
 #include "AggrPkt_m.h"
 
-using namespace std;
-
 class MIXIM_API AggrPkt : public AggrPkt_Base
 {
   public:
@@ -28,7 +26,7 @@ class MIXIM_API AggrPkt : public AggrPkt_Base
     virtual bool isEmpty();
     virtual pApplPkt& popFrontPacket();
   protected:
-    list<pApplPkt> storedPackets;
+    std::list<pApplPkt> storedPackets;
 
 };
 

@@ -6,7 +6,10 @@
  */
 
 #include "Decider80211MultiChannel.h"
+
 #include "DeciderResult80211.h"
+#include "Consts80211.h"
+#include "AirFrame_m.h"
 
 Decider80211MultiChannel::Decider80211MultiChannel(DeciderToPhyInterface* phy,
 					double threshold,
@@ -24,18 +27,16 @@ Decider80211MultiChannel::Decider80211MultiChannel(DeciderToPhyInterface* phy,
 
 Decider80211MultiChannel::~Decider80211MultiChannel() {}
 
-void Decider80211MultiChannel::getChannelInfo(simtime_t start, simtime_t end, AirFrameVector& out)
+void Decider80211MultiChannel::getChannelInfo(simtime_t_cref start, simtime_t_cref end, AirFrameVector& out)
 {
 	Decider80211Battery::getChannelInfo(start, end, out);
 
-	for(AirFrameVector::iterator it = out.begin(); it != out.end(); ++it)
-	{
-		AirFrame* af = *it;
-        if(af->getChannel() != currentChannel) {
+	for (AirFrameVector::iterator it = out.begin(); it != out.end(); ) {
+		if((*it)->getChannel() != currentChannel) {
 			it = out.erase(it);
-            if (it == out.end())
-                break;
-        }
+		}
+		else
+			++it;
 	}
 }
 

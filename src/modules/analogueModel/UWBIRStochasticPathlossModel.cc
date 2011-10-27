@@ -18,7 +18,9 @@
  ***************************************************************************/
 
 #include "UWBIRStochasticPathlossModel.h"
-#include "ChannelAccess.h"
+
+#include "BaseWorldUtility.h"
+#include "AirFrame_m.h"
 
 //const double UWBIRStochasticPathlossModel::Gtx = 0.9, UWBIRStochasticPathlossModel::Grx = 0.9, UWBIRStochasticPathlossModel::ntx = 0.9, UWBIRStochasticPathlossModel::nrx = 0.9;
 const double UWBIRStochasticPathlossModel::Gtx = 1, UWBIRStochasticPathlossModel::Grx = 1, UWBIRStochasticPathlossModel::ntx = 1, UWBIRStochasticPathlossModel::nrx = 1;
@@ -39,11 +41,10 @@ double UWBIRStochasticPathlossModel::simtruncnormal(double mean, double stddev, 
     return res;
 }
 
-void UWBIRStochasticPathlossModel::filterSignal(AirFrame *frame)
+void UWBIRStochasticPathlossModel::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
 {
-    Signal& signal = frame->getSignal();
-
 	if (isEnabled) {
+		Signal& signal = frame->getSignal();
 		// Initialize objects and variables
 		TimeMapping<Linear>* attMapping = new TimeMapping<Linear> ();
 		Argument arg;
@@ -60,12 +61,7 @@ void UWBIRStochasticPathlossModel::filterSignal(AirFrame *frame)
 		S = n2 * sigma;
 
 		// Determine distance between sender and receiver
-		assert(signal.getReceptionStart() == simTime());
-		IMobility *senderMobility = ((ChannelAccess*)frame->getSenderModule())->getMobilityModule();
-		IMobility *receiverMobility = ((ChannelAccess*)frame->getArrivalModule())->getMobilityModule();
-		Coord senderPos = senderMobility->getCurrentPosition();
-		Coord receiverPos = receiverMobility->getCurrentPosition();
-		double distance = receiverPos.distance(senderPos);
+		double distance    = receiverPos.distance(sendersPos);
 		/*
 		 srcPosX.record(senderPos.x);
 		 srcPosY.record(senderPos.y);

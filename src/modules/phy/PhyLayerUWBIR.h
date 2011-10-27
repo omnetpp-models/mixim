@@ -66,21 +66,23 @@
 #define UWBIR_PHY_LAYER_H
 
 #include "MiXiMDefs.h"
-#include "PhyLayerBattery.h"
+#include "BasePhyLayer.h"
 #include "RadioUWBIR.h"
 #include "UWBIRStochasticPathlossModel.h"
 #include "UWBIRIEEE802154APathlossModel.h"
 #include "HostState.h"
-#include "MacToPhyControlInfo.h"
 
 
-class DeciderUWBIRED;
 class DeciderUWBIREDSyncOnAddress;
 class DeciderUWBIREDSync;
 
 #include "DeciderUWBIRED.h"
-#include "DeciderUWBIREDSyncOnAddress.h"
-#include "DeciderUWBIREDSync.h"
+
+#if (OMNETPP_VERSION >= 0x0402)
+	typedef cNEDValue 				  t_dynamic_expression_value;
+#else
+	typedef cDynamicExpression::Value t_dynamic_expression_value;
+#endif
 
 /**
  * @brief Physical layer that models an Ultra Wideband Impulse Radio wireless communication system.
@@ -126,7 +128,7 @@ public:
     void finish();
 
     // this function allows to include common xml documents for ned parameters as ned functions
-    static cNEDValue ghassemzadehNLOSFunc(cComponent *context, cNEDValue argv[], int argc) {
+    static t_dynamic_expression_value ghassemzadehNLOSFunc(cComponent *context, t_dynamic_expression_value argv[], int argc) {
       const char * ghassemzadehnlosxml =
     		  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     		  "<root>"
@@ -143,12 +145,12 @@ public:
     		  "</root>";
       cXMLParImpl xmlParser;
       xmlParser.parse(ghassemzadehnlosxml);  // from char* to xml
-      cNEDValue parameters(xmlParser.xmlValue(NULL)); // from xml to Value
+      t_dynamic_expression_value parameters(xmlParser.xmlValue(NULL)); // from xml to Value
       return parameters;
     }
-    typedef cNEDValue (*fptr) (cComponent *context, cNEDValue argv[], int argc);
+    typedef t_dynamic_expression_value (*fptr) (cComponent *context, t_dynamic_expression_value argv[], int argc);
     static fptr ghassemzadehNLOSFPtr;
-    //static cNEDValue (*ghassemzadehNLOSFPtr) (cComponent *context, cNEDValue argv[], int argc);
+    //static t_dynamic_expression_value (*ghassemzadehNLOSFPtr) (cComponent *context, t_dynamic_expression_value argv[], int argc);
 
 
 

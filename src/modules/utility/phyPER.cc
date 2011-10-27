@@ -17,16 +17,17 @@
 
 #include "phyPER.h"
 
+#include "BaseLayer.h"
+#include "DeciderUWBIRED.h"
+
 Define_Module(phyPER);
 
 void phyPER::initialize(int stage)
 {
 	BaseModule::initialize(stage);
 	if(stage == 0) {
-		catPacket = registerSignal("packet");
-		subscribe(catPacket, this);
-		catUWBIRPacket = registerSignal("UWBIRPacket");
-		subscribe(catUWBIRPacket, this);
+		findHost()->subscribe(BaseLayer::catPacketSignal, this);
+		findHost()->subscribe(DeciderUWBIRED::catUWBIRPacketSignal, this);
 		maiPER.setName("maiPER");
 		maiPERnoRS.setName("maiPERnoRS");
 		nbSyncAttempts = 0;
@@ -38,11 +39,11 @@ void phyPER::initialize(int stage)
 
 
 void phyPER::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) {
-    if(signalID == catPacket) {
+    if(signalID == BaseLayer::catPacketSignal) {
     	packet = *(static_cast<const Packet*>(obj));
     	nbRx = static_cast<long>(packet.getNbPacketsReceived());
     	nbRxnoRS = static_cast<long>(packet.getNbPacketsReceivedNoRS());
-    } else if(signalID == catUWBIRPacket) {
+    } else if(signalID == DeciderUWBIRED::catUWBIRPacketSignal) {
     	uwbirpacket = *(static_cast<const UWBIRPacket*>(obj));
     	nbSyncAttempts = static_cast<long>(uwbirpacket.getNbSyncAttempts());
     	nbSyncSuccesses = uwbirpacket.getNbSyncSuccesses();

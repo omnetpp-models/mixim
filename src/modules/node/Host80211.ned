@@ -6,7 +6,6 @@ import org.mixim.base.modules.IBaseApplLayer;
 import org.mixim.base.modules.IBaseNetwLayer;
 import org.mixim.modules.nic.Nic80211;
 
-
 //
 // Example host module using an 802.11 Network interface card.
 //

@@ -9,7 +9,6 @@ import org.mixim.modules.power.battery.BatteryStats;
 import org.mixim.modules.power.battery.SimpleBattery;
 import org.mixim.modules.utility.phyPER;
 
-
 //
 // This host NED module models a host using an IEEE 802.15.4A correlation receiver.
 // 

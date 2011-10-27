@@ -16,18 +16,15 @@
  ***************************************************************************
  * part of:     framework implementation developed by tkn
  **************************************************************************/
-
-
 #include "Mac80211.h"
-#include "MacToPhyControlInfo.h"
-#include <MacToNetwControlInfo.h>
-#include <PhyToMacControlInfo.h>
-#include <Ieee802Ctrl_m.h>
-#include "SimpleAddress.h"
-#include <FWMath.h>
-#include <Decider80211.h>
-#include <DeciderResult80211.h>
-#include <BaseConnectionManager.h>
+
+#include "PhyToMacControlInfo.h"
+#include "FWMath.h"
+#include "Decider80211.h"
+#include "DeciderResult80211.h"
+#include "BaseConnectionManager.h"
+#include "MacToPhyInterface.h"
+#include "ChannelSenseRequest_m.h"
 
 Define_Module(Mac80211);
 
@@ -133,7 +130,7 @@ void Mac80211::initialize(int stage)
     }
 }
 
-void Mac80211::senseChannelWhileIdle(simtime_t duration) {
+void Mac80211::senseChannelWhileIdle(simtime_t_cref duration) {
 	if(contention->isScheduled()) {
 		error("Cannot start a new channel sense request because already sensing the channel!");
 	}
@@ -197,10 +194,10 @@ Mac80211Pkt *Mac80211::encapsMsg(cPacket * netw)
 
     // copy dest address from the Control Info attached to the network
     // mesage by the network layer
-    Ieee802Ctrl* cInfo = static_cast<Ieee802Ctrl*>(netw->removeControlInfo());
+    cObject *const cInfo = netw->removeControlInfo();
 
-    debugEV <<"CInfo removed, mac addr="<< cInfo->getDest()<<endl;
-    pkt->setDestAddr(cInfo->getDest());
+    debugEV << "CInfo removed, mac addr=" << getUpperDestinationFromControlInfo(cInfo) << endl;
+    pkt->setDestAddr(getUpperDestinationFromControlInfo(cInfo));
 
     //delete the control info
     delete cInfo;
@@ -215,10 +212,9 @@ Mac80211Pkt *Mac80211::encapsMsg(cPacket * netw)
     return pkt;
 }
 
-//TODO: See if we can use the BaseMacLayers decapsMsg-method here
 cMessage *Mac80211::decapsMsg(Mac80211Pkt *frame) {
     cMessage *m = frame->decapsulate();
-    m->setControlInfo(new MacToNetwControlInfo(frame->getSrcAddr(), 0));
+    setUpControlInfo(m, frame->getSrcAddr());
     debugEV << " message decapsulated " << endl;
     return m;
 }
@@ -244,7 +240,7 @@ void Mac80211::handleLowerMsg(cMessage *msg)
         if(af->getDestAddr() == myMacAddr) {
             handleMsgForMe(af);
         }
-        else if(af->getDestAddr() == MACAddress::BROADCAST_ADDRESS) {
+        else if(LAddress::isL2Broadcast(af->getDestAddr())) {
             handleBroadcastMsg(af);
         }
         else {
@@ -303,6 +299,7 @@ void Mac80211::handleLowerControl(cMessage *msg)
     default:
     	ev << "Unhandled control message from physical layer: " << msg << endl;
     	delete msg;
+    	break;
     }
 }
 
@@ -327,6 +324,7 @@ void Mac80211::handleSelfMsg(cMessage * msg)
 
     default:
         error("unknown timer type");
+        break;
     }
 }
 
@@ -340,7 +338,7 @@ void Mac80211::handleSelfMsg(cMessage * msg)
  *  occured the node must defer for EIFS.  Called by
  *  handleLowerMsg()
  */
-void Mac80211::handleMsgNotForMe(cMessage *af, simtime_t duration)
+void Mac80211::handleMsgNotForMe(cMessage *af, simtime_t_cref duration)
 {
 	debugEV << "handle msg not for me " << af->getName() << "\n";
 
@@ -496,6 +494,7 @@ void Mac80211::handleMsgForMe(Mac80211Pkt *af)
         break;
     default:
         error("unknown state %d", state);
+        break;
     }
 }
 
@@ -747,6 +746,7 @@ void Mac80211::handleEndSifsTimer()
         break;
     default:
         error("logic error: end sifs timer when previously received packet is not RTS/CTS/DATA");
+        break;
     }
 
     // don't need previous frame any more
@@ -784,11 +784,9 @@ void Mac80211::sendDATAframe(Mac80211Pkt *af)
     double br;
 
     if(af) {
-    	PhyToMacControlInfo* tmp = static_cast<PhyToMacControlInfo*>(af->removeControlInfo());
+        br = static_cast<const DeciderResult80211*>(PhyToMacControlInfo::getDeciderResult(af))->getBitrate();
 
-        br = static_cast<const DeciderResult80211*>(tmp->getDeciderResult())->getBitrate();
-
-        delete tmp;
+        delete af->removeControlInfo();
     }
     else {
        br  = retrieveBitrate(frame->getDestAddr());
@@ -796,10 +794,8 @@ void Mac80211::sendDATAframe(Mac80211Pkt *af)
        if(shortRetryCounter) frame->setRetry(true);
     }
     simtime_t duration = packetDuration(frame->getBitLength(), br);
-    Signal* signal = createSignal(simTime(), duration, txPower, br);
-    MacToPhyControlInfo *pco = new MacToPhyControlInfo(signal);
+    setDownControlInfo(frame, createSignal(simTime(), duration, txPower, br));
     // build a copy of the frame in front of the queue'
-    frame->setControlInfo(pco);
     frame->setSrcAddr(myMacAddr);
     frame->setKind(DATA);
     frame->setDuration(SIFS + packetDuration(LENGTH_ACK, br));
@@ -822,18 +818,10 @@ void Mac80211::sendACKframe(Mac80211Pkt * af)
 {
     Mac80211Pkt *frame = new Mac80211Pkt("wlan-ack");
 
-    PhyToMacControlInfo* phyCtrlInfo = static_cast<PhyToMacControlInfo*>(af->removeControlInfo());
-    double br = static_cast<const DeciderResult80211*>(phyCtrlInfo->getDeciderResult())->getBitrate();
-    delete phyCtrlInfo;
-    phyCtrlInfo = 0;
+    double br = static_cast<const DeciderResult80211*>(PhyToMacControlInfo::getDeciderResult(af))->getBitrate();
+    delete af->removeControlInfo();
 
-    Signal* signal = createSignal(simTime(),
-								  packetDuration(LENGTH_ACK, br),
-								  txPower, br);
-
-    MacToPhyControlInfo *pco = new MacToPhyControlInfo(signal);
-
-    frame->setControlInfo(pco);
+    setDownControlInfo(frame, createSignal(simTime(), packetDuration(LENGTH_ACK, br), txPower, br));
     frame->setKind(ACK);
     frame->setBitLength((int)LENGTH_ACK);
 
@@ -861,13 +849,8 @@ void Mac80211::sendRTSframe()
     const Mac80211Pkt* frameToSend = fromUpperLayer.front();
     double br = retrieveBitrate(frameToSend->getDestAddr());
 
-    Signal* signal = createSignal(simTime(),
-								  packetDuration(LENGTH_RTS, br),
-								  txPower, br);
+    setDownControlInfo(frame, createSignal(simTime(),packetDuration(LENGTH_RTS, br), txPower, br));
 
-    MacToPhyControlInfo *pco = new MacToPhyControlInfo(signal);
-
-    frame->setControlInfo(pco);
     frame->setKind(RTS);
     frame->setBitLength((int)LENGTH_RTS);
 
@@ -900,17 +883,11 @@ void Mac80211::sendCTSframe(Mac80211Pkt * af)
 {
     Mac80211Pkt *frame = new Mac80211Pkt("wlan-cts");
 
-    PhyToMacControlInfo* phyCtrlInfo = static_cast<PhyToMacControlInfo*>(af->removeControlInfo());
-	double br = static_cast<const DeciderResult80211*>(phyCtrlInfo->getDeciderResult())->getBitrate();
-	delete phyCtrlInfo;
-	phyCtrlInfo = 0;
+    double br = static_cast<const DeciderResult80211*>(PhyToMacControlInfo::getDeciderResult(af))->getBitrate();
+    delete af->removeControlInfo();
 
-	Signal* signal = createSignal(simTime(),
-								  packetDuration(LENGTH_CTS, br),
-								  txPower, br);
+    setDownControlInfo(frame, createSignal(simTime(), packetDuration(LENGTH_CTS, br), txPower, br));
 
-    MacToPhyControlInfo *pco = new MacToPhyControlInfo(signal);
-    frame->setControlInfo(pco);
     frame->setKind(CTS);
     frame->setBitLength((int)LENGTH_CTS);
 
@@ -941,11 +918,8 @@ void Mac80211::sendBROADCASTframe()
     double br = retrieveBitrate(frame->getDestAddr());
 
     simtime_t duration = packetDuration(frame->getBitLength(), br);
-    Signal* signal = createSignal(simTime(), duration, txPower, br);
+    setDownControlInfo(frame, createSignal(simTime(), duration, txPower, br));
 
-    MacToPhyControlInfo *pco = new MacToPhyControlInfo(signal);
-
-    frame->setControlInfo(pco);
     frame->setKind(BROADCAST);
 
     sendDown(frame);
@@ -981,7 +955,7 @@ void Mac80211::beginNewCycle()
     if (!fromUpperLayer.empty()) {
 
         // look if the next packet is unicast or broadcast
-        nextIsBroadcast = (fromUpperLayer.front()->getDestAddr() == MACAddress::BROADCAST_ADDRESS);
+        nextIsBroadcast = LAddress::isL2Broadcast(fromUpperLayer.front()->getDestAddr());
 
         setState(CONTEND);
         if(!contention->isScheduled()) {
@@ -1046,7 +1020,7 @@ void Mac80211::testMaxAttempts()
     }
 }
 
-Signal* Mac80211::createSignal(	simtime_t start, simtime_t length,
+Signal* Mac80211::createSignal(	simtime_t_cref start, simtime_t_cref length,
 								double power, double bitrate)
 {
 	simtime_t end = start + length;
@@ -1079,40 +1053,6 @@ Signal* Mac80211::createSignal(	simtime_t start, simtime_t length,
 }
 
 /**
- * Handle change nofitications. In this layer it is usually
- * information about the radio channel, i.e. if it is IDLE etc.
- */
-/*
-void Mac80211::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
-{
-    Enter_Method_Silent();
-    BasicLayer::receiveSignal(category, details, scopeModuleId);
-
-    EV << simTime() << " receiveSignal " << obj->info() << endl;
-    if(signalID == catRadioState) {
-        radioState = static_cast<const RadioState *>(obj)->getState();
-        switch(radioState)
-        {
-        case RadioState::SWITCH_TO_SLEEP:
-        case RadioState::SWITCH_TO_RECV:
-        case RadioState::SWITCH_TO_SEND:
-            switching = true;
-            break;
-        case RadioState::SLEEP:
-        case RadioState::RECV:
-        case RadioState::SEND:
-            switching = false;
-            break;
-        default:
-            error("Mac80211::receiveSignal unknown radio state");
-            break;
-        }
-    }
-}
-*/
-
-
-/**
  *  Return a time-out value for a type of frame. Called by
  *  SendRTSframe, sendCTSframe, etc.
  */
@@ -1132,6 +1072,7 @@ simtime_t Mac80211::timeOut(Mac80211MessageKinds type, double br)
         break;
     default:
         EV << "Unused frame type was given when calling timeOut(), this should not happen!\n";
+        break;
     }
     return time_out;
 }
@@ -1224,10 +1165,10 @@ void Mac80211::suspendContention()  {
     //}
 }
 
-double Mac80211::retrieveBitrate(MACAddress destAddress) {
+double Mac80211::retrieveBitrate(const LAddress::L2Type& destAddress) {
     double bitrate = defaultBitrate;
     NeighborList::iterator it;
-    if(autoBitrate && (destAddress != MACAddress::BROADCAST_ADDRESS) &&
+    if(autoBitrate && !LAddress::isL2Broadcast(destAddress) &&
        (longRetryCounter == 0) && (shortRetryCounter == 0)) {
         it = findNeighbor(destAddress);
         if((it != neighbors.end()) && (it->age > (simTime() - neighborhoodCacheMaxAge))) {
@@ -1238,11 +1179,9 @@ double Mac80211::retrieveBitrate(MACAddress destAddress) {
 }
 
 void Mac80211::addNeighbor(Mac80211Pkt *af) {
-	MACAddress srcAddress = af->getSrcAddr();
-    NeighborList::iterator it = findNeighbor(srcAddress);
-    const DeciderResult80211* result = static_cast<const DeciderResult80211*>(
-											static_cast<PhyToMacControlInfo *>(
-												af->getControlInfo())->getDeciderResult());
+    const LAddress::L2Type&   srcAddress = af->getSrcAddr();
+    NeighborList::iterator    it         = findNeighbor(srcAddress);
+    const DeciderResult80211* result     = static_cast<const DeciderResult80211*>(PhyToMacControlInfo::getDeciderResult(af));
     double snr = result->getSnr();
 
     double bitrate = BITRATES_80211[0];

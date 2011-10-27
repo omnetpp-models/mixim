@@ -9,7 +9,7 @@
 #define DECIDERRESULT80211_H_
 
 #include "MiXiMDefs.h"
-#include <Decider.h>
+#include "Decider.h"
 
 /**
  * @brief Defines an extended DeciderResult for the 80211 protocol

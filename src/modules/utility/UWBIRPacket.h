@@ -20,6 +20,7 @@
 #define BBUWBIRPACKET_H
 
 #include <sstream>
+#include <string>
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
@@ -27,7 +28,7 @@
 /**
  * @brief Class that keeps track of the number of packets sent.
  *
- * @author Andreas K�pke
+ * @author Andreas Koepke
  */
 class MIXIM_API  UWBIRPacket : public cObject
 {

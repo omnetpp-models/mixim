@@ -1,14 +1,10 @@
 #ifndef BREAKPOINTPATHLOSSMODEL_H_
 #define BREAKPOINTPATHLOSSMODEL_H_
 
-#include "MiXiMDefs.h"
-#include "AnalogueModel.h"
-#include "Mapping.h"
-#include "BaseWorldUtility.h"
-//#include "SimplePathlossModel.h"
 #include <cstdlib>
 
-//class BreakpointPathlossModel;
+#include "MiXiMDefs.h"
+#include "AnalogueModel.h"
 
 /**
  * @brief Basic implementation of a BreakpointPathlossModel.
@@ -40,16 +36,16 @@ protected:
     /** @brief Carrier frequency in Hz */
     double carrierFrequency;
 
-	/** @brief Information needed about the playground */
-	const bool useTorus;
+    /** @brief Information needed about the playground */
+    const bool useTorus;
 
-	/** @brief The size of the playground.*/
-	const Coord& playgroundSize;
+    /** @brief The size of the playground.*/
+    const Coord& playgroundSize;
 
-	/** @brief Whether debug messages should be displayed. */
-	bool debug;
+    /** @brief Whether debug messages should be displayed. */
+    bool debug;
 
-	/** logs computed pathlosses. */
+    /** logs computed pathlosses. */
     cOutVector pathlosses;
 
 public:
@@ -87,7 +83,7 @@ public:
 	 * @brief Filters a specified AirFrame's Signal by adding an attenuation
 	 * over time to the Signal.
 	 */
-	virtual void filterSignal(AirFrame *frame);
+	virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
 
 	virtual bool isActiveAtDestination() { return true; }
 

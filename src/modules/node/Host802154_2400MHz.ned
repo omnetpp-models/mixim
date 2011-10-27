@@ -9,7 +9,6 @@ import org.mixim.modules.power.battery.BatteryStats;
 import org.mixim.modules.power.battery.SimpleBattery;
 import org.mixim.modules.transport.Aggregation;
 
-
 //
 // This NED module defines a host using an IEEE 802.15.4 transceiver at 2.4GHz
 // for wireless communications, that can be used to simulate wireless sensor

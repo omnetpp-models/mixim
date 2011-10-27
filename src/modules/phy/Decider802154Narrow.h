@@ -9,8 +9,7 @@
 #define DECIDER802154NARROW_H_
 
 #include "MiXiMDefs.h"
-#include <BaseDecider.h>
-#include <BaseArp.h>
+#include "BaseDecider.h"
 
 /**
  * @brief Decider for the 802.15.4 Narrow band module

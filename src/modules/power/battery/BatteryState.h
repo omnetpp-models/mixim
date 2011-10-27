@@ -15,6 +15,7 @@
 #define BATTERYSTATE_H
 
 #include <sstream>
+#include <string>
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"

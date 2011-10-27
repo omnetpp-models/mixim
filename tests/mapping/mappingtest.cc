@@ -5,19 +5,19 @@
 //#include "Time.h"
 #include "../testUtils/asserts.h"
 #include "../testUtils/OmnetTestBase.h"
+#include "FWMath.h"
 
 
-
-void assertEqualSilent(std::string msg, double target, simtime_t actual) {
+void assertEqualSilent(std::string msg, double target, simtime_t_cref actual) {
 
 	assertEqualSilent(msg, target, SIMTIME_DBL(actual));
 }
 
-void assertClose(std::string msg, double target, simtime_t actual){
+void assertClose(std::string msg, double target, simtime_t_cref actual){
 	assertClose(msg, target, SIMTIME_DBL(actual));
 }
 
-void assertClose(std::string msg, simtime_t target, double actual){
+void assertClose(std::string msg, simtime_t_cref target, double actual){
 	assertClose(msg, SIMTIME_DBL(target), actual);
 }
 
@@ -44,7 +44,7 @@ void checkIterator(std::string msg, ConstMappingIterator& it,
 	if(hasNext){
 		try{
 			assertClose(msg + ": nextPos() at " + toString(arg), nextArg, it.getNextPosition());
-		}catch(NoNextIteratorException e){
+		}catch(NoNextIteratorException& e){
 			assertFalse("HasNext should be false on NoNextException.", hasNext);
 		}
 	}
@@ -69,7 +69,7 @@ void checkIteratorHard(std::string msg, ConstMappingIterator& it,
 	if(hasNext){
 		try{
 			assertEqual(msg + ": nextPos() at " + toString(arg), nextArg, it.getNextPosition());
-		}catch(NoNextIteratorException e){
+		}catch(NoNextIteratorException& e){
 			assertFalse("HasNext should be false on NoNextException.", hasNext);
 		}
 	}
@@ -127,7 +127,7 @@ void assertEqualNotSmaller(std::string msg, T& v1, T& v2){
 
 class MappingTest:public SimpleTest {
 protected:
-	std::map<double, std::map<simtime_t, Argument> > a;
+	std::map<Argument::mapped_type, std::map<simtime_t, Argument> > a;
 	std::map<simtime_t, Argument> t;
 	Dimension time;
 	Dimension freq;
@@ -146,29 +146,28 @@ protected:
 		ArgFactory(Dimension d2, Dimension d3):
 			time(Dimension::time_static()), d2(d2), d3(d3), set2(time, d2), set3(time, d2, d3) {}
 
-		Argument operator()(simtime_t t){
+		Argument operator()(simtime_t_cref t){
 			return Argument(t);
 		}
 
-		Argument operator[](simtime_t t){
-			t.setRaw(t.raw() - 1);
-			return Argument(t);
+		Argument operator[](simtime_t_cref t){
+			return Argument(MappingUtils::pre(t));
 		}
 
-		Argument operator()(double v2, simtime_t t){
+		Argument operator()(Argument::mapped_type v2, simtime_t_cref t){
 			Argument res(set2, t);
 			res.setArgValue(d2, v2);
 			return res;
 		}
 
-		Argument operator()(double v3, double v2, simtime_t t){
+		Argument operator()(Argument::mapped_type v3, Argument::mapped_type v2, simtime_t_cref t){
 			Argument res(set3, t);
 			res.setArgValue(d2, v2);
 			res.setArgValue(d3, v3);
 			return res;
 		}
 
-		Argument operator()(Dimension other, double v2, simtime_t t){
+		Argument operator()(Dimension other, Argument::mapped_type v2, simtime_t_cref t){
 			Argument res(t);
 			res.setArgValue(other, v2);
 			return res;
@@ -183,8 +182,8 @@ public:
 		SimpleTest(),
 		time(Dimension::time_static()), freq("frequency"), channel(freq), space("space"),
 		A(freq, space), createMappingBuffer(0){
-		for(double i = 0.0; i <= 6.0; i+=0.25) {
-			for(simtime_t j = 0.0; j <= 6.0; j+=0.25) {
+		for(Argument::mapped_type i = 0.0; i <= 6.0; i+=0.25) {
+			for(simtime_t j = SIMTIME_ZERO; j <= 6.0; j+=0.25) {
 				a[i][j].setTime(j);
 				a[i][j].setArgValue(freq, i);
 			}
@@ -224,15 +223,13 @@ protected:
 		DimensionSet::reverse_iterator it = dims.rbegin();
 		assertEqual("first dimension should be freq.", d2, *it);
 		it++;
-		assertTrue("there should be no more dimensions", it == dims.rend());
+		assertEqual("next dimension of freq should be freq.", d2, *it);
 
 		dims.addDimension(d4);
 		it = dims.rbegin();
 		assertEqual("first dimension should be space.", d4, *it);
-		it++;
-		assertEqual("next dimension of space should be freq.", d2, *it);
-		it++;
-        assertTrue("there should be no more dimensions", it == dims.rend());
+		assertEqual("next dimension of freq should be freq.", d2, *(++it));
+		assertEqual("next dimension of space should be freq.", d2, *(++it));
 	}
 
 	void testArg() {
@@ -1334,7 +1331,7 @@ protected:
 			TimeMapping f1;
 			TimeMapping f2;
 
-			std::cout << "--------TimeMapping [" << count << " entries]---------------------------------------------\n";
+			std::cout << "--------TimeMapping [" << count << " entries]---------------------------------------------" << std::endl;
 			std::cout << "Creating f1...\t\t\t\t";
 			std::flush(std::cout);
 
@@ -1343,7 +1340,7 @@ protected:
 				f1.setValue(Argument(j * 0.1), j * 0.1);
 			}
 			el = timer.elapsed();
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 			std::cout << "Creating f2 ...\t\t\t\t";
 			std::flush(std::cout);
 			timer.start();
@@ -1351,14 +1348,14 @@ protected:
 				f2.setValue(Argument(j * 0.1), j * 0.1);
 			}
 			el = timer.elapsed();
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 			std::cout << "Multiplying f1 with f2...\t\t";
 			std::flush(std::cout);
 			timer.start();
 			res = f1 * f2;
 			el = timer.elapsed();
 			delete res;
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 		}
 
 
@@ -1368,7 +1365,7 @@ protected:
 		pos.setArgValue(channel, 0.0);
 
 		{
-			std::cout << "--------MultiDimFunction [" << count << " entries]----------------------------------------\n";
+			std::cout << "--------MultiDimFunction [" << count << " entries]----------------------------------------" << std::endl;
 			std::cout << "Creating f7 ...\t\t\t\t";
 			MultiDimMapping f7(chTime);
 			MultiDimMapping f8(chTime);
@@ -1381,7 +1378,7 @@ protected:
 				f7.setValue(pos, j * 0.1);
 			}
 			el = timer.elapsed();
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 			std::cout << "Creating f8 ...\t\t\t\t";
 			std::flush(std::cout);
 			timer.start();
@@ -1391,14 +1388,14 @@ protected:
 				f8.setValue(pos, j * 0.1);
 			}
 			el = timer.elapsed();
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 			std::cout << "Multiplying f7 with f8...\t\t";
 			std::flush(std::cout);
 			timer.start();
 			res = f7 * f8;
 			el = timer.elapsed();
 			delete res;
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 		}
 
 		count = 35000 * factor;
@@ -1406,7 +1403,7 @@ protected:
 		count = hCount * hCount * hCount;
 
 		{
-			std::cout << "--------MultiDimFunction 3D [" << count << " entries]--------------------------------------\n";
+			std::cout << "--------MultiDimFunction 3D [" << count << " entries]--------------------------------------" << std::endl;
 			std::cout << "Creating f9 and f10...\t\t\t";
 			MultiDimMapping f9(spcChTime);
 			MultiDimMapping f10(spcChTime);
@@ -1427,14 +1424,14 @@ protected:
 				}
 			}
 			el = timer.elapsed();
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / (count * 2) << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / (count * 2) << "us per entry)." << std::endl;
 
 			std::cout << "Multiplying f9 with f10...\t\t";
 			std::flush(std::cout);
 			timer.start();
 			res = f9 * f10;
 			el = timer.elapsed();
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 
 			for(int s = 0; s < hCount; s++) {
 				pos.setArgValue(space, s * 0.1);
@@ -1455,7 +1452,7 @@ protected:
 		count = hCount * hCount;
 
 		{
-			std::cout << "--------TestSimpleConstMapping [" << count << " entries]----------------------------------\n";
+			std::cout << "--------TestSimpleConstMapping [" << count << " entries]----------------------------------" << std::endl;
 			std::cout << "Creating f13 ...\t\t\t\t";
 			Argument from(0.0);
 			from.setArgValue(channel, 0.0);
@@ -1468,20 +1465,20 @@ protected:
 			timer.start();
 			TestSimpleConstMapping f13(chTime, from, to, interval);
 			el = timer.elapsed();
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 			std::cout << "Creating f14...\t\t\t\t";
 			std::flush(std::cout);
 			timer.start();
 			TestSimpleConstMapping f14(chTime, from, to, interval);
 			el = timer.elapsed();
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 			std::cout << "Multiplying f13 with f14...\t\t";
 			std::flush(std::cout);
 			timer.start();
 			res = f13 * f14;
 			el = timer.elapsed();
 			delete res;
-			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry).\n";
+			std::cout << "done. Took " << el << "ms(" << el * 1000.0 / count << "us per entry)." << std::endl;
 		}
 	}*/
 
@@ -1577,7 +1574,7 @@ protected:
 		std::map<double, std::map<simtime_t, Argument> > a;
 
 		for(double i = 0.0; i <= 5.5; i+=0.25) {
-			for(simtime_t j = 0.0; j <= 5.5; j+=0.25) {
+			for(simtime_t j = SIMTIME_ZERO; j <= 5.5; j+=0.25) {
 				A(i, j).setTime(j);
 				A(i, j).setArgValue(freq, i);
 			}
@@ -1586,7 +1583,7 @@ protected:
 		f = new TestSimpleConstMapping(freqTime, A(2, 1.5), A(4, 4), A(1, 0.5));
 
 		for(double i = 0.0; i <= 5.5; i+=0.25) {
-			for(simtime_t j = 0.0; j <= 5.5; j+=0.25) {
+			for(simtime_t j = SIMTIME_ZERO; j <= 5.5; j+=0.25) {
 				assertEqual("Get value of fully initialized freq-time-mapping.", j, f->getValue(A(i, j)));
 			}
 		}
@@ -1670,7 +1667,8 @@ protected:
 	}
 
 	void testOperatorAgainstInt64Simtime(){
-		std::cout << "---Int64 simtime tests---\n";
+		const char cSaveFill = std::cout.fill();
+		std::cout << std::setw(80) << std::setfill('-') << std::internal << " Int64 simtime tests " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 
 		TimeMapping<Linear> time1;
 		simtime_t t1 = 3.5;
@@ -1779,7 +1777,7 @@ protected:
 		delete it;
 		delete res;
 
-		std::cout << "---Int64 simtime tests done.---\n";
+		std::cout << std::setw(80) << std::setfill('-') << std::internal << " Int64 simtime tests done. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 	}
 
 	template<class Operator>
@@ -1837,7 +1835,7 @@ protected:
 
 
 
-	Mapping* createTestMapping(simtime_t from, simtime_t to, int entries){
+	Mapping* createTestMapping(simtime_t_cref from, simtime_t_cref to, int entries){
 		Mapping* result = new TimeMapping<Linear>();
 
 		if(entries > 1){
@@ -2108,7 +2106,7 @@ protected:
 								double offset = 1.0)
 	{
 		Mapping* res = MappingUtils::createMapping(domain);
-		int numDims = domain.size();
+		unsigned int numDims = domain.size();
 
 		//for each entry i
 		for(int i = 0; i < pow((double)size, numDims); ++i) {
@@ -2185,12 +2183,13 @@ protected:
 		DimensionSet timeFreqSpaceBig(time, freq, space);
 		timeFreqSpaceBig.addDimension(bigDim);
 		DimensionSet timeBig(time, bigDim);
+		const char   cSaveFill = std::cout.fill();
 
-		std::cout << "--------TimeFreq^2.--------\n";
+		std::cout << std::setw(80) << std::setfill('-') << std::internal << " TimeFreq^2. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 		testMappingMulBF(timeFreq, timeFreq);
-		std::cout << "--------Time * TimeBig.--------\n";
+		std::cout << std::setw(80) << std::setfill('-') << std::internal << " Time * TimeBig. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 		testMappingMulBF(timeBig, DimensionSet(time));
-		std::cout << "--------timeSpace * timeFreqSpaceBig.--------\n";
+		std::cout << std::setw(80) << std::setfill('-') << std::internal << " timeSpace * timeFreqSpaceBig. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 		testMappingMulBF(timeSpace, timeFreqSpaceBig);
 
 		//displayPassed = false;
@@ -2299,18 +2298,18 @@ protected:
 		Mapping* multi1 = MappingUtils::createMapping(timeFreqSpace);
 
 		//global
-		assertEqual("Empty timed mapping max(global).", -DBL_MAX, MappingUtils::findMax(*timed1));
-		assertEqual("Empty timed mapping min(global).", DBL_MAX, MappingUtils::findMin(*timed1));
+		assertEqual("Empty timed mapping max(global).", MappingUtils::cMaxNotFound, MappingUtils::findMax(*timed1));
+		assertEqual("Empty timed mapping min(global).", MappingUtils::cMinNotFound, MappingUtils::findMin(*timed1));
 		//local
-		assertEqual("Empty timed mapping max(local).", 0.0, MappingUtils::findMax(*timed1, A(1), A(2)));
-		assertEqual("Empty timed mapping min(local).", 0.0, MappingUtils::findMin(*timed1, A(1), A(2)));
+		assertEqual("Empty timed mapping max(local).", MappingUtils::cMaxNotFound, MappingUtils::findMax(*timed1, A(1), A(2)));
+		assertEqual("Empty timed mapping min(local).", MappingUtils::cMinNotFound, MappingUtils::findMin(*timed1, A(1), A(2)));
 
 		//global
-		assertEqual("Empty multidim mapping max(global).", -DBL_MAX, MappingUtils::findMax(*multi1));
-		assertEqual("Empty multidim mapping min(global).", DBL_MAX, MappingUtils::findMin(*multi1));
+		assertEqual("Empty multidim mapping max(global).", MappingUtils::cMaxNotFound, MappingUtils::findMax(*multi1));
+		assertEqual("Empty multidim mapping min(global).", MappingUtils::cMinNotFound, MappingUtils::findMin(*multi1));
 		//local - is not yet implemented
-		//assertEqual("Empty multidim mapping max(local).", DBL_MIN, MappingUtils::findMax(*multi1, A(1,1,1), A(2,2,2)));
-		//assertEqual("Empty multidim mapping min(local).", DBL_MAX, MappingUtils::findMin(*multi1, A(1,1,1), A(2,2,2)));
+		assertEqual("Empty multidim mapping max(local).", MappingUtils::cMaxNotFound, MappingUtils::findMax(*multi1, A(1,1,1), A(2,2,2)));
+		assertEqual("Empty multidim mapping min(local).", MappingUtils::cMinNotFound, MappingUtils::findMin(*multi1, A(1,1,1), A(2,2,2)));
 
 		//- one element mapping
 		timed1->setValue(A(1), 2);
@@ -2320,23 +2319,23 @@ protected:
 		assertEqual("One element timed mapping max(global).", 2, MappingUtils::findMax(*timed1));
 		assertEqual("One element timed mapping min(global).", 2, MappingUtils::findMin(*timed1));
 		//local
-		assertEqual("One element timed mapping max(local) before element.", 0.0, MappingUtils::findMax(*timed1, A(0), A(0.5)));
-		assertEqual("One element timed mapping min(local) before element.", 0.0, MappingUtils::findMin(*timed1, A(0), A(0.5)));
+		assertEqual("One element timed mapping max(local) before element.", MappingUtils::cMaxNotFound, MappingUtils::findMax(*timed1, A(0), A(0.5)));
+		assertEqual("One element timed mapping min(local) before element.", 0.0, MappingUtils::findMin(*timed1, A(0), A(0.5), 0.0));
 		assertEqual("One element timed mapping max(local) around element.", 2, MappingUtils::findMax(*timed1, A(1), A(1)));
 		assertEqual("One element timed mapping min(local) around element.", 2, MappingUtils::findMin(*timed1, A(1), A(1)));
-		assertEqual("One element timed mapping max(local) after element.", 0.0, MappingUtils::findMax(*timed1, A(2), A(3)));
-		assertEqual("One element timed mapping min(local) after element.", 0.0, MappingUtils::findMin(*timed1, A(2), A(3)));
+		assertEqual("One element timed mapping max(local) after element.", MappingUtils::cMaxNotFound, MappingUtils::findMax(*timed1, A(2), A(3)));
+		assertEqual("One element timed mapping min(local) after element.", MappingUtils::cMinNotFound, MappingUtils::findMin(*timed1, A(2), A(3)));
 
 		//global
 		assertEqual("One element multidim mapping max(global).", 2, MappingUtils::findMax(*multi1));
 		assertEqual("One element multidim mapping min(global).", 2, MappingUtils::findMin(*multi1));
 		//local - is not yet implemented
-//		assertEqual("One element multidim mapping max(local) before element.", DBL_MIN, MappingUtils::findMax(*multi1, A(0,0,0), A(0.5,2,2)));
-//		assertEqual("One element multidim mapping min(local) before element.", DBL_MAX, MappingUtils::findMin(*multi1, A(0,0,0), A(0.5,2,2)));
-//		assertEqual("One element multidim mapping max(local) around element.", 2, MappingUtils::findMax(*multi1, A(1,1,1), A(1,1,1)));
-//		assertEqual("One element multidim mapping min(local) around element.", 2, MappingUtils::findMin(*multi1, A(1,1,0), A(1,1,1)));
-//		assertEqual("One element multidim mapping max(local) after element.", DBL_MIN, MappingUtils::findMax(*multi1, A(2,0,0), A(3,2,2)));
-//		assertEqual("One element multidim mapping min(local) after element.", DBL_MAX, MappingUtils::findMin(*multi1, A(2,0,0), A(3,2,2)));
+		assertEqual("One element multidim mapping max(local) before element.", MappingUtils::cMaxNotFound, MappingUtils::findMax(*multi1, A(0,0,0), A(0.5,2,2)));
+		assertEqual("One element multidim mapping min(local) before element.", MappingUtils::cMinNotFound, MappingUtils::findMin(*multi1, A(0,0,0), A(0.5,2,2)));
+		assertEqual("One element multidim mapping max(local) around element.", 2, MappingUtils::findMax(*multi1, A(1,1,1), A(1,1,1)));
+		assertEqual("One element multidim mapping min(local) around element.", 2, MappingUtils::findMin(*multi1, A(1,1,0), A(1,1,1)));
+		assertEqual("One element multidim mapping max(local) after element.", MappingUtils::cMaxNotFound, MappingUtils::findMax(*multi1, A(2,0,0), A(3,2,2)));
+		assertEqual("One element multidim mapping min(local) after element.", MappingUtils::cMinNotFound, MappingUtils::findMin(*multi1, A(2,0,0), A(3,2,2)));
 
 		//Timed mapping multi element tests
 		timed1->setValue(A(2), 2);  /**/ timed1->setValue(A(3), 2);
@@ -2456,28 +2455,30 @@ protected:
 		//testDoubleCompareLess();
 
 	    testSimpleFunction<TimeMapping<Linear> >();
-	    std::cout << "--------TimeMapping tests done.---------------------------------------------------\n";
+	    const char cSaveFill = std::cout.fill();
+
+	    std::cout << std::setw(80) << std::setfill('-') << std::internal << " TimeMapping tests done. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 
 	    testMultiFunction();
-	    std::cout << "--------MultiDimMapping tests done.-----------------------------------------------\n";
+	    std::cout << std::setw(80) << std::setfill('-') << std::internal << " MultiDimMapping tests done. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 
 	    testInterpolationMethods();
-	    std::cout << "--------Interpolation methods tests done------------------------------------------\n";
+	    std::cout << std::setw(80) << std::setfill('-') << std::internal << " Interpolation methods tests done. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 
 	    testSimpleConstmapping();
-	    std::cout << "--------SimpleConstMapping tests done.--------------------------------------------\n";
+	    std::cout << std::setw(80) << std::setfill('-') << std::internal << " SimpleConstMapping tests done. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 
 	    testOperators();
-	    std::cout << "--------Operator tests done.------------------------------------------------------\n";
+	    std::cout << std::setw(80) << std::setfill('-') << std::internal << " Operator tests done. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 
 	    testOutOfRange();
-	    std::cout << "--------Out of range tests done.--------------------------------------------------\n";
+	    std::cout << std::setw(80) << std::setfill('-') << std::internal << " Out of range tests done. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 
-	    std::cout << "--------Various MappingUtils tests (may take a while)-----------------------------\n";
+	    std::cout << std::setw(80) << std::setfill('-') << std::internal << " Various MappingUtils tests (may take a while) " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 	    testMappingUtils();
-		std::cout << "--------Various MappingUtils tests done.------------------------------------------\n";
+		std::cout << std::setw(80) << std::setfill('-') << std::internal << " Various MappingUtils tests done. " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 
-	    //std::cout << "========Performance tests=========================================================\n";
+	    //std::cout << std::setw(80) << std::setfill('=') << std::internal << " Performance tests " << std::setw(48) << "" << std::setfill(cSaveFill) << std::endl; std::cout.flush();
 	    //testPerformance();
 		testsExecuted = true;
 	}

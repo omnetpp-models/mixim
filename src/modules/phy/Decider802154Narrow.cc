@@ -6,10 +6,14 @@
  */
 
 #include "Decider802154Narrow.h"
-#include "DeciderResult802154Narrow.h"
-#include <MacPkt_m.h>
-#include <PhyToMacControlInfo.h>
+
 #include <cmath>
+
+#include "DeciderResult802154Narrow.h"
+#include "MacPkt_m.h"
+#include "PhyToMacControlInfo.h"
+#include "AirFrame_m.h"
+#include "Mapping.h"
 
 bool Decider802154Narrow::syncOnSFD(AirFrame* frame) {
 	double BER;
@@ -176,10 +180,7 @@ simtime_t Decider802154Narrow::processSignalEnd(AirFrame* frame)
 		mac->setName("BIT_ERRORS");
 		mac->setKind(PACKET_DROPPED);
 
-		DeciderResult802154Narrow* result =
-			new DeciderResult802154Narrow(false, bitrate, snirMin, avgBER, rssi);
-		PhyToMacControlInfo* cInfo = new PhyToMacControlInfo(result);
-		mac->setControlInfo(cInfo);
+		PhyToMacControlInfo::setControlInfo(mac, new DeciderResult802154Narrow(false, bitrate, snirMin, avgBER, rssi));
 		phy->sendControlMsg(mac);
 		if(recordStats) {
 		  snirDropped.record(10*log10(snirMin));  // in dB

@@ -1,12 +1,12 @@
 #ifndef PATHLOSSMODEL_H_
 #define PATHLOSSMODEL_H_
 
+#include <cstdlib>
+
 #include "MiXiMDefs.h"
 #include "AnalogueModel.h"
 #include "Mapping.h"
 #include "BaseWorldUtility.h"
-
-#include <cstdlib>
 
 class SimplePathlossModel;
 
@@ -89,10 +89,10 @@ protected:
 	friend class SimplePathlossConstMapping;
 
 	/** @brief Path loss coefficient. **/
-    double pathLossAlphaHalf;
+	double pathLossAlphaHalf;
 
-    /** @brief carrier frequency needed for calculation */
-    double carrierFrequency;
+	/** @brief carrier frequency needed for calculation */
+	double carrierFrequency;
 
 	/** @brief Information needed about the playground */
 	const bool useTorus;
@@ -134,7 +134,7 @@ public:
 	 * @brief Filters a specified AirFrame's Signal by adding an attenuation
 	 * over time to the Signal.
 	 */
-	virtual void filterSignal(AirFrame *frame);
+	virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
 
 	/**
 	 * @brief Method to calculate the attenuation value for pathloss.
@@ -146,7 +146,7 @@ public:
 	 * pathloss is calculated in SimplePathlossConstMappings "getValue()"
 	 * method.
 	 */
-	virtual double calcPathloss(const Coord& myPos, const Coord& sendersPos);
+	virtual double calcPathloss(const Coord& receiverPos, const Coord& sendersPos);
 };
 
 #endif /*PATHLOSSMODEL_H_*/

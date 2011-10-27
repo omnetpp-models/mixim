@@ -4,11 +4,7 @@
 #include <list>
 
 #include "MiXiMDefs.h"
-#include <PhyUtils.h>
-#include <BaseMacLayer.h>
-#include <MacPkt_m.h>
-#include <SimpleAddress.h>
-#include <MacToPhyInterface.h>
+#include "BaseMacLayer.h"
 
 
 /**

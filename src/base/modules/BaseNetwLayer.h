@@ -24,10 +24,11 @@
 #define SIMPLE_NETW_LAYER_H
 
 #include "MiXiMDefs.h"
-#include <BaseLayer.h>
-#include <ArpInterface.h>
-#include <NetwPkt_m.h>
-#include <SimpleAddress.h>
+#include "BaseLayer.h"
+#include "SimpleAddress.h"
+
+class ArpInterface;
+class NetwPkt;
 
 /**
  * @brief Base class for the network layer
@@ -63,13 +64,22 @@ protected:
     ArpInterface* arp;
 
     /** @brief cached variable of my networ address */
-    int myNetwAddr;
+    LAddress::L3Type myNetwAddr;
 
     /** @brief Enables debugging of this module.*/
     bool coreDebug;
 
 public:
     //Module_Class_Members(BaseNetwLayer,BaseLayer,0);
+    BaseNetwLayer() 
+      : BaseLayer()
+      , arp(NULL)
+    {}
+
+    BaseNetwLayer(unsigned stacksize) 
+      : BaseLayer(stacksize)
+      , arp(NULL)
+    {}
 
     /** @brief Initialization of the module and some variables*/
     virtual void initialize(int);
@@ -112,6 +122,35 @@ public:
 
     /** @brief Encapsulate higher layer packet into an NetwPkt*/
     virtual NetwPkt* encapsMsg(cPacket*);
+
+    /**
+     * @brief Attaches a "control info" (NetwToMac) structure (object) to the message pMsg.
+     *
+     * This is most useful when passing packets between protocol layers
+     * of a protocol stack, the control info will contain the destination MAC address.
+     *
+     * The "control info" object will be deleted when the message is deleted.
+     * Only one "control info" structure can be attached (the second
+     * setL3ToL2ControlInfo() call throws an error).
+     *
+     * @param pMsg		The message where the "control info" shall be attached.
+     * @param pDestAddr	The MAC address of the message receiver.
+     */
+    virtual cObject *const setDownControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr);
+    /**
+     * @brief Attaches a "control info" (NetwToUpper) structure (object) to the message pMsg.
+     *
+     * This is most useful when passing packets between protocol layers
+     * of a protocol stack, the control info will contain the destination MAC address.
+     *
+     * The "control info" object will be deleted when the message is deleted.
+     * Only one "control info" structure can be attached (the second
+     * setL3ToL2ControlInfo() call throws an error).
+     *
+     * @param pMsg		The message where the "control info" shall be attached.
+     * @param pSrcAddr	The MAC address of the message receiver.
+     */
+    virtual cObject *const setUpControlInfo(cMessage *const pMsg, const LAddress::L3Type& pSrcAddr);
 };
 
 #endif

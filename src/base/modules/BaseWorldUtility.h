@@ -51,7 +51,7 @@ protected:
     bool isInitialized;
 
 public:
-    /** @brief Speed of light */
+    /** @brief Speed of light in meters per second. */
 	static const double speedOfLight;
 
 protected:

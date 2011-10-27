@@ -17,7 +17,7 @@
 #define __WORLDUTILITYSTATS_H__
 
 #include <omnetpp.h>
-#include <BaseWorldUtility.h>
+#include "BaseWorldUtility.h"
 
 /**
  * @brief Collects global statistics (like channel usage).
@@ -28,9 +28,6 @@ class WorldUtilityStats : public BaseWorldUtility,
 						  public cListener
 {
 protected:
-	/** @brief Signal for Packets*/
-	int catPacket;
-
 	/** @brief Stores the number of bits sent */
 	double bitsSent;
 	/** @brief Stores the number of bits received */
@@ -47,7 +44,7 @@ protected:
     virtual void initialize(int stage);
 
 public:
-    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
+	virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
 	virtual void finish();
 };

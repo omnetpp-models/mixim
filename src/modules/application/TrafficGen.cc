@@ -12,13 +12,17 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
-
 #include "TrafficGen.h"
-#include "NetwControlInfo.h"
-#include <cassert>
-#include <Packet.h>
-#include <BaseNetwLayer.h>
 
+#include <cassert>
+
+#include "NetwControlInfo.h"
+#include "Packet.h"
+#include "BaseNetwLayer.h"
+#include "FindModule.h"
+#include "BaseWorldUtility.h"
+#include "ApplPkt_m.h"
+#include "SimpleAddress.h"
 
 Define_Module(TrafficGen);
 
@@ -35,9 +39,6 @@ void TrafficGen::initialize(int stage)
 		burstSize = par("burstSize");
 
 		nbPacketDropped = 0;
-
-		Packet p(1);
-		catPacket = registerSignal("packet");
 	} else if (stage == 1) {
 		if(burstSize > 0) {
 			remainingBurst = burstSize;
@@ -80,6 +81,7 @@ void TrafficGen::handleSelfMsg(cMessage *msg)
 	default:
 		EV << "Unkown selfmessage! -> delete, kind: "<<msg->getKind() <<endl;
 		delete msg;
+		break;
 	}
 }
 
@@ -88,7 +90,7 @@ void TrafficGen::handleLowerMsg(cMessage *msg)
 {
 	cPacket* pkt = static_cast<cPacket*>(msg);
 	Packet p(pkt->getBitLength(), 1, 0);
-	emit(catPacket, &p);
+	emit(BaseLayer::catPacketSignal, &p);
 
 	delete msg;
 	msg = 0;
@@ -98,16 +100,16 @@ void TrafficGen::handleLowerMsg(cMessage *msg)
 void TrafficGen::sendBroadcast()
 {
 	ApplPkt *pkt = new ApplPkt("BROADCAST_MESSAGE", TRAFFIC_GEN_PACKET);
-	pkt->setDestAddr(-1);
+	pkt->setDestAddr(LAddress::L3BROADCAST);
 	// we use the host modules getIndex() as a appl address
 	pkt->setSrcAddr( myApplAddr() );
 	pkt->setBitLength(headerLength);
 
 	// set the control info to tell the network layer the layer 3
 	// address;
-	pkt->setControlInfo( new NetwControlInfo(L3BROADCAST) );
+	NetwControlInfo::setControlInfo(pkt, LAddress::L3BROADCAST);
 
-	debugEV << "Sending broadcast packet!\n";
+	debugEV << "Sending broadcast packet!" << endl;
 	sendDown( pkt );
 }
 

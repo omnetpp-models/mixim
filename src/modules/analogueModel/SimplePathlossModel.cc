@@ -1,5 +1,6 @@
 #include "SimplePathlossModel.h"
-#include "ChannelAccess.h"
+
+#include "AirFrame_m.h"
 
 #define splmEV (ev.isDisabled()||!debug) ? ev : ev << "PhyLayer(SimplePathlossModel): "
 
@@ -26,20 +27,9 @@ double SimplePathlossConstMapping::getValue(const Argument& pos) const
 
 
 
-void SimplePathlossModel::filterSignal(AirFrame *frame)
+void SimplePathlossModel::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
 {
-    Signal& signal = frame->getSignal();
-
-	/** Get start of the signal */
-	simtime_t sStart = signal.getReceptionStart();
-	simtime_t sEnd = signal.getReceptionEnd();
-
-	/** claim the move pattern of the sender from the Signal */
-	assert(sStart == simTime());
-	IMobility *senderMobility = ((ChannelAccess *)frame->getSenderModule())->getMobilityModule();
-	IMobility *receiverMobility = ((ChannelAccess *)frame->getArrivalModule())->getMobilityModule();
-	Coord sendersPos = senderMobility->getCurrentPosition();
-	Coord receiverPos = receiverMobility->getCurrentPosition();
+	Signal& signal = frame->getSignal();
 
 	/** Calculate the distance factor */
 	double sqrDistance = useTorus ? receiverPos.sqrTorusDist(sendersPos, playgroundSize)

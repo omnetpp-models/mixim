@@ -14,11 +14,13 @@
 //
 
 #include "NetworkStackTrafficGen.h"
-#include <cassert>
-#include <Packet.h>
-#include <BaseMacLayer.h>
-#include <Ieee802Ctrl_m.h>
 
+#include <cassert>
+
+#include "Packet.h"
+#include "BaseMacLayer.h"
+#include "FindModule.h"
+#include "NetwToMacControlInfo.h"
 
 Define_Module(NetworkStackTrafficGen);
 
@@ -37,12 +39,9 @@ void NetworkStackTrafficGen::initialize(int stage)
 		packetTime = par("packetTime");
 		pppt = par("packetsPerPacketTime");
 		burstSize = par("burstSize");
-		destination = par("destination");
+		destination = LAddress::L3Type(par("destination").longValue());
 
 		nbPacketDropped = 0;
-
-		Packet p(1);
-		catPacket = registerSignal("packet");
 	} else if (stage == 1) {
 		if(burstSize > 0) {
 			remainingBurst = burstSize;
@@ -86,6 +85,7 @@ void NetworkStackTrafficGen::handleSelfMsg(cMessage *msg)
 	default:
 		EV << "Unkown selfmessage! -> delete, kind: "<<msg->getKind() <<endl;
 		delete msg;
+		break;
 	}
 }
 
@@ -93,7 +93,7 @@ void NetworkStackTrafficGen::handleSelfMsg(cMessage *msg)
 void NetworkStackTrafficGen::handleLowerMsg(cMessage *msg)
 {
 	Packet p(packetLength, 1, 0);
-	emit(catPacket, &p);
+	emit(BaseMacLayer::catPacketSignal, &p);
 
 	delete msg;
 	msg = 0;
@@ -117,12 +117,10 @@ void NetworkStackTrafficGen::sendBroadcast()
 	pkt->setSrcAddr(myNetwAddr);
 	pkt->setDestAddr(destination);
 
-	Ieee802Ctrl *control = new Ieee802Ctrl();
-	control->setDest(MACAddress::BROADCAST_ADDRESS);
-	pkt->setControlInfo(control);
+	NetwToMacControlInfo::setControlInfo(pkt, LAddress::L2BROADCAST);
 
 	Packet p(packetLength, 0, 1);
-	emit(catPacket, &p);
+	emit(BaseMacLayer::catPacketSignal, &p);
 
 	sendDown(pkt);
 }

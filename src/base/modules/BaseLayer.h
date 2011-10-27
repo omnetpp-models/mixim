@@ -38,6 +38,13 @@
  */
 class MIXIM_API BaseLayer : public BatteryAccess
 {
+public:
+    /** @brief SignalID for packets. */
+    const static simsignalwrap_t catPacketSignal;
+    /** @brief Signal for passed messages.*/
+    const static simsignalwrap_t catPassedMsgSignal;
+    /** @brief Signal for dropped packets.*/
+    const static simsignalwrap_t catDroppedPacketSignal;
  protected:
 
     /** @name gate ids*/
@@ -52,16 +59,19 @@ class MIXIM_API BaseLayer : public BatteryAccess
     int lowerControlOut;
     /*@}*/
 
-    /** @brief Signal for PassedMessage.*/
-    int  catPassedMsg;
     /** @brief The last message passed through this layer. This variable will be only not NULL if we are
-               in statistic recording mode.*/
+     * in statistic recording mode.*/
     PassedMessage *passedMsg;
-    /** @brief This layers hosts id.*/
-    int            hostId;
 
 public:
-    BaseLayer();
+    BaseLayer()
+        : BatteryAccess()
+        , passedMsg(NULL)
+    {}
+    BaseLayer(unsigned stacksize)
+        : BatteryAccess(stacksize)
+        , passedMsg(NULL)
+    {}
     virtual ~BaseLayer();
     //Module_Class_Members(BaseLayer, BaseModule, 0 );
 

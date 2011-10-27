@@ -23,13 +23,21 @@
  * ported to Mixim 2.0.1 by Theodoros Kapourniotis
  * last modification: 06/02/11
  **************************************************************************/
+#include "WiseRoute.h"
 
 #include <limits>
 #include <algorithm>
-
-#include "WiseRoute.h"
-#include "MobilityAccess.h"
 #include <cassert>
+
+#include "NetwControlInfo.h"
+#include "MacToNetwControlInfo.h"
+#include "ArpInterface.h"
+#include "FindModule.h"
+#include "WiseRoutePkt_m.h"
+#include "SimTracer.h"
+#include "ChannelAccess.h"
+
+using std::make_pair;
 
 Define_Module(WiseRoute);
 
@@ -47,7 +55,7 @@ void WiseRoute::initialize(int stage)
 		EV << "  host macaddress=" << arp->getMacAddr(myNetwAddr) << endl;
 		macaddress = arp->getMacAddr(myNetwAddr);
 
-		sinkAddress = par("sinkAddress"); // 0
+		sinkAddress = LAddress::L3Type( par("sinkAddress").longValue() ); // 0
 		headerLength = par ("headerLength");
 		rssiThreshold = par("rssiThreshold");
 		routeFloodsInterval = par("routeFloodsInterval");
@@ -85,18 +93,22 @@ void WiseRoute::initialize(int stage)
 			scheduleAt(simTime() + uniform(0.5, 1.5), routeFloodTimer);
 
 		if (useSimTracer) {
-            // Get a handle to the tracer module
-            tracer = FindModule<SimTracer*>::findGlobalModule();
-            //const char *tracerModulePath = "sim.simTracer";
-            //cModule *modp = simulation.getModuleByPath(tracerModulePath);
-            //tracer = check_and_cast<SimTracer *>(modp);
-            if (!tracer)
-                error("No SimTracer module found, please check your ned configuration.");
-	        // log node position
-            Coord pos = MobilityAccess().get()->getCurrentPosition();
-            tracer->logPosition(myNetwAddr, pos.x, pos.y);
+		  // Get a handle to the tracer module
+		  tracer = FindModule<SimTracer*>::findGlobalModule();
+		  //const char *tracerModulePath = "sim.simTracer";
+		  //cModule *modp = simulation.getModuleByPath(tracerModulePath);
+		  //tracer = check_and_cast<SimTracer *>(modp);
+		  if (!tracer) {
+			error("No SimTracer module found, please check your ned configuration.");
+		  }
+		  // log node position
+		  ChannelMobilityPtrType ptrMobility = ChannelMobilityAccessType().get();
+		  if (ptrMobility) {
+		    Coord pos = ptrMobility->getCurrentPosition();
+		  tracer->logPosition(myNetwAddr, pos.x, pos.y, pos.z);
 		}
 	}
+}
 }
 
 WiseRoute::~WiseRoute()
@@ -108,22 +120,18 @@ void WiseRoute::handleSelfMsg(cMessage* msg)
 {
 	if (msg->getKind() == SEND_ROUTE_FLOOD_TIMER) {
 		// Send route flood packet and restart the timer
-		MACAddress macBcastAddr = MACAddress::BROADCAST_ADDRESS;
-		int ipBcastAddr = L3BROADCAST;
 		WiseRoutePkt* pkt = new WiseRoutePkt("route-flood", ROUTE_FLOOD);
 		pkt->setByteLength(headerLength);
 		pkt->setInitialSrcAddr(myNetwAddr);
-		pkt->setFinalDestAddr(ipBcastAddr);
+		pkt->setFinalDestAddr(LAddress::L3BROADCAST);
 		pkt->setSrcAddr(myNetwAddr);
-		pkt->setDestAddr(ipBcastAddr);
+		pkt->setDestAddr(LAddress::L3BROADCAST);
 		pkt->setNbHops(0);
 		floodTable.insert(make_pair(myNetwAddr, floodSeqNumber));
 		pkt->setSeqNum(floodSeqNumber);
 		floodSeqNumber++;
 		pkt->setIsFlood(1);
-		Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-		ctrl->setDest(macBcastAddr);
-		pkt->setControlInfo(ctrl);
+		setDownControlInfo(pkt, LAddress::L2BROADCAST);
 		sendDown(pkt);
 		nbFloodsSent++;
 		nbRouteFloodsSent++;
@@ -138,12 +146,10 @@ void WiseRoute::handleSelfMsg(cMessage* msg)
 
 void WiseRoute::handleLowerMsg(cMessage* msg)
 {
-	MACAddress macBcastAddr = MACAddress::BROADCAST_ADDRESS;
-	int bcastIpAddr = L3BROADCAST;
-	WiseRoutePkt* netwMsg = check_and_cast<WiseRoutePkt*>(msg);
-	int finalDestAddr = netwMsg->getFinalDestAddr();
-	int initialSrcAddr = netwMsg->getInitialSrcAddr();
-	int srcAddr = netwMsg->getSrcAddr();
+	WiseRoutePkt*           netwMsg        = check_and_cast<WiseRoutePkt*>(msg);
+	const LAddress::L3Type& finalDestAddr  = netwMsg->getFinalDestAddr();
+	const LAddress::L3Type& initialSrcAddr = netwMsg->getInitialSrcAddr();
+	const LAddress::L3Type& srcAddr        = netwMsg->getSrcAddr();
 	double rssi = static_cast<MacToNetwControlInfo*>(netwMsg->getControlInfo())->getRSSI();
 	double ber = static_cast<MacToNetwControlInfo*>(netwMsg->getControlInfo())->getBitErrorRate();
 	// Check whether the message is a flood and if it has to be forwarded.
@@ -158,11 +164,12 @@ void WiseRoute::handleLowerMsg(cMessage* msg)
 		delete netwMsg;
 	}
 	else {
+		const cObject* pCtrlInfo = NULL;
 		// If the message is a route flood, update the routing table.
 		if (netwMsg->getKind() == ROUTE_FLOOD)
 			updateRouteTable(initialSrcAddr, srcAddr, rssi, ber);
 
-		if (finalDestAddr == myNetwAddr || finalDestAddr == bcastIpAddr) {
+		if (finalDestAddr == myNetwAddr || LAddress::isL3Broadcast(finalDestAddr)) {
 			WiseRoutePkt* msgCopy;
 			if (floodType == FORWARD) {
 				// it's a flood. copy for delivery, forward original.
@@ -172,10 +179,8 @@ void WiseRoute::handleLowerMsg(cMessage* msg)
 				// local hop source address.
 				msgCopy = check_and_cast<WiseRoutePkt*>(netwMsg->dup());
 				netwMsg->setSrcAddr(myNetwAddr);
-				netwMsg->removeControlInfo();
-				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-				ctrl->setDest(macBcastAddr);
-				netwMsg->setControlInfo(ctrl);
+				pCtrlInfo = netwMsg->removeControlInfo();
+				setDownControlInfo(netwMsg, LAddress::L2BROADCAST);
 				netwMsg->setNbHops(netwMsg->getNbHops()+1);
 				sendDown(netwMsg);
 				nbDataPacketsForwarded++;
@@ -195,34 +200,32 @@ void WiseRoute::handleLowerMsg(cMessage* msg)
 			// not for me. if flood, forward as flood. else select a route
 			if (floodType == FORWARD) {
 				netwMsg->setSrcAddr(myNetwAddr);
-				netwMsg->removeControlInfo();
-				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-				ctrl->setDest(macBcastAddr);
-				netwMsg->setControlInfo(ctrl);
+				pCtrlInfo = netwMsg->removeControlInfo();
+				setDownControlInfo(netwMsg, LAddress::L2BROADCAST);
 				netwMsg->setNbHops(netwMsg->getNbHops()+1);
 				sendDown(netwMsg);
 				nbDataPacketsForwarded++;
 				nbUnicastFloodForwarded++;
 			}
 			else {
-				int nextHop = getRoute(finalDestAddr);
-				if (nextHop == bcastIpAddr) {
+				LAddress::L3Type nextHop = getRoute(finalDestAddr);
+				if (LAddress::isL3Broadcast(nextHop)) {
 					// no route exist to destination, attempt to send to final destination
 					nextHop = finalDestAddr;
 					nbGetRouteFailures++;
 				}
 				netwMsg->setSrcAddr(myNetwAddr);
 				netwMsg->setDestAddr(nextHop);
-				netwMsg->removeControlInfo();
-				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-				ctrl->setDest(arp->getMacAddr(nextHop));
-				netwMsg->setControlInfo(ctrl);
+				pCtrlInfo = netwMsg->removeControlInfo();
+				setDownControlInfo(netwMsg, arp->getMacAddr(nextHop));
 				netwMsg->setNbHops(netwMsg->getNbHops()+1);
 				sendDown(netwMsg);
 				nbDataPacketsForwarded++;
 				nbPureUnicastForwarded++;
 			}
 		}
+		if (pCtrlInfo != NULL)
+			delete pCtrlInfo;
 	}
 }
 
@@ -233,23 +236,22 @@ void WiseRoute::handleLowerControl(cMessage *msg)
 
 void WiseRoute::handleUpperMsg(cMessage* msg)
 {
-	int finalDestAddr;
-	int nextHopAddr;
-	MACAddress nextHopMacAddr;
-	WiseRoutePkt* pkt = new WiseRoutePkt(msg->getName(), DATA);
-	NetwControlInfo* cInfo = dynamic_cast<NetwControlInfo*>(msg->removeControlInfo());
-	int ipBcastAddr = L3BROADCAST;
+	LAddress::L3Type finalDestAddr;
+	LAddress::L3Type nextHopAddr;
+	LAddress::L2Type nextHopMacAddr;
+	WiseRoutePkt*    pkt   = new WiseRoutePkt(msg->getName(), DATA);
+	cObject*         cInfo = msg->removeControlInfo();
 
 	pkt->setByteLength(headerLength);
 
-	if ( cInfo == 0 ) {
+	if ( cInfo == NULL ) {
 	    EV << "WiseRoute warning: Application layer did not specifiy a destination L3 address\n"
 	       << "\tusing broadcast address instead\n";
-	    finalDestAddr = ipBcastAddr;
+	    finalDestAddr = LAddress::L3BROADCAST;
 	}
 	else {
-		EV <<"WiseRoute: CInfo removed, netw addr="<< cInfo->getNetwAddr() <<endl;
-		finalDestAddr = cInfo->getNetwAddr();
+		EV <<"WiseRoute: CInfo removed, netw addr="<< NetwControlInfo::getAddressFromControlInfo( cInfo ) <<endl;
+		finalDestAddr = NetwControlInfo::getAddressFromControlInfo( cInfo );
 		delete cInfo;
 	}
 
@@ -258,14 +260,14 @@ void WiseRoute::handleUpperMsg(cMessage* msg)
 	pkt->setSrcAddr(myNetwAddr);
 	pkt->setNbHops(0);
 
-	if (finalDestAddr == ipBcastAddr)
-		nextHopAddr = ipBcastAddr;
+	if (LAddress::isL3Broadcast(finalDestAddr))
+		nextHopAddr = LAddress::L3BROADCAST;
 	else
 		nextHopAddr = getRoute(finalDestAddr, true);
 	pkt->setDestAddr(nextHopAddr);
-	if (nextHopAddr == ipBcastAddr) {
+	if (LAddress::isL3Broadcast(nextHopAddr)) {
 		// it's a flood.
-		nextHopMacAddr = MACAddress::BROADCAST_ADDRESS;
+		nextHopMacAddr = LAddress::L2BROADCAST;
 		pkt->setIsFlood(1);
 		nbFloodsSent++;
 		// record flood in flood table
@@ -279,9 +281,7 @@ void WiseRoute::handleUpperMsg(cMessage* msg)
 		nbPureUnicastSent++;
 		nextHopMacAddr = arp->getMacAddr(nextHopAddr);
 	}
-	Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-	ctrl->setDest(nextHopMacAddr);
-	pkt->setControlInfo(ctrl);
+	setDownControlInfo(pkt, nextHopMacAddr);
 	assert(static_cast<cPacket*>(msg));
 	pkt->encapsulate(static_cast<cPacket*>(msg));
 	sendDown(pkt);
@@ -307,7 +307,7 @@ void WiseRoute::finish()
 	}
 }
 
-void WiseRoute::updateRouteTable(int origin, int lastHop, double rssi, double ber)
+void WiseRoute::updateRouteTable(const LAddress::L3Type& origin, const LAddress::L3Type& lastHop, double rssi, double ber)
 {
 	tRouteTable::iterator pos;
 
@@ -334,8 +334,8 @@ void WiseRoute::updateRouteTable(int origin, int lastHop, double rssi, double be
 			  tracer->logLink(myNetwAddr, lastHop);
 			}
 			nbRoutesRecorded++;
-			if (origin == 0 && trace) {
-				nextHopSelectionForSink.record(lastHop);
+			if (origin == LAddress::L3NULL && trace) {
+				nextHopSelectionForSink.record(static_cast<double>(lastHop));
 			}
 		}
 	}
@@ -356,14 +356,14 @@ void WiseRoute::updateRouteTable(int origin, int lastHop, double rssi, double be
 cMessage* WiseRoute::decapsMsg(WiseRoutePkt *msg)
 {
 	cMessage *m = msg->decapsulate();
-	m->setControlInfo(new NetwControlInfo(msg->getSrcAddr()));
+	setUpControlInfo(m, msg->getSrcAddr());
 	nbHops = nbHops + msg->getNbHops();
 	// delete the netw packet
 	delete msg;
 	return m;
 }
 
-WiseRoute::floodTypes WiseRoute::updateFloodTable(bool isFlood, int srcAddr, int destAddr, unsigned long seqNum)
+WiseRoute::floodTypes WiseRoute::updateFloodTable(bool isFlood, const tFloodTable::key_type& srcAddr, const tFloodTable::key_type& destAddr, unsigned long seqNum)
 {
 	if (isFlood) {
 		tFloodTable::iterator pos = floodTable.lower_bound(srcAddr);
@@ -384,7 +384,7 @@ WiseRoute::floodTypes WiseRoute::updateFloodTable(bool isFlood, int srcAddr, int
 		return NOTAFLOOD;
 }
 
-int WiseRoute::getRoute(int destAddr, bool iAmOrigin)
+WiseRoute::tFloodTable::key_type WiseRoute::getRoute(const tFloodTable::key_type& destAddr, bool iAmOrigin)
 {
 	// Find a route to dest address. As in the embedded code, if no route exists, indicate
 	// final destination as next hop. If we'are lucky, final destination is one hop away...
@@ -394,5 +394,5 @@ int WiseRoute::getRoute(int destAddr, bool iAmOrigin)
 	if (pos != routeTable.end())
 		return pos->second.nextHop;
 	else
-		return L3BROADCAST;
+		return LAddress::L3BROADCAST;
 }

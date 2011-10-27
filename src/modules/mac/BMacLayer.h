@@ -24,7 +24,8 @@
 #include "MiXiMDefs.h"
 #include "BaseMacLayer.h"
 #include <DroppedPacket.h>
-#include <MacPkt_m.h>
+
+class MacPkt;
 
 /**
  * @brief Implementation of B-MAC (called also Berkeley MAC, Low Power
@@ -168,17 +169,14 @@ class MIXIM_API  BMacLayer : public BaseMacLayer
 
 	/** @name Help variables for the acknowledgment process. */
 	/*@{*/
-	MACAddress lastDataPktSrcAddr;
-	MACAddress lastDataPktDestAddr;
-	int txAttempts;
+	LAddress::L2Type lastDataPktSrcAddr;
+	LAddress::L2Type lastDataPktDestAddr;
+	int              txAttempts;
 	/*@}*/
 
 
 	/** @brief Inspect reasons for dropped packets */
 	DroppedPacket droppedPacket;
-
-	/** @brief Category for dropped packets from BB */
-	int catDroppedPacket;
 
 	/** @brief publish dropped packets nic wide */
 	int nicId;

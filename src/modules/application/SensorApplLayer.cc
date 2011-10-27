@@ -18,9 +18,16 @@
  **************************************************************************/
 
 #include "SensorApplLayer.h"
-//#include <sstream>
-#include <BaseNetwLayer.h>
-#include <AddressingInterface.h>
+
+#include <sstream>
+
+#include "BaseNetwLayer.h"
+#include "AddressingInterface.h"
+#include "NetwControlInfo.h"
+#include "FindModule.h"
+#include "SimpleAddress.h"
+#include "BaseWorldUtility.h"
+#include "ApplPkt_m.h"
 
 Define_Module(SensorApplLayer);
 
@@ -47,7 +54,7 @@ void SensorApplLayer::initialize(int stage) {
 		headerLength = par("headerLength");
 		// application configuration
 		const char *traffic = par("trafficType");
-		destAddr = par("destAddr");
+		destAddr = LAddress::L3Type(par("destAddr").longValue());
 		nbPacketsSent = 0;
 		nbPacketsReceived = 0;
 		firstPacketGeneration = -1;
@@ -56,19 +63,18 @@ void SensorApplLayer::initialize(int stage) {
 		initializeDistribution(traffic);
 
 		delayTimer = new cMessage("appDelay", SEND_DATA_TIMER);
-		hostID = getParentModule()->getId();
 
 		// get pointer to the world module
-
 		world = FindModule<BaseWorldUtility*>::findGlobalModule();
 
 	} else if (stage == 1) {
 		debugEV << "in initialize() stage 1...";
 		// Application address configuration: equals to host address
 
-		cModule *netw = FindModule<BaseNetwLayer*>::findSubModule(findHost());
+		cModule *const pHost = findHost();
+		const cModule* netw  = FindModule<BaseNetwLayer*>::findSubModule(pHost);
 		if(!netw) {
-			netw = findHost()->getSubmodule("netw");
+			netw = pHost->getSubmodule("netw");
 			if(!netw) {
 				opp_error("Could not find network layer module. This means "
 						  "either no network layer module is present or the "
@@ -76,20 +82,18 @@ void SensorApplLayer::initialize(int stage) {
 						  "BaseNetworkLayer.");
 			}
 		}
-		AddressingInterface* addrScheme = FindModule<AddressingInterface*>
-													::findSubModule(findHost());
+		const AddressingInterface *const addrScheme = FindModule<AddressingInterface*>::findSubModule(pHost);
 		if(addrScheme) {
 			myAppAddr = addrScheme->myNetwAddr(netw);
 		} else {
-			myAppAddr = netw->getId();
+			myAppAddr = LAddress::L3Type( netw->getId() );
 		}
 		sentPackets = 0;
-		catPacket = registerSignal("packet");
 
 		// first packet generation time is always chosen uniformly
 		// to avoid systematic collisions
 		if(nbPackets> 0)
-		scheduleAt(simTime() +uniform(initializationTime, initializationTime + trafficParam), delayTimer);
+			scheduleAt(simTime() +uniform(initializationTime, initializationTime + trafficParam), delayTimer);
 
 		if (stats) {
 			latenciesRaw.setName("rawLatencies");
@@ -99,13 +103,15 @@ void SensorApplLayer::initialize(int stage) {
 	}
 }
 
-cStdDev& SensorApplLayer::hostsLatency(int hostAddress)
+cStdDev& SensorApplLayer::hostsLatency(const LAddress::L3Type& hostAddress)
 {
+	using std::pair;
+
 	  if(latencies.count(hostAddress) == 0) {
-		  std::ostringstream oss;
-		  oss << hostAddress;
-		  cStdDev aLatency(oss.str().c_str());
-		  latencies.insert(pair<int, cStdDev>(hostAddress, aLatency));
+		std::ostringstream oss;
+		oss << hostAddress;
+		cStdDev aLatency(oss.str().c_str());
+		latencies.insert(pair<LAddress::L3Type, cStdDev>(hostAddress, aLatency));
 	  }
 
 	  return latencies[hostAddress];
@@ -127,7 +133,7 @@ void SensorApplLayer::initializeDistribution(const char* traffic) {
 void SensorApplLayer::scheduleNextPacket() {
 	if (nbPackets > sentPackets && trafficType != 0) { // We must generate packets
 
-		simtime_t waitTime = -1;
+		simtime_t waitTime = SIMTIME_ZERO;
 
 		switch (trafficType) {
 		case PERIODIC:
@@ -147,7 +153,8 @@ void SensorApplLayer::scheduleNextPacket() {
 			EV <<
 			"Cannot generate requested traffic type (unimplemented or unknown)."
 			<< endl;
-
+			return; // don not schedule
+			break;
 		}
 		debugEV << "Start timer for a new packet in " << waitTime << " seconds." <<
 		endl;
@@ -172,7 +179,7 @@ void SensorApplLayer::handleLowerMsg(cMessage * msg) {
 		packet.setNbPacketsSent(0);
 		packet.setNbPacketsReceived(1);
 		packet.setHost(myAppAddr);
-		emit(catPacket, &packet);
+		emit(BaseLayer::catPacketSignal, &packet);
 		if (stats) {
 			simtime_t theLatency = m->getArrivalTime() - m->getCreationTime();
 			if(trace) {
@@ -201,6 +208,7 @@ void SensorApplLayer::handleLowerMsg(cMessage * msg) {
 		default:
 		EV << "Error! got packet with unknown kind: " << msg->getKind() << endl;
 		delete msg;
+		break;
 	}
 }
 
@@ -221,6 +229,7 @@ void SensorApplLayer::handleSelfMsg(cMessage * msg) {
 	default:
 		EV<< "Unkown selfmessage! -> delete, kind: " << msg->getKind() << endl;
 		delete msg;
+		break;
 	}
 }
 
@@ -236,14 +245,14 @@ void SensorApplLayer::sendData() {
 	ApplPkt *pkt = new ApplPkt("Data", DATA_MESSAGE);
 
 	if(broadcastPackets) {
-		pkt->setDestAddr(L3BROADCAST);
+		pkt->setDestAddr(LAddress::L3BROADCAST);
 	} else {
 		pkt->setDestAddr(destAddr);
 	}
 	pkt->setSrcAddr(myAppAddr);
 	pkt->setByteLength(headerLength);
 	// set the control info to tell the network layer the layer 3 address
-	pkt->setControlInfo(new NetwControlInfo(pkt->getDestAddr()));
+	NetwControlInfo::setControlInfo(pkt, pkt->getDestAddr());
 	debugEV<< "Sending data packet!\n";
 	sendDown(pkt);
 	nbPacketsSent++;
@@ -251,22 +260,22 @@ void SensorApplLayer::sendData() {
 	packet.setNbPacketsSent(1);
 	packet.setNbPacketsReceived(0);
 	packet.setHost(myAppAddr);
-	emit(catPacket, &packet);
+	emit(BaseLayer::catPacketSignal, &packet);
 	sentPackets++;
 	scheduleNextPacket();
 }
 
 void SensorApplLayer::finish() {
+	using std::map;
 	if (stats) {
 		if (trace) {
+			std::stringstream osToStr(std::stringstream::out);
 			// output logs to scalar file
-			for (map<int, cStdDev>::iterator it = latencies.begin(); it
-					!= latencies.end(); ++it) {
-				char dispstring[12];
+			for (map<LAddress::L3Type, cStdDev>::iterator it = latencies.begin(); it != latencies.end(); ++it) {
 				cStdDev aLatency = it->second;
-				sprintf(dispstring, "latency%d", it->first);
-				//dispstring
-				recordScalar(dispstring, aLatency.getMean(), "s");
+
+				osToStr.str(""); osToStr << "latency" << it->first;
+				recordScalar(osToStr.str().c_str(), aLatency.getMean(), "s");
 				aLatency.record();
 			}
 		}

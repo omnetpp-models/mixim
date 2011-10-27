@@ -21,14 +21,20 @@
 
 
 #include "BaseMacLayer.h"
-#include "MacToNetwControlInfo.h"
-#include "Ieee802Ctrl_m.h"
-#include "SimpleAddress.h"
-#include "AddressingInterface.h"
-#include <InterfaceTableAccess.h>
-#include <ChannelAccess.h>
 
 #include <cassert>
+#include <sstream>
+
+#include "Mapping.h"
+#include "Signal_.h"
+#include "MacToPhyInterface.h"
+#include "MacToNetwControlInfo.h"
+#include "NetwToMacControlInfo.h"
+#include "MacToPhyControlInfo.h"
+#include "AddressingInterface.h"
+#include "ChannelAccess.h"
+#include "FindModule.h"
+#include "MacPkt_m.h"
 
 Define_Module(BaseMacLayer);
 
@@ -44,66 +50,73 @@ void BaseMacLayer::initialize(int stage)
     if(stage==0)
     {
     	// get handle to phy layer
-        phy = FindModule<MacToPhyInterface*>::findSubModule(getParentModule());
-
+        if ((phy = FindModule<MacToPhyInterface*>::findSubModule(getParentModule())) == NULL) {
+        	error("Could not find a PHY module.");
+        }
         headerLength= par("headerLength");
         phyHeaderLength = phy->getPhyHeaderLength();
 
         hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
-
+    //}
+    //else if (stage==1) {
     	// see if there is an addressing module available
-		// otherwise use NIC modules id as MAC address
-		AddressingInterface* addrScheme = FindModule<AddressingInterface*>::findSubModule(findHost());
-		if(addrScheme)
-			myMacAddr = addrScheme->myMacAddr(this);
-		else {
-		    const char *addressString = par("address").stringValue();
-		    if (!strcmp(addressString, "auto"))
-		        myMacAddr = MACAddress(getParentModule()->getId());
-		    else
-		        myMacAddr.setAddress(addressString);
-		    par("address").setStringValue(myMacAddr.str().c_str());
-		}
-		registerInterface();
+        // otherwise use NIC modules id as MAC address
+        AddressingInterface* addrScheme = FindModule<AddressingInterface*>::findSubModule(findHost());
+        if(addrScheme) {
+            myMacAddr = addrScheme->myMacAddr(this);
+        } else {
+            const std::string addressString = par("address").stringValue();
+            if (addressString.empty() || addressString == "auto")
+                myMacAddr = LAddress::L2Type(getParentModule()->getId());
+            else
+                myMacAddr = LAddress::L2Type(addressString.c_str());
+            // use streaming operator for string conversion, this makes it more
+            // independent from the myMacAddr type
+            std::ostringstream oSS; oSS << myMacAddr;
+            par("address").setStringValue(oSS.str());
+        }
+        registerInterface();
     }
 }
 
 void BaseMacLayer::registerInterface()
 {
+#ifdef MIXIM_INET
     IInterfaceTable *ift = InterfaceTableAccess().getIfExists();
     if (ift) {
-		cModule* nic = getParentModule();
-		InterfaceEntry *e = new InterfaceEntry();
+        cModule* nic = getParentModule();
+        InterfaceEntry *e = new InterfaceEntry();
 
-		// interface name: NIC module's name without special
-		// characters ([])
-		char *interfaceName = new char[strlen(nic->getFullName()) + 1];
-		char *d = interfaceName;
-		for (const char *s = nic->getFullName(); *s; s++)
-			if (isalnum(*s))
-				*d++ = *s;
-		*d = '\0';
+        // interface name: NIC module's name without special
+        // characters ([])
+        char *interfaceName = new char[strlen(nic->getFullName()) + 1];
+        char *d = interfaceName;
+        for (const char *s = nic->getFullName(); *s; s++)
+            if (isalnum(*s))
+                *d++ = *s;
+        *d = '\0';
 
-		e->setName(interfaceName);
-		delete [] interfaceName;
+        e->setName(interfaceName);
+        delete [] interfaceName;
 
-		// this MAC address must be the same as the one in BaseMacLayer
-		e->setMACAddress(myMacAddr);
+        // this MAC address must be the same as the one in BaseMacLayer
+        e->setMACAddress(myMacAddr);
 
-		// generate interface identifier for IPv6
-		e->setInterfaceToken(myMacAddr.formInterfaceIdentifier());
+        // generate interface identifier for IPv6
+        e->setInterfaceToken(myMacAddr.formInterfaceIdentifier());
 
-		// MTU on 802.11 = ?
-		e->setMtu(1500);            // FIXME
+        // MTU on 802.11 = ?
+        e->setMtu(1500);            // FIXME
 
-		// capabilities
-		e->setBroadcast(true);
-		e->setMulticast(true);
-		e->setPointToPoint(false);
+        // capabilities
+        e->setBroadcast(true);
+        e->setMulticast(true);
+        e->setPointToPoint(false);
 
-		// add
-		ift->addInterface(e, this);
+        // add
+        ift->addInterface(e, this);
     }
+#endif
 }
 
 /**
@@ -112,13 +125,12 @@ void BaseMacLayer::registerInterface()
 cPacket* BaseMacLayer::decapsMsg(MacPkt* msg)
 {
     cPacket *m = msg->decapsulate();
-    m->setControlInfo(new MacToNetwControlInfo(msg->getSrcAddr(), 0));
+    setUpControlInfo(m, msg->getSrcAddr());
     // delete the macPkt
     delete msg;
     coreEV << " message decapsulated " << endl;
     return m;
 }
-
 
 /**
  * Encapsulates the received NetwPkt into a MacPkt and set all needed
@@ -131,10 +143,10 @@ MacPkt* BaseMacLayer::encapsMsg(cPacket *netwPkt)
 
     // copy dest address from the Control Info attached to the network
     // message by the network layer
-    Ieee802Ctrl* cInfo = static_cast<Ieee802Ctrl*>(netwPkt->removeControlInfo());
+    cObject* cInfo = netwPkt->removeControlInfo();
 
-    coreEV <<"CInfo removed, mac addr="<< cInfo->getDest()<<endl;
-    pkt->setDestAddr(cInfo->getDest());
+    coreEV <<"CInfo removed, mac addr="<< getUpperDestinationFromControlInfo(cInfo) << endl;
+    pkt->setDestAddr(getUpperDestinationFromControlInfo(cInfo));
 
     //delete the control info
     delete cInfo;
@@ -172,12 +184,12 @@ void BaseMacLayer::handleUpperMsg(cMessage *mac)
 
 void BaseMacLayer::handleLowerMsg(cMessage *msg)
 {
-    MacPkt *mac = static_cast<MacPkt *>(msg);
-    MACAddress dest = mac->getDestAddr();
-    MACAddress src = mac->getSrcAddr();
+    MacPkt*          mac  = static_cast<MacPkt *>(msg);
+    LAddress::L2Type dest = mac->getDestAddr();
+    LAddress::L2Type src  = mac->getSrcAddr();
 
     //only foward to upper layer if message is for me or broadcast
-    if((dest == myMacAddr) || dest.isBroadcast()) {
+    if((dest == myMacAddr) || LAddress::isL2Broadcast(dest)) {
 		coreEV << "message with mac addr " << src
 			   << " for me (dest=" << dest
 			   << ") -> forward packet to upper layer\n";
@@ -206,7 +218,7 @@ void BaseMacLayer::handleLowerControl(cMessage* msg)
 	}
 }
 
-Signal* BaseMacLayer::createSignal(simtime_t start, simtime_t length, double power, double bitrate)
+Signal* BaseMacLayer::createSignal(simtime_t_cref start, simtime_t_cref length, double power, double bitrate)
 {
 	simtime_t end = start + length;
 	//create signal with start at current simtime and passed length
@@ -223,10 +235,10 @@ Signal* BaseMacLayer::createSignal(simtime_t start, simtime_t length, double pow
 	return s;
 }
 
-Mapping* BaseMacLayer::createConstantMapping(simtime_t start, simtime_t end, double value)
+Mapping* BaseMacLayer::createConstantMapping(simtime_t_cref start, simtime_t_cref end, Argument::mapped_type_cref value)
 {
 	//create mapping over time
-	Mapping* m = MappingUtils::createMapping(0.0, DimensionSet::timeDomain, Mapping::LINEAR);
+	Mapping* m = MappingUtils::createMapping(Argument::MappedZero, DimensionSet::timeDomain, Mapping::LINEAR);
 
 	//set position Argument
 	Argument startPos(start);
@@ -243,7 +255,7 @@ Mapping* BaseMacLayer::createConstantMapping(simtime_t start, simtime_t end, dou
 	return m;
 }
 
-Mapping* BaseMacLayer::createRectangleMapping(simtime_t start, simtime_t end, double value)
+Mapping* BaseMacLayer::createRectangleMapping(simtime_t_cref start, simtime_t_cref end, Argument::mapped_type_cref value)
 {
 	//create mapping over time
 	Mapping* m = MappingUtils::createMapping(DimensionSet::timeDomain, Mapping::LINEAR);
@@ -251,23 +263,23 @@ Mapping* BaseMacLayer::createRectangleMapping(simtime_t start, simtime_t end, do
 	//set position Argument
 	Argument startPos(start);
 	//set discontinuity at position
-	MappingUtils::addDiscontinuity(m, startPos, 0.0, MappingUtils::post(start), value);
+	MappingUtils::addDiscontinuity(m, startPos, Argument::MappedZero, MappingUtils::post(start), value);
 
 	//set position Argument
 	Argument endPos(end);
 	//set discontinuity at position
-	MappingUtils::addDiscontinuity(m, endPos, 0.0, MappingUtils::pre(end), value);
+	MappingUtils::addDiscontinuity(m, endPos, Argument::MappedZero, MappingUtils::pre(end), value);
 
 	return m;
 }
 
-ConstMapping* BaseMacLayer::createSingleFrequencyMapping(simtime_t start,
-														 simtime_t end,
-														 double centerFreq,
-														 double halfBandwidth,
-														 double value)
+ConstMapping* BaseMacLayer::createSingleFrequencyMapping(simtime_t_cref             start,
+                                                         simtime_t_cref             end,
+                                                         Argument::mapped_type_cref centerFreq,
+                                                         Argument::mapped_type_cref halfBandwidth,
+                                                         Argument::mapped_type_cref value)
 {
-	Mapping* res = MappingUtils::createMapping(0.0, DimensionSet::timeFreqDomain, Mapping::LINEAR);
+	Mapping* res = MappingUtils::createMapping(Argument::MappedZero, DimensionSet::timeFreqDomain, Mapping::LINEAR);
 
 	Argument pos(DimensionSet::timeFreqDomain);
 
@@ -292,5 +304,22 @@ BaseConnectionManager* BaseMacLayer::getConnectionManager() {
 	return ChannelAccess::getConnectionManager(nic);
 }
 
+const LAddress::L2Type& BaseMacLayer::getUpperDestinationFromControlInfo(const cObject *const pCtrlInfo) {
+	return NetwToMacControlInfo::getDestFromControlInfo(pCtrlInfo);
+}
 
+/**
+ * Attaches a "control info" (MacToNetw) structure (object) to the message pMsg.
+ */
+cObject *const BaseMacLayer::setUpControlInfo(cMessage *const pMsg, const LAddress::L3Type& pSrcAddr)
+{
+	return MacToNetwControlInfo::setControlInfo(pMsg, pSrcAddr);
+}
 
+/**
+ * Attaches a "control info" (MacToPhy) structure (object) to the message pMsg.
+ */
+cObject *const BaseMacLayer::setDownControlInfo(cMessage *const pMsg, Signal *const pSignal)
+{
+	return MacToPhyControlInfo::setControlInfo(pMsg, pSignal);
+}

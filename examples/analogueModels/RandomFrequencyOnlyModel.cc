@@ -1,12 +1,13 @@
 #include "RandomFrequencyOnlyModel.h"
 
+#include "AirFrame_m.h"
 
 /**
  * @brief The actual filtering method. This implementation just
  * put some random attenuations over time and frequency into
  * the attenuation mapping.
  */
-void RandomFrequencyOnlyModel::filterSignal(AirFrame *frame){
+void RandomFrequencyOnlyModel::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos){
     Signal& signal = frame->getSignal();
 
 	/* At first get a new instance of the default Mapping implementation
@@ -25,7 +26,7 @@ void RandomFrequencyOnlyModel::filterSignal(AirFrame *frame){
 	 * makes sence in most cases, using NEAREST whould make more sense
 	 * for frequency.
 	 */
-	Mapping* attMapping = MappingUtils::createMapping(1.0, dimensions, Mapping::LINEAR);
+	Mapping* attMapping = MappingUtils::createMapping(Argument::MappedOne, dimensions, Mapping::LINEAR);
 
 	/* Get start and end of the signal to avoid unnecessary calculation
 	 * of attenuation.*/

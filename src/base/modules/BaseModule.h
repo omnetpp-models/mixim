@@ -26,7 +26,6 @@
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
-#include "FindModule.h"
 #include "HostState.h"
 
 #ifndef debugEV
@@ -76,47 +75,44 @@ class MIXIM_API BaseModule: public cSimpleModule, public cListener {
     /** @brief Debug switch for all other modules*/
     bool debug;
 
-	/** @brief Stores if this module is affected by changes in the
-	 * hosts state. If not explicitly set this module has to capture
-	 * changes in the host state.*/
-	bool notAffectedByHostState;
+    /** @brief Stores if this module is affected by changes in the
+     * hosts state. If not explicitly set this module has to capture
+     * changes in the host state.*/
+    bool notAffectedByHostState;
 
-	/** @brief Stores the category of the HostState*/
-	int hostStateCat;
-
-	/** @brief The hosts id. */
-	int hostId;
+    /** @brief Stores the category of the HostState*/
+    const static simsignalwrap_t catHostStateSignal;
 protected:
 
-	/**
-	 * @brief Called whenever the hosts state changes.
-	 *
-	 * Default implementation of this method throws an error whenever the host
-	 * state changes and the "notAffectedbyHostState" variable is not explicitly
-	 * set. This is because every module of a host has to make sure to react
-	 * well to changes in the host state. Or it has to explicitly set its
-	 * parameter "notAffectedbyHostState" to true.
-	 */
-	virtual void handleHostState(const HostState& state);
+    /**
+     * @brief Called whenever the hosts state changes.
+     *
+     * Default implementation of this method throws an error whenever the host
+     * state changes and the "notAffectedbyHostState" variable is not explicitly
+     * set. This is because every module of a host has to make sure to react
+     * well to changes in the host state. Or it has to explicitly set its
+     * parameter "notAffectedbyHostState" to true.
+     */
+    virtual void handleHostState(const HostState& state);
 
-	/**
-	 * @brief Switches the host to the passed state.
-	 *
-	 * If the hosts state is switched to anything else than "ACTIVE" every
-	 * module of the host has to handle this explicitly (see method
-	 * "handleHostState()")!
-	 */
-	void switchHostState(HostState::States state);
+    /**
+     * @brief Switches the host to the passed state.
+     *
+     * If the hosts state is switched to anything else than "ACTIVE" every
+     * module of the host has to handle this explicitly (see method
+     * "handleHostState()")!
+     */
+    void switchHostState(HostState::States state);
 
     /** @brief Function to get a pointer to the host module*/
-    cModule *findHost(void);
+    cModule *const findHost(void);
+    const cModule *const findHost(void) const;
     /** @brief Function to get the logging name of id*/
     //std::string getLogName(int);
-
-
-
   public:
+
     BaseModule();
+    BaseModule(unsigned stacksize);
 
     /** @brief Basic initialization for all modules */
     virtual void initialize(int);
@@ -144,12 +140,12 @@ protected:
      * host ned variable loggingName is specified). It can be used for
      * logging messages to simplify debugging in TKEnv.
      */
-    std::string logName(void);
+    std::string logName(void) const ;
 
     /**
      * @brief Get a reference to the local node module
      */
-    cModule * getNode(){
+    const cModule *const getNode() const {
     	return findHost();
     };
 

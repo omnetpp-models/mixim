@@ -22,8 +22,10 @@
 #ifndef TEST_APPL_LAYER_H
 #define TEST_APPL_LAYER_H
 
+#include "MiXiMDefs.h"
 #include "BaseApplLayer.h"
 
+class ApplPkt;
 
 /**
  * @brief Test class for the application layer
@@ -35,7 +37,7 @@
  * @ingroup applLayer
  * @author Daniel Willkomm
  **/
-class TestApplLayer : public BaseApplLayer
+class MIXIM_API TestApplLayer : public BaseApplLayer
 {
   public:
     TestApplLayer();

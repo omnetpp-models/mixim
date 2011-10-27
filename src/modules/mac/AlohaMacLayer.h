@@ -25,8 +25,6 @@
 #include "MiXiMDefs.h"
 #include "UWBIRMac.h"
 
-using namespace std;
-
 /**
  * @brief this class implements a basic Aloha MAC protocol for an UWB-IR
  * IEEE 802.15.4A transceiver to allow testing the PHY layer.

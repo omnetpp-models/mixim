@@ -1,16 +1,13 @@
 #ifndef PHYUTILS_H_
 #define PHYUTILS_H_
 
+#include <cassert>
+#include <list>
+#include <omnetpp.h>
+
 #include "MiXiMDefs.h"
 #include "AnalogueModel.h"
 #include "Mapping.h"
-
-#include <omnetpp.h>
-#include <iostream>
-#include <assert.h>
-#include <list>
-
-
 
 class RSAMMapping;
 
@@ -55,12 +52,12 @@ protected:
 	{
 	protected:
 		/** @brief The pair representing the time stamp.*/
-		std::pair<simtime_t, double> basicTimestamp;
+		std::pair<simtime_t, Argument::mapped_type> basicTimestamp;
 
 	public:
 		/** @brief Initializes the entry with the passed values.*/
-		ListEntry(simtime_t time, double value) {
-			basicTimestamp = std::pair<simtime_t, double> (time, value);
+		ListEntry(simtime_t_cref time, Argument::mapped_type_cref value) {
+			basicTimestamp = std::make_pair(time, value);
 		}
 
 		virtual ~ListEntry() {}
@@ -71,17 +68,17 @@ protected:
 		}
 
 		/** @brief Sets the time of the entry.*/
-		void setTime(simtime_t time) {
+		void setTime(simtime_t_cref time) {
 			basicTimestamp.first = time;
 		}
 
 		/** @brief Returns the value of the entry.*/
-		double getValue() const {
+		Argument::mapped_type getValue() const {
 			return basicTimestamp.second;
 		}
 
 		/** @brief Sets the value of the entry.*/
-		void setValue(double value) {
+		void setValue(Argument::mapped_type_cref value) {
 			basicTimestamp.second = value;
 		}
 
@@ -89,7 +86,7 @@ protected:
 		 * @brief overload of operator < for class ListEntry to be able to use the STL Algorithms
 		 * "lower_bound" and "upper_bound"
 		 */
-		friend bool operator<(const ListEntry& e, const simtime_t& t) {
+		friend bool operator<(const ListEntry& e, simtime_t_cref t) {
 			return (e.getTime() < t);
 		}
 
@@ -97,7 +94,7 @@ protected:
 		 * @brief overload of operator < for class ListEntry to be able to use the STL Algorithms
 		 * "lower_bound" and "upper_bound"
 		 */
-		friend bool operator<(const simtime_t& t, const ListEntry& e) {
+		friend bool operator<(simtime_t_cref t, const ListEntry& e) {
 			return (t < e.getTime());
 		}
 
@@ -126,9 +123,9 @@ public:
 	 *
 	 * Default setting is: tracking off
 	 */
-	RadioStateAnalogueModel(double initValue,
+	RadioStateAnalogueModel(Argument::mapped_type_cref initValue,
 							bool currentlyTracking = false,
-							simtime_t initTime = 0)
+							simtime_t_cref initTime = SIMTIME_ZERO)
 		: currentlyTracking(currentlyTracking)
 	{
 		// put the initial time-stamp to the list
@@ -145,7 +142,7 @@ public:
 	 * this instance RadioStateAnalogueModel, hence the pointer is valid as long
 	 * as the Radio instance exists that has this RSAM as a member.
 	 */
-	virtual void filterSignal(AirFrame *frame);
+	virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
 
 	/**
 	 * @brief sets tracking mode
@@ -163,14 +160,14 @@ public:
 	 *
 	 * THIS SHOULD BE THE ONLY WAY TO DELETE ENTRIES IN THE RECEIVING LIST
 	 */
-	void cleanUpUntil(simtime_t t);
+	void cleanUpUntil(simtime_t_cref t);
 
 	/**
 	 * @brief Stores an entry of the form "time-point/attenuation (from now on)"
 	 *
 	 * Intended to be used by the Radio
 	 */
-	void writeRecvEntry(simtime_t time, double value);
+	void writeRecvEntry(simtime_t_cref time, Argument::mapped_type_cref value);
 
 
 
@@ -243,9 +240,9 @@ protected:
 	simtime_t** swTimes;
 
 	/** @brief Constant to store the minimum attenuation for a Radio instance.*/
-	const double minAtt;
+	const Argument::mapped_type minAtt;
 	/** @brief Constant to store the maximum attenuation for a Radio instance.*/
-	const double maxAtt;
+	const Argument::mapped_type maxAtt;
 
 	/**
 	 * @brief The corresponding RadioStateAnalogueModel.
@@ -274,8 +271,8 @@ public:
 	 */
 	static Radio* createNewRadio(bool recordStats = false,
 								 int initialState = RX,
-								 double minAtt = 1.0,
-								 double maxAtt = 0.0,
+								 Argument::mapped_type_cref minAtt = Argument::MappedOne,
+								 Argument::mapped_type_cref maxAtt = Argument::MappedZero,
 								 int currentChannel=0, int nbChannels=1)
 	{
 		return new Radio(NUM_RADIO_STATES,
@@ -299,14 +296,14 @@ public:
 	 *
 	 * The actual simtime must be passed, to create properly RSAMEntry
 	 */
-	virtual simtime_t switchTo(int newState, simtime_t now);
+	virtual simtime_t switchTo(int newState, simtime_t_cref now);
 
 	/**
 	 * @brief function called by PhyLayer in order to make an entry in the switch times matrix,
 	 * i.e. set the time for switching from one state to another
 	 *
 	 */
-	virtual void setSwitchTime(int from, int to, simtime_t time);
+	virtual void setSwitchTime(int from, int to, simtime_t_cref time);
 
 	/**
 	 * @brief Returns the state the Radio is currently in
@@ -326,7 +323,7 @@ public:
 	 *
 	 * The actual simtime must be passed, to create properly RSAMEntry
 	 */
-	virtual void endSwitch(simtime_t now);
+	virtual void endSwitch(simtime_t_cref now);
 
 	/**
 	 * @brief Returns a pointer to the RadioStateAnalogueModel
@@ -342,7 +339,7 @@ public:
 	 * @brief discards information in the RadioStateAnalogueModel before given time-point
 	 *
 	 */
-	virtual void cleanAnalogueModelUntil(simtime_t t) {
+	virtual void cleanAnalogueModelUntil(simtime_t_cref t) {
 		rsam.cleanUpUntil(t);
 	}
 
@@ -394,13 +391,13 @@ protected:
 	Radio(int numRadioStates,
 		  bool recordStats,
 		  int initialState = RX,
-		  double minAtt = 1.0, double maxAtt = 0.0,
+		  Argument::mapped_type_cref minAtt = Argument::MappedOne, Argument::mapped_type_cref maxAtt = Argument::MappedZero,
 		  int currentChannel = 0, int nbChannels = 1);
 
 	/**
 	 * @brief responsible for making entries to the RSAM
 	 */
-	virtual void makeRSAMEntry(simtime_t time, int state)
+	virtual void makeRSAMEntry(simtime_t_cref time, int state)
 	{
 		rsam.writeRecvEntry(time, mapStateToAtt(state));
 	}
@@ -409,7 +406,7 @@ protected:
 	 * @brief maps RadioState to attenuation, the Radios receiving characteristic
 	 *
 	 */
-	virtual double mapStateToAtt(int state)
+	virtual Argument::mapped_type_cref mapStateToAtt(int state)
 	{
 		if (state == RX) {
 			return minAtt;
@@ -453,8 +450,8 @@ public:
 
 	/** @brief Initializes the iterator with the passed values.*/
 	RSAMConstMappingIterator(const RadioStateAnalogueModel* rsam,
-							 simtime_t signalStart,
-							simtime_t signalEnd);
+							 simtime_t_cref signalStart,
+							 simtime_t_cref signalEnd);
 
 	virtual ~RSAMConstMappingIterator() {}
 
@@ -534,7 +531,7 @@ public:
 	 * @brief Returns the value of the function at the current
 	 * position.
 	 */
-	virtual double getValue() const {
+	virtual argument_value_t getValue() const {
 		return it->getValue();
 	}
 
@@ -543,7 +540,7 @@ public:
 	 * @brief Iterates to valid entry for timepoint t over all zero-time switches
 	 * starting from the current position of iterator it
 	 */
-	virtual void iterateToOverZeroSwitches(simtime_t t);
+	virtual void iterateToOverZeroSwitches(simtime_t_cref t);
 
 }; // end class RSAMConstMappingIterator
 
@@ -581,8 +578,8 @@ public:
 	 *
 	 */
 	RSAMMapping(const RadioStateAnalogueModel* rsam,
-				simtime_t signalStart,
-				simtime_t signalEnd) :
+				simtime_t_cref signalStart,
+				simtime_t_cref signalEnd) :
 		ConstMapping(),
 		rsam(rsam),
 		signalStart(signalStart),
@@ -603,13 +600,13 @@ public:
 	 * In this case we have a function: simtime_t -> attenuation
 	 *
 	 */
-	virtual double getValue(const Argument& pos) const;
+	virtual argument_value_t getValue(const Argument& pos) const;
 
 	/**
 	 * @brief Returns a pointer of a new Iterator which is able to iterate
 	 * over the function.
 	 */
-	virtual ConstMappingIterator* createConstIterator()
+	virtual ConstMappingIterator* createConstIterator() const
 	{
 		return new RSAMConstMappingIterator(rsam, signalStart, signalEnd);
 	}
@@ -619,7 +616,7 @@ public:
 	 * over the function. The iterator starts at the passed position.
 	 *
 	 */
-	virtual ConstMappingIterator* createConstIterator(const Argument& pos);
+	virtual ConstMappingIterator* createConstIterator(const Argument& pos) const;
 
 	virtual ConstMapping* constClone() const {
 		return new RSAMMapping(*this);

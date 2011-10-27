@@ -30,7 +30,6 @@ import inet.linklayer.IWirelessNic;
 import org.mixim.modules.mac.Mac80211;
 import org.mixim.modules.phy.PhyLayerBattery;
 
-
 //
 // Based on Nic80211
 //

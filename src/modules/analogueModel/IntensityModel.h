@@ -20,15 +20,13 @@
 #ifndef INTENSITYMODEL_H_
 #define INTENSITYMODEL_H_
 
+#include <math.h>
+
 #include "MiXiMDefs.h"
 #include "AnalogueModel.h"
 #include "Mapping.h"
-#include "Signal_.h"
-#include "BaseWorldUtility.h"
-#include "MobilityAccess.h"
-#include <math.h>
-
-#define PI 3.1415926
+#include "AirFrame_m.h"
+#include "FWMath.h"
 
 /**
  * @brief TODO: Short description for this AnalogueModel
@@ -39,20 +37,17 @@ class MIXIM_API IntensityModel : public AnalogueModel {
 
 public:
 	IntensityModel() { }
-	void filterSignal(AirFrame *frame) {
-		Signal& signal = frame->getSignal();
+	virtual ~IntensityModel() { }
+	void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos) {
+		Signal&              s          = frame->getSignal();
 		TimeMapping<Linear>* attMapping = new TimeMapping<Linear> ();
 
 		// Determine distance between sender and receiver
 		assert(s.getReceptionStart() == simTime());
-		IMobility *senderMobility = ((ChannelAccess *)frame->getSenderModule())->getMobilityModule();
-		IMobility *receiverMobility = ((ChannelAccess *)frame->getArrivalModule())->getMobilityModule();
-		Coord senderPos = senderMobility->getCurrentPosition();
-		Coord receiverPos = receiverMobility->getCurrentPosition();
-		double distance = senderPos.distance(receiverPos);
+		double distance    = sendersPos.distance(receiverPos);
 
 		Argument arg;
-		attMapping->setValue(arg, 4*PI*pow(distance, 2));
+		attMapping->setValue(arg, 4*M_PI*pow(distance, 2));
 		s.addAttenuation(attMapping);
 	}
 };

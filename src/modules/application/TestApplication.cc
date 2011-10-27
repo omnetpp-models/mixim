@@ -1,5 +1,10 @@
 #include "TestApplication.h"
 
+#include "BaseMacLayer.h"
+#include "NetwControlInfo.h"
+#include "ApplPkt_m.h"
+
+using std::endl;
 
 Define_Module(TestApplication);
 
@@ -21,20 +26,20 @@ void TestApplication::initialize(int stage) {
         stats = par("stats").boolValue();
         trace = par("trace").boolValue();
 
-        isTransmitting = false;
+        isTransmitting    = false;
 
-        nbPackets = par("nbPackets");
-        trafficParam = par("trafficParam").doubleValue();
-        nodeAddr = par("nodeAddr");
-	dstAddr = par("dstAddr");
-        flood = par("flood").boolValue();
-        PAYLOAD_SIZE = par("payloadSize"); // data field size
-        PAYLOAD_SIZE = PAYLOAD_SIZE * 8; // convert to bits
+        nbPackets         = par("nbPackets");
+        trafficParam      = par("trafficParam").doubleValue();
+        nodeAddr          = LAddress::L3Type( par("nodeAddr").longValue() );
+        dstAddr           = LAddress::L3Type( par("dstAddr").longValue() );
+        flood             = par("flood").boolValue();
+        PAYLOAD_SIZE      = par("payloadSize"); // data field size
+        PAYLOAD_SIZE      = PAYLOAD_SIZE * 8; // convert to bits
         // Configure internal state variables and objects
         nbPacketsReceived = 0;
-        remainingPackets = nbPackets;
+        remainingPackets  = nbPackets;
 
-        INITIAL_DELAY = 5; // initial delay before sending first packet
+        INITIAL_DELAY     = 5; // initial delay before sending first packet
 
         // start timer if needed
         if (nodeAddr != 0 && remainingPackets > 0) {
@@ -95,8 +100,7 @@ void TestApplication::handleMessage(cMessage * msg) {
 			msg->setBitLength(PAYLOAD_SIZE);
 			msg->setSrcAddr(nodeAddr);
 			msg->setDestAddr(dstAddr);
-			NetwControlInfo* cInfo = new NetwControlInfo(0);
-			msg->setControlInfo(cInfo);
+			NetwControlInfo::setControlInfo(msg, LAddress::L3NULL);
 			if (debug) {
 				debugEV << " sending down new data message to Aloha MAC layer for radio transmission." << endl;
 			}

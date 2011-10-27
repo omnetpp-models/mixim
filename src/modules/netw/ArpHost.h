@@ -22,10 +22,9 @@
 #define ARP_HOST_H
 
 #include "MiXiMDefs.h"
-#include <ArpInterface.h>
-#include <AddressingInterface.h>
-#include <BaseModule.h>
-#include <FindModule.h>
+#include "ArpInterface.h"
+#include "AddressingInterface.h"
+#include "BaseModule.h"
 
 /**
  * @brief A class to convert integer layer addresses
@@ -43,9 +42,9 @@ class MIXIM_API ArpHost : public ArpInterface,
 				public AddressingInterface,
 				public BaseModule
 {
-	int offset;
+    int offset;
 public:
-	virtual void initialize(int stage);
+    virtual void initialize(int stage);
 
     /** @brief should not be called,
      *  instead direct calls to the radio methods should be used.
@@ -55,16 +54,16 @@ public:
     };
 
     /** @brief returns a L2 address to a given L3 address*/
-    virtual MACAddress getMacAddr(const int netwAddr);
+    virtual LAddress::L2Type getMacAddr(const LAddress::L3Type& netwAddr) const;
 
     /** @brief returns a L3 address to a given L2 address*/
-    virtual int getNetwAddr(const MACAddress macAddr);
+    virtual LAddress::L3Type getNetwAddr(const LAddress::L2Type& macAddr) const;
 
     /** @brief Returns the L2 address for the passed mac*/
-    virtual MACAddress myMacAddr(cModule* mac);
+    virtual LAddress::L2Type myMacAddr(const cModule* mac) const;
 
     /** @brief Returns the L3 address for the passed net*/
-    virtual int myNetwAddr(cModule* netw);
+    virtual LAddress::L3Type myNetwAddr(const cModule* netw) const;
 };
 
 #endif

@@ -8,7 +8,6 @@ import org.mixim.modules.nic.NicLMAC;
 import org.mixim.modules.power.battery.BatteryStats;
 import org.mixim.modules.power.battery.SimpleBattery;
 
-
 //
 // Example host module using a LMAC Network interface card.
 //

@@ -23,14 +23,13 @@
 
 #include <omnetpp.h>
 #include <map>
-#include <vector>
-#include <utility>
+#include <list>
 
 #include "MiXiMDefs.h"
 #include "BaseLayer.h"
-#include "ApplPkt_m.h"
+#include "SimpleAddress.h"
 
-using namespace std;
+class ApplPkt;
 
 /**
  * @brief this class aggregates the packets received from the application
@@ -52,12 +51,12 @@ private:
 	    // this type is used to store, for a network destination, the time
 	    // at which a packet was last sent to it, and the packets currently
 	    // queued for aggregation.
-	    typedef pair<simtime_t, list<ApplPkt*> > destInfo;
+	    typedef std::pair<simtime_t, std::list<ApplPkt*> > destInfo;
 
 	    // this map associates to each known netwok address
 	    // the time at which a packet was last sent to it, and a vector
 	    // of packets currently queued for it (waiting aggregation).
-	    map<int, destInfo> destInfos;
+	    std::map<LAddress::L3Type, destInfo> destInfos;
 
 	    // This message is used as a timer to perform aggregation
 	    cMessage* aggregationTimer;
@@ -69,10 +68,10 @@ private:
 	    int nbMaxPacketsPerAggregation;
 
 	    // returns true if we can send now to this destination
-	    virtual bool isOkToSendNow(int dest);
+	    virtual bool isOkToSendNow(const LAddress::L3Type& dest);
 
 	    // sends aggregated packets to destination now
-	    void sendAggregatedPacketNow(int dest);
+	    void sendAggregatedPacketNow(const LAddress::L3Type& dest);
 
 
 	    // counters

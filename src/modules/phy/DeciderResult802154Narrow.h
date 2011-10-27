@@ -9,7 +9,7 @@
 #define DECIDERRESULT802154NARROW_H_
 
 #include "MiXiMDefs.h"
-#include <Decider.h>
+#include "Decider.h"
 
 /**
  * @brief Defines an extended DeciderResult for the 802.15.4 protocol.

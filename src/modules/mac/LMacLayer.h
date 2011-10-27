@@ -15,16 +15,12 @@
 #include <list>
 
 #include "MiXiMDefs.h"
-#include <DroppedPacket.h>
-#include <BaseMacLayer.h>
-#include "LMacPkt_m.h"
-#include <SimpleAddress.h>
+#include "DroppedPacket.h"
+#include "BaseMacLayer.h"
+#include "PhyUtils.h"
+#include "SimpleAddress.h"
 
-#include "MacToPhyControlInfo.h"
-#include <BaseArp.h>
-#include <BaseConnectionManager.h>
-#include <Ieee802Ctrl_m.h>
-
+class LMacPkt;
 
 /**
  * @brief Implementation of L-MAC (Lightweight Medium Access Protocol for
@@ -131,7 +127,8 @@ class MIXIM_API  LMacLayer : public BaseMacLayer
 	};
 	
 	/** @brief dummy receiver address to indicate no pending packets in the control packet */
-	static const int LMAC_NO_RECEIVER;
+	static const LAddress::L2Type LMAC_NO_RECEIVER;
+	static const LAddress::L2Type LMAC_FREE_SLOT;
 	
 	/** @brief the setup phase is the beginning of the simulation, where only control packets at very small slot durations are exchanged. */
 	bool SETUP_PHASE;
@@ -163,9 +160,9 @@ class MIXIM_API  LMacLayer : public BaseMacLayer
 	/** @brief The current slot of the simulation */
 	int currSlot;
 	/** @brief Occupied slots from nodes, from which I hear directly */
-	MACAddress occSlotsDirect[64];
+	LAddress::L2Type occSlotsDirect[64];
 	/** @brief Occupied slots of two-hop neighbors */
-	MACAddress occSlotsAway[64];
+	LAddress::L2Type occSlotsAway[64];
 	/** @brief The first couple of slots are reserved for nodes with special needs to avoid changing slots for them (mobile nodes) */
 	int reservedMobileSlots;
 

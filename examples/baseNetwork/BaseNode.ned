@@ -5,7 +5,6 @@ import org.mixim.base.modules.BaseArp;
 import org.mixim.base.modules.IBaseApplLayer;
 import org.mixim.base.modules.IBaseNetwLayer;
 
-
 module BaseNode
 {
     parameters:

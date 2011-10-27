@@ -1,7 +1,15 @@
-export PATH="$PATH:../../../src:../../../../inet/src:../../../../omnetpp/bin"
+#/bin/bash
 
-rm *.vec *.sca
+export PATH="$PATH:../../../src/base:../../../src/modules:../../testUtils:../utils:."
+export NEDPATH="../../../src:../.."
+
+LIBSREF=( -l ../../../src/base/miximbase \
+          -l ../../testUtils/miximtestUtils \
+          -l ../utils/powerTestUtils -l \
+          ../../../src/modules/miximmodules )
+          
+rm *.vec *.sca 2>/dev/null
 for i in One Two Three Four Five Six Seven Eight Nine Ten
 do
- ../../tests -c $i
+ ./Nic80211Test -u Cmdenv -c $i "${LIBSREF[@]}"
 done

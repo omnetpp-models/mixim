@@ -18,6 +18,7 @@
 
 #include "MiXiMDefs.h"
 #include "AnalogueModel.h"
+#include "Mapping.h"
 
 class JakesFading;
 
@@ -115,14 +116,14 @@ protected:
 public:
 	/**
 	 * @brief Takes the number of fading paths, the maximum delay
-	 * on a path, the carrier frequency used and the interval in
-	 * which to defien attenuation entries in.	 *
+	 * on a path, the hosts move, the carrier frequency used and the
+	 * interval in which to defien attenuation entries in.	 *
 	 */
-	JakesFading(int fadingPaths, simtime_t delayRMS,
-				double carrierFrequency, simtime_t interval);
+	JakesFading(int fadingPaths, simtime_t_cref delayRMS,
+				double carrierFrequency, simtime_t_cref interval);
 	virtual ~JakesFading();
 
-	virtual void filterSignal(AirFrame *frame);
+	virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
 };
 
 #endif /* JAKESFADING_H_ */

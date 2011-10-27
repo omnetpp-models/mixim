@@ -6,9 +6,15 @@
  */
 
 #include "Decider80211.h"
-#include "INETDefs.h"
-#include <DeciderResult80211.h>
-#include <Mac80211Pkt_m.h>
+
+#include <cassert>
+#include <INETDefs.h>
+
+#include "DeciderResult80211.h"
+#include "Mac80211Pkt_m.h"
+#include "Consts80211.h"
+#include "Mapping.h"
+#include "AirFrame_m.h"
 
 Decider80211::Decider80211(	DeciderToPhyInterface* phy,
 							double threshold,
@@ -60,7 +66,7 @@ simtime_t Decider80211::processNewSignal(AirFrame* frame) {
 	return ( signal.getReceptionEnd());
 }
 
-double Decider80211::calcChannelSenseRSSI(simtime_t start, simtime_t end) {
+double Decider80211::calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref end) {
 	Mapping* rssiMap = calculateRSSIMapping(start, end);
 
 	Argument min(DimensionSet::timeFreqDomain);
@@ -70,7 +76,7 @@ double Decider80211::calcChannelSenseRSSI(simtime_t start, simtime_t end) {
 	max.setTime(end);
 	max.setArgValue(Dimension::frequency_static(), centerFrequency + 11e6);
 
-	double rssi = MappingUtils::findMax(*rssiMap, min, max);
+	Mapping::argument_value_t rssi = MappingUtils::findMax(*rssiMap, min, max, Argument::MappedZero /* the value if no maximum will be found */);
 
 	delete rssiMap;
 
@@ -100,7 +106,7 @@ DeciderResult* Decider80211::checkIfSignalOk(AirFrame* frame)
 	max.setTime(end);
 	max.setArgValue(Dimension::frequency_static(), centerFrequency + 11e6);
 
-	double snirMin = MappingUtils::findMin(*snrMap, min, max);
+	Mapping::argument_value_t snirMin = MappingUtils::findMin(*snrMap, min, max, Argument::MappedZero /* the value if no minimum will be found */);
 
 	deciderEV << " snrMin: " << snirMin << endl;
 

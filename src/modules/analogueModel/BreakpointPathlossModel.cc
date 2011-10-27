@@ -1,22 +1,12 @@
 #include "BreakpointPathlossModel.h"
-#include "ChannelAccess.h"
+
+#include "AirFrame_m.h"
 
 #define debugEV (ev.isDisabled()||!debug) ? ev : ev << "PhyLayer(BreakpointPathlossModel): "
 
 
-void BreakpointPathlossModel::filterSignal(AirFrame *frame) {
+void BreakpointPathlossModel::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos) {
     Signal& signal = frame->getSignal();
-
-	/** Get start of the signal */
-	simtime_t sStart = signal.getReceptionStart();
-	simtime_t sEnd = signal.getReceptionEnd();
-
-	/** claim the Move pattern of the sender from the Signal */
-	assert(sStart == simTime());
-	IMobility *senderMobility = ((ChannelAccess*)frame->getSenderModule())->getMobilityModule();
-	IMobility *receiverMobility = ((ChannelAccess*)frame->getArrivalModule())->getMobilityModule();
-	Coord sendersPos = senderMobility->getCurrentPosition();
-	Coord receiverPos = receiverMobility->getCurrentPosition();
 
 	/** Calculate the distance factor */
 	double distance = useTorus ? receiverPos.sqrTorusDist(sendersPos, playgroundSize)
@@ -49,7 +39,7 @@ void BreakpointPathlossModel::filterSignal(AirFrame *frame) {
 	  pathlosses.record(10*log10(attenuation)); // in dB
 	}
 
-	const DimensionSet& domain = DimensionSet::timeDomain;
+	//const DimensionSet& domain = DimensionSet::timeDomain;
 	Argument arg;	// default constructor initializes with a single dimension, time, and value 0 (offset from signal start)
 	TimeMapping<Linear>* attMapping = new TimeMapping<Linear> ();	// mapping performs a linear interpolation from our single point -> constant
 	attMapping->setValue(arg, attenuation);

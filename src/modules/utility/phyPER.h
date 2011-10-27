@@ -21,12 +21,11 @@
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
-#include <BaseModule.h>
+#include "BaseModule.h"
 #include "Packet.h"
 #include "UWBIRPacket.h"
 
 /**
- * TODO - Generated class
  */
 class MIXIM_API phyPER : public  BaseModule
 {
@@ -34,13 +33,16 @@ class MIXIM_API phyPER : public  BaseModule
     virtual void initialize(int stage);
     virtual void handleMessage(cMessage *msg) { };
 
-    int catPacket, catUWBIRPacket;
-    long nbSyncAttempts, nbSyncSuccesses, nbRx, nbRxnoRS;
+    long        nbSyncAttempts;
+    long        nbSyncSuccesses;
+    long        nbRx;
+    long        nbRxnoRS;
 
     Packet packet;
     UWBIRPacket uwbirpacket;
 
-    cOutVector maiPER, maiPERnoRS;
+    cOutVector  maiPER;
+    cOutVector  maiPERnoRS;
 
   public:
 

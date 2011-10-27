@@ -1,12 +1,41 @@
 #/bin/bash
 
-export PATH="$PATH:../../src:../../../inet/src:../../../omnetpp/bin"
+export PATH="${PATH}:../../src/base:../../src/modules:../testUtils:."
+export NEDPATH="../../src:.."
+LIBSREF=( '-l' '../../src/base/miximbase' \
+          '-l' '../testUtils/miximtestUtils' \
+          '-l' '../../src/modules/miximmodules' )
 
-../tests -c Test1 > out.tmp
-../tests -c Test2 >> out.tmp
-../tests -c Test3 >> out.tmp
-../tests -c Test4 >> out.tmp
+lCombined='tests'
+lSingle='connectionManager'
+if [ ! -e ${lSingle} -a ! -e ${lSingle}.exe ]; then
+    if [ -e ../${lCombined}.exe ]; then
+        ln -s ../${lCombined}.exe ${lSingle}.exe
+    elif [ -e ../${lCombined} ]; then
+        ln -s ../${lCombined}     ${lSingle}
+    fi
+fi
 
-diff -I '^Assigned runID=' -I '^Loading NED files from' -w exp-output out.tmp
+./${lSingle} -c Test1 "${LIBSREF[@]}">  out.tmp 2>  err.tmp
+./${lSingle} -c Test2 "${LIBSREF[@]}">> out.tmp 2>> err.tmp
+./${lSingle} -c Test3 "${LIBSREF[@]}">> out.tmp 2>> err.tmp
+./${lSingle} -c Test4 "${LIBSREF[@]}">> out.tmp 2>> err.tmp
 
-rm -f out.tmp
+diff -I '^Assigned runID=' \
+     -I '^Loading NED files from' \
+     -I '^OMNeT++ Discrete Event Simulation' \
+     -I '^Version: ' \
+     -I '^     Speed:' \
+     -I '^** Event #' \
+     -w exp-output out.tmp >diff.log 2>/dev/null
+
+if [ -s diff.log ]; then
+    echo "FAILED counted $(( 1 + $(grep -c -e '^---$' diff.log) )) differences where #<=$(grep -c -e '^<' diff.log) and #>=$(grep -c -e '^>' diff.log); see $(basename $(cd $(dirname $0);pwd) )/diff.log"
+    [ "$1" = "update-exp-output" ] && \
+        cat out.tmp >exp-output
+    exit 1
+else
+    echo "PASSED $(basename $(cd $(dirname $0);pwd) )"
+    rm -f out.tmp diff.log err.tmp
+fi
+exit 0

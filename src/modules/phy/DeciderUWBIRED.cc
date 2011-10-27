@@ -1,9 +1,16 @@
 #include "DeciderUWBIRED.h"
+
 #include "PhyLayerUWBIR.h"
 #include "AirFrameUWBIR_m.h"
+#include "DeciderResultUWBIR.h"
 
-const double DeciderUWBIRED::noiseVariance = 101.085E-12; // P=-116.9 dBW // 404.34E-12;   v²=s²=4kb T R B (T=293 K)
-const double DeciderUWBIRED::peakPulsePower = 1.3E-3; //1.3E-3 W peak power of pulse to reach  0dBm during burst; // peak instantaneous power of the transmitted pulse (A=0.6V) : 7E-3 W. But peak limit is 0 dBm
+using std::map;
+using std::vector;
+using std::pair;
+
+const double          DeciderUWBIRED::noiseVariance = 101.085E-12; // P=-116.9 dBW // 404.34E-12;   v²=s²=4kb T R B (T=293 K)
+const double          DeciderUWBIRED::peakPulsePower = 1.3E-3; //1.3E-3 W peak power of pulse to reach  0dBm during burst; // peak instantaneous power of the transmitted pulse (A=0.6V) : 7E-3 W. But peak limit is 0 dBm
+const simsignalwrap_t DeciderUWBIRED::catUWBIRPacketSignal = simsignalwrap_t(MIXIM_SIGNAL_UWBIRPACKET_NAME);
 
 simtime_t DeciderUWBIRED::processSignal(AirFrame* frame) {
 	Signal* s = &frame->getSignal();
@@ -91,7 +98,7 @@ simtime_t DeciderUWBIRED::handleHeaderOver(map<Signal*, int>::iterator& it) {
 			phy->sendControlMsg(syncFailureNotification);
 
 		}
-		uwbiface->emit(catUWBIRPacket, &packet);
+		uwbiface->emit(catUWBIRPacketSignal, &packet);
 
 	}
 	// in any case, look at that frame again when it is finished
@@ -117,7 +124,7 @@ bool DeciderUWBIRED::attemptSync(Signal* s) {
 	}
 	Argument posFirstPulse(IEEE802154A::tFirstSyncPulseMax + s->getReceptionStart());
 	mIt->jumpTo(posFirstPulse);
-	snrValue = fabs(mIt->getValue()/getNoiseValue());
+	snrValue = std::abs(mIt->getValue()/getNoiseValue());
     syncThresholds.record(snrValue);
     if(snrValue > syncThreshold) {
     	return true;
@@ -273,13 +280,13 @@ bool DeciderUWBIRED::decodePacket(Signal* signal,
  * 16 pulse peak positions of the voltage measured by the receiver ADC.
  */
 pair<double, double> DeciderUWBIRED::integrateWindow(int symbol,
-		simtime_t now, simtime_t burst, Signal* signal) {
+		simtime_t_cref pNow, simtime_t_cref burst, Signal* signal) {
 	std::pair<double, double> energy;
 	energy.first = 0; // stores SNIR
 	energy.second = 0; // stores total captured window energy
 	vector<ConstMapping*>::iterator mappingIter;
 	Argument arg;
-	simtime_t windowEnd = now + burst;
+	simtime_t windowEnd = pNow + burst;
 
 	double burstsnr = 0;
 	// Triangular baseband pulses
@@ -289,7 +296,7 @@ pair<double, double> DeciderUWBIRED::integrateWindow(int symbol,
 
 	// we sample one point per pulse
 	// caller has already set our time reference ("now") at the peak of the pulse
-	for (; now < windowEnd; now += cfg.pulse_duration) {
+	for (simtime_t now = pNow; now < windowEnd; now += cfg.pulse_duration) {
 		double signalValue = 0;	// electric field from tracked signal [V/m²]
 		double resPower = 0;		// electric field at antenna = combination of all arriving electric fields [V/m²]
 		double vEfield = 0;		// voltage at antenna caused by electric field Efield [V]

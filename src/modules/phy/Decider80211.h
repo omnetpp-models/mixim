@@ -9,8 +9,7 @@
 #define DECIDER80211_H_
 
 #include "MiXiMDefs.h"
-#include <BaseDecider.h>
-#include <Consts80211.h>
+#include "BaseDecider.h"
 
 /**
  * @brief Decider for the 802.11 modules
@@ -82,7 +81,7 @@ protected:
 	 * Returns the maximum RSSI value inside the passed time
 	 * interval and the channel the Decider currently listens to.
 	 */
-	virtual double calcChannelSenseRSSI(simtime_t start, simtime_t end);
+	virtual double calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref end);
 
 public:
 

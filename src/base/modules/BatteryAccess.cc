@@ -7,8 +7,15 @@
 
 #include "BatteryAccess.h"
 
+#include "FindModule.h"
+
 BatteryAccess::BatteryAccess():
 	BaseModule(),
+	battery(NULL)
+{}
+
+BatteryAccess::BatteryAccess(unsigned stacksize):
+	BaseModule(stacksize),
 	battery(NULL)
 {}
 

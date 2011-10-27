@@ -26,13 +26,10 @@
 #include "MiXiMDefs.h"
 #include "BaseModule.h"
 #include "BaseLayer.h"
-#include "NetwControlInfo.h"
 #include "Packet.h"
-#include "ApplPkt_m.h"
-#include "BaseApplLayer.h"
-#include "BaseWorldUtility.h"
+#include "SimpleAddress.h"
 
-using namespace std;
+class BaseWorldUtility;
 
 /**
  * @brief Test class for the application layer
@@ -61,7 +58,7 @@ public:
   virtual void initialize(int);
   virtual void finish();
 
-  ~SensorApplLayer();
+  virtual ~SensorApplLayer();
   
   SensorApplLayer(): packet(100) {} // we must specify a packet length for Packet.h
 
@@ -83,8 +80,8 @@ public:
 
 protected:
   cMessage * delayTimer;
-  int myAppAddr;
-  int destAddr;
+  LAddress::L3Type myAppAddr;
+  LAddress::L3Type destAddr;
   int sentPackets;
   simtime_t initializationTime;
   simtime_t firstPacketGeneration;
@@ -99,12 +96,10 @@ protected:
   bool trace;
   bool debug;
   bool broadcastPackets;
-  map < int, cStdDev > latencies;
+  std::map < LAddress::L3Type, cStdDev > latencies;
   cStdDev latency;
   cOutVector latenciesRaw;
   Packet packet; // informs the simulation of the number of packets sent and received by this node.
-  int catPacket;
-  int hostID;
   int headerLength;
   BaseWorldUtility* world;
 
@@ -141,7 +136,7 @@ protected:
    * @param hostAddress the address of the host to return the statistics for.
    * @return A reference to the hosts latency statistics.
    */
-  cStdDev& hostsLatency(int hostAddress);
+  cStdDev& hostsLatency(const LAddress::L3Type& hostAddress);
 };
 
 #endif

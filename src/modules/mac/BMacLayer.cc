@@ -14,12 +14,16 @@
 // 
 
 #include "BMacLayer.h"
+
+#include <cassert>
+
 #include "FWMath.h"
 #include "MacToPhyControlInfo.h"
-#include <BaseArp.h>
-#include <BaseConnectionManager.h>
-#include <SimpleAddress.h>
-#include <Ieee802Ctrl_m.h>
+#include "BaseArp.h"
+#include "BaseConnectionManager.h"
+#include "PhyUtils.h"
+#include "MacPkt_m.h"
+#include "MacToPhyInterface.h"
 
 Define_Module( BMacLayer )
 
@@ -32,10 +36,10 @@ void BMacLayer::initialize(int stage)
 
     if (stage == 0) {
 
-        queueLength = hasPar("queueLength") ? par("queueLength") : 10;
+		queueLength = hasPar("queueLength") ? par("queueLength") : 10;
 		animation = hasPar("animation") ? par("animation") : true;
-        slotDuration = hasPar("slotDuration") ? par("slotDuration") : 1;
-        bitrate = hasPar("bitrate") ? par("bitrate") : 15360;
+		slotDuration = hasPar("slotDuration") ? par("slotDuration") : 1;
+		bitrate = hasPar("bitrate") ? par("bitrate") : 15360;
 		headerLength = hasPar("headerLength") ? par("headerLength") : 10;
 		checkInterval = hasPar("checkInterval") ? par("checkInterval") : 0.1;
 		txPower = hasPar("txPower") ? par("txPower") : 50;
@@ -54,16 +58,14 @@ void BMacLayer::initialize(int stage)
 		nbTxAcks=0;
 
 		txAttempts = 0;
-		lastDataPktDestAddr = MACAddress::BROADCAST_ADDRESS;
-		lastDataPktSrcAddr = MACAddress::BROADCAST_ADDRESS;
+		lastDataPktDestAddr = LAddress::L2BROADCAST;
+		lastDataPktSrcAddr  = LAddress::L2BROADCAST;
 
 		macState = INIT;
 
 		// init the dropped packet info
 		droppedPacket.setReason(DroppedPacket::NONE);
 		nicId = getParentModule()->getId();
-
-		catDroppedPacket = registerSignal("droppedPacket");
 		WATCH(macState);
     }
 
@@ -177,7 +179,7 @@ void BMacLayer::sendPreamble()
 {
 	MacPkt* preamble = new MacPkt();
 	preamble->setSrcAddr(myMacAddr);
-	preamble->setDestAddr(MACAddress::BROADCAST_ADDRESS);
+	preamble->setDestAddr(LAddress::L2BROADCAST);
 	preamble->setKind(BMAC_PREAMBLE);
 	preamble->setBitLength(headerLength);
 
@@ -346,7 +348,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 	case WAIT_TX_DATA_OVER:
 		if (msg->getKind() == BMAC_DATA_TX_OVER)
 		{
-			if ((useMacAcks) && (lastDataPktDestAddr != MACAddress::BROADCAST_ADDRESS))
+			if ((useMacAcks) && !LAddress::isL2Broadcast( lastDataPktDestAddr ))
 			{
 				debugEV << "State WAIT_TX_DATA_OVER, message BMAC_DATA_TX_OVER,"
 						  " new state WAIT_ACK" << endl;
@@ -417,8 +419,8 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 		if (msg->getKind() == BMAC_ACK)
 		{
 			debugEV << "State WAIT_ACK, message BMAC_ACK" << endl;
-			MacPkt *mac = static_cast<MacPkt *>(msg);
-			MACAddress src = mac->getSrcAddr();
+			MacPkt*                 mac = static_cast<MacPkt *>(msg);
+			const LAddress::L2Type& src = mac->getSrcAddr();
 			// the right ACK is received..
 			debugEV << "We are waiting for ACK from : " << lastDataPktDestAddr
 				   << ", and ACK came from : " << src << endl;
@@ -426,7 +428,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 			{
 				debugEV << "New state SLEEP" << endl;
 				nbRecvdAcks++;
-				lastDataPktDestAddr = MACAddress::BROADCAST_ADDRESS;
+				lastDataPktDestAddr = LAddress::L2BROADCAST;
 				cancelEvent(ack_timeout);
 				delete macQueue.front();
 				macQueue.pop_front();
@@ -438,7 +440,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 				macState = SLEEP;
 				phy->setRadioState(Radio::SLEEP);
 				changeDisplayColor(BLACK);
-				lastDataPktDestAddr = MACAddress::BROADCAST_ADDRESS;
+				lastDataPktDestAddr = LAddress::L2BROADCAST;
 			}
 			delete msg;
 			return;
@@ -465,10 +467,10 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 		if (msg->getKind() == BMAC_DATA)
 		{
 			nbRxDataPackets++;
-			MacPkt *mac = static_cast<MacPkt *>(msg);
-			MACAddress dest = mac->getDestAddr();
-			MACAddress src = mac->getSrcAddr();
-			if ((dest == myMacAddr) || (dest == MACAddress::BROADCAST_ADDRESS)) {
+			MacPkt*                 mac  = static_cast<MacPkt *>(msg);
+			const LAddress::L2Type& dest = mac->getDestAddr();
+			const LAddress::L2Type& src  = mac->getSrcAddr();
+			if ((dest == myMacAddr) || LAddress::isL2Broadcast(dest)) {
 				sendUp(decapsMsg(mac));
 			} else {
 				delete msg;
@@ -541,7 +543,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 			macState = SLEEP;
 			phy->setRadioState(Radio::SLEEP);
 			changeDisplayColor(BLACK);
-			lastDataPktSrcAddr = MACAddress::BROADCAST_ADDRESS;
+			lastDataPktSrcAddr = LAddress::L2BROADCAST;
 			return;
 		}
 		break;
@@ -613,9 +615,6 @@ void BMacLayer::handleLowerControl(cMessage *msg)
     delete msg;
 }
 
-
-
-
 /**
  * Encapsulates the received network-layer packet into a MacPkt and set all
  * needed header fields.
@@ -630,7 +629,7 @@ bool BMacLayer::addToQueue(cMessage *msg)
 		msg->setKind(PACKET_DROPPED);
 		sendControlUp(msg);
 		droppedPacket.setReason(DroppedPacket::QUEUE);
-		emit(catDroppedPacket, &droppedPacket);
+		emit(BaseLayer::catDroppedPacketSignal, &droppedPacket);
 		nbDroppedDataPackets++;
 
 		return false;
@@ -638,13 +637,11 @@ bool BMacLayer::addToQueue(cMessage *msg)
 
 	MacPkt *macPkt = new MacPkt(msg->getName());
 	macPkt->setBitLength(headerLength);
-	Ieee802Ctrl* cInfo
-			= static_cast<Ieee802Ctrl*> (msg->removeControlInfo());
+	cObject *const cInfo = msg->removeControlInfo();
 	//EV<<"CSMA received a message from upper layer, name is "
 	//  << msg->getName() <<", CInfo removed, mac addr="
 	//  << cInfo->getNextHopMac()<<endl;
-	MACAddress dest = cInfo->getDest();
-	macPkt->setDestAddr(dest);
+	macPkt->setDestAddr(getUpperDestinationFromControlInfo(cInfo));
 	delete cInfo;
 	macPkt->setSrcAddr(myMacAddr);
 
@@ -662,11 +659,8 @@ void BMacLayer::attachSignal(MacPkt *macPkt)
 {
 	//calc signal duration
 	simtime_t duration = macPkt->getBitLength() / bitrate;
-	//create signal
-	Signal* s = createSignal(simTime(), duration, txPower, bitrate);
-	//create and initialize control info
-	MacToPhyControlInfo* ctrl = new MacToPhyControlInfo(s);
-	macPkt->setControlInfo(ctrl);
+	//create and initialize control info with new signal
+	setDownControlInfo(macPkt, createSignal(simTime(), duration, txPower, bitrate));
 }
 
 /**
@@ -677,8 +671,7 @@ void BMacLayer::changeDisplayColor(BMAC_COLORS color)
 {
 	if (!animation)
 		return;
-	cDisplayString& dispStr
-			= findHost()->getDisplayString();
+	cDisplayString& dispStr = findHost()->getDisplayString();
 	//b=40,40,rect,black,black,2"
 	if (color == GREEN)
 		dispStr.setTagArg("b", 3, "green");

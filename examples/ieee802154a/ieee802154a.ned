@@ -4,7 +4,6 @@ import org.mixim.base.connectionManager.ConnectionManager;
 import org.mixim.base.modules.BaseWorldUtility;
 import org.mixim.modules.node.Host802154A;
 
-
 //
 //This example illustrates the use of the IEEE 802.15.4A UWB-IR
 //simulation model implemented in MiXiM.

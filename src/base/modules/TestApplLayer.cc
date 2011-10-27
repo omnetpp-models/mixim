@@ -20,9 +20,10 @@
 
 
 #include "TestApplLayer.h"
-#include "NetwControlInfo.h"
 
-#include <SimpleAddress.h>
+#include "NetwControlInfo.h"
+#include "SimpleAddress.h"
+#include "ApplPkt_m.h"
 
 
 TestApplLayer::TestApplLayer()
@@ -75,6 +76,7 @@ void TestApplLayer::handleLowerMsg( cMessage* msg )
     default:
 	EV <<"Error! got packet with unknown kind: " << msg->getKind()<<endl;
         delete msg;
+        break;
     }
 }
 
@@ -96,6 +98,7 @@ void TestApplLayer::handleSelfMsg(cMessage *msg) {
     default:
     	EV << "Unknown selfmessage! -> delete, kind: "<<msg->getKind() <<endl;
 	delete msg;
+    	break;
     }
 }
 
@@ -106,16 +109,16 @@ void TestApplLayer::handleSelfMsg(cMessage *msg) {
 void TestApplLayer::sendBroadcast()
 {
     ApplPkt *pkt = new ApplPkt("BROADCAST_MESSAGE", BROADCAST_MESSAGE);
-    pkt->setDestAddr(-1);
+    pkt->setDestAddr(LAddress::L3BROADCAST);
     // we use the host modules getIndex() as a appl address
     pkt->setSrcAddr( myApplAddr() );
     pkt->setBitLength(headerLength);
 
     // set the control info to tell the network layer the layer 3
     // address;
-    pkt->setControlInfo( new NetwControlInfo(L3BROADCAST) );
+    NetwControlInfo::setControlInfo(pkt, LAddress::L3BROADCAST );
 
-    coreEV << "Sending broadcast packet!\n";
+    coreEV << "Sending broadcast packet!" << endl;
     sendDown( pkt );
 }
 

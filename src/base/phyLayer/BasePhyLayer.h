@@ -1,24 +1,21 @@
 #ifndef BASEPHYLAYER_
 #define BASEPHYLAYER_
 
+#include <map>
+#include <vector>
+#include <string>
+
 #include "MiXiMDefs.h"
 #include "ChannelAccess.h"
 #include "DeciderToPhyInterface.h"
 #include "MacToPhyInterface.h"
 
-#include "AnalogueModel.h"
-
-#include "Decider.h"
 #include "ChannelInfo.h"
-#include "BaseWorldUtility.h"
 
-#include "MacPkt_m.h"
-
-#include <cxmlelement.h>
-#include <map>
-#include <vector>
-#include <iostream>
-
+class AnalogueModel;
+class Decider;
+class BaseWorldUtility;
+class cXMLElement;
 
 /**
  * @brief The BasePhyLayer represents the physical layer of a nic.
@@ -344,7 +341,7 @@ protected:
 	/**
 	 * @brief Schedule self message to passed point in time.
 	 */
-	void sendSelfMessage(cMessage* msg, simtime_t time);
+	void sendSelfMessage(cMessage* msg, simtime_t_cref time);
 
 	/*@}*/
 
@@ -470,7 +467,7 @@ public:
 	 * @brief Fills the passed AirFrameVector with all AirFrames that intersect
 	 * with the time interval [from, to]
 	 */
-	virtual void getChannelInfo(simtime_t from, simtime_t to, AirFrameVector& out);
+	virtual void getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out);
 
 	/**
 	 * @brief Returns a Mapping which defines the thermal noise in
@@ -485,7 +482,7 @@ public:
 	 * Override this method if you want to define a more complex
 	 * thermal noise.
 	 */
-	virtual ConstMapping* getThermalNoise(simtime_t from, simtime_t to);
+	virtual ConstMapping* getThermalNoise(simtime_t_cref from, simtime_t_cref to);
 
 	/**
 	 * @brief Called by the Decider to send a control message to the MACLayer
@@ -527,7 +524,7 @@ public:
 	 * earlier than it has returned to the PhyLayer the last time the Decider
 	 * handled that message.
 	 */
-	virtual void rescheduleMessage(cMessage* msg, simtime_t t);
+	virtual void rescheduleMessage(cMessage* msg, simtime_t_cref t);
 
 	/**
 	 * @brief Does nothing. For an actual power supporting
@@ -550,6 +547,20 @@ public:
 
 	/*@}*/
 
+	/**
+	 * @brief Attaches a "control info" (PhyToMac) structure (object) to the message pMsg.
+	 *
+	 * This is most useful when passing packets between protocol layers
+	 * of a protocol stack, the control info will contain the decider result.
+	 *
+	 * The "control info" object will be deleted when the message is deleted.
+	 * Only one "control info" structure can be attached (the second
+	 * setL3ToL2ControlInfo() call throws an error).
+	 *
+	 * @param pMsg		The message where the "control info" shall be attached.
+	 * @param pSrcAddr	The MAC address of the message receiver.
+	 */
+	 virtual cObject *const setUpControlInfo(cMessage *const pMsg, DeciderResult *const pDeciderResult);
 };
 
 #endif /*BASEPHYLAYER_*/

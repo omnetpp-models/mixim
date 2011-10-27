@@ -9,19 +9,12 @@
 #ifndef UWBIREDSYNCONADDRESS_H_
 #define UWBIREDSYNCONADDRESS_H_
 
-#include <vector>
-#include <map>
-#include <math.h>
-
 #include "MiXiMDefs.h"
-#include "Mapping.h"
-#include "AirFrame_m.h"
-#include "MacPkt_m.h"
-#include "Decider.h"
+#include "SimpleAddress.h"
 #include "DeciderUWBIRED.h"
 
-using namespace std;
-
+class AirFrame;
+class Signal;
 class PhyLayerUWBIR;
 
 /**
@@ -62,15 +55,15 @@ public:
 	DeciderUWBIREDSyncOnAddress(DeciderToPhyInterface* iface,
 				PhyLayerUWBIR* _uwbiface,
 				double _syncThreshold, bool _syncAlwaysSucceeds, bool _stats,
-				bool _trace, int _addr, bool alwaysFailOnDataInterference);
+				bool _trace, const LAddress::L2Type& _addr, bool alwaysFailOnDataInterference);
 
 	virtual bool attemptSync(Signal* signal);
 
 	virtual simtime_t processSignal(AirFrame* frame);
 
 protected:
-	AirFrame* currFrame;
-	int syncAddress;
+	AirFrame*        currFrame;
+	LAddress::L2Type syncAddress;
 };
 
 #endif /* UWBIREDSYNCONADDRESS_H_ */

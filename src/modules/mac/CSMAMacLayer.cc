@@ -1,10 +1,12 @@
 
 
 #include "CSMAMacLayer.h"
+
 #include "FWMath.h"
-#include "MacToPhyControlInfo.h"
-#include <BaseArp.h>
-#include <BaseConnectionManager.h>
+#include "BaseConnectionManager.h"
+#include "MacToPhyInterface.h"
+#include "MacPkt_m.h"
+#include "PhyUtils.h"
 
 Define_Module( CSMAMacLayer )
 
@@ -201,10 +203,10 @@ void CSMAMacLayer::handleSelfMsg(cMessage *msg)
  */
 void CSMAMacLayer::handleLowerMsg(cMessage *msg)
 {
-    MacPkt *mac = static_cast<MacPkt *>(msg);
-    MACAddress dest = mac->getDestAddr();
+    MacPkt*                 mac  = static_cast<MacPkt *>(msg);
+    const LAddress::L2Type& dest = mac->getDestAddr();
 
-    if(dest == myMacAddr || dest == MACAddress::BROADCAST_ADDRESS)
+    if(dest == myMacAddr || LAddress::isL2Broadcast(dest))
     {
     	debugEV << "sending pkt to upper...\n";
         sendUp(decapsMsg(mac));
@@ -299,12 +301,7 @@ MacPkt* CSMAMacLayer::encapsMsg(cPacket *pkt)
 	}
 
 	//create signal
-	Signal* s = createSignal(simTime(), duration, txPower, bitrate);
-
-	//create and initialize control info
-	MacToPhyControlInfo* ctrl = new MacToPhyControlInfo(s);
-
-	macPkt->setControlInfo(ctrl);
+	setDownControlInfo(macPkt, createSignal(simTime(), duration, txPower, bitrate));
 
 	return macPkt;
 }

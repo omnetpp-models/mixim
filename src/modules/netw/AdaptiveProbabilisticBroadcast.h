@@ -8,11 +8,11 @@
 #ifndef ADAPTIVEPROBABILISTICBROADCAST_H_
 #define ADAPTIVEPROBABILISTICBROADCAST_H_
 
+#include <map>
+
 #include "MiXiMDefs.h"
 #include "ProbabilisticBroadcast.h"
-
-using namespace std;
-
+#include "SimpleAddress.h"
 
 /**
  * @brief This class extends ProbabilisticBroadcast by adding
@@ -31,7 +31,7 @@ public:
     virtual void initialize(int);
 
 protected:
-	typedef map<int, cMessage*> NeighborMap;
+	typedef std::map<LAddress::L3Type, cMessage*> NeighborMap;
 
 	/** @brief Handle messages from lower layer */
 	virtual void handleLowerMsg(cMessage* msg);

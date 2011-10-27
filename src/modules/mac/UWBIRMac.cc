@@ -31,9 +31,17 @@
 //
 
 #include "UWBIRMac.h"
+
 #include <iostream>
 #include <math.h>
+
 #include "MacToUWBIRPhyControlInfo.h"
+#include "PhyToMacControlInfo.h"
+#include "DeciderResultUWBIR.h"
+#include "FindModule.h"
+#include "UWBIRMacPkt_m.h"
+#include "UWBIRMacPkt.h"
+#include "MacToPhyInterface.h"
 
 using namespace std;
 
@@ -49,10 +57,8 @@ void UWBIRMac::initialize(int stage) {
 		assert(prf == 4 || prf == 16);
 		packetsAlwaysValid = par("packetsAlwaysValid");
 		rsDecoder = par("RSDecoder").boolValue();
-		phy = FindModule<MacToPhyInterface*>::findSubModule(
-				this->getParentModule());
+		phy = FindModule<MacToPhyInterface*>::findSubModule( this->getParentModule() );
 		initCounters();
-		catPacket = registerSignal("packet");
 	}
 }
 
@@ -138,9 +144,7 @@ void UWBIRMac::prepareData(UWBIRMacPkt* packet, IEEE802154A::config cfg) {
 	packet->setNbSymbols(nbSymbols);
 
 	// attach control info
-	MacToUWBIRPhyControlInfo* macPhycInfo = new MacToUWBIRPhyControlInfo(theSignal, IEEE802154A::getConfig());
-	packet->setControlInfo(macPhycInfo);
-
+	MacToUWBIRPhyControlInfo::setControlInfo(packet, theSignal, IEEE802154A::getConfig());
 }
 
 bool UWBIRMac::validatePacket(UWBIRMacPkt *mac) {
@@ -163,7 +167,7 @@ bool UWBIRMac::validatePacket(UWBIRMacPkt *mac) {
 			// bit error
 			if (decodedBits->at(i) != mac->popBitValue()) {
 				nbBitErrors++;
-				debugEV<< "Found an error at position " << i << "." << endl;
+				debugEV<< "Found an error at position " << i << "." << std::endl;
 				// symbol error
 				if(!currSymbolError) {
 					currSymbolError = true;
@@ -172,7 +176,7 @@ bool UWBIRMac::validatePacket(UWBIRMacPkt *mac) {
 			}
 		}
 
-		debugEV << "Found " << nbBitErrors << " bit errors in MAC packet." << endl;
+		debugEV << "Found " << nbBitErrors << " bit errors in MAC packet." << std::endl;
 		double packetBER = static_cast<double>(nbBitErrors)/static_cast<double>(bitsToDecode);
 		packetsBER.record(packetBER);
 		meanBER.collect(packetBER);
@@ -194,7 +198,7 @@ bool UWBIRMac::validatePacket(UWBIRMacPkt *mac) {
 			success.record(1);
 			nbReceivedPacketsRS++;
 			packet.setNbPacketsReceived(packet.getNbPacketsReceived()+1);
-			emit(catPacket, &packet);
+			emit(BaseLayer::catPacketSignal, &packet);
 		} else {
 			success.record(0);
 			nbFramesDropped++;
@@ -224,21 +228,21 @@ void UWBIRMac::handleLowerMsg(cPacket *msg) {
 	UWBIRMacPkt *mac = static_cast<UWBIRMacPkt *> (msg);
 
 	if (validatePacket(mac)) {
-		MACAddress dest = mac->getDestAddr();
-		MACAddress src = mac->getSrcAddr();
+		const LAddress::L2Type& dest = mac->getDestAddr();
+		const LAddress::L2Type& src  = mac->getSrcAddr();
 		if ((dest == myMacAddr)) {
 			debugEV<< "message with mac addr " << src
 			<< " for me (dest=" << dest
-			<< ") -> forward packet to upper layer\n";
+			<< ") -> forward packet to upper layer" << std::endl;
 			sendUp(decapsMsg(mac));
 		} else {
 			debugEV << "message with mac addr " << src
 			<< " not for me (dest=" << dest
-			<< ") -> delete (my MAC=" << myMacAddr << ")\n";
+			<< ") -> delete (my MAC=" << myMacAddr << ")" << std::endl;
 			delete mac;
 		}
 	} else {
-		debugEV << "Errors in message ; dropping mac packet." << endl;
+		debugEV << "Errors in message ; dropping mac packet." << std::endl;
 		delete mac;
 	}
 }

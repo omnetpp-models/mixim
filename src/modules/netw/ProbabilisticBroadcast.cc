@@ -4,10 +4,15 @@
  *  Created on: Nov 4, 2008
  *      Author: Damien Piguet
  */
+#include "ProbabilisticBroadcast.h"
 
 #include <cassert>
-#include "ProbabilisticBroadcast.h"
-#include "SimpleAddress.h"
+
+#include "MacToNetwControlInfo.h"
+#include "ProbBcastNetwControlInfo.h"
+
+using std::make_pair;
+using std::endl;
 
 Define_Module(ProbabilisticBroadcast);
 
@@ -22,13 +27,12 @@ void ProbabilisticBroadcast::initialize(int stage)
 	    trace = par("trace");
 	    debug = par("debug");
 	    broadcastPeriod = par("bcperiod");
-		beta = par("beta");
-		maxNbBcast = par("maxNbBcast");
+	    beta = par("beta");
+	    maxNbBcast = par("maxNbBcast");
 	    headerLength = par("headerLength");
 	    timeInQueueAfterDeath = par("timeInQueueAfterDeath");
 	    timeToLive = par("timeToLive");
 	    broadcastTimer = new cMessage("broadcastTimer");
-	    convertedMacBroadcastAddr = MACAddress::BROADCAST_ADDRESS;
 	    maxFirstBcastBackoff = par("maxFirstBcastBackoff");
 	    oneHopLatencies.setName("oneHopLatencies");
 	    nbDataPacketsReceived = 0;
@@ -53,12 +57,12 @@ void ProbabilisticBroadcast::handleUpperMsg(cMessage* msg)
 
 void ProbabilisticBroadcast::handleLowerMsg(cMessage* msg)
 {
-	MACAddress macSrcAddr;
+	LAddress::L2Type macSrcAddr;
 	double oneHopLatency;
 	ProbabilisticBroadcastPkt* m = check_and_cast<ProbabilisticBroadcastPkt*>(msg);
-	MacToNetwControlInfo* cInfo = check_and_cast<MacToNetwControlInfo*>(m->removeControlInfo());
+	cObject*                   cInfo = m->removeControlInfo();
 	m->setNbHops(m->getNbHops()+1);
-	macSrcAddr = cInfo->getLastHopMac();
+	macSrcAddr = MacToNetwControlInfo::getAddressFromControlInfo( cInfo );
 	delete cInfo;
 	++nbDataPacketsReceived;
 	nbHops = nbHops + m->getNbHops();
@@ -86,9 +90,7 @@ void ProbabilisticBroadcast::handleLowerMsg(cMessage* msg)
 		// Unknown message. Insert message in queue with random backoff broadcast delay.
 		// Because we got the message from lower layer, we need to create and add a new
 		// control info with the MAC destination address = broadcast address.
-		Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-		ctrl->setDest(convertedMacBroadcastAddr);
-		m->setControlInfo(ctrl);
+		setDownControlInfo(m, LAddress::L2BROADCAST);
 		// before inserting message, update source address (for this hop, not the initial source)
 		m->setSrcAddr(myNetwAddr);
 		insertNewMessage(m);
@@ -131,9 +133,7 @@ void ProbabilisticBroadcast::handleSelfMsg(cMessage* msg)
 				// queue, it will be considered as dead and discarded.
 				pktCopy = static_cast<ProbabilisticBroadcastPkt*>(pkt->dup());
 				// control info is not duplicated with the message, so we have to re-create one here.
-				Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-				ctrl->setDest(convertedMacBroadcastAddr);
-				pktCopy->setControlInfo(ctrl);
+				setDownControlInfo(pktCopy, LAddress::L2BROADCAST);
 				// it the copy that is re-inserted into the queue so update the container accordingly
 				msgDesc->pkt = pktCopy;
 				// increment nbBcast field of the descriptor because at this point, it is sure that
@@ -239,7 +239,7 @@ bool ProbabilisticBroadcast::debugMessageKnown(unsigned int msgId)
 	return pos != debugMsgIdSet.end();
 }
 
-void ProbabilisticBroadcast::insertMessage(simtime_t bcastDelay, tMsgDesc* msgDesc)
+void ProbabilisticBroadcast::insertMessage(simtime_t_cref bcastDelay, tMsgDesc* msgDesc)
 {
 	TimeMsgMap::iterator pos;
 	simtime_t bcastTime = simTime() + bcastDelay;
@@ -290,19 +290,17 @@ ProbabilisticBroadcastPkt* ProbabilisticBroadcast::encapsMsg(cMessage* message)
 	ProbabilisticBroadcastPkt* pkt = new ProbabilisticBroadcastPkt(msg->getName(), DATA);
 //	ProbBcastNetwControlInfo* cInfo = dynamic_cast<ProbBcastNetwControlInfo*>(msg->removeControlInfo());
 	cObject* cInfo = msg->removeControlInfo();
-	int bcastIpAddr = L3BROADCAST;
 
 	ASSERT(cInfo);
 	pkt->setByteLength(headerLength);
 	pkt->setSrcAddr(myNetwAddr);
-	pkt->setDestAddr(bcastIpAddr);
+	pkt->setDestAddr(LAddress::L3BROADCAST);
 	pkt->setInitialSrcAddr(myNetwAddr);
-	pkt->setFinalDestAddr(bcastIpAddr);
+	pkt->setFinalDestAddr(LAddress::L3BROADCAST);
 	pkt->setAppTtl(timeToLive);
 	pkt->setId(getNextID());
-	Ieee802Ctrl *ctrl = new Ieee802Ctrl();
-	ctrl->setDest(convertedMacBroadcastAddr);
-	pkt->setControlInfo(ctrl);
+
+	setDownControlInfo(pkt, LAddress::L2BROADCAST);
 	//encapsulate the application packet
 	pkt->encapsulate(msg);
 

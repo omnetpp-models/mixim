@@ -17,9 +17,9 @@
 #define __CSMA802154_H__
 
 #include <omnetpp.h>
-#include <csma.h>
 
 #include "MiXiMDefs.h"
+#include "csma.h"
 
 /**
  * @brief Extends "csma" module by some statistics send

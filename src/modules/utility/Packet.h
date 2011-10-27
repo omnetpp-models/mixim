@@ -23,25 +23,26 @@
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
+#include "SimpleAddress.h"
 
 /**
  * @brief Class that keeps track of the number of packets sent.
  *
  * @ingroup utils
- * @author Andreas K�pke, Karl Wessel
+ * @author Andreas Koepke, Karl Wessel
  */
 
 class MIXIM_API  Packet : public cObject
 {
 protected:
     /** @brief number of packets generated. */
-    long nbPacketsReceived;
-    long nbPacketsReceivedNoRS;
-    long nbPacketsSent;
+    long             nbPacketsReceived;
+    long             nbPacketsReceivedNoRS;
+    long             nbPacketsSent;
     /** @brief The size of each of the received and sent packet.*/
-    long packetBitLength;
-    bool sent;
-    int host;
+    long             packetBitLength;
+    bool             sent;
+    LAddress::L3Type host;
 
 public:
 
@@ -91,11 +92,11 @@ public:
     	return packetBitLength;
     }
 
-    void setHost(int h) {
+    void setHost(const LAddress::L3Type& h) {
     	host = h;
     }
 
-    int getHost() {
+    const LAddress::L3Type& getHost() const {
     	return host;
     }
 

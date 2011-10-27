@@ -11,6 +11,8 @@
 #include "MiXiMDefs.h"
 #include "Decider.h"
 
+class Mapping;
+
 #define deciderEV (ev.isDisabled()||!debug) ? ev : ev << "[Host " << myIndex << "] - PhyLayer(Decider): "
 
 /**
@@ -86,10 +88,10 @@ protected:
 
 		ChannelSenseRequest* getRequest() const { return first; }
 		void setRequest(ChannelSenseRequest* request) { first = request; }
-		simtime_t getSenseStart() const { return second; }
-		void setSenseStart(simtime_t start) { second = start; }
-		simtime_t getAnswerTime() const { return canAnswerAt; }
-		void setAnswerTime(simtime_t answerAt) { canAnswerAt = answerAt; }
+		simtime_t_cref getSenseStart() const { return second; }
+		void setSenseStart(simtime_t_cref start) { second = start; }
+		simtime_t_cref getAnswerTime() const { return canAnswerAt; }
+		void setAnswerTime(simtime_t_cref answerAt) { canAnswerAt = answerAt; }
 	} CSRInfo;
 
 	/** @brief pointer to the currently running ChannelSenseRequest and its
@@ -200,10 +202,7 @@ protected:
 	 * @brief Processes any Signal for which no state could be found.
 	 * (is an error case).
 	 */
-	virtual simtime_t processUnknownSignal(AirFrame* frame) {
-		opp_error("Unknown state for the AirFrame with ID %d", frame->getId());
-		return notAgain;
-	}
+	virtual simtime_t processUnknownSignal(AirFrame* frame);
 
 	/**
 	 * @brief Returns the SignalState for the passed AirFrame.
@@ -255,7 +254,7 @@ protected:
 	 * Default implementation returns the maximum RSSI value inside the
 	 * passed interval.
 	 */
-	virtual double calcChannelSenseRSSI(simtime_t start, simtime_t end);
+	virtual double calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref end);
 
 	/**
 	 * @brief Answers the ChannelSenseRequest (CSR) from the passed CSRInfo.
@@ -286,7 +285,7 @@ protected:
 	 * @param end The end of the interval to collect AirFrames from.
 	 * @param out The output vector in which to put the AirFrames.
 	 */
-	virtual void getChannelInfo(simtime_t start, simtime_t end,
+	virtual void getChannelInfo(simtime_t_cref start, simtime_t_cref end,
 								AirFrameVector& out);
 
 	//------Utility methods------------
@@ -312,9 +311,9 @@ protected:
 	 * exclude is omitted OR to calculate a Noise-Strength-Mapping in case the
 	 * AirFrame of the received Signal is passed as parameter exclude.
 	 */
-	virtual Mapping* calculateRSSIMapping(	simtime_t start,
-											simtime_t end,
-											AirFrame* exclude = 0);
+	virtual Mapping* calculateRSSIMapping(	simtime_t_cref start,
+											simtime_t_cref end,
+											AirFrame*      exclude = NULL);
 };
 
 #endif /* BASEDECIDER_H_ */

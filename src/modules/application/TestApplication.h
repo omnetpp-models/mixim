@@ -1,17 +1,12 @@
 #ifndef TEST_APPLICATION_H
 #define TEST_APPLICATION_H
 
+#include <vector>
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
 #include "BaseModule.h"
-#include "NetwControlInfo.h"
-#include "Signal_.h"
-#include "MacPkt_m.h"
-#include "ApplPkt_m.h"
-#include "AlohaMacLayer.h"
-#include "MacToPhyInterface.h"
-#include "Mapping.h"
+#include "SimpleAddress.h"
 
 class MIXIM_API TestApplication : public BaseModule {
 
@@ -34,7 +29,11 @@ class MIXIM_API TestApplication : public BaseModule {
         cMessage* delayTimer;
 
         // module parameters
-        int nbPackets, remainingPackets, headerLength, nodeAddr, dstAddr;
+        int nbPackets;
+        int remainingPackets;
+        int headerLength;
+        LAddress::L3Type nodeAddr;
+        LAddress::L3Type dstAddr;
         double trafficParam;
         bool debug, stats, trace;
         bool flood;
@@ -46,7 +45,7 @@ class MIXIM_API TestApplication : public BaseModule {
 
         // state variables
         int nbPacketsReceived;
-        vector < cStdDev > latencies;
+        std::vector < cStdDev > latencies;
         cOutVector latenciesRaw;
         cStdDev testStat;
 
