@@ -32,6 +32,4 @@ module TestHost
         radioIn --> nic.radioIn;
         app.out --> nic.upperLayerIn;
         app.in <-- nic.upperLayerOut;
-        app.controlOut --> nic.upperControlIn;
-        app.controlIn <-- nic.upperControlOut;
 }
