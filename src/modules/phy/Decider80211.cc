@@ -79,7 +79,6 @@ double Decider80211::calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref e
 	Mapping::argument_value_t rssi = MappingUtils::findMax(*rssiMap, min, max, Argument::MappedZero /* the value if no maximum will be found */);
 
 	delete rssiMap;
-
 	return rssi;
 }
 

@@ -3,9 +3,6 @@ cplusplus {{
 #include "ChannelState.h"
 }}
 
-
-
-
 class noncobject ChannelState;
 
 enum SenseMode {

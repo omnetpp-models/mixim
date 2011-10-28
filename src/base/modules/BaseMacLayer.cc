@@ -25,6 +25,10 @@
 #include <cassert>
 #include <sstream>
 
+#ifdef MIXIM_INET
+#include <InterfaceTableAccess.h>
+#endif
+
 #include "Mapping.h"
 #include "Signal_.h"
 #include "MacToPhyInterface.h"
@@ -57,8 +61,8 @@ void BaseMacLayer::initialize(int stage)
         phyHeaderLength = phy->getPhyHeaderLength();
 
         hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
-    //}
-    //else if (stage==1) {
+    }
+    else if (stage==1) {
     	// see if there is an addressing module available
         // otherwise use NIC modules id as MAC address
         AddressingInterface* addrScheme = FindModule<AddressingInterface*>::findSubModule(findHost());
@@ -311,7 +315,7 @@ const LAddress::L2Type& BaseMacLayer::getUpperDestinationFromControlInfo(const c
 /**
  * Attaches a "control info" (MacToNetw) structure (object) to the message pMsg.
  */
-cObject *const BaseMacLayer::setUpControlInfo(cMessage *const pMsg, const LAddress::L3Type& pSrcAddr)
+cObject *const BaseMacLayer::setUpControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr)
 {
 	return MacToNetwControlInfo::setControlInfo(pMsg, pSrcAddr);
 }
