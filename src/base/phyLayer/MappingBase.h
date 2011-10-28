@@ -791,10 +791,13 @@ public:
 		bool              bTimeIsIn = false;
 		for(DimensionSet::iterator it = dims.begin(); it != dims.end(); ++it) {
 			if(*it != Dimension::time) {
-				if (pOnlyDim && *it != *pOnlyDim)
-					continue; // skip not the requested dimension
-				otherDim      = *it;
-				bOnlyDimFound = pOnlyDim != NULL;
+				if (pOnlyDim && *it == *pOnlyDim) {
+					otherDim      = *it;
+					bOnlyDimFound = pOnlyDim != NULL;
+				}
+				else if (!pOnlyDim) {
+					otherDim      = *it;
+				}
 				if (!osDimHead.str().empty())
 					osDimHead << ", ";
 				osDimHead << *it;
@@ -823,7 +826,7 @@ public:
 		Argument max = it->getPosition();
 
 		typedef std::set<simtime_t>         t_time_container_type;
-		typedef std::set<argument_value_t>	t_value_container_type;
+		typedef std::set<argument_value_t>  t_value_container_type;
 
 		t_time_container_type  timePositions;
 		t_value_container_type otherPositions;
