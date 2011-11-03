@@ -18,7 +18,9 @@
 // **************************************************************************/
 package org.mixim.modules.nic;
 
-import inet.linklayer.IWirelessNic;
+//#import inet.linklayer.IWirelessNic;
+import *.**.IWirelessNic;
+
 import org.mixim.modules.mac.Mac80211;
 import org.mixim.modules.phy.PhyLayer;
 

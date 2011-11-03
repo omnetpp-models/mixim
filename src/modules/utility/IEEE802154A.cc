@@ -150,7 +150,7 @@ IEEE802154A::signalAndData IEEE802154A::generateIEEE802154AUWBSignal(
 	// 48 R-S parity bits, the 2 symbols phy header is not modeled as it includes its own parity bits
 	// and is thus very robust
 	unsigned int nbBits = IEEE802154A::psduLength * 8 + 48;
-	IEEE802154A::signalStart = signalStart.dbl();  // use the signalStart time value as a global offset for all Mapping values
+	IEEE802154A::signalStart = SIMTIME_DBL(signalStart);  // use the signalStart time value as a global offset for all Mapping values
 	simtime_t signalDuration = cfg.preambleLength;
 	signalDuration += static_cast<double> (nbBits) * cfg.data_symbol_duration;
 	Signal* s = new Signal(signalStart, signalDuration);

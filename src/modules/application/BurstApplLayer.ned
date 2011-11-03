@@ -40,9 +40,10 @@ simple BurstApplLayer like IBaseApplLayer
 {
     parameters:
         bool coreDebug = default(false); //debug switch for base class (TestApplLayer)
-    	bool debug; // debug switch
+    	bool debug      = default(false); // debug switch
     	int headerLength @unit("bit"); // length of the application message header (in bits)
     	int burstSize; // size of the burst
+    	bool burstReply = default(true);  // if true, send unicast replies to received broadcasts
     gates:
     	input lowerLayerIn; // from network layer
         output lowerLayerOut; // to network layer
