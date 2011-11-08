@@ -120,7 +120,8 @@ void assertEqualNotSmaller(std::string msg, T& v1, T& v2){
 	assertEqual(msg, v1, v2);
 	assertFalse(msg, v1 < v2);
 	assertFalse(msg, v2 < v1);
-	assertEqual(msg, 0, v1.compare(v2, v1.getDimensions()));
+	DimensionSet v1Dims = v1.getDimensions();
+	assertEqual(msg, 0, v1.compare(v2, &v1Dims));
 }
 
 
@@ -144,7 +145,7 @@ protected:
 		DimensionSet set3;
 	public:
 		ArgFactory(Dimension d2, Dimension d3):
-			time(Dimension::time_static()), d2(d2), d3(d3), set2(time, d2), set3(time, d2, d3) {}
+			time(Dimension::time), d2(d2), d3(d3), set2(time, d2), set3(time, d2, d3) {}
 
 		Argument operator()(simtime_t_cref t){
 			return Argument(t);
@@ -180,7 +181,7 @@ protected:
 public:
 	MappingTest():
 		SimpleTest(),
-		time(Dimension::time_static()), freq("frequency"), channel(freq), space("space"),
+		time(Dimension::time), freq("frequency"), channel(freq), space("space"),
 		A(freq, space), createMappingBuffer(0){
 		for(Argument::mapped_type i = 0.0; i <= 6.0; i+=0.25) {
 			for(simtime_t j = SIMTIME_ZERO; j <= 6.0; j+=0.25) {
@@ -234,6 +235,7 @@ protected:
 
 	void testArg() {
 		Argument a1(10.2);
+		DimensionSet a1Dims = a1.getDimensions();
 
 		assertClose("Check initial time value of a1.", 10.2, a1.getTime());
 
@@ -241,18 +243,21 @@ protected:
 		assertEqualSilent("Check time value of a1 after setTimeValue.", -4.2, a1.getTime());
 
 		Argument a2(-4.2);
+		DimensionSet a2Dims = a2.getDimensions();
+
 		assertEqualNotSmaller("a1 and a2 should be equal.", a1, a2);
 
 		a2.setTime(-4.3);
 		assertTrue("a2 with smaller time should be smaller than a1", a2 < a1);
-		assertTrue("a2 with smaller time should be compared smaller than a1", a2.compare(a1, a1.getDimensions()) < 0);
+		assertTrue("a2 with smaller time should be compared smaller than a1", a2.compare(a1, &a1Dims) < 0);
 
 		a2.setTime(0.0);
 		assertTrue("a1 with smaller time should be smaller than a2", a1 < a2);
-		assertTrue("a1 with smaller time should be compared smaller than a2", a1.compare(a2, a1.getDimensions()) < 0);
+		assertTrue("a1 with smaller time should be compared smaller than a2", a1.compare(a2, &a1Dims) < 0);
 
 
 		a1.setArgValue(freq, 2.5);
+		a1Dims = a1.getDimensions();
 		assertEqualSilent("time dimension should still have same value.", -4.2, a1.getTime());
 		assertEqualSilent("Check frequency dimension value.", 2.5, a1.getArgValue(freq));
 
@@ -261,23 +266,23 @@ protected:
 		//assertFalse("a1 and a2 with same time and implicit same freq should not be smaller.", a1 < a2);
 		assertTrue("a1 and a2 with same time and implicit same freq should be same.", a1.isSamePosition(a2));
 		assertFalse("a1 and a2 with same time and implicit same freq should not be equal.", a1 == a2);
-		assertEqual("a1 and a2 with same time and implicit same freq should be compared same.", 0, a1.compare(a2, a2.getDimensions()));
+		assertEqual("a1 and a2 with same time and implicit same freq should be compared same.", 0, a1.compare(a2, &a2Dims));
 
 		a1.setArgValue(freq, -2.2);
 		//assertFalse("a1 and a2 with same time and implicit same freq should still not be smaller.", a1 < a2);
-		assertEqual("a1 and a2 with same time and implicit same freq should still be compared same.", 0, a1.compare(a2, a2.getDimensions()));
+		assertEqual("a1 and a2 with same time and implicit same freq should still be compared same.", 0, a1.compare(a2, &a2Dims));
 		assertTrue("a1 and a2 with same time and implicit same freq should still be same.", a1.isSamePosition(a2));
 		assertFalse("a1 and a2 with same time and implicit same freq should still not be equal.", a1 == a2);
 
 		a2.setTime(-5);
 		//assertFalse("a1 with bigger time and implicit equal freq should not be smaller.", a1 < a2);
-		assertTrue("a1 with bigger time and implicit equal freq should be compared bigger.", a1.compare(a2, a2.getDimensions()) > 0);
+		assertTrue("a1 with bigger time and implicit equal freq should be compared bigger.", a1.compare(a2, &a2Dims) > 0);
 		assertFalse("a1 with bigger time and implicit equal freq should not be same.", a1.isSamePosition(a2));
 		assertFalse("a1 with bigger time and implicit equal freq should not be equal.", a1 == a2);
 
 		a1.setTime(-6);
 		//assertTrue("a1 with smaller time and implicit equal freq should be smaller.", a1 < a2);
-		assertTrue("a1 with smaller time and implicit equal freq should be compared smaller.", a1.compare(a2, a2.getDimensions()) < 0);
+		assertTrue("a1 with smaller time and implicit equal freq should be compared smaller.", a1.compare(a2, &a2Dims) < 0);
 		assertFalse("a1 with smaller time and implicit equal freq should not be same.", a1.isSamePosition(a2));
 		assertFalse("a1 with smaller time and implicit equal freq should not be equal.", a1 == a2);
 
@@ -285,39 +290,40 @@ protected:
 		a1.setArgValue(freq, 2.5);
 		a2.setTime(-4.2);
 		a2.setArgValue(freq, 2.5);
+		a2Dims = a2.getDimensions();
 
 		assertEqual("a1 and a2 with same time and freq should be equal.", a1, a2);
-		assertEqual("a1 and a2 with same time and freq should be compared equal.", 0, a1.compare(a2, a1.getDimensions()));
+		assertEqual("a1 and a2 with same time and freq should be compared equal.", 0, a1.compare(a2, &a1Dims));
 
 		a2.setTime(-4.3);
 		assertTrue("a2 with smaller time and same freq should be smaller than a1", a2 < a1);
-		assertTrue("a2 with smaller time and same freq should be compared smaller than a1", a2.compare(a1, a1.getDimensions()) < 0);
+		assertTrue("a2 with smaller time and same freq should be compared smaller than a1", a2.compare(a1, &a1Dims) < 0);
 		assertFalse("a2 with smaller time and same freq should not be equal with a1.", a1 == a2);
 
 		a2.setTime(0.0);
-		assertTrue("a1 with smaller time and same freq should be compared smaller than a2", a1.compare(a2, a2.getDimensions()) < 0);
+		assertTrue("a1 with smaller time and same freq should be compared smaller than a2", a1.compare(a2, &a2Dims) < 0);
 		assertTrue("a1 with smaller time and same freq should be smaller than a2", a1 < a2);
 		assertFalse("a1 with smaller time and same freq should not be equal with a2.", a1 == a2);
 
 		a2.setTime(-4.2);
 		a2.setArgValue(freq, 2.0);
-		assertTrue("a2 with smaller freq should be smaller than a1", a2.compare(a1, a1.getDimensions()) < 0);
+		assertTrue("a2 with smaller freq should be smaller than a1", a2.compare(a1, &a1Dims) < 0);
 		assertTrue("a2 with smaller freq should be smaller than a1", a2 < a1);
 		assertFalse("a2 with smaller freq should not be equal with a1.", a1 == a2);
 
 		a2.setArgValue(freq, 3.0);
-		assertTrue("a1 with smaller freq should be smaller than a2", a1.compare(a2, a2.getDimensions()) < 0);
+		assertTrue("a1 with smaller freq should be smaller than a2", a1.compare(a2, &a2Dims) < 0);
 		assertTrue("a1 with smaller freq should be smaller than a2", a1 < a2);
 		assertFalse("a1 with smaller freq should not be equal with a2.", a1 == a2);
 
 		a2.setTime(-20.0);
-		assertTrue("a1 with smaller freq should still be smaller than a2 with smaller time", a2.compare(a1, a2.getDimensions()) > 0);
+		assertTrue("a1 with smaller freq should still be smaller than a2 with smaller time", a2.compare(a1, &a2Dims) > 0);
 		assertTrue("a1 with smaller freq should still be smaller than a2 with smaller time", a1 < a2);
 		assertFalse("a1 with smaller freq should not be equal with a2 with smaller time.", a1 == a2);
 
 		a2.setTime(40.0);
 		a2.setArgValue(freq, 2.2);
-		assertTrue("a2 with smaller freq should still be smaller than a1 with smaller time", a1.compare(a2, a2.getDimensions()) > 0);
+		assertTrue("a2 with smaller freq should still be smaller than a1 with smaller time", a1.compare(a2, &a2Dims) > 0);
 		assertTrue("a2 with smaller freq should still be smaller than a1 with smaller time", a2 < a1);
 		assertFalse("a2 with smaller freq should not be equal with a1 with smaller time.", a1 == a2);
 
@@ -500,8 +506,140 @@ protected:
 		delete res;
 	}
 
-	void testMultiFunction() {
+	void testMultiFunctionInfinity() {
+		DimensionSet dimSet(Dimension::time);
+		dimSet.addDimension(freq);
 
+		//ConstantSimpleConstMapping*	thermalNoiseS = new ConstantSimpleConstMapping(DimensionSet::timeDomain, FWMath::dBm2mW(-110.0));
+		MultiDimMapping<Linear>     NoiseMap(dimSet);
+		MultiDimMapping<Linear>     RecvPowerMap(dimSet);
+
+		/*
+		NoiseMap:
+		Mapping domain: time, frequency(1)
+		--------------+-------------------------------
+		o\t           | 140000.07 140000.07 140000.12
+		--------------+-------------------------------
+		5865000000.00 |   -110.00    -95.73    -95.73
+		5875000000.00 |   -110.00    -95.75    -95.75
+		--------------+-------------------------------
+		*/
+		NoiseMap.setValue(A(5865000000.00, 140.000070), FWMath::dBm2mW(-110.00));
+		NoiseMap.setValue(A(5865000000.00, 140.000071), FWMath::dBm2mW( -95.73));
+		NoiseMap.setValue(A(5865000000.00, 140.000120), FWMath::dBm2mW( -95.73));
+		NoiseMap.setValue(A(5875000000.00, 140.000070), FWMath::dBm2mW(-110.00));
+		NoiseMap.setValue(A(5875000000.00, 140.000071), FWMath::dBm2mW( -95.73));
+		NoiseMap.setValue(A(5875000000.00, 140.000120), FWMath::dBm2mW( -95.73));
+		std::cerr << "NoiseMap is:" << std::endl << NoiseMap << std::endl;
+
+		/*
+		RecvPowerMap:
+		Mapping domain: time, frequency(1)
+		--------------+---------------------
+		o\t           | 140000.07 140000.11
+		--------------+---------------------
+		5895000000.00 |    -71.28    -71.28
+		5905000000.00 |    -71.29    -71.29
+		--------------+---------------------
+		*/
+		RecvPowerMap.setValue(A(5895000000.00, 140.000070), FWMath::dBm2mW(-71.28));
+		RecvPowerMap.setValue(A(5905000000.00, 140.000070), FWMath::dBm2mW(-71.29));
+		RecvPowerMap.setValue(A(5895000000.00, 140.000111), FWMath::dBm2mW(-71.28));
+		RecvPowerMap.setValue(A(5905000000.00, 140.000111), FWMath::dBm2mW(-71.29));
+		std::cerr << "RecvPowerMap is:" << std::endl << RecvPowerMap << std::endl;
+
+		/*
+		snrMap
+		Mapping domain: time, frequency(1)
+		--------------+-----------------------------------------
+		o\t           | 140000.07 140000.07 140000.11 140000.12
+		--------------+-----------------------------------------
+		5865000000.00 |     38.72     24.45               24.45
+		5875000000.00 |     38.72     24.45               24.45
+		5895000000.00 |     38.72               24.45
+		5905000000.00 |     38.71               24.44
+		--------------+-----------------------------------------
+		*/
+		Mapping* SnrMap = MappingUtils::divide( RecvPowerMap, NoiseMap, 0 );
+		std::cout << "SnrMap ( RecvPowerMap / NoiseMap ) is:" << std::endl << *SnrMap << std::endl;
+		delete SnrMap;
+
+		ConstantSimpleConstMapping*  ThermalMap = new ConstantSimpleConstMapping(DimensionSet::timeDomain,  FWMath::dBm2mW(-110));
+		Mapping*                     resultMap  = MappingUtils::createMapping(0.0, DimensionSet::timeDomain);
+		Mapping*                     RecvMap    = MappingUtils::createMapping(DimensionSet::timeFreqDomain);
+		Mapping*                     SignalMap  = MappingUtils::createMapping(DimensionSet::timeFreqDomain);
+		Mapping*                     delMap     = NULL;
+
+		ThermalMap->initializeArguments(A(140.000088221202));
+
+		resultMap = MappingUtils::add(*(delMap = resultMap), *ThermalMap, 0);
+		delete ThermalMap;
+		delete delMap;
+
+		RecvMap->setValue(A(5865000000.00,140.000097221202),FWMath::dBm2mW(-95.73));
+		RecvMap->setValue(A(5875000000.00,140.000097221202),FWMath::dBm2mW(-95.73));
+		RecvMap->setValue(A(5865000000.00,140.000123332313),FWMath::dBm2mW(-95.73));
+		RecvMap->setValue(A(5875000000.00,140.000123332313),FWMath::dBm2mW(-95.73));
+
+		resultMap = MappingUtils::add(*RecvMap, *(delMap = resultMap), 0);
+		delete RecvMap;
+		delete delMap;
+
+		/*
+		Noise Map
+		Mapping domain: time, frequency(1)
+		--------------+-------------------------------
+		o\t           | 140000.09 140000.10 140000.12
+		--------------+-------------------------------
+		5865000000.00 |    -95.57    -95.57    -95.57
+		5875000000.00 |    -95.57    -95.57    -95.57
+		--------------+-------------------------------
+		*/
+		std::cerr<< "Noise Map" << std::endl << *resultMap << std::endl;
+
+		SignalMap->setValue(A(5895000000.00,140.000068221202),FWMath::dBm2mW(-71.28));
+		SignalMap->setValue(A(5895000000.00,140.000114332313),FWMath::dBm2mW(-71.28 ));
+		SignalMap->setValue(A(5905000000.00,140.000068221202),FWMath::dBm2mW(-71.28));
+		SignalMap->setValue(A(5905000000.00,140.000114332313),FWMath::dBm2mW(-71.28 ));
+
+		/*
+		Signal Map
+		Mapping domain: time, frequency(1)
+		--------------+---------------------
+		o\t           | 140000.07 140000.11
+		--------------+---------------------
+		5895000000.00 |    -71.28    -71.28
+		5905000000.00 |    -71.28    -71.28
+		--------------+---------------------
+		*/
+		std::cerr << "Signal Map" << std::endl << *SignalMap << std::endl;
+
+		resultMap = MappingUtils::divide(*SignalMap, *(delMap = resultMap), 0);
+		delete SignalMap;
+		delete delMap;
+
+		/*
+		SNR Map
+		Mapping domain: time, frequency(1)
+		--------------+---------------------------------------------------
+		o\t           | 140000.07 140000.09 140000.10 140000.11 140000.12
+		--------------+---------------------------------------------------
+		5865000000.00 |               24.29     24.29               24.29
+		5875000000.00 |               24.29     24.29               24.29
+		5895000000.00 |       inf                           inf
+		5905000000.00 |       inf                           inf
+		--------------+---------------------------------------------------
+		*/
+		std::cerr << "SNR Map (Signal Map / Noise Map)" << std::endl << *resultMap << std::endl;
+
+		std::cerr << "SNR Map findMin = " << FWMath::mW2dBm( MappingUtils::findMin(*resultMap) ) << std::endl;
+		std::cerr << "SNR Map findMax = " << FWMath::mW2dBm( MappingUtils::findMax(*resultMap) ) << std::endl;
+
+		delete resultMap;
+	}
+
+	void testMultiFunction() {
+		//testMultiFunctionInfinity();
 		DimensionSet dimSet(Dimension::time);
 		dimSet.addDimension(channel);
 
