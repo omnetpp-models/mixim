@@ -1,30 +1,12 @@
 package org.mixim.examples.analogueModels;
 
-import inet.mobility.IMobility;
+import org.mixim.modules.node.WirelessNode;
 
-
-module PhyMacHost
+module PhyMacHost extends WirelessNode
 {
     parameters:
-        double numHosts; // total number of hosts in the network
-        string mobilityType = default("StationaryMobility"); // how the node moves around. see: inet.mobility
-        @display("bgb=180,200,white,,;bgp=10,10");
-        @node();
-    gates:
-        input radioIn;
-
-    submodules:
-        mobility: <mobilityType> like IMobility {
-            parameters:
-                @display("p=130,130;i=block/cogwheel");
-        }
-        nic: PhyMacNic {
-            parameters:
-                @display("b=32,30;p=60,166;i=block/ifcard");
-        }
-    connections:
-
-        radioIn --> nic.radioIn;
-
+        @display("bgb=,,white,,;bgp=10,10");
+        nicType = "PhyMacNic";
+        int numHosts; // total number of hosts in the network
 }
 

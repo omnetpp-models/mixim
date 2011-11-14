@@ -1,7 +1,8 @@
 package org.mixim.modules.application;
 
-simple TestApplication
+import org.mixim.base.modules.IBaseApplLayer;
 
+simple TestApplication like IBaseApplLayer
 {
     parameters:
         bool   debug = default(false); // debug switch
@@ -13,7 +14,7 @@ simple TestApplication
         bool flood;                   // send packets continuously
         double payloadSize @unit(byte);     // number of bytes per packet
         double nbPackets;	// number of packets to generate
-
+    	int    headerLength @unit("bit");   // length of the application message header (in bits)
 
     gates:
         input lowerLayerIn; // to receive data from communications stack

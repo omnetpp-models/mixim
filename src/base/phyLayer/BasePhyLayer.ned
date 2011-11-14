@@ -2,7 +2,7 @@ package org.mixim.base.phyLayer;
 
 // Basic physical layer module.
 // See the class "BasePhyLayer" documentation.
-simple BasePhyLayer
+simple BasePhyLayer like IWirelessPhy
 {
     parameters:
         bool coreDebug   = default(false); //debug switch for core framework

@@ -20,8 +20,7 @@ package org.mixim.examples.inet.bulktransfer;
 
 import inet.networklayer.autorouting.ipv4.FlatNetworkConfigurator;
 import inet.nodes.inet.WirelessHost;
-import org.mixim.base.connectionManager.ConnectionManager;
-import org.mixim.base.modules.BaseWorldUtility;
+import org.mixim.base.modules.BaseNetwork;
 
 
 //
@@ -38,26 +37,12 @@ import org.mixim.base.modules.BaseWorldUtility;
 //data with the server.
 //The application models bulk file transfer.
 //
-network BulkTransfer
+network BulkTransfer extends BaseNetwork
 {
     parameters:
-        double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
-        double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
-        double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
         **.wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
     submodules:
-        world: BaseWorldUtility {
-            parameters:
-                playgroundSizeX = playgroundSizeX;
-                playgroundSizeY = playgroundSizeY;
-                playgroundSizeZ = playgroundSizeZ;
-                @display("p=171,25");
-        }
-        connectionManager: ConnectionManager {
-            parameters:
-                @display("p=66,25");
-        }
         client1: WirelessHost {
             parameters:
                 @display("p=131,67");
