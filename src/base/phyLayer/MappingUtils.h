@@ -418,7 +418,7 @@ public:
 	/**
 	 * @brief This method isn't supported by an interpolated Mapping.
 	 */
-	virtual void setValue(argument_value_cref_t value) { assert(false); }
+	virtual void setValue(argument_value_cref_t) { assert(false); }
 
 	/**
 	 * @brief Lets the iterator point to the passed position.
@@ -550,7 +550,7 @@ public:
 	/**
 	 * @brief This method is not supported!
 	 */
-	virtual void setValue(const Argument& pos, argument_value_cref_t value) { assert(false); }
+	virtual void setValue(const Argument&, argument_value_cref_t) { assert(false); }
 };
 
 /**
@@ -774,7 +774,7 @@ public:
 							   argument_value_cref_t val):
 		SimpleConstMapping(dims, key), value(val) {}
 
-	virtual argument_value_t getValue(const Argument& pos) const {
+	virtual argument_value_t getValue(const Argument&) const {
 		return value;
 	}
 
@@ -817,7 +817,7 @@ public:
 			delete iterator;
 	}
 
-	virtual void setValue(argument_value_cref_t value) { assert(false); }
+	virtual void setValue(argument_value_cref_t) { assert(false); }
 
 	virtual const Argument& getNextPosition() const { return iterator->getNextPosition(); }
 
@@ -855,7 +855,7 @@ public:
 	ConstMappingWrapper(const ConstMapping* m):
 		Mapping(m->getDimensionSet()), mapping(m) {}
 
-	virtual void setValue(const Argument& pos, argument_value_cref_t value) { assert(false); }
+	virtual void setValue(const Argument&, argument_value_cref_t) { assert(false); }
 
 	virtual MappingIterator* createIterator() {
 		return new ConstMappingIteratorWrapper(mapping->createConstIterator());
@@ -1023,12 +1023,12 @@ public:
 	 * @brief Initializes the Iterator for the passed MultiDimMapping and sets
 	 * its position two the first entry of the passed MultiDimMapping.
 	 */
-	MultiDimMappingIterator(MultiDimMapping<Interpolator>& mapping):
-		mapping(mapping),
-		valueIt(mapping.entries.beginIntpl()),
-		subMapping(0), subIterator(0),
-		position() {
-
+	MultiDimMappingIterator(MultiDimMapping<Interpolator>& pMapping):
+		mapping(pMapping),
+		valueIt(pMapping.entries.beginIntpl()),
+		subMapping(0), subIterator(NULL),
+		position()
+	{
 		subMapping = valueIt.getValue();
 		if(!subMapping.isInterpolated && *subMapping) {
 			subIterator = (*subMapping)->createIterator();
@@ -1046,21 +1046,21 @@ public:
 	 * @brief Intializes the Iterator for the passed MultiDimMapping and sets
 	 * its position two the passed position.
 	 */
-	MultiDimMappingIterator(MultiDimMapping<Interpolator>& mapping, const Argument& pos):
-		mapping(mapping),
-		valueIt(mapping.entries.findIntpl(pos.getArgValue(mapping.myDimension))),
-		subMapping(0), subIterator(0),
-		position() {
-
+	MultiDimMappingIterator(MultiDimMapping<Interpolator>& pMapping, const Argument& pos):
+		mapping(pMapping),
+		valueIt(pMapping.entries.beginIntpl()/*pMapping.entries.findIntpl(pos.getArgValue(pMapping.myDimension))*/), //ATTENTION: pMapping.entries.findIntpl(...) results in GCC-Crash at -O2
+		subMapping(0), subIterator(NULL),
+		position(pos)
+	{
+		// valueIt was not initialized with pMapping.entries.findIntpl(...), so we need the jumpTo-call
+		valueIt.jumpTo(position.getArgValue(mapping.myDimension));
 		subMapping = valueIt.getValue();
 		if(*subMapping){
-			subIterator = (*subMapping)->createIterator(pos);
+			subIterator = (*subMapping)->createIterator(position);
 		}
-
-		position = pos;
 		nextPosition = position;
-		updateNextPosition();
 
+		updateNextPosition();
 	}
 
 	/**
@@ -1338,7 +1338,7 @@ protected:
 
 		entries.setOutOfRangeVal(wrappedOORMapping);
 
-		copySubMappings(o);
+		copySubMappings();
 	}
 
 	/**
@@ -1360,7 +1360,7 @@ protected:
 		}
 	}
 
-	void copySubMappings(const MultiDimMapping& o){
+	void copySubMappings(){
 		const typename interpolator_map_type::iterator itEnd   = entries.end();
 		Dimension                                      nextDim = *(--dimensions.find(myDimension));
 
@@ -1428,7 +1428,7 @@ public:
 			wrappedOORMapping = new ConstMappingWrapper(outOfRangeMapping);
 			entries.setOutOfRangeVal(wrappedOORMapping);
 		}
-		copySubMappings(o);
+		copySubMappings();
 	}
 
 	/**
@@ -1455,7 +1455,7 @@ public:
 			entries.setOutOfRangeVal(wrappedOORMapping);
 		}
 
-		copySubMappings(o);
+		copySubMappings();
 
 		return *this;
 	}
@@ -1563,7 +1563,7 @@ public:
 
 	FilledUpMappingIterator(FilledUpMapping& mapping, const Argument& pos);
 
-	virtual void setValue(argument_value_cref_t value) {
+	virtual void setValue(argument_value_cref_t) {
 		assert(false);
 	}
 };
@@ -1692,7 +1692,7 @@ public:
 	const static Argument::mapped_type cMaxNotFound;
 
 private:
-	static const ConstMapping *const createCompatibleMapping(const ConstMapping& src, const ConstMapping& dst);
+	static const ConstMapping* createCompatibleMapping(const ConstMapping& src, const ConstMapping& dst);
 
 	static bool iterateToNext(ConstMappingIterator* it1, ConstMappingIterator* it2);
 

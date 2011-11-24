@@ -94,7 +94,7 @@ public:
 	 *
 	 * @return The received signal strength
 	 */
-	virtual const double getRSSI() {
+	virtual double getRSSI() const {
 		return rssi;
 	}
 
@@ -119,7 +119,7 @@ public:
      * @param pMsg		The message where the "control info" shall be attached.
      * @param pSrcAddr	The MAC address of the message sender.
      */
-    static cObject *const setControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr) {
+    static cObject* setControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr) {
     	MacToNetwControlInfo *const cCtrlInfo = new MacToNetwControlInfo(pSrcAddr);
     	pMsg->setControlInfo(cCtrlInfo);
 

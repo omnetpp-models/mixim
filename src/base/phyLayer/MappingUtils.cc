@@ -14,11 +14,10 @@ FilledUpMappingIterator::FilledUpMappingIterator(FilledUpMapping& mapping):
 FilledUpMappingIterator::FilledUpMappingIterator(FilledUpMapping& mapping, const Argument& pos):
 	MultiDimMappingIterator<Linear>(mapping, pos) {}
 
-
 const Argument::mapped_type MappingUtils::cMinNotFound =  std::numeric_limits<Argument::mapped_type>::infinity();
 const Argument::mapped_type MappingUtils::cMaxNotFound = -std::numeric_limits<Argument::mapped_type>::infinity();
 
-const ConstMapping *const MappingUtils::createCompatibleMapping(const ConstMapping& src, const ConstMapping& dst){
+const ConstMapping* MappingUtils::createCompatibleMapping(const ConstMapping& src, const ConstMapping& dst){
 	typedef FilledUpMapping::KeySet KeySet;
 	typedef FilledUpMapping::KeyMap KeyMap;
 

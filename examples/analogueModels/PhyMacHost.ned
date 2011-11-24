@@ -6,7 +6,7 @@ module PhyMacHost extends WirelessNode
 {
     parameters:
         @display("bgb=,,white,,;bgp=10,10");
-        nicType = "PhyMacNic";
+        nicType = "org.mixim.examples.analogueModels.PhyMacNic";
         int numHosts; // total number of hosts in the network
 }
 

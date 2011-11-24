@@ -49,7 +49,7 @@ class FindModule
 		 * Assumes that every host module is a direct sub module of the
 		 * simulation.
 		 */
-		static cModule *const findHost(cModule *const m) {
+		static cModule* findHost(cModule *const m) {
 			cModule* parent = m != NULL ? m->getParentModule() : NULL;
 			cModule* node   = m;
 
@@ -61,7 +61,7 @@ class FindModule
 			return node;
 		}
 		// the constness version
-		static const cModule *const findHost(const cModule *const m) {
+		static const cModule* findHost(const cModule *const m) {
 			const cModule* parent = m != NULL ? m->getParentModule() : NULL;
 			const cModule *node   = m;
 
@@ -89,7 +89,7 @@ class AccessModuleWrap
 		AccessModuleWrap() : pModule(NULL)
 		{}
 
-		T *const get(cModule *const from = NULL)
+		T* get(cModule *const from = NULL)
 		{
 			if (!pModule) {
 				pModule = FindModule<T*>::findSubModule( FindModule<>::findHost(from != NULL ? from : simulation.getContextModule()) );

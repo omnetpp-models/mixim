@@ -15,11 +15,10 @@
 
 package org.mixim.tests.nicTest;
 
-simple TestApp
+import org.mixim.base.modules.BaseNetwLayer;
+
+simple TestApp extends BaseNetwLayer
 {
-    gates:
-        input in;
-        output out;
-        input controlIn;
-        output controlOut;
+    parameters:
+        @class(TestApp);
 }

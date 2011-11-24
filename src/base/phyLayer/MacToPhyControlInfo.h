@@ -77,7 +77,7 @@ public:
      * @param pMsg		The message where the "control info" shall be attached.
      * @param pSignal	The signal which should be send.
      */
-    static cObject *const setControlInfo(cMessage *const pMsg, Signal *const pSignal) {
+    static cObject* setControlInfo(cMessage *const pMsg, Signal *const pSignal) {
     	MacToPhyControlInfo *const cCtrlInfo = new MacToPhyControlInfo(pSignal);
     	pMsg->setControlInfo(cCtrlInfo);
 
@@ -86,13 +86,13 @@ public:
     /**
      * @brief extracts the signal from message "control info".
      */
-    static Signal *const getSignal(cMessage *const pMsg) {
+    static Signal* getSignal(cMessage *const pMsg) {
     	return getSignalFromControlInfo(pMsg->getControlInfo());
     }
     /**
      * @brief extracts the signal from "control info".
      */
-    static Signal *const getSignalFromControlInfo(cObject *const pCtrlInfo) {
+    static Signal* getSignalFromControlInfo(cObject *const pCtrlInfo) {
     	MacToPhyControlInfo *const cCtrlInfo = dynamic_cast<MacToPhyControlInfo *const>(pCtrlInfo);
 
     	if (cCtrlInfo)

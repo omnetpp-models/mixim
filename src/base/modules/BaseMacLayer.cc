@@ -315,7 +315,7 @@ const LAddress::L2Type& BaseMacLayer::getUpperDestinationFromControlInfo(const c
 /**
  * Attaches a "control info" (MacToNetw) structure (object) to the message pMsg.
  */
-cObject *const BaseMacLayer::setUpControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr)
+cObject* BaseMacLayer::setUpControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr)
 {
 	return MacToNetwControlInfo::setControlInfo(pMsg, pSrcAddr);
 }
@@ -323,7 +323,7 @@ cObject *const BaseMacLayer::setUpControlInfo(cMessage *const pMsg, const LAddre
 /**
  * Attaches a "control info" (MacToPhy) structure (object) to the message pMsg.
  */
-cObject *const BaseMacLayer::setDownControlInfo(cMessage *const pMsg, Signal *const pSignal)
+cObject* BaseMacLayer::setDownControlInfo(cMessage *const pMsg, Signal *const pSignal)
 {
 	return MacToPhyControlInfo::setControlInfo(pMsg, pSignal);
 }

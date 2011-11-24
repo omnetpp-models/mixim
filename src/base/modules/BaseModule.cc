@@ -84,12 +84,12 @@ void BaseModule::switchHostState(HostState::States state)
 	emit(catHostStateSignal, &hostState);
 }
 
-cModule *const BaseModule::findHost(void)
+cModule* BaseModule::findHost(void)
 {
 	return FindModule<>::findHost(this);
 }
 
-const cModule *const BaseModule::findHost(void) const
+const cModule* BaseModule::findHost(void) const
 {
 	return FindModule<>::findHost(this);
 }

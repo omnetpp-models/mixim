@@ -35,7 +35,7 @@ void TestApp::initialize(int stage)
 			opp_error("Could not find MultiChannelMac80211.");
 		}
 
-		out = gate("out");
+		out = gate("lowerLayerOut");
 	}
 }
 

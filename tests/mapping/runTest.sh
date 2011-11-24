@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 lPATH='.'
 LIBSREF=( )
@@ -36,7 +36,7 @@ if [ ! -e ${lSingle} -a ! -e ${lSingle}.exe ]; then
     fi
 fi
 
-./${lSingle} "${LIBSREF[@]}">  out.tmp 2>  err.tmp
+./${lSingle} "${LIBSREF[@]}" >  out.tmp 2>  err.tmp
 
 diff -I '^Assigned runID=' \
      -I '^Loading NED files from' \

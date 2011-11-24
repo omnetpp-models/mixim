@@ -105,8 +105,8 @@ protected:
     void switchHostState(HostState::States state);
 
     /** @brief Function to get a pointer to the host module*/
-    cModule *const findHost(void);
-    const cModule *const findHost(void) const;
+    cModule* findHost(void);
+    const cModule* findHost(void) const;
     /** @brief Function to get the logging name of id*/
     //std::string getLogName(int);
   public:
@@ -145,7 +145,7 @@ protected:
     /**
      * @brief Get a reference to the local node module
      */
-    const cModule *const getNode() const {
+    const cModule* getNode() const {
     	return findHost();
     };
 

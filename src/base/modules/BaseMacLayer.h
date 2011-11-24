@@ -138,12 +138,12 @@ protected:
      */
     virtual void handleLowerMsg(cMessage *msg);
 
-    virtual void handleSelfMsg(cMessage* msg){
+    virtual void handleSelfMsg(cMessage*){
 	error("BaseMacLayer does not handle self messages");
     };
     virtual void handleLowerControl(cMessage* msg);
 
-    virtual void handleUpperControl(cMessage* msg){
+    virtual void handleUpperControl(cMessage*){
 	error("BaseMacLayer does not handle control messages from upper layers");
     };
 
@@ -222,7 +222,7 @@ protected:
      * @param pMsg		The message where the "control info" shall be attached.
      * @param pSrcAddr	The MAC address of the message receiver.
      */
-    virtual cObject *const setUpControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr);
+    virtual cObject* setUpControlInfo(cMessage *const pMsg, const LAddress::L2Type& pSrcAddr);
     /**
      * @brief Attaches a "control info" (MacToPhy) structure (object) to the message pMsg.
      *
@@ -236,7 +236,7 @@ protected:
      * @param pMsg		The message where the "control info" shall be attached.
      * @param pSignal	The signal which should be send.
      */
-    virtual cObject *const setDownControlInfo(cMessage *const pMsg, Signal *const pSignal);
+    virtual cObject* setDownControlInfo(cMessage *const pMsg, Signal *const pSignal);
 };
 
 #endif

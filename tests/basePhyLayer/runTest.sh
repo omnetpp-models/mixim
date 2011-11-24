@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 lPATH='.'
 LIBSREF=( )
@@ -47,6 +47,8 @@ diff -I '^Assigned runID=' \
      -I '^Version: ' \
      -I '^     Speed:' \
      -I '^** Event #' \
+     -I '^Initializing ' \
+     -I '(id=[0-9]*)' \
      -w exp-output out.tmp >diff.log 2>/dev/null
 
 if [ -s diff.log ]; then

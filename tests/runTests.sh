@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 if [ -d blackboard ]; then
     echo '----------------Blackboard--------------------'
@@ -50,3 +50,4 @@ if [ -d mapping ]; then
     ( ( cd mapping >/dev/null 2>&1 && \
     ./runTest.sh $1 ) && echo "PASSED" ) || echo "FAILED"
 fi
+
