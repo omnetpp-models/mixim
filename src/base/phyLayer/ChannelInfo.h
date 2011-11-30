@@ -2,6 +2,7 @@
 #define CHANNELINFO_H_
 
 #include <list>
+#include <map>
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
@@ -42,19 +43,21 @@
  * @ingroup phyLayer
  */
 class MIXIM_API ChannelInfo {
-
+public:
+	/** The stored air frame pointer type */
+	typedef AirFrame* airframe_ptr_t;
 protected:
-
-	/** @brief Type for a pair of an AirFrame and a simulation time.*/
-	typedef std::pair<simtime_t, AirFrame*> AirFrameTimePair;
-	/** @brief Type for a list of AirFrames and a simulation time.*/
-	typedef std::list<AirFrameTimePair> AirFrameTimeList;
 	/**
 	 * The AirFrames are stored in a Matrix with start- and end time as
 	 * dimensions.
 	 */
-	typedef std::map<simtime_t, AirFrameTimeList > AirFrameMatrix;
+	typedef std::map<simtime_t, std::multimap<simtime_t, airframe_ptr_t> > AirFrameMatrix;
 
+	struct c_min_start_time_fctr {
+		bool operator() (const AirFrameMatrix::value_type& a, const AirFrameMatrix::value_type& b) {
+			return a.second.key_comp()(a.second.begin()->first, b.second.begin()->first);
+		}
+	};
 	/**
 	 * @brief Iterator for every intersection of a specific interval in a
 	 * AirFrameMatrix.
@@ -78,158 +81,220 @@ protected:
 	 *
 	 * In template form to work as const- and non-const iterator.
 	 */
-	template<class C, class ItMatrix, class ItList>
+	template<typename C, typename ItMatrix = typename C::const_iterator, typename ItSubMatrix = typename C::mapped_type::const_iterator>
 	class BaseIntersectionIterator
 	{
 	public:
+		typedef typename ItSubMatrix::value_type value_type;
+		typedef typename ItSubMatrix::reference  reference;
+		typedef typename ItSubMatrix::pointer    pointer;
+
+		typedef BaseIntersectionIterator<C, ItMatrix, ItSubMatrix> iterator;
+
+		typedef std::bidirectional_iterator_tag iterator_category;
+		typedef ptrdiff_t                       difference_type;
+
+	protected:
+		friend class ChannelInfo;
+		typedef BaseIntersectionIterator<C, ItMatrix, ItSubMatrix> _Self;
+		//typedef _Rb_tree_node_base::_Const_Base_ptr _Base_ptr;
+		//typedef const _Rb_tree_node<_Tp>*           _Link_type;
+
 		/** @brief Pointer to the matrix holding the intervals.*/
 		C* intervals;
 
 		/** @brief Point in time to start iterating over intersections.*/
-		simtime_t from;
+		simtime_t_cref from;
 
 		/** @brief Point in time to end iterating over intersections.*/
-		simtime_t to;
+		simtime_t_cref to;
 
 		/** @brief Iterator over AirFrame end times.*/
 		ItMatrix endIt;
 
 		/** @brief Iterator over AirFrame start times.*/
-		ItList startIt;
+		ItSubMatrix startIt;
+		ItSubMatrix startItEnd;
 
-		/** @brief True if the we are already pointing to the next entry.*/
-		bool alreadyNext;
+		/** Jumps top next valid entry.
+		 *
+		 * ATTENTION: startIt and startItEnd must be set!
+		 */
+	    _Self& jumpToNextValid(ItMatrix endItEnd)
+	    {
+			for (; endIt != endItEnd; startIt = endIt->second.begin()) {
+				// while there are entries left at the current end-time
+				if (startIt != startItEnd) {
+					// check if this entry fulfilles the intersection condition
+					// 2 (condition 1 is already fulfilled in the constructor by
+					// the start-value of the end-time-iterator)
+					return *this;
+				}
+				if (++endIt != endItEnd) {
+					startItEnd = endIt->second.upper_bound(to);
+				}
+			}
 
+			intervals = NULL;
+			return *this;
+	    }
 	public:
-
 		/**
 		 * @brief Creates an iterator for the specified interval at the
 		 * specified AirFrameMatrix.
 		 */
 		BaseIntersectionIterator(C* airFrames, simtime_t_cref from, simtime_t_cref to) :
-			intervals(airFrames), from(from), to(to)
+			intervals(airFrames), from(from), to(to), endIt(), startIt(), startItEnd()
 		{
 			// begin at the smallest end-time-entry fulfilling the intersection
 			// condition 1
-			endIt = intervals->lower_bound(from);
-
-			if(endIt != intervals->end()) {
-				startIt = endIt->second.begin();
+			if (intervals) {
+				endIt = intervals->lower_bound(from);
+				if(endIt != intervals->end()) {
+					startIt    = endIt->second.begin();
+					startItEnd = endIt->second.upper_bound(to);
+					jumpToNextValid(intervals->end());
+				}
+				else {
+					intervals = NULL;
+					startIt   = startItEnd;
+				}
+			}
+			else {
+				startIt = startItEnd;
 			}
 			//we are already pointing at the first unchecked interval
-			alreadyNext = true;
+		}
+		BaseIntersectionIterator(const iterator& __it) :
+			intervals(__it.intervals), from(__it.from), to(__it.to), endIt(__it.endIt), startIt(__it.startIt),  startItEnd(__it.startItEnd)
+		{ }
+
+		reference
+	    operator*() const
+		{
+			if(intervals == NULL || endIt == intervals->end() || startIt == startItEnd)
+				return NULL;
+			return startIt.operator*();
 		}
 
-		/**
-		 * @brief Increases the iterator to the next intersecting AirFrame and
-		 * returns a pointer to this AirFrame.
-		 */
-		AirFrame* next()
+		pointer
+	    operator->() const
 		{
-			if(endIt == intervals->end())
-				return 0;
+			if(intervals == NULL || endIt == intervals->end() || startIt == startItEnd)
+				return NULL;
+			return startIt.operator->();
+		}
 
-			// "alreadyNext" indicates that some previous iterator function has
-			// already increased the intern iterators to a yet unchecked values.
-			// This happens after initialization of the iterator and when an
-			// element is erased.
-			if(alreadyNext)
-				alreadyNext = false;
-			else
-				startIt++;
+		/**  @brief Increases the iterator to the next intersecting AirFrame.
+		 */
+		_Self&
+		operator++()
+		{
+			if (!intervals)
+				return *this;
 
-
-			while(endIt != intervals->end())
-			{
-				// while there are entries left at the current end-time
-				while(startIt != endIt->second.end())
-				{
-					// check if this entry fulfilles the intersection condition
-					// 2 (condition 1 is already fulfilled in the constructor by
-					// the start-value of the end-time-iterator)
-					if(startIt->first <= to) {
-						return startIt->second;
-					}
-					startIt++;
-				}
-
-				endIt++;
-				if(endIt == intervals->end())
-					return 0;
-
-				startIt = endIt->second.begin();
-
+			const ItMatrix endItEnd = intervals->end();
+			if(endIt == endItEnd) {
+				intervals = NULL;
+				return *this;
 			}
 
-			return 0;
+			if (startIt != startItEnd)
+				++startIt;
+
+			return jumpToNextValid(endItEnd);
 		}
+
+		/**  @brief Increases the iterator to the next intersecting AirFrame.
+		 */
+		_Self
+		operator++(int)
+	    {
+			_Self __tmp = *this;
+			++(*this);
+			return __tmp;
+	    }
+
+		/**  @brief Compares two iterators for equality.
+		 */
+	    bool
+	    operator==(const _Self& __x) const
+	    {
+	    	if (intervals == NULL) {
+	    		if (__x.intervals == NULL)
+	    			return true;
+	    		return (__x.endIt == __x.intervals->end() || __x.startIt == __x.startItEnd); // we have no next element
+	    	}
+	    	if (__x.intervals == NULL) {
+	    		return (endIt == intervals->end() || startIt == endIt->second.end()); // we have no next element
+	    	}
+	    	if( (endIt == intervals->end() && __x.endIt == __x.intervals->end()) || (startIt == startItEnd && __x.startIt == __x.startItEnd) )
+	    		return true;
+	    	return intervals == __x.intervals && from == __x.from && to == __x.to && endIt == __x.endIt && startIt == __x.startIt && startItEnd == __x.startItEnd;
+	    }
+
+		/**  @brief Compares two iterators for inequality.
+		 */
+	    bool
+	    operator!=(const _Self& __x) const
+	    { return !(*this == __x); }
 	};
 
 	/** @brief Type for a const-iterator over an AirFrame interval matrix.*/
-	typedef BaseIntersectionIterator
-				<const AirFrameMatrix,
-				 AirFrameMatrix::const_iterator,
-				 AirFrameTimeList::const_iterator> ConstIntersectionIterator;
+	typedef BaseIntersectionIterator<const AirFrameMatrix,
+									 AirFrameMatrix::const_iterator,
+									 AirFrameMatrix::mapped_type::const_iterator> const_iterator;
 
-	/**
-	 * @brief Type for a iterator over an AirFrame interval matrix.
-	 *
-	 * Extends the const-version by an erase method.
-	 */
-	class IntersectionIterator:
-			public BaseIntersectionIterator<AirFrameMatrix,
-											AirFrameMatrix::iterator,
-											AirFrameTimeList::iterator>
-	{
-	private:
-		/** @brief Type for shortcut to base class type.*/
-		typedef BaseIntersectionIterator<AirFrameMatrix,
-										 AirFrameMatrix::iterator,
-										 AirFrameTimeList::iterator> Base;
-	public:
-		/**
-		 * @brief Creates an iterator for the specified interval at the
-		 * specified AirFrameMatrix.
-		 */
-		IntersectionIterator(AirFrameMatrix* airFrames,
-							 simtime_t_cref  from,
-							 simtime_t_cref  to) :
-			Base(airFrames, from, to)
-		{}
+	/** @brief The end iterator for the matrix.*/
+	const static const_iterator cConstItEnd;
 
-		/**
-		 * @brief Erases the AirFrame the iterator currently points to from the
-		 * AirFrameMatrix.
-		 *
-		 * After the erase the iterator points to an invalid value and "next()"
-		 * should be called.
-		 */
-		void eraseAirFrame()
-		{
-			assert(endIt != intervals->end());
-			assert(startIt != endIt->second.end());
+    /**
+     *  Returns a read-only (constant) iterator that points one past the last
+     *  pair in the AirFrameMatrix.  Iteration is done in ascending order according to
+     *  the end, and start time.
+     */
+	const_iterator end() const {
+		return cConstItEnd;
+	}
 
-			//erase AirFrame from list
-			startIt = endIt->second.erase(startIt);
+	/** @brief Type for a iterator over an AirFrame interval matrix.*/
+	typedef BaseIntersectionIterator<AirFrameMatrix,
+									 AirFrameMatrix::iterator,
+									 AirFrameMatrix::mapped_type::iterator> iterator;
 
-			//check if we've deleted the last entry in the list
-			if(startIt == endIt->second.end())
-			{
-				//check if we deleted the only entry in the list
-				if(endIt->second.empty()) {
-					intervals->erase(endIt++); //delete list from map
-				} else {
-					endIt++;
-				}
+	/** @brief The end iterator for the matrix.*/
+	const static iterator cItEnd;
+    /**
+     *  Returns a read/write iterator that points one past the last
+     *  pair in the AirFrameMatrix.  Iteration is done in ascending order according to
+     *  the end, and start time.
+     */
+	iterator end() {
+		return cItEnd;
+	}
 
-				//increase to a valid value if we are not done
-				if(endIt != intervals->end()) {
-					startIt = endIt->second.begin();
-				}
-			}
-			alreadyNext = true;
+    /**
+     *  @brief Erases an element from a AirFrameMatrix.
+     *  @param  position  An iterator pointing to the element to be erased.
+     *
+     *  This function erases an element, pointed to by the given
+     *  iterator, from a AirFrameMatrix.  Note that this function only erases
+     *  the element, and that if the element is itself a pointer,
+     *  the pointed-to memory is not touched in any way.  Managing
+     *  the pointer is the user's responsibility.
+     */
+	void erase(const iterator& __position) {
+		assert(__position.endIt   != __position.intervals->end());
+		assert(__position.startIt != __position.startItEnd);
+
+		//erase AirFrame from list
+		__position.endIt->second.erase(__position.startIt);
+
+		//check if we deleted the only entry in the list
+		if(__position.endIt->second.empty()) {
+			__position.intervals->erase(__position.endIt); //delete list from map
 		}
-	};
+	}
 
 	/**
 	 * @brief Stores the currently active AirFrames.
@@ -247,14 +312,10 @@ protected:
 	AirFrameMatrix inactiveAirFrames;
 
 	/** @brief Type for a map of AirFrame pointers to their start time.*/
-	typedef std::map<AirFrame*, simtime_t> AirFrameStartMap;
+	typedef std::map<long, simtime_t> AirFrameStartMap;
 
 	/** @brief Stores the start time of every AirFrame.*/
 	AirFrameStartMap airFrameStarts;
-
-	/** @brief Stores the point in history up to which we have some (but not
-	 * necessarily all) channel information stored.*/
-	simtime_t earliestInfoPoint;
 
 	/** @brief Stores a point in history up to which we need to keep all channel
 	 * information stored.*/
@@ -266,14 +327,14 @@ public:
 	 *
 	 * Used as out type for "getAirFrames" method.
 	 */
-	typedef std::list<AirFrame*> AirFrameVector;
+	typedef std::list<airframe_ptr_t> AirFrameVector;
 
 protected:
 	/**
 	 * @brief Asserts that every inactive AirFrame is still intersecting with at
 	 * least one active airframe or with the current record start time.
 	 */
-	void assertNoIntersections();
+	void assertNoIntersections() const;
 
 
 	/**
@@ -283,16 +344,16 @@ protected:
 	 * The intersecting AirFrames are stored in the AirFrameVector reference
 	 * passed as parameter.
 	 */
-	void getIntersections( const AirFrameMatrix& airFrames,
-						   simtime_t_cref from, simtime_t_cref to,
-						   AirFrameVector& outVector) const;
+	static void getIntersections( const AirFrameMatrix& airFrames,
+	                              simtime_t_cref from, simtime_t_cref to,
+	                              AirFrameVector& outVector );
 
 	/**
 	 * @brief Returns true if there is at least one AirFrame in the passed
 	 * AirFrameMatrix which intersect with the given interval.
 	 */
-	bool isIntersecting( const AirFrameMatrix& airFrames,
-						 simtime_t_cref from, simtime_t_cref to) const;
+	static bool isIntersecting( const AirFrameMatrix& airFrames,
+	                            simtime_t_cref from, simtime_t_cref to );
 
 	/**
 	 * @brief Moves a previously active AirFrame to the inactive AirFrames.
@@ -303,19 +364,19 @@ protected:
 	 * It also checks if the AirFrame to in-activate still intersect with at
 	 * least one active AirFrame before it is moved to inactive AirFrames.
 	 */
-	void addToInactives(AirFrame* a, simtime_t_cref startTime, simtime_t_cref endTime);
+	void addToInactives(airframe_ptr_t a, simtime_t_cref startTime, simtime_t_cref endTime);
 
 	/**
 	 * @brief Deletes an AirFrame from an AirFrameMatrix.
 	 */
-	void deleteAirFrame(AirFrameMatrix& airFrames,
-			 			AirFrame* a,
-			 			simtime_t_cref startTime, simtime_t_cref endTime);
+	static void deleteAirFrame(AirFrameMatrix& airFrames,
+	                           airframe_ptr_t  a,
+	                           simtime_t_cref  startTime, simtime_t_cref endTime);
 
 	/**
 	 * @brief Returns the start time of the odlest AirFrame on the channel.
 	 */
-	simtime_t findEarliestInfoPoint();
+	simtime_t findEarliestInfoPoint(simtime_t_cref returnTimeIfEmpty = -1) const;
 
 	/**
 	 * @brief Checks if any information inside the passed interval can be
@@ -360,7 +421,6 @@ protected:
 
 public:
 	ChannelInfo():
-		earliestInfoPoint(-1),
 		recordStartTime(-1)
 	{}
 
@@ -374,7 +434,7 @@ public:
 	 * parameter startTime holds the time the receiving of the AirFrame has
 	 * started in seconds.
 	 */
-	void addAirFrame(AirFrame* a, simtime_t_cref startTime);
+	void addAirFrame(airframe_ptr_t a, simtime_t_cref startTime);
 
 	/**
 	 * @brief Tells the ChannelInfo that an AirFrame is over.
@@ -384,7 +444,7 @@ public:
 	 * @return The current time-point from on which information concerning
 	 * AirFrames is needed to be stored.
 	 */
-	simtime_t removeAirFrame(AirFrame* a);
+	simtime_t removeAirFrame(airframe_ptr_t a, simtime_t_cref returnTimeIfEmpty = -1);
 
 	/**
 	 * @brief Fills the passed AirFrameVector reference with the AirFrames which
@@ -402,11 +462,9 @@ public:
 	 * @brief Returns the current time-point from that information concerning
 	 * AirFrames is needed to be stored.
 	 */
-	simtime_t getEarliestInfoPoint()
+	simtime_t getEarliestInfoPoint(simtime_t_cref returnTimeIfEmpty = -1) const
 	{
-		assert(!isChannelEmpty() || earliestInfoPoint == -1);
-
-		return earliestInfoPoint;
+		return findEarliestInfoPoint(returnTimeIfEmpty);
 	}
 
 	/**

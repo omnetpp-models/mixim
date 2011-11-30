@@ -42,13 +42,14 @@ fi
 ./${lSingle} -c Test4 "${LIBSREF[@]}" >> out.tmp 2>> err.tmp
 ./${lSingle} -c Test5 "${LIBSREF[@]}" >> out.tmp 2>> err.tmp
 
+cat out.tmp |grep -e "Passed" -e "FAILED" |\
 diff -I '^Assigned runID=' \
      -I '^Loading NED files from' \
      -I '^OMNeT++ Discrete Event Simulation' \
      -I '^Version: ' \
      -I '^     Speed:' \
      -I '^** Event #' \
-     -w exp-output out.tmp >diff.log 2>/dev/null
+     -w exp-output - >diff.log 2>/dev/null
 
 if [ -s diff.log ]; then
     echo "FAILED counted $(( 1 + $(grep -c -e '^---$' diff.log) )) differences where #<=$(grep -c -e '^<' diff.log) and #>=$(grep -c -e '^>' diff.log); see $(basename $(cd $(dirname $0);pwd) )/diff.log"

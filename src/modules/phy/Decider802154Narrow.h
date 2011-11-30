@@ -80,12 +80,12 @@ protected:
 
 	double evalBER(AirFrame* frame);
 
-	/** @brief Helper function to compute BER from SNR using analytical formulas */
-	double n_choose_k(int n, int k);
-
 	bool recordStats;
 
 public:
+
+	/** @brief Helper function to compute BER from SNR using analytical formulas */
+	static double n_choose_k(int n, int k);
 
 	/**
 	 * @brief Initializes the Decider with a pointer to its PhyLayer and

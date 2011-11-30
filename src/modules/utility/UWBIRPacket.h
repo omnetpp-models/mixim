@@ -43,7 +43,7 @@ public:
     /** @brief Constructor*/
     UWBIRPacket() : cObject(), nbSyncAttempts(0), nbSyncSuccesses(0), nbPacketsReceived(0) { };
 
-    double getNbPacketsReceived() const  {
+    long getNbPacketsReceived() const  {
         return nbPacketsReceived;
     }
 
@@ -51,7 +51,7 @@ public:
         nbPacketsReceived = n;
     }
 
-    double getNbSyncAttempts() const  {
+    long getNbSyncAttempts() const  {
             return nbSyncAttempts;
 	}
 

@@ -786,7 +786,7 @@ int BasePhyLayer::getNbRadioChannels() {
 
 //--DeciderToPhyInterface implementation------------
 
-void BasePhyLayer::getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out) {
+void BasePhyLayer::getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out) const {
 	channelInfo.getAirFrames(from, to, out);
 }
 
@@ -819,7 +819,7 @@ void BasePhyLayer::sendUp(AirFrame* frame, DeciderResult* result) {
 	sendMacPktUp(packet);
 }
 
-simtime_t BasePhyLayer::getSimTime() {
+simtime_t BasePhyLayer::getSimTime() const {
 
 	return simTime();
 }

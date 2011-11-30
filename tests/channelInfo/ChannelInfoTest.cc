@@ -96,9 +96,11 @@ void testIntersections() {
 	bool bothReturned =    (v.front() == frame1 && v.back() == frame2) 
 						|| (v.front() == frame2 && v.back() == frame1);
 	assertTrue("Interval inside both AirFrame should return both.", bothReturned);
+	assertEqual("Earliest info point should be from frame1", 1.0, SIMTIME_DBL(testChannel.getEarliestInfoPoint()));
 	
 	//remove first one
 	testChannel.removeAirFrame(frame1);
+	assertEqual("Earliest info point should be always from frame1 after delete.", 1.0, SIMTIME_DBL(testChannel.getEarliestInfoPoint()));
 	
 	v.clear();
 	testChannel.getAirFrames(2.51, 2.9, v);	
@@ -123,6 +125,7 @@ void testIntersections() {
 	v.clear();
 	testChannel.getAirFrames(1.51, 2.0, v);	
 	assertTrue("Interval before second frame should be empty (first one is deleted).", v.empty());
+	assertEqual("Earliest info point should be now from frame2 after delete.", 2.5, SIMTIME_DBL(testChannel.getEarliestInfoPoint()));
 	
 	v.clear();
 	testChannel.getAirFrames(3.5, 3.6, v);	
@@ -149,10 +152,10 @@ void testIntersections() {
 	
 	v.clear();
 	testChannel.getAirFrames(14.5, 15.0, v);	
-	assertEqual("Check for simultaneus airframes", 2u, v.size());
+	assertEqual("Check for simultaneous airframes", 2u, v.size());
 	bothReturned =    (v.front() == frame4b && v.back() == frame4) 
 								|| (v.front() == frame4 && v.back() == frame4b);
-	assertTrue("Check for simultaneus airframes.", bothReturned);
+	assertTrue("Check for simultaneous airframes.", bothReturned);
 	
 	
 	//remove one of them
@@ -160,10 +163,10 @@ void testIntersections() {
 	
 	v.clear();
 	testChannel.getAirFrames(14.5, 15.0, v);	
-	assertEqual("Check for simultaneus airframes after remove of one.", 2u, v.size());
+	assertEqual("Check for simultaneous airframes after remove of one.", 2u, v.size());
 	bothReturned =    (v.front() == frame4b && v.back() == frame4) 
 								|| (v.front() == frame4 && v.back() == frame4b);
-	assertTrue("Check for simultaneus airframes after remove of one.", bothReturned);
+	assertTrue("Check for simultaneous airframes after remove of one.", bothReturned);
 	
 	//add another airframe which starts at the end of the previous ones.
 	AirFrame* frame5 = new AirFrame();
@@ -174,17 +177,17 @@ void testIntersections() {
 	testChannel.getAirFrames(16.0, 17.0, v);	
 	assertEqual("Aiframes with same start and end are intersecting.", 3u, v.size());
 	
-	//remove the second of the simulateus AirFrames
+	//remove the second of the simultaneous AirFrames
 	testChannel.removeAirFrame(frame4b);
 	
 	v.clear();
 	testChannel.getAirFrames(16.0, 17.0, v);	
-	assertEqual("Should intersect still with both removed simultaneus AirFrames.", 3u, v.size());
+	assertEqual("Should intersect still with both removed simultaneous AirFrames.", 3u, v.size());
 	
 	v.clear();
 	testChannel.getAirFrames(16.1, 17.0, v);	
-	assertEqual("Interval after simultaneus should return only third AirFrame.", 1u, v.size());
-	assertEqual("Interval after simultaneus should return only third AirFrame.", frame5, v.front());
+	assertEqual("Interval after simultaneous should return only third AirFrame.", 1u, v.size());
+	assertEqual("Interval after simultaneous should return only third AirFrame.", frame5, v.front());
 	
 	//create another AirFrame with same start as previous but later end
 	AirFrame* frame6 = new AirFrame();
@@ -244,17 +247,17 @@ void testIntersections() {
 	
 	v.clear();
 	testChannel.getAirFrames(14.5, 15.0, v);	
-	assertEqual("Our simulatneus AirFrames should be still there", 2u, v.size());
+	assertEqual("Our simultaneous AirFrames should be still there", 2u, v.size());
 	bothReturned =    (v.front() == frame4b && v.back() == frame4) 
 								|| (v.front() == frame4 && v.back() == frame4b);
-	assertTrue("Our simulatneus AirFrames should be still there.", bothReturned);
+	assertTrue("Our simultaneous AirFrames should be still there.", bothReturned);
 	
-	//remove the only AirFrame still intersecting with the simultaneus ones and the shorter version
+	//remove the only AirFrame still intersecting with the simultaneous ones and the shorter version
 	testChannel.removeAirFrame(frame6);
 	
 	v.clear();
 	testChannel.getAirFrames(14.5, 15.0, v);	
-	assertEqual("Simultaneus AirFrames should be deleted now.", 0u, v.size());
+	assertEqual("Simultaneous AirFrames should be deleted now.", 0u, v.size());
 	
 	v.clear();
 	testChannel.getAirFrames(16.0, 16.0, v);	

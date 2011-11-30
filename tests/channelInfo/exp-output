@@ -51,21 +51,24 @@ Passed: Interval after first AirFrame should return only second.
 Passed: Interval after first AirFrame should return the second AirFrame.
 Passed: Interval inside both AirFrames should return both.
 Passed: Interval inside both AirFrame should return both.
+Passed: Earliest info point should be from frame1
+Passed: Earliest info point should be always from frame1 after delete.
 Passed: Interval inside both AirFrame should return also the deleted.
 Passed: Interval inside both AirFrame should return also the deleted.
 Passed: Interval inside all AirFrame should return all.
 Passed: Interval before second frame should be empty (first one is deleted).
+Passed: Earliest info point should be now from frame2 after delete.
 Passed: Interval inside second and third AirFrame should return also the second (deleted).
 Passed: Interval inside both AirFrame should return also the deleted.
 Passed: There shouldn't be anymore AirFrames.
-Passed: Check for simultaneus airframes
-Passed: Check for simultaneus airframes.
-Passed: Check for simultaneus airframes after remove of one.
-Passed: Check for simultaneus airframes after remove of one.
+Passed: Check for simultaneous airframes
+Passed: Check for simultaneous airframes.
+Passed: Check for simultaneous airframes after remove of one.
+Passed: Check for simultaneous airframes after remove of one.
 Passed: Aiframes with same start and end are intersecting.
-Passed: Should intersect still with both removed simultaneus AirFrames.
-Passed: Interval after simultaneus should return only third AirFrame.
-Passed: Interval after simultaneus should return only third AirFrame.
+Passed: Should intersect still with both removed simultaneous AirFrames.
+Passed: Interval after simultaneous should return only third AirFrame.
+Passed: Interval after simultaneous should return only third AirFrame.
 Passed: Interval at start of both AirFrames should return both.
 Passed: Interval at start of both AirFrames should return both.
 Passed: Interval after shorter AirFrame shouldn't return the shorter.
@@ -80,9 +83,9 @@ Passed: Interval before newly added should not return newly added.
 Passed: Interval before newly added should not return newly added.
 Passed: Newly added should be returned together with the other one.
 Passed: Newly added should be returned together with the other one.
-Passed: Our simulatneus AirFrames should be still there
-Passed: Our simulatneus AirFrames should be still there.
-Passed: Simultaneus AirFrames should be deleted now.
+Passed: Our simultaneous AirFrames should be still there
+Passed: Our simultaneous AirFrames should be still there.
+Passed: Simultaneous AirFrames should be deleted now.
 Passed: Only longer AirFrame should be still there.
 Passed: Only longer AirFrame should be still there.
 Passed: Last mans standing: last added and the long AirFrame.

@@ -42,7 +42,7 @@ protected:
 	 * @param out The output vector in which to put the AirFrames.
 	 */
 	virtual void getChannelInfo(simtime_t_cref start, simtime_t_cref end,
-								AirFrameVector& out);
+								AirFrameVector& out) const;
 
 	/**
 	 * @brief Filters AirFrames on other channels than the current one.

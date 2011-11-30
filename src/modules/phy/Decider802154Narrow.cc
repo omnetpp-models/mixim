@@ -146,8 +146,8 @@ simtime_t Decider802154Narrow::processSignalEnd(AirFrame* frame)
 			// Pb = 2^(k-1)/(2^k - 1) Pm
 
 
-			ber = std::max(getBERFromSNR(snr), BER_LOWER_BOUND);
-			avgBER = ber*nbBits;
+			ber     = getBERFromSNR(snr);
+			avgBER  = ber*nbBits;
 			snirAvg = snirAvg + snr*SIMTIME_DBL(snrDuration);
 
 			if(ber < bestBER) {
@@ -203,11 +203,19 @@ simtime_t Decider802154Narrow::processSignalEnd(AirFrame* frame)
 }
 
 double Decider802154Narrow::n_choose_k(int n, int k) {
-  double res = 1;
-  for(int i = 1; i <= k; i++) {
-    res = res * (n-k+i) / i;
-  }
-  return res;
+	if (n < k)
+		return 0.0;
+
+	const int       iK     = (k<<1) > n ? n-k : k;
+	const double    dNSubK = (n-iK);
+	register int    i      = 1;
+	register double dRes   = i > iK ? 1.0 : (dNSubK+i);
+
+	for (++i; i <= iK; ++i) {
+		dRes *= dNSubK+i;
+		dRes /= i;
+	}
+	return dRes;
 }
 
 double Decider802154Narrow::getBERFromSNR(double snr) {
@@ -218,9 +226,28 @@ double Decider802154Narrow::getBERFromSNR(double snr) {
 		ber = 0.5 *  erfc(sqrt(snr));
 	} else if (modulation == "oqpsk16") {
 		// valid for IEEE 802.15.4 2.45 GHz OQPSK modulation
-		for (int k = 2; k <= 16; k++) {
-			sum_k = sum_k + pow(-1.0, k) * n_choose_k(16, k) * exp(20 * snr * (1.0 / k - 1.0));
+		const double dSNRFct = 20.0 * snr;
+		register int k       = 2;
+		/* following loop was optimized by using n_choose_k symmetries
+		for (k=2; k <= 16; ++k) {
+			sum_k += pow(-1.0, k) * n_choose_k(16, k) * exp(dSNRFct * (1.0 / k - 1.0));
 		}
+		*/
+		// n_choose_k(16, k) == n_choose_k(16, 16-k)
+		for (; k < 8; k += 2) {
+			// k will be 2, 4, 6 (symmetric values: 14, 12, 10)
+			sum_k += n_choose_k(16, k) * (exp(dSNRFct * (1.0 / k - 1.0)) + exp(dSNRFct * (1.0 / (16 - k) - 1.0)));
+		}
+		// for k =  8 (which does not have a symmetric value)
+		k = 8; sum_k += n_choose_k(16, k) * exp(dSNRFct * (1.0 / k - 1.0));
+		for (k = 3; k < 8; k += 2) {
+			// k will be 3, 5, 7 (symmetric values: 13, 11, 9)
+			sum_k -= n_choose_k(16, k) * (exp(dSNRFct * (1.0 / k - 1.0)) + exp(dSNRFct * (1.0 / (16 - k) - 1.0)));
+		}
+		// for k = 15 (because of missing k=1 value)
+		k   = 15; sum_k -= n_choose_k(16, k) * exp(dSNRFct * (1.0 / k - 1.0));
+		// for k = 16 (because of missing k=0 value)
+		k   = 16; sum_k += n_choose_k(16, k) * exp(dSNRFct * (1.0 / k - 1.0));
 		ber = (8.0 / 15) * (1.0 / 16) * sum_k;
 	} else if(modulation == "gfsk") {
 		// valid for Bluetooth 4.0 PHY mandatory base rate 1 Mbps

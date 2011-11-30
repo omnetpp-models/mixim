@@ -265,7 +265,7 @@ protected:
 	AirFrame* createTestAirFrame(int i);
 
 	// pass AirFrames currently on the (virtual) channel to currently tested decider
-	void passAirFramesOnChannel(AirFrameVector& out);
+	void passAirFramesOnChannel(AirFrameVector& out) const;
 
 	/**
 	 * @brief Creates a simple Signal defined over time with the
@@ -493,7 +493,7 @@ public:
 	 * @brief Fills the passed AirFrameVector with all AirFrames that intersect
 	 * with the time interval [from, to]
 	 */
-	virtual void getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out);
+	virtual void getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out) const;
 
 	/**
 	 * @brief Called by the decider to send a control message to the MACLayer
@@ -517,7 +517,7 @@ public:
 	 * @brief Returns a special test-time
 	 *
 	 */
-	virtual simtime_t getSimTime();
+	virtual simtime_t getSimTime() const;
 
 	/**
 	 * Return a string with the pattern

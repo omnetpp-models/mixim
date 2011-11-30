@@ -242,7 +242,7 @@ Mapping* BaseDecider::calculateSnrMapping(AirFrame* frame)
 }
 
 void BaseDecider::getChannelInfo(simtime_t_cref start, simtime_t_cref end,
-                                 AirFrameVector& out)
+                                 AirFrameVector& out) const
 {
 	phy->getChannelInfo(start, end, out);
 }

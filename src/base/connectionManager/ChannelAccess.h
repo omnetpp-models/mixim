@@ -39,8 +39,8 @@ typedef IMobility*     ChannelMobilityPtrType;
 #ifndef MIXIM_INET
 #include "FindModule.h"
 #include "BaseMobility.h"
-typedef AccessModuleWrap<BaseMobility>                ChannelMobilityAccessType;
-typedef typename ChannelMobilityAccessType::wrapType* ChannelMobilityPtrType;
+typedef AccessModuleWrap<BaseMobility>       ChannelMobilityAccessType;
+typedef ChannelMobilityAccessType::wrapType* ChannelMobilityPtrType;
 #endif
 
 class NicEntry;

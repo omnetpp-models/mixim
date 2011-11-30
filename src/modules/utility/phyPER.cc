@@ -45,7 +45,7 @@ void phyPER::receiveSignal(cComponent *source, simsignal_t signalID, cObject *ob
     	nbRxnoRS = static_cast<long>(packet.getNbPacketsReceivedNoRS());
     } else if(signalID == DeciderUWBIRED::catUWBIRPacketSignal) {
     	uwbirpacket = *(static_cast<const UWBIRPacket*>(obj));
-    	nbSyncAttempts = static_cast<long>(uwbirpacket.getNbSyncAttempts());
+    	nbSyncAttempts = uwbirpacket.getNbSyncAttempts();
     	nbSyncSuccesses = uwbirpacket.getNbSyncSuccesses();
     }
     if(nbSyncAttempts > 0) {

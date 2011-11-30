@@ -52,7 +52,7 @@ public:
 	 * @brief Fills the passed AirFrameVector with all AirFrames that intersect
 	 * with the time interval [from, to]
 	 */
-	virtual void getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out) = 0;
+	virtual void getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out) const = 0;
 
 	/**
 	 * @brief Returns a Mapping which defines the thermal noise in
@@ -85,7 +85,7 @@ public:
 	 * @brief Returns the current simulation time
 	 *
 	 */
-	virtual simtime_t getSimTime() = 0;
+	virtual simtime_t getSimTime() const = 0;
 
 	/**
 	 * @brief Tells the PhyLayer to cancel a scheduled message (AirFrame or

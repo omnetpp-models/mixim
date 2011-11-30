@@ -572,14 +572,13 @@ AirFrame* DeciderTest::createTestAirFrame(int i)
 }
 
 // pass AirFrame-pointers currently on the (virtual) channel to decider
-void DeciderTest::passAirFramesOnChannel(AirFrameVector& out)
+void DeciderTest::passAirFramesOnChannel(AirFrameVector& out) const
 {
-	AirFrameVector::iterator it;
+	AirFrameVector::const_iterator it;
 
 	// iterate over the member that holds the pointers to all AirFrames on
 	// the virtual channel and put them to the output reference
-	for (it = airFramesOnChannel.begin(); it != airFramesOnChannel.end(); it++)
-	{
+	for (it = airFramesOnChannel.begin(); it != airFramesOnChannel.end(); ++it) {
 		out.push_back(*it);
 	}
 
@@ -762,7 +761,7 @@ Mapping* DeciderTest::createHeaderPayloadMapping(	simtime_t_cref start,
 /**
  * SPECIAL TESTING IMPLEMENTATION: PLEASE REFER TO HEADER-FILE!
  */
-void DeciderTest::getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out)
+void DeciderTest::getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out) const
 {
 
 	switch (currentTestCase) {
@@ -903,7 +902,7 @@ void DeciderTest::sendUp(AirFrame* packet, DeciderResult* result)
 /**
  * SPECIAL TESTING IMPLEMENTATION: PLEASE REFER TO HEADER-FILE!
  */
-simtime_t DeciderTest::getSimTime()
+simtime_t DeciderTest::getSimTime() const
 {
 	return testTime;
 }
