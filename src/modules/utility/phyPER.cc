@@ -38,7 +38,7 @@ void phyPER::initialize(int stage)
 }
 
 
-void phyPER::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) {
+void phyPER::receiveSignal(cComponent */*source*/, simsignal_t signalID, cObject *obj) {
     if(signalID == BaseLayer::catPacketSignal) {
     	packet = *(static_cast<const Packet*>(obj));
     	nbRx = static_cast<long>(packet.getNbPacketsReceived());

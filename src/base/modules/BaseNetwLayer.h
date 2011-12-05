@@ -103,7 +103,7 @@ public:
     virtual void handleLowerMsg(cMessage* msg);
 
     /** @brief Handle self messages */
-    virtual void handleSelfMsg(cMessage* msg){
+    virtual void handleSelfMsg(cMessage* /*msg*/){
 	error("BaseNetwLayer does not handle self messages");
     };
 
@@ -111,7 +111,7 @@ public:
     virtual void handleLowerControl(cMessage* msg);
 
     /** @brief Handle control messages from lower layer */
-    virtual void handleUpperControl(cMessage* msg){
+    virtual void handleUpperControl(cMessage* /*msg*/){
         error("BaseNetwLayer does not handle control messages");
     };
 
@@ -136,7 +136,7 @@ public:
      * @param pMsg		The message where the "control info" shall be attached.
      * @param pDestAddr	The MAC address of the message receiver.
      */
-    virtual cObject *const setDownControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr);
+    virtual cObject* setDownControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr);
     /**
      * @brief Attaches a "control info" (NetwToUpper) structure (object) to the message pMsg.
      *
@@ -150,7 +150,7 @@ public:
      * @param pMsg		The message where the "control info" shall be attached.
      * @param pSrcAddr	The MAC address of the message receiver.
      */
-    virtual cObject *const setUpControlInfo(cMessage *const pMsg, const LAddress::L3Type& pSrcAddr);
+    virtual cObject* setUpControlInfo(cMessage *const pMsg, const LAddress::L3Type& pSrcAddr);
 };
 
 #endif

@@ -19,7 +19,7 @@
 
 Define_Module(PhyLayer);
 
-AnalogueModel* PhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& params) {
+AnalogueModel* PhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& params) const {
 
 	if (name == "SimplePathlossModel")
 	{
@@ -43,7 +43,7 @@ AnalogueModel* PhyLayer::getAnalogueModelFromName(std::string name, ParameterMap
 	return BasePhyLayer::getAnalogueModelFromName(name, params);
 }
 
-AnalogueModel* PhyLayer::initializeLogNormalShadowing(ParameterMap& params){
+AnalogueModel* PhyLayer::initializeLogNormalShadowing(ParameterMap& params) const {
 	double mean = params["mean"].doubleValue();
 	double stdDev = params["stdDev"].doubleValue();
 	simtime_t interval = params["interval"].doubleValue();
@@ -51,7 +51,7 @@ AnalogueModel* PhyLayer::initializeLogNormalShadowing(ParameterMap& params){
 	return new LogNormalShadowing(mean, stdDev, interval);
 }
 
-AnalogueModel* PhyLayer::initializeJakesFading(ParameterMap& params){
+AnalogueModel* PhyLayer::initializeJakesFading(ParameterMap& params) const {
 	int fadingPaths = params["fadingPaths"].longValue();
 	simtime_t delayRMS = params["delayRMS"].doubleValue();
 	simtime_t interval = params["interval"].doubleValue();
@@ -69,7 +69,7 @@ AnalogueModel* PhyLayer::initializeJakesFading(ParameterMap& params){
 	return new JakesFading(fadingPaths, delayRMS, carrierFrequency, interval);
 }
 
-AnalogueModel* PhyLayer::initializeBreakpointPathlossModel(ParameterMap& params) {
+AnalogueModel* PhyLayer::initializeBreakpointPathlossModel(ParameterMap& params) const {
 	double alpha1 =-1, alpha2=-1, breakpointDistance=-1;
 	double L01=-1, L02=-1;
 	double carrierFrequency = 2.412e+9;
@@ -162,7 +162,7 @@ AnalogueModel* PhyLayer::initializeBreakpointPathlossModel(ParameterMap& params)
 
 }
 
-AnalogueModel* PhyLayer::initializeSimplePathlossModel(ParameterMap& params){
+AnalogueModel* PhyLayer::initializeSimplePathlossModel(ParameterMap& params) const {
 
 	// init with default value
 	double alpha = 3.5;
@@ -238,7 +238,7 @@ AnalogueModel* PhyLayer::initializeSimplePathlossModel(ParameterMap& params){
 
 }
 
-AnalogueModel* PhyLayer::initializePERModel(ParameterMap& params) {
+AnalogueModel* PhyLayer::initializePERModel(ParameterMap& params) const {
 	double per = params["packetErrorRate"].doubleValue();
 	return new PERModel(per);
 }

@@ -47,7 +47,7 @@ public:
 	/**
 	 * @brief Returns a constant.
 	 * */
-	double getValue(const Argument& pos) const { return myValue; }
+	double getValue(const Argument& /*pos*/) const { return myValue; }
 
 	/**
 	 * @brief creates a clone of this mapping.

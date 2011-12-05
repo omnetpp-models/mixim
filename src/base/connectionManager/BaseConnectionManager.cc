@@ -124,7 +124,7 @@ void BaseConnectionManager::initialize(int stage)
 }
 
 BaseConnectionManager::GridCoord BaseConnectionManager
-	::getCellForCoordinate(const Coord& c)
+	::getCellForCoordinate(const Coord& c) const
 {
     return GridCoord(c, findDistance);
 }
@@ -140,7 +140,7 @@ void BaseConnectionManager::updateConnections(int nicID,
 }
 
 BaseConnectionManager::NicEntries& BaseConnectionManager
-	::getCellEntries(BaseConnectionManager::GridCoord& cell)
+	::getCellEntries(const BaseConnectionManager::GridCoord& cell)
 {
     return nicGrid[cell.x][cell.y][cell.z];
 }
@@ -200,7 +200,7 @@ void BaseConnectionManager::checkGrid(BaseConnectionManager::GridCoord& oldCell,
     }
 }
 
-int BaseConnectionManager::wrapIfTorus(int value, int max) {
+int BaseConnectionManager::wrapIfTorus(int value, int max) const {
 	if(value < 0) {
 		if(useTorus) {
 			return max + value;
@@ -219,7 +219,7 @@ int BaseConnectionManager::wrapIfTorus(int value, int max) {
 }
 
 void BaseConnectionManager::fillUnionWithNeighbors(CoordSet& gridUnion,
-												   GridCoord cell)
+												   const GridCoord& cell) const
 {
 	for(int iz = (int)cell.z - 1; iz <= (int)cell.z + 1; iz++) {
 		int cz = wrapIfTorus(iz, gridDim.z);

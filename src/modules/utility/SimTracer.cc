@@ -68,28 +68,36 @@ void SimTracer::initialize(int stage)
 }
 
 // compute current average sensor power consumption
-double SimTracer::getAvgSensorPowerConsumption() {
+double SimTracer::getAvgSensorPowerConsumption() const {
 	double sensorAvgP = 0;
-	int nbSensors = 0;
-	map < unsigned long, double >::iterator iter = powerConsumptions.begin(); // address, powerConsumption
-	for (; iter != powerConsumptions.end(); iter++) {	// iterate over all nodes power consumptions
-		  double eval = iter->second;
-		  eval = eval +  SIMTIME_DBL(simTime()-lastUpdates[iter->first])*currPower[iter->first];
-		  eval = eval * 1000 / simTime();
-		  if(iter->first != 0) {
-			  nbSensors++;
-			  sensorAvgP += eval;
-		  }
-	  }
-	  sensorAvgP = sensorAvgP / nbSensors;
+	int    nbSensors  = 0;
+
+	map < unsigned long, double >::const_iterator iter = powerConsumptions.begin(); // address, powerConsumption
+	for (; iter != powerConsumptions.end(); ++iter) {	// iterate over all nodes power consumptions
+		if(iter->first == 0)
+			continue;
+
+		double eval = iter->second;
+		eval = eval +  SIMTIME_DBL(simTime() - lastUpdates.at(iter->first)) * currPower.at(iter->first);
+		eval = eval * 1000 / SIMTIME_DBL(simTime());
+
+		++nbSensors;
+		sensorAvgP += eval;
+	}
+	if (nbSensors) {
+		sensorAvgP = sensorAvgP / nbSensors;
+	}
 	return sensorAvgP;
 }
 
-double SimTracer::getSinkPowerConsumption() {
-  double sinkP = powerConsumptions[0];
-  sinkP = sinkP + SIMTIME_DBL(simTime() - lastUpdates[0]) * currPower[0];
-  sinkP = sinkP * 1000 / simTime();
-  return sinkP;
+double SimTracer::getSinkPowerConsumption() const {
+	map < unsigned long, double >::const_iterator iter = powerConsumptions.find(0);
+	if (iter == powerConsumptions.end())
+		return 0.0;
+	double  sinkP = iter->second;
+	sinkP = sinkP + SIMTIME_DBL(simTime() - lastUpdates.at(iter->first)) * currPower.at(iter->first);
+	sinkP = sinkP * 1000 / SIMTIME_DBL(simTime());
+	return sinkP;
 }
 
 /*
@@ -118,13 +126,13 @@ void SimTracer::finish()
 /*
  * Record a line into the nam log file.
  */
-void SimTracer::namLog(string namString)
+void SimTracer::namLog(string /*namString*/)
 {
   //Enter_Method_Silent();
   //namFile << namString << endl;
 }
 
-void SimTracer::radioEnergyLog(unsigned long mac, int state,
+void SimTracer::radioEnergyLog(unsigned long mac, int /*state*/,
 			       simtime_t_cref duration, double power, double newPower)
 {
   Enter_Method_Silent();
@@ -145,12 +153,12 @@ void SimTracer::radioEnergyLog(unsigned long mac, int state,
   }
 }
 
-void SimTracer::logPosition(int node, double x, double y, double z)
+void SimTracer::logPosition(int node, double x, double y, double /*z*/)
 {
 	treeFile << node << "[pos=\""<< x << ", " << y << "!\"];" << endl;
 }
 
-void SimTracer::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
+void SimTracer::receiveSignal(cComponent */*source*/, simsignal_t signalID, cObject *obj)
 {
 	if (signalID == BaseLayer::catPacketSignal) {
 		packet = *(static_cast<const Packet*>(obj));

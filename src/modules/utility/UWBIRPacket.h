@@ -59,7 +59,7 @@ public:
             nbSyncAttempts = n;
 	}
 
-    long getNbSyncSuccesses() {
+    long getNbSyncSuccesses() const {
     	return nbSyncSuccesses;
     }
 

@@ -279,8 +279,8 @@ bool DeciderUWBIRED::decodePacket(Signal* signal,
  * and as second value a "score" associated to this window. This score is equals to the sum for all
  * 16 pulse peak positions of the voltage measured by the receiver ADC.
  */
-pair<double, double> DeciderUWBIRED::integrateWindow(int symbol,
-		simtime_t_cref pNow, simtime_t_cref burst, Signal* signal) {
+pair<double, double> DeciderUWBIRED::integrateWindow(int /*symbol*/,
+		simtime_t_cref pNow, simtime_t_cref burst, Signal* /*signal*/) {
 	std::pair<double, double> energy;
 	energy.first = 0; // stores SNIR
 	energy.second = 0; // stores total captured window energy
@@ -370,7 +370,7 @@ simtime_t DeciderUWBIRED::handleChannelSenseRequest(ChannelSenseRequest* request
 	}
 }
 
-ChannelState DeciderUWBIRED::getChannelState() {
+ChannelState DeciderUWBIRED::getChannelState() const {
 	return ChannelState(true, 0);  // channel is always "sensed" free
 }
 

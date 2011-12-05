@@ -74,7 +74,7 @@ void BatteryStats::initialize(int stage)
   }
 }
 
-void BatteryStats::handleMessage(cMessage *msg)
+void BatteryStats::handleMessage(cMessage */*msg*/)
 {
   error("BatteryStats doesn't handle any messages");
 }

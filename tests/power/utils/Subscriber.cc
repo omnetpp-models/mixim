@@ -31,7 +31,7 @@ void Subscriber::initialize(int stage)
   }
 }
 
-void Subscriber::handleMessage(cMessage *msg)
+void Subscriber::handleMessage(cMessage */*msg*/)
 {
   error("does not handle any messages");
 }
@@ -57,6 +57,7 @@ void Subscriber::handleHostState(const HostState& hostState)
 		break;
 	default:
 		error ("unknown host state from BB");
+		break;
 	}
 
 }

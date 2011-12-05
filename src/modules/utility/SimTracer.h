@@ -68,9 +68,9 @@ public:
   /** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
   virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
-  double getAvgSensorPowerConsumption();
+  double getAvgSensorPowerConsumption() const;
 
-  double getSinkPowerConsumption();
+  double getSinkPowerConsumption() const;
 
 protected:
    std::ofstream namFile, radioEnergyFile, treeFile;;

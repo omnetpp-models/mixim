@@ -178,7 +178,7 @@ protected:
     floodTypes updateFloodTable(bool isFlood, const tFloodTable::key_type& srcAddr, const tFloodTable::key_type& destAddr, unsigned long seqNum);
 
     /** @brief find a route to destination address. */
-    tFloodTable::key_type getRoute(const tFloodTable::key_type& destAddr, bool iAmOrigin = false);
+    tFloodTable::key_type getRoute(const tFloodTable::key_type& destAddr, bool iAmOrigin = false) const;
 };
 
 #endif

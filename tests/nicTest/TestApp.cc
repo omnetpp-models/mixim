@@ -191,7 +191,7 @@ void TestApp::switchChannel(int channel)
 	mac->switchChannel(channel);
 }
 
-int TestApp::getCurrentChannel(){
+int TestApp::getCurrentChannel() const {
 	return mac->getChannel();
 }
 

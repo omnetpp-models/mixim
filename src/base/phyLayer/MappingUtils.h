@@ -781,7 +781,7 @@ public:
 	/**
 	 * @brief Returns the value of this constant mapping.
 	 */
-	const argument_value_t getValue() const {
+	argument_value_cref_t getValue() const {
 		return value;
 	}
 
@@ -2208,10 +2208,10 @@ public:
  * @ingroup mappingDetails
  * @author Karl Wessel
  */
-class MIXIM_API ConstDelayedMapping: public BaseDelayedMapping<ConstMapping> {
+class MIXIM_API ConstDelayedMapping: public BaseDelayedMapping<const ConstMapping> {
 public:
-	ConstDelayedMapping(ConstMapping* mapping, simtime_t_cref delay):
-		BaseDelayedMapping<ConstMapping>(mapping, delay) {}
+	ConstDelayedMapping(const ConstMapping* mapping, simtime_t_cref delay):
+		BaseDelayedMapping<const ConstMapping>(mapping, delay) {}
 
 	virtual ~ConstDelayedMapping() {}
 

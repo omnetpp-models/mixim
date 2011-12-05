@@ -190,7 +190,7 @@ protected:
 	/**
 	 * @brief Quick and ugly printing of a two dimensional mapping.
 	 */
-	void printMapping(ConstMapping* m) {
+	void printMapping(const ConstMapping* m) const {
 		m->print(ev.getOStream(), 1000., 1e-9, "GHz\\ms", &Dimension::frequency);
 	}
 
@@ -231,7 +231,7 @@ public:
 		return 0;
 	}
 
-	virtual ChannelState getChannelState() {
+	virtual ChannelState getChannelState() const {
 		return ChannelState(false, 0);
 	}
 	virtual simtime_t handleChannelSenseRequest(ChannelSenseRequest*) {

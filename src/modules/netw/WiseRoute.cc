@@ -384,13 +384,13 @@ WiseRoute::floodTypes WiseRoute::updateFloodTable(bool isFlood, const tFloodTabl
 		return NOTAFLOOD;
 }
 
-WiseRoute::tFloodTable::key_type WiseRoute::getRoute(const tFloodTable::key_type& destAddr, bool iAmOrigin)
+WiseRoute::tFloodTable::key_type WiseRoute::getRoute(const tFloodTable::key_type& destAddr, bool /*iAmOrigin*/) const
 {
 	// Find a route to dest address. As in the embedded code, if no route exists, indicate
 	// final destination as next hop. If we'are lucky, final destination is one hop away...
 	// If I am the origin of the packet and no route exists, use flood, hence return broadcast
 	// address for next hop.
-	tRouteTable::iterator pos = routeTable.find(destAddr);
+	tRouteTable::const_iterator pos = routeTable.find(destAddr);
 	if (pos != routeTable.end())
 		return pos->second.nextHop;
 	else

@@ -9,6 +9,16 @@
 
 #include <cmath>
 
+#ifdef MIXIM_INET
+#include <INETDefs.h>
+#define ERFC(x)   erfc(x)
+#define MW2DBM(x) (10.0*log10(x))
+#else
+#include "FWMath.h"
+#define ERFC(x)   FWMath::erfc(x)
+#define MW2DBM(x) FWMath::mW2dBm(x)
+#endif
+
 #include "DeciderResult802154Narrow.h"
 #include "MacPkt_m.h"
 #include "PhyToMacControlInfo.h"
@@ -223,7 +233,7 @@ double Decider802154Narrow::getBERFromSNR(double snr) {
 	double sum_k = 0;
 	if(modulation == "msk") {
 		// valid for IEEE 802.15.4 868 MHz BPSK modulation
-		ber = 0.5 *  erfc(sqrt(snr));
+		ber = 0.5 *  ERFC(sqrt(snr));
 	} else if (modulation == "oqpsk16") {
 		// valid for IEEE 802.15.4 2.45 GHz OQPSK modulation
 		const double dSNRFct = 20.0 * snr;
@@ -253,18 +263,18 @@ double Decider802154Narrow::getBERFromSNR(double snr) {
 		// valid for Bluetooth 4.0 PHY mandatory base rate 1 Mbps
 		// Please note that this is not the correct expression for
 		// the enhanced data rates (EDR), which uses another modulation.
-		ber = 0.5 * erfc(sqrt(0.5 * snr));
+		ber = 0.5 * ERFC(sqrt(0.5 * snr));
 	} else {
 		opp_error("The selected modulation is not supported.");
 	}
 	if(recordStats) {
 	  berlog.record(ber);
-	  snrlog.record(10*log10(snr));
+	  snrlog.record(MW2DBM(snr));
 	}
 	return std::max(ber, BER_LOWER_BOUND);
 }
 
-void Decider802154Narrow::channelChanged(int newChannel) {
+void Decider802154Narrow::channelChanged(int /*newChannel*/) {
 	//TODO: stop receiving
 	;
 }

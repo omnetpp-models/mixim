@@ -27,14 +27,13 @@ package org.mixim.tests.power.Nic80211Test;
 import org.mixim.base.connectionManager.ConnectionManager;
 import org.mixim.base.modules.BaseWorldUtility;
 
-
-module Sim
+network sim
 {
     parameters:
         // parametes for the framework
-        double playgroundSizeX @unit(m);
-        double playgroundSizeY @unit(m);
-        double numHosts;
+        double playgroundSizeX @unit(m) = default(40m);
+        double playgroundSizeY @unit(m) = default(40m);
+        double numHosts = default(2);
 
 
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=0,0");
@@ -46,26 +45,14 @@ module Sim
         }
         channelcontrol: ConnectionManager {
             parameters:
-                @display("p=50,25;i=eye14");
+                @display("p=50,25;i=-");
         }
         host[numHosts]: Host {
             parameters:
-                @display("p=50,50;i=node");
+                @display("p=141,112;i=misc/node");
 
         }
     connections allowunconnected:
     // all connections and gates are to be generated dynamically
-
-}
-
-
-
-
-network sim extends Sim
-{
-    parameters:
-        playgroundSizeX @prompt("playgroundSizeX") = default(40m);
-        playgroundSizeY @prompt("playgroundSizeY") = default(40m);
-        numHosts @prompt("Number of hosts:") = default(2);
 
 }

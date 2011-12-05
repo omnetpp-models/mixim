@@ -56,7 +56,7 @@ protected:
 		PING = PONG + 1,
 
 	};
-     int getCurrentChannel();
+    int getCurrentChannel() const;
     void testRun1(int stage);
     void startTraffic();
     void ping(int nr);

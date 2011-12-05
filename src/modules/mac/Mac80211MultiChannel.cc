@@ -40,6 +40,6 @@ void Mac80211MultiChannel::switchChannel(int channel) {
 	centerFreq = CENTER_FREQUENCIES[channel];
 }
 
-int Mac80211MultiChannel::getChannel() {
+int Mac80211MultiChannel::getChannel() const {
 	return phy->getCurrentRadioChannel();
 }

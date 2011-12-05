@@ -210,7 +210,7 @@ public:
 	 * @brief Returns the function representing the bitrate of the
 	 * signal.
 	 */
-	Mapping* getBitrate() {
+	Mapping* getBitrate() const {
 		return bitrate;
 	}
 

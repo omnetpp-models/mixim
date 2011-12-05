@@ -230,7 +230,7 @@ void IEEE802154A::generateSFD(Mapping* mapping, Argument* arg) {
 	}
 }
 
-void IEEE802154A::generatePhyHeader(Mapping* mapping, Argument* arg) {
+void IEEE802154A::generatePhyHeader(Mapping* /*mapping*/, Argument* /*arg*/) {
 	// not implemented
 }
 
@@ -247,7 +247,7 @@ void IEEE802154A::generatePulse(Mapping* mapping, Argument* arg,
 }
 
 void IEEE802154A::generateBurst(Mapping* mapping, Argument* arg,
-		simtime_t_cref burstStart, short polarity) {
+		simtime_t_cref burstStart, short /*polarity*/) {
 	assert(burstStart < cfg.preambleLength+(psduLength*8+48+2)*cfg.data_symbol_duration);
 	// 1. Start point = zeros
 	simtime_t offset = burstStart;

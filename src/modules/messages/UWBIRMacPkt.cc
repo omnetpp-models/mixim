@@ -17,7 +17,7 @@ UWBIRMacPkt& UWBIRMacPkt::operator=(const UWBIRMacPkt& other) {
 	return *this;
 }
 
-void UWBIRMacPkt::setBitValuesArraySize(unsigned int size) {
+void UWBIRMacPkt::setBitValuesArraySize(unsigned int /*size*/) {
 	// do nothing, dynamic array
 }
 
@@ -30,7 +30,7 @@ bool UWBIRMacPkt::getBitValues(unsigned int k) const {
 	return bitValues.front();   // do not use -- implemented because omnet wants it
 }
 
-void UWBIRMacPkt::setBitValues(unsigned int k, bool bitValue) { }
+void UWBIRMacPkt::setBitValues(unsigned int /*k*/, bool /*bitValue*/) { }
 
 void UWBIRMacPkt::pushBitvalue(bool bitValue) {
   bitValues.push_back(bitValue);

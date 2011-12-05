@@ -45,7 +45,7 @@ protected:
     virtual void handleLowerMsg(cMessage* msg);
 
     /** @brief Handle self messages */
-    virtual void handleSelfMsg(cMessage* msg) { };
+    virtual void handleSelfMsg(cMessage* /*msg*/) { };
 
     /** @brief Handle control messages from lower layer */
     virtual void handleLowerControl(cMessage* msg);

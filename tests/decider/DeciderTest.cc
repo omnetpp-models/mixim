@@ -282,7 +282,7 @@ void DeciderTest::executeTestCase(TestCaseIdentifier testCase) {
 }
 
 
-Decider* DeciderTest::initDeciderTest(std::string name, ParameterMap& params) {
+Decider* DeciderTest::initDeciderTest(std::string name, ParameterMap& /*params*/) {
 
 	//reset globals
 	if(name == "SNRThresholdDeciderNew") {
@@ -874,7 +874,7 @@ void DeciderTest::sendControlMsgToMac(cMessage* msg)
 /**
  * SPECIAL TESTING IMPLEMENTATION: PLEASE REFER TO HEADER-FILE!
  */
-void DeciderTest::sendUp(AirFrame* packet, DeciderResult* result)
+void DeciderTest::sendUp(AirFrame* packet, DeciderResult* /*result*/)
 {
 
 	// signal that method has been called
@@ -1705,32 +1705,32 @@ void DeciderTest::executeSNRNewTestCase()
  * Return a string with the pattern
  * "[module name] - passed text"
  */
-std::string DeciderTest::log(std::string msg) {
+std::string DeciderTest::log(std::string msg) const {
 	return "[" + deciderName + " Test] - " + msg;
 }
 
 
-ConstMapping* DeciderTest::getThermalNoise(simtime_t_cref from, simtime_t_cref to)
+ConstMapping* DeciderTest::getThermalNoise(simtime_t_cref /*from*/, simtime_t_cref /*to*/)
 {
 	return NULL;
 }
 
-void DeciderTest::cancelScheduledMessage(cMessage* msg)
+void DeciderTest::cancelScheduledMessage(cMessage* /*msg*/)
 {
 	return;
 }
 
-void DeciderTest::drawCurrent(double amount, int activity)
+void DeciderTest::drawCurrent(double /*amount*/, int /*activity*/)
 {
 	return;
 }
 
-BaseWorldUtility* DeciderTest::getWorldUtility()
+BaseWorldUtility* DeciderTest::getWorldUtility() const
 {
 	return 0;
 }
 
-void DeciderTest::recordScalar(const char *name, double value, const char *unit)
+void DeciderTest::recordScalar(const char */*name*/, double /*value*/, const char */*unit*/)
 {
 	return;
 }

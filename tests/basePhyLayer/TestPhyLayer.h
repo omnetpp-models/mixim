@@ -29,12 +29,12 @@ protected:
 	// prepared RSSI mapping for testing purposes
 	Mapping* testRSSIMap;
 
-	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params);
+	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
 
 	virtual Decider* getDeciderFromName(std::string name, ParameterMap& params);
 
-	virtual bool isKnownProtocolId(int id);
-	virtual int myProtocolId();
+	virtual bool isKnownProtocolId(int id) const;
+	virtual int myProtocolId() const;
 
 public:
 	virtual void initialize(int stage);

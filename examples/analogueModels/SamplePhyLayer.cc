@@ -52,7 +52,7 @@ void SamplePhyLayer::handleMessage(cMessage* msg) {
 	PhyLayer::handleMessage(msg);
 }
 
-void SamplePhyLayer::log(std::string msg) {
+void SamplePhyLayer::log(std::string msg) const {
 	ev << "[Host " << myIndex << "] - PhyLayer: " << msg << endl;
 }
 
@@ -60,7 +60,7 @@ void SamplePhyLayer::log(std::string msg) {
  * @brief Creates and initializes a RandomFreqTimeModel with the passed
  * parameter values.
  */
-AnalogueModel* SamplePhyLayer::createRandomFreqTimeModel(ParameterMap& params){
+AnalogueModel* SamplePhyLayer::createRandomFreqTimeModel(ParameterMap& params) const{
 
 	//get the "seed"-parameter from the config
 	ParameterMap::iterator it = params.find("seed");
@@ -79,7 +79,7 @@ AnalogueModel* SamplePhyLayer::createRandomFreqTimeModel(ParameterMap& params){
  * @brief Creates and initializes a RandomFreqOnlyModel with the passed
  * parameter values.
  */
-AnalogueModel* SamplePhyLayer::createRandomFrequencyOnlyModel(ParameterMap& params){
+AnalogueModel* SamplePhyLayer::createRandomFrequencyOnlyModel(ParameterMap& params) const{
 
 	//get the "seed"-parameter from the config
 	ParameterMap::iterator it = params.find("seed");
@@ -94,7 +94,7 @@ AnalogueModel* SamplePhyLayer::createRandomFrequencyOnlyModel(ParameterMap& para
 
 }
 
-AnalogueModel* SamplePhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& params) {
+AnalogueModel* SamplePhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& params) const {
 
 	if(name == "RandomFreqTimeModel")
 		return createRandomFreqTimeModel(params);

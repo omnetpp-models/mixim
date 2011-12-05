@@ -124,14 +124,14 @@ public:
 
 	virtual simtime_t processSignal(AirFrame* frame);
 
-	double getAvgThreshold() {
+	double getAvgThreshold() const {
 		if (nbSymbols > 0)
 			return allThresholds / nbSymbols;
 		else
 			return 0;
 	};
 
-	double getNoiseValue() {
+	double getNoiseValue() const {
 		 return normal(0, sqrt(noiseVariance));
 	}
 
@@ -149,7 +149,7 @@ public:
 
 	// compatibility function to allow running MAC layers that depend on channel state information
 	// from PHY layer. Returns last SNR
-	virtual ChannelState getChannelState();
+	virtual ChannelState getChannelState() const;
 
 protected:
 	bool decodePacket(Signal* signal, std::vector<bool> * receivedBits);

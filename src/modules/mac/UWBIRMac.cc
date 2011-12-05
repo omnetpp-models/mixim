@@ -104,7 +104,7 @@ void UWBIRMac::finish() {
 	}
 }
 
-void UWBIRMac::prepareData(UWBIRMacPkt* packet, IEEE802154A::config cfg) {
+void UWBIRMac::prepareData(UWBIRMacPkt* packet, IEEE802154A::config /*cfg*/) {
 	// generate signal
 	//int nbSymbols = packet->getByteLength() * 8 + 92; // to move to ieee802154a.h
 	debugEV << "prepare Data for a packet with " << packet->getByteLength() << " data bytes." << endl;

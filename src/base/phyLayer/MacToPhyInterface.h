@@ -50,7 +50,7 @@ public:
 	 *
 	 * This method is mainly used by the mac layer.
 	 */
-	virtual int getRadioState() = 0;
+	virtual int getRadioState() const = 0;
 
 	/**
 	 * @brief Tells the BasePhyLayer to switch to the specified
@@ -73,7 +73,7 @@ public:
 	 * NOTE: Channel state information is not available until initialization
 	 *       is over and the simulation has started.
 	 */
-	virtual ChannelState getChannelState() = 0;
+	virtual ChannelState getChannelState() const = 0;
 
 	/**
 	 * @brief Returns the length of the phy header in bits.
@@ -83,16 +83,16 @@ public:
      * the packet and therefore needs the length of the
      * phy header.
 	 */
-	virtual int getPhyHeaderLength() = 0;
+	virtual int getPhyHeaderLength() const = 0;
 
 	/** @brief Sets the channel currently used by the radio. */
 	virtual void setCurrentRadioChannel(int newRadioChannel) = 0;
 
 	/** @brief Returns the channel currently used by the radio. */
-	virtual int getCurrentRadioChannel() = 0;
+	virtual int getCurrentRadioChannel() const = 0;
 
 	/** @brief Returns the number of channels available on this radio. */
-	virtual int getNbRadioChannels() = 0;
+	virtual int getNbRadioChannels() const = 0;
 };
 
 #endif /*MACTOPHYINTERFACE_H_*/

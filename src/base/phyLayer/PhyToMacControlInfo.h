@@ -56,7 +56,7 @@ public:
      * @param pMsg				The message where the "control info" shall be attached.
      * @param pDeciderResult	The decider results.
      */
-    static cObject *const setControlInfo(cMessage *const pMsg, DeciderResult *const pDeciderResult) {
+    static cObject* setControlInfo(cMessage *const pMsg, DeciderResult *const pDeciderResult) {
     	PhyToMacControlInfo *const cCtrlInfo = new PhyToMacControlInfo(pDeciderResult);
     	pMsg->setControlInfo(cCtrlInfo);
 
@@ -65,13 +65,13 @@ public:
     /**
      * @brief extracts the decider result from message "control info".
      */
-    static DeciderResult *const getDeciderResult(cMessage *const pMsg) {
+    static DeciderResult* getDeciderResult(cMessage *const pMsg) {
     	return getDeciderResultFromControlInfo(pMsg->getControlInfo());
     }
     /**
      * @brief extracts the decider result from message "control info".
      */
-    static DeciderResult *const getDeciderResultFromControlInfo(cObject *const pCtrlInfo) {
+    static DeciderResult* getDeciderResultFromControlInfo(cObject *const pCtrlInfo) {
     	PhyToMacControlInfo *const cCtrlInfo = dynamic_cast<PhyToMacControlInfo *const>(pCtrlInfo);
 
     	if (cCtrlInfo)

@@ -68,10 +68,7 @@
 #include "MiXiMDefs.h"
 #include "BasePhyLayer.h"
 #include "RadioUWBIR.h"
-#include "UWBIRStochasticPathlossModel.h"
-#include "UWBIRIEEE802154APathlossModel.h"
 #include "HostState.h"
-
 
 class DeciderUWBIREDSyncOnAddress;
 class DeciderUWBIREDSync;
@@ -122,12 +119,12 @@ class MIXIM_API PhyLayerUWBIR : public BasePhyLayer
 	friend class DeciderUWBIRED;
 
 public:
-        PhyLayerUWBIR() : uwbpathloss(0), ieee802154AChannel(0) {}
+        PhyLayerUWBIR() : BasePhyLayer() {}
 
     void finish();
 
     // this function allows to include common xml documents for ned parameters as ned functions
-    static t_dynamic_expression_value ghassemzadehNLOSFunc(cComponent *context, t_dynamic_expression_value argv[], int argc) {
+    static t_dynamic_expression_value ghassemzadehNLOSFunc(cComponent */*context*/, t_dynamic_expression_value argv[] __attribute__((unused)), int /*argc*/) {
       const char * ghassemzadehnlosxml =
     		  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     		  "<root>"
@@ -154,27 +151,24 @@ public:
 
 
 protected:
-
-    UWBIRStochasticPathlossModel* uwbpathloss;
-    UWBIRIEEE802154APathlossModel* ieee802154AChannel;
     DeciderUWBIRED* uwbdecider;
 
     virtual AirFrame *encapsMsg(cPacket *msg);
 
-    virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params);
+    virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
 
-    AnalogueModel* createUWBIRStochasticPathlossModel(ParameterMap & params);
-    AnalogueModel* createUWBIRIEEE802154APathlossModel(ParameterMap & params);
-    AnalogueModel* createIntensityModel(ParameterMap & params);
+    AnalogueModel* createUWBIRStochasticPathlossModel(ParameterMap & params) const;
+    AnalogueModel* createUWBIRIEEE802154APathlossModel(ParameterMap & params) const;
+    AnalogueModel* createIntensityModel(ParameterMap & params) const;
     virtual Decider* getDeciderFromName(std::string name, ParameterMap& params);
-    virtual Radio* initializeRadio();
+    virtual Radio* initializeRadio() const;
 
     RadioUWBIR* uwbradio;
 
     virtual void switchRadioToRX() {
     	Enter_Method_Silent();
     	uwbradio->startReceivingFrame(simTime());
-    	setRadioCurrent(uwbradio->getCurrentState());
+    	setRadioCurrent(radio->getCurrentState());
     }
 
     virtual void switchRadioToSync() {

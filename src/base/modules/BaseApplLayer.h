@@ -148,7 +148,7 @@ protected:
 	 *
 	 * We use the node module index as application address
 	 **/
-	virtual const LAddress::L3Type myApplAddr() const {
+	virtual LAddress::L3Type myApplAddr() const {
 		return LAddress::L3Type( getParentModule()->getIndex() );
 	};
 

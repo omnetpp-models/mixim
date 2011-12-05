@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void RadioStateAnalogueModel::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
+void RadioStateAnalogueModel::filterSignal(AirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
 {
 	Signal& signal = frame->getSignal();
 	RSAMMapping* attMapping = new RSAMMapping(this, signal.getReceptionStart(), signal.getReceptionEnd());
@@ -326,10 +326,10 @@ void RSAMConstMappingIterator::iterateToOverZeroSwitches(simtime_t_cref t)
 	{
 		// and go over (ignore) all zero-time-switches, to the next greater entry (time)
 		while( it != rsam->radioStateAttenuation.end() && !(t < it->getTime()) )
-			it++;
+			++it;
 
 		// go back one step, here the iterator 'it' is placed right
-		it--;
+		--it;
 	}
 }
 
@@ -350,7 +350,7 @@ RSAMMapping::argument_value_t RSAMMapping::getValue(const Argument& pos) const
 	it = upper_bound(rsam->radioStateAttenuation.begin(), rsam->radioStateAttenuation.end(), t);
 
 	// REGULAR CASE: it points to an element that has a predecessor
-	it--; // go back one entry, this one is significant!
+	--it; // go back one entry, this one is significant!
 
 	return it->getValue();
 }

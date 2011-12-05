@@ -183,7 +183,7 @@ protected:
     /*
      * @brief Computes the pathloss as a function of center frequency and bandwidth given in MHz
      */
-    double getPathloss(double fc, double BW);
+    double getPathloss(double fc, double BW) const;
 
 };
 

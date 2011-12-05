@@ -39,7 +39,7 @@ protected:
 	     * @param pMsg		The message where the "control info" shall be attached.
 	     * @param pSignal	The signal which should be send.
 	     */
-	    static cObject *const setControlInfo(cMessage *const pMsg, Signal *const pSignal, const IEEE802154A::config& pConfig = IEEE802154A::cfg_mandatory_16M ) {
+	    static cObject* setControlInfo(cMessage *const pMsg, Signal *const pSignal, const IEEE802154A::config& pConfig = IEEE802154A::cfg_mandatory_16M ) {
 	    	MacToUWBIRPhyControlInfo *const cCtrlInfo = new MacToUWBIRPhyControlInfo(pSignal, pConfig);
 	    	pMsg->setControlInfo(cCtrlInfo);
 
@@ -48,7 +48,7 @@ protected:
 	    /**
 	     * @brief extracts the signal from "control info".
 	     */
-	    static Signal *const getSignalFromControlInfo(cObject *const pCtrlInfo) {
+	    static Signal* getSignalFromControlInfo(cObject *const pCtrlInfo) {
 	    	MacToUWBIRPhyControlInfo *const cCtrlInfo = dynamic_cast<MacToUWBIRPhyControlInfo *const>(pCtrlInfo);
 
 	    	if (cCtrlInfo)

@@ -285,7 +285,7 @@ class MIXIM_API Argument {
 public:
 	typedef DimensionSet::value_type key_type;
 	typedef double                   mapped_type;
-	typedef const mapped_type        mapped_type_cref;
+	typedef mapped_type              mapped_type_cref;
 
 	/** @brief Zero value of a Argument value. */
 	const static mapped_type         MappedZero;
@@ -335,7 +335,7 @@ protected:
 	    {
 	        return IteratorType::operator*().first;
 	    }
-	    const pointer  operator ->() const
+	    pointer operator ->() const
 	    {
 	        return &IteratorType::operator->()->first;
 	    }

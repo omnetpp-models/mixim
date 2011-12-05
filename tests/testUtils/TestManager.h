@@ -82,7 +82,7 @@ protected:
 	 * @param msg A pointer to the message the current stage had been waiting
 	 * for, or NULL.
 	 */
-	virtual void runTests(int run, int stage, cMessage* msg) {};
+	virtual void runTests(int run, int stage, cMessage* msg) {(void)run;(void)stage;(void)msg;};
 
 	/**
 	 * @brief Plans the tests to be executed for the passed test run.
@@ -92,7 +92,7 @@ protected:
 	 *
 	 * @param run The test run to plan the tests for
 	 */
-	virtual void planTests(int run) {};
+	virtual void planTests(int run) {(void)run;};
 
 	/**
 	 * @brief Calles whenever a message arrived at a test module.
@@ -102,7 +102,7 @@ protected:
 	 * @param module The module the message arrived on.
 	 * @param msg The message arrived.
 	 */
-	virtual void onTestModuleMessage(std::string module, cMessage* msg) {}
+	virtual void onTestModuleMessage(std::string module, cMessage* msg) {(void)module;(void)msg;}
 
 	/**
 	 * @brief Reads current run number from ned parameter and calls planTests()

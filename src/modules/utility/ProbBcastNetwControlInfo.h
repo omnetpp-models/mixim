@@ -39,7 +39,7 @@ public:
     virtual ~ProbBcastNetwControlInfo(){};
 
     /** @brief Getter method*/
-    virtual const simtime_t getTtl(){
+    virtual simtime_t_cref getTtl() const {
     	return ttl;
     };
 
@@ -49,7 +49,7 @@ public:
     };
 
     /** @brief Getter method*/
-	virtual const double getCriticality(){
+	virtual double getCriticality() const {
 		return criticality;
 	};
 
@@ -59,7 +59,7 @@ public:
 	};
 
     /** @brief Getter method*/
-	virtual const unsigned int getId(){
+	virtual unsigned int getId() const {
 		return id;
 	};
 

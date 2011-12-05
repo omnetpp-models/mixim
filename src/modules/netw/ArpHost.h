@@ -45,6 +45,7 @@ class MIXIM_API ArpHost : public ArpInterface,
     int offset;
 public:
     virtual void initialize(int stage);
+    virtual ~ArpHost() {}
 
     /** @brief should not be called,
      *  instead direct calls to the radio methods should be used.

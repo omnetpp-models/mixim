@@ -33,7 +33,7 @@ const double UWBIRStochasticPathlossModel::kappa = 1;
 double UWBIRStochasticPathlossModel::n1_limit = 1.25;
 double UWBIRStochasticPathlossModel::n2_limit = 2;
 
-double UWBIRStochasticPathlossModel::simtruncnormal(double mean, double stddev, double a, int rng) {
+double UWBIRStochasticPathlossModel::simtruncnormal(double mean, double stddev, double a, int /*rng*/) {
     double res = a + 1;
     while(res > a || res < -a) {
       res = normal(mean, stddev, 0);
@@ -80,11 +80,11 @@ void UWBIRStochasticPathlossModel::filterSignal(AirFrame *frame, const Coord& se
 }
 
 double UWBIRStochasticPathlossModel::getNarrowBandFreeSpacePathloss(double fc, double distance) {
-    double attenuation = 4*M_PI*distance*fc/BaseWorldUtility::speedOfLight;
-    return 1/(attenuation*attenuation);
+    const double attenuation = 4*M_PI*distance*fc/BaseWorldUtility::speedOfLight;
+    return 1.0/(attenuation*attenuation);
 }
 
-double UWBIRStochasticPathlossModel::getGhassemzadehPathloss(double distance) {
+double UWBIRStochasticPathlossModel::getGhassemzadehPathloss(double distance) const {
     double attenuation = PL0;
     if(distance < d0) {
       distance = d0;
@@ -97,7 +97,7 @@ double UWBIRStochasticPathlossModel::getGhassemzadehPathloss(double distance) {
     return attenuation;
 }
 
-double UWBIRStochasticPathlossModel::getFDPathloss(double freq, double distance) {
+double UWBIRStochasticPathlossModel::getFDPathloss(double freq, double distance) const {
     return 0.5*PL0*ntx*nrx*pow(freq/fc, -2*(kappa+1))/pow(distance/d0, pathloss_exponent);
 }
 

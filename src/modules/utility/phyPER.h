@@ -31,7 +31,7 @@ class MIXIM_API phyPER : public  BaseModule
 {
   protected:
     virtual void initialize(int stage);
-    virtual void handleMessage(cMessage *msg) { };
+    virtual void handleMessage(cMessage */*msg*/) { };
 
     long        nbSyncAttempts;
     long        nbSyncSuccesses;

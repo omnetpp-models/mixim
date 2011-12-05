@@ -46,7 +46,7 @@ public:
      * @brief Returns the currently used channel.
      * @return The currently used channel.
      */
-    int getChannel();
+    int getChannel() const;
 };
 
 #endif

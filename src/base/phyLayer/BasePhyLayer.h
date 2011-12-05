@@ -170,7 +170,7 @@ private:
 	 * @brief Utility function. Reads the parameters of a XML element
 	 * and stores them in the passed ParameterMap reference.
 	 */
-	void getParametersFromXML(cXMLElement* xmlData, ParameterMap& outputMap);
+	void getParametersFromXML(cXMLElement* xmlData, ParameterMap& outputMap) const;
 
 	/**
 	 * @brief Initializes the AnalogueModels with the data from the
@@ -198,7 +198,7 @@ protected:
 	 * @param defaultValue 	- the value to be returned if the parameter
 	 * 				  		  couldn't be found
 	 */
-	template<class T> T readPar(const char* parName, const T defaultValue);
+	template<class T> T readPar(const char* parName, const T defaultValue) const;
 
 	/**
 	 * @brief OMNeT++ initialization function.
@@ -227,7 +227,7 @@ protected:
 	 * Can be overridden by sub-classing phy layers to use their
 	 * own Radio implementations.
 	 */
-	virtual Radio* initializeRadio();
+	virtual Radio* initializeRadio() const;
 
 	/**
 	 * @brief Creates and returns an instance of the AnalogueModel with the
@@ -244,7 +244,7 @@ protected:
 	 * This method has to be overridden if you want to be
 	 * able to load your own AnalogueModels.
 	 */
-	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params);
+	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
 
 	/**
 	 * @brief Creates and returns an instance of the Decider with the specified
@@ -370,7 +370,7 @@ protected:
 	 *
 	 * @return An integer representing the identifier of the used protocol.
 	 */
-	virtual int myProtocolId() { return protocolId; }
+	virtual int myProtocolId() const { return protocolId; }
 
 	/**
 	 * @brief Returns true if the protocol with the passed identifier is
@@ -387,7 +387,7 @@ protected:
 	 * @return Returns true if the passed protocol id is supported by this phy-
 	 * layer.
 	 */
-	virtual bool isKnownProtocolId(int id) { return id == myProtocolId(); }
+	virtual bool isKnownProtocolId(int id) const { return id == myProtocolId(); }
 
 public:
 	BasePhyLayer();
@@ -414,7 +414,7 @@ public:
 	 *
 	 * This method is mainly used by the mac layer.
 	 */
-	virtual int getRadioState();
+	virtual int getRadioState() const;
 
 	/**
 	 * @brief Tells the BasePhyLayer to switch to the specified
@@ -433,7 +433,7 @@ public:
 	 *
 	 * See ChannelState for details.
 	 */
-	virtual ChannelState getChannelState();
+	virtual ChannelState getChannelState() const;
 
 	/**
 	 * @brief Returns the length of the phy header in bits.
@@ -443,16 +443,16 @@ public:
 	 * the packet and therefore needs the length of the
 	 * phy header.
 	 */
-	virtual int getPhyHeaderLength();
+	virtual int getPhyHeaderLength() const;
 
 	/** @brief Sets the channel currently used by the radio. */
 	virtual void setCurrentRadioChannel(int newRadioChannel);
 
 	/** @brief Returns the channel currently used by the radio. */
-	virtual int getCurrentRadioChannel();
+	virtual int getCurrentRadioChannel() const;
 
 	/** @brief Returns the number of channels available on this radio. */
-	virtual int getNbRadioChannels();
+	virtual int getNbRadioChannels() const;
 
 	/*@}*/
 
@@ -535,7 +535,7 @@ public:
 	/**
 	 * @brief Returns a pointer to the simulations world-utility-module.
 	 */
-	virtual BaseWorldUtility* getWorldUtility();
+	virtual BaseWorldUtility* getWorldUtility() const;
 
 	/**
 	 * @brief Records a double into the scalar result file.
@@ -560,7 +560,7 @@ public:
 	 * @param pMsg		The message where the "control info" shall be attached.
 	 * @param pSrcAddr	The MAC address of the message receiver.
 	 */
-	 virtual cObject *const setUpControlInfo(cMessage *const pMsg, DeciderResult *const pDeciderResult);
+	 virtual cObject* setUpControlInfo(cMessage *const pMsg, DeciderResult *const pDeciderResult);
 };
 
 #endif /*BASEPHYLAYER_*/

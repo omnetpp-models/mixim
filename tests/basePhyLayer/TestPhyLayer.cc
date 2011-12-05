@@ -20,11 +20,11 @@ void TestPhyLayer::initialize(int stage) {
 	}
 }
 
-bool TestPhyLayer::isKnownProtocolId(int id) {
+bool TestPhyLayer::isKnownProtocolId(int id) const {
 	return id == protocolID;
 }
 
-int TestPhyLayer::myProtocolId() {
+int TestPhyLayer::myProtocolId() const {
 	return protocolID;
 }
 
@@ -130,7 +130,7 @@ void TestPhyLayer::testInitialisation() {
 }
 
 
-AnalogueModel* TestPhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& params) {
+AnalogueModel* TestPhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& params) const {
 
 	AnalogueModel* model = BasePhyLayer::getAnalogueModelFromName(name, params);
 

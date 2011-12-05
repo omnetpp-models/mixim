@@ -100,10 +100,10 @@ protected:
     Dimension frequency;
     cOutVector pathlosses;  // outputs computed pathlosses. Allows to compute Eb = Epulse*pathloss for Eb/N0 computations. (N0 is the noise sampled by the receiver)
 
-    double getNarrowBandFreeSpacePathloss(double fc, double distance);
-    double getGhassemzadehPathloss(double distance);
-    double getFDPathloss(double freq, double distance);
-    double simtruncnormal(double mean, double stddev, double a, int rng);
+    static double getNarrowBandFreeSpacePathloss(double fc, double distance);
+    double getGhassemzadehPathloss(double distance) const;
+    double getFDPathloss(double freq, double distance) const;
+    static double simtruncnormal(double mean, double stddev, double a, int rng);
 
 };
 

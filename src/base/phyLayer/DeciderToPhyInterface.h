@@ -117,7 +117,7 @@ public:
 	/**
 	 * @brief Returns a pointer to the simulations world-utility-module.
 	 */
-	virtual BaseWorldUtility* getWorldUtility() = 0;
+	virtual BaseWorldUtility* getWorldUtility() const = 0;
 
 	/**
 	 * @brief Utility method to enable a Decider, which isn't an OMNeT-module, to
@@ -131,7 +131,7 @@ public:
 	virtual void recordScalar(const char *name, double value, const char *unit=NULL) = 0;
 
 	/** @brief Returns the channel currently used by the radio. */
-	virtual int getCurrentRadioChannel() = 0;
+	virtual int getCurrentRadioChannel() const = 0;
 };
 
 #endif /*DECIDER_TO_PHY_INTERFACE_H_*/

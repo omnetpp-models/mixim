@@ -110,7 +110,7 @@ protected:
     virtual void handleLowerMsg(cMessage *);
 
     /** @brief we have no self messages */
-    virtual void handleSelfMsg(cMessage* msg) {};
+    virtual void handleSelfMsg(cMessage* /*msg*/) {};
     
     /** @brief Checks whether a message was already broadcasted*/
     bool notBroadcasted( NetwPkt* );

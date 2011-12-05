@@ -24,7 +24,7 @@ typedef NetwToMacControlInfo  tNetwToMacControlInfoBase;
 #endif
 
 
-cObject *const NetwToMacControlInfo::setControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr)
+cObject* NetwToMacControlInfo::setControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr)
 {
 	tNetwToMacControlInfoBase *const cCtrlInfo = new tNetwToMacControlInfoBase();
 

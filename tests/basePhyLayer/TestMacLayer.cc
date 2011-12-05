@@ -61,7 +61,7 @@ void TestMacLayer::runTests(int run, int state, const cMessage* msg)
 		fail("Unknown or duplicate test run: " + toString(run));
 }
 
-void TestMacLayer::testRun1(int stage, const cMessage* msg){
+void TestMacLayer::testRun1(int stage, const cMessage* /*msg*/){
 	Enter_Method_Silent();
 	if(stage == 0)
 	{
@@ -156,7 +156,7 @@ void TestMacLayer::testRun1(int stage, const cMessage* msg){
  * Testhandling for run 2:
  * - check sending on already sending
  */
-void TestMacLayer::testRun2(int stage, const cMessage* msg){
+void TestMacLayer::testRun2(int stage, const cMessage* /*msg*/){
 	switch(stage) {
 	case 0:
 		waitForTX();
@@ -230,7 +230,7 @@ void TestMacLayer::testRun3(int stage, const cMessage* msg){
  * Sending real AirFrames over the channel that SNRThresholdDecider can obtain
  * by calling the DeciderToPhyInterface will be done later.
  */
-void TestMacLayer::testRun5(int stage, const cMessage* msg)
+void TestMacLayer::testRun5(int stage, const cMessage* /*msg*/)
 {
 	switch (stage) {
 		case 0:
@@ -356,7 +356,7 @@ void TestMacLayer::testRun6(int stage, const cMessage* msg)
 	*/
 }
 
-void TestMacLayer::testRun7(int stage, const cMessage* msg)
+void TestMacLayer::testRun7(int stage, const cMessage* /*msg*/)
 {
 	Enter_Method_Silent();
 
@@ -464,7 +464,7 @@ void TestMacLayer::testChannelInfo(int stage) {
 	//displayPassed = false;
 }
 
-void TestMacLayer::testSending1(int stage, const cMessage* lastMsg) {
+void TestMacLayer::testSending1(int stage, const cMessage* /*lastMsg*/) {
 	switch(stage) {
 	case 0: {
 		waitForTX();

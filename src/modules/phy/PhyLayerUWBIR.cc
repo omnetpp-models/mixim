@@ -7,6 +7,8 @@
 #include "MacToUWBIRPhyControlInfo.h"
 #include "AirFrameUWBIR_m.h"
 #include "BaseWorldUtility.h"
+#include "UWBIRStochasticPathlossModel.h"
+#include "UWBIRIEEE802154APathlossModel.h"
 
 Define_Module(PhyLayerUWBIR);
 
@@ -35,20 +37,21 @@ void PhyLayerUWBIR::initialize(int stage) {
 		rxTxCurrent = getParentModule()->par( "rxTxCurrent" );
 		txRxCurrent = getParentModule()->par( "txRxCurrent" );
 		syncCurrent = getParentModule()->par( "syncCurrent" ); // assume instantaneous transitions between rx and sync
+		uwbradio    = dynamic_cast<RadioUWBIR*>(radio);
 	} else if (stage == 1) {
 		registerWithBattery("physical layer", numActivities);
-		setRadioCurrent(uwbradio->getCurrentState());
+		setRadioCurrent(radio->getCurrentState());
 	}
 
 }
 
 
-Radio* PhyLayerUWBIR::initializeRadio() {
+Radio* PhyLayerUWBIR::initializeRadio() const {
 	int initialRadioState = par("initialRadioState"); //readPar("initalRadioState", (int) RadioUWBIR::SYNC);
 	double radioMinAtt = readPar("radioMinAtt", 1.0);
 	double radioMaxAtt = readPar("radioMaxAtt", 0.0);
 
-	uwbradio = RadioUWBIR::createNewUWBIRRadio(initialRadioState, recordStats, radioMinAtt, radioMaxAtt);
+	RadioUWBIR* uwbradio = RadioUWBIR::createNewUWBIRRadio(recordStats, initialRadioState, radioMinAtt, radioMaxAtt);
 
 	//	- switch times to TX
 	//simtime_t rxToTX = readPar("timeRXToTX", 0.0);
@@ -56,18 +59,18 @@ Radio* PhyLayerUWBIR::initializeRadio() {
 
 	// Radio timers
 	// From Sleep mode
-	uwbradio->setSwitchTime(RadioUWBIR::SLEEP, RadioUWBIR::RX, par("timeSleepToRX"));
-	uwbradio->setSwitchTime(RadioUWBIR::SLEEP, RadioUWBIR::TX, par("timeSleepToTX"));
+	uwbradio->setSwitchTime(RadioUWBIR::SLEEP, RadioUWBIR::RX, par("timeSleepToRX").doubleValue());
+	uwbradio->setSwitchTime(RadioUWBIR::SLEEP, RadioUWBIR::TX, par("timeSleepToTX").doubleValue());
 	uwbradio->setSwitchTime(RadioUWBIR::SLEEP, RadioUWBIR::SLEEP, 0);
 
 	// From TX mode
-	uwbradio->setSwitchTime(RadioUWBIR::TX, RadioUWBIR::SYNC, par("timeTXToRX"));
-	uwbradio->setSwitchTime(RadioUWBIR::TX, RadioUWBIR::RX, par("timeTXToRX"));
+	uwbradio->setSwitchTime(RadioUWBIR::TX, RadioUWBIR::SYNC, par("timeTXToRX").doubleValue());
+	uwbradio->setSwitchTime(RadioUWBIR::TX, RadioUWBIR::RX, par("timeTXToRX").doubleValue());
 
 	// From RX mode
-	uwbradio->setSwitchTime(RadioUWBIR::RX, RadioUWBIR::TX, par("timeRXToTX"));
+	uwbradio->setSwitchTime(RadioUWBIR::RX, RadioUWBIR::TX, par("timeRXToTX").doubleValue());
 	uwbradio->setSwitchTime(RadioUWBIR::RX, RadioUWBIR::SYNC, 0.000000001);
-	uwbradio->setSwitchTime(RadioUWBIR::SYNC, RadioUWBIR::TX, par("timeRXToTX"));
+	uwbradio->setSwitchTime(RadioUWBIR::SYNC, RadioUWBIR::TX, par("timeRXToTX").doubleValue());
 
 	// From SYNC mode
 	uwbradio->setSwitchTime(RadioUWBIR::SYNC, RadioUWBIR::RX, 0.000000001);
@@ -75,18 +78,14 @@ Radio* PhyLayerUWBIR::initializeRadio() {
 	return uwbradio;
 }
 
-AnalogueModel* PhyLayerUWBIR::getAnalogueModelFromName(std::string name,
-		ParameterMap& params) {
+AnalogueModel* PhyLayerUWBIR::getAnalogueModelFromName(std::string name, ParameterMap& params) const {
 	if (name == "UWBIRStochasticPathlossModel")
 		return createUWBIRStochasticPathlossModel(params);
 
 	if (name == "UWBIRIEEE802154APathlossModel")
 		return createUWBIRIEEE802154APathlossModel(params);
 
-	if (name == "RadioStateAnalogueModel")
-		return uwbradio->getAnalogueModel();
-
-	return 0;
+	return BasePhyLayer::getAnalogueModelFromName(name, params);
 }
 
 /*
@@ -95,8 +94,7 @@ AnalogueModel* PhyLayerUWBIR::getAnalogueModelFromName(std::string name,
  * to any signal at the beginning of its reception, and their outputs
  * (attenuations objects) are then associated to the incoming signal object.
  **/
-AnalogueModel* PhyLayerUWBIR::createUWBIRStochasticPathlossModel(
-		ParameterMap & params) {
+AnalogueModel* PhyLayerUWBIR::createUWBIRStochasticPathlossModel(ParameterMap & params) const {
 	//get the pathloss exponent parameter from the config
 	ParameterMap::iterator it = params.find("PL0");
 	double PL0 = it->second.doubleValue();
@@ -138,14 +136,11 @@ AnalogueModel* PhyLayerUWBIR::createUWBIRStochasticPathlossModel(
 		shadowing = it->second.boolValue();
 	}
 
-	uwbpathloss = new UWBIRStochasticPathlossModel(PL0, mu_gamma, sigma_gamma,
+	return new UWBIRStochasticPathlossModel(PL0, mu_gamma, sigma_gamma,
 			mu_sigma, sigma_sigma, isEnabled, shadowing);
-
-	return uwbpathloss;
-
 }
 
-AnalogueModel* PhyLayerUWBIR::createUWBIRIEEE802154APathlossModel(ParameterMap & params) {
+AnalogueModel* PhyLayerUWBIR::createUWBIRIEEE802154APathlossModel(ParameterMap & params) const {
 	int CM;
 	ParameterMap::iterator it = params.find("CM");
 	if (it == params.end()) {
@@ -167,8 +162,7 @@ AnalogueModel* PhyLayerUWBIR::createUWBIRIEEE802154APathlossModel(ParameterMap &
 		shadowing = it->second.boolValue();
 	}
 
-	ieee802154AChannel = new UWBIRIEEE802154APathlossModel(CM, threshold, shadowing);
-	return ieee802154AChannel;
+	return new UWBIRIEEE802154APathlossModel(CM, threshold, shadowing);
 }
 
 Decider* PhyLayerUWBIR::getDeciderFromName(std::string name, ParameterMap& params) {

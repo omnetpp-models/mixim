@@ -180,7 +180,7 @@ const UWBIRIEEE802154APathlossModel::CMconfig UWBIRIEEE802154APathlossModel::CMc
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}  // CM9
 };
 
-void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
+void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
 {
     Signal& signal = frame->getSignal();
     // We create a new "fake" txPower to add multipath taps
@@ -388,7 +388,7 @@ void UWBIRIEEE802154APathlossModel::addEchoes(simtime_t_cref pulseStart) {
  * Returns the integral of formula (12) assuming constant nrx, ntx over BW
  * and kappa != 0.5
  */
-double UWBIRIEEE802154APathlossModel::getPathloss(double fc, double BW) {
+double UWBIRIEEE802154APathlossModel::getPathloss(double /*fc*/, double /*BW*/) const {
 	double pathloss = 0.5; // "antenna attenuation factor"
 	pathloss = pathloss * cfg.PL0;  // pathloss at reference distance
 	pathloss = pathloss * ntx * nrx; // antenna effects

@@ -177,7 +177,7 @@ void BaseNetwLayer::handleLowerControl(cMessage* msg)
 /**
  * Attaches a "control info" structure (object) to the down message pMsg.
  */
-cObject *const BaseNetwLayer::setDownControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr)
+cObject* BaseNetwLayer::setDownControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr)
 {
 	return NetwToMacControlInfo::setControlInfo(pMsg, pDestAddr);
 }
@@ -185,7 +185,7 @@ cObject *const BaseNetwLayer::setDownControlInfo(cMessage *const pMsg, const LAd
 /**
  * Attaches a "control info" structure (object) to the up message pMsg.
  */
-cObject *const BaseNetwLayer::setUpControlInfo(cMessage *const pMsg, const LAddress::L3Type& pSrcAddr)
+cObject* BaseNetwLayer::setUpControlInfo(cMessage *const pMsg, const LAddress::L3Type& pSrcAddr)
 {
 	return NetwControlInfo::setControlInfo(pMsg, pSrcAddr);
 }

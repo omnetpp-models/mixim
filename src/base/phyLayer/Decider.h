@@ -99,7 +99,7 @@ public:
 	 * immediately (in contrast to sending a ChannelSenseRequest,
 	 * i.e. sending a cMessage over the OMNeT-control-channel)
 	 */
-	virtual ChannelState getChannelState();
+	virtual ChannelState getChannelState() const;
 
 	/**
 	 * @brief This function is called by the PhyLayer to hand over a
@@ -131,7 +131,7 @@ public:
 	 *
 	 * @param newChannel The new channel the radio has changed to.
 	 */
-	virtual void channelChanged(int newChannel) {}
+	virtual void channelChanged(int /*newChannel*/) {}
 
 };
 

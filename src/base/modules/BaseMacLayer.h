@@ -111,7 +111,7 @@ public:
     /**
      * @brief Returns the MAC address of this MAC module.
      */
-    const LAddress::L2Type& getMACAddress() { return myMacAddr; }
+    const LAddress::L2Type& getMACAddress() const { return myMacAddr; }
 
 protected:
 
@@ -197,7 +197,7 @@ protected:
      * @brief Returns a pointer to this MACs NICs ConnectionManager module.
      * @return pointer to the connection manager module
      */
-    BaseConnectionManager* getConnectionManager();
+    BaseConnectionManager* getConnectionManager() const;
 
     /**
      * @brief Extracts the MAC address from the "control info" structure (object).
@@ -207,7 +207,7 @@ protected:
      * @param pCtrlInfo	The "control info" structure (object) prev. set by NetwToMacControlInfo::setControlInfo().
      * @return The MAC address of message receiver.
      */
-    virtual const LAddress::L2Type& getUpperDestinationFromControlInfo(const cObject *const pCtrlInfo);
+    virtual const LAddress::L2Type& getUpperDestinationFromControlInfo(const cObject *const pCtrlInfo) const;
 
     /**
      * @brief Attaches a "control info" (MacToNetw) structure (object) to the message pMsg.

@@ -38,7 +38,7 @@ void WorldUtilityStats::initialize(int stage)
 }
 
 
-void WorldUtilityStats::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
+void WorldUtilityStats::receiveSignal(cComponent */*source*/, simsignal_t signalID, cObject *obj)
 {
 	Enter_Method_Silent();
 	if(signalID == BaseLayer::catPacketSignal)

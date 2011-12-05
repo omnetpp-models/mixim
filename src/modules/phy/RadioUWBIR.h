@@ -39,10 +39,10 @@ public:
 	};
 
 	/* Static factory method (see Radio class in PhyUtils.h) */
-	static RadioUWBIR* createNewUWBIRRadio(int initialState,
-								 bool recordStats,
-								 double minAtt = 1.0,
-								 double maxAtt = 0.0)
+	static RadioUWBIR* createNewUWBIRRadio(bool                       recordStats,
+	                                       int                        initialState,
+	      	                               Argument::mapped_type_cref minAtt       = Argument::MappedOne,
+	      	                               Argument::mapped_type_cref maxAtt       = Argument::MappedZero)
 	{
 		return new RadioUWBIR(RadioUWBIR::UWBIR_NUM_RADIO_STATES,
 						 recordStats,

@@ -523,7 +523,7 @@ public:
 	 * Return a string with the pattern
 	 * "[module name] - passed text"
 	 */
-	std::string log(std::string msg);
+	std::string log(std::string msg) const;
 
 	/**
 	 * @brief Returns a Mapping which defines the thermal noise in
@@ -555,7 +555,7 @@ public:
 	/**
 	 * @brief Returns a pointer to the simulations world-utility-module.
 	 */
-	virtual BaseWorldUtility* getWorldUtility();
+	virtual BaseWorldUtility* getWorldUtility() const;
 
 	/**
 	 * @brief Utility method to enable a Decider, which isn't an OMNeT-module, to
@@ -578,7 +578,7 @@ public:
 	 */
 	virtual void rescheduleMessage(cMessage* msg, simtime_t_cref t);
 
-	virtual int getCurrentRadioChannel()  { return -1; }
+	virtual int getCurrentRadioChannel() const { return -1; }
 
 
 	//---------SimpleTest implementation-----------

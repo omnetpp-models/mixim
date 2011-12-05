@@ -28,7 +28,7 @@ double LogNormalShadowing::randomLogNormalGain() const {
 	return FWMath::dBm2mW(-1.0 * normal(mean, stdDev));
 }
 
-void LogNormalShadowing::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos) {
+void LogNormalShadowing::filterSignal(AirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/) {
 	Signal&   signal = frame->getSignal();
 	simtime_t start  = signal.getReceptionStart();
 	simtime_t end    = signal.getReceptionEnd();

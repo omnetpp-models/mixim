@@ -24,7 +24,8 @@
  */
 class MIXIM_API ArpInterface {
 public:
-	/** @brief returns a L2 address to a given L3 address.*/
+    virtual ~ArpInterface() {}
+    /** @brief returns a L2 address to a given L3 address.*/
     virtual LAddress::L2Type getMacAddr(const LAddress::L3Type& netwAddr) const = 0;
 };
 

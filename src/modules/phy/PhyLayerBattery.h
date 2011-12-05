@@ -114,7 +114,7 @@ protected:
 	 * a default TX-current for every transmission but a current depending on
 	 * the actual used TX power for a packet.
 	 */
-	virtual double calcTXCurrentForPacket(MacPkt* pkt, MacToPhyControlInfo* cInfo)
+	virtual double calcTXCurrentForPacket(MacPkt* /*pkt*/, MacToPhyControlInfo* /*cInfo*/) const
 	{ return -1.0; }
 
 	/** @brief Updates the actual current drawn for the passed state.*/

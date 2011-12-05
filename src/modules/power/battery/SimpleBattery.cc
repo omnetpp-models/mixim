@@ -236,7 +236,7 @@ void SimpleBattery::handleMessage(cMessage *msg) {
 	}
 }
 
-void SimpleBattery::handleHostState(const HostState& state)
+void SimpleBattery::handleHostState(const HostState& /*state*/)
 {
 	//does nothing yet
 }

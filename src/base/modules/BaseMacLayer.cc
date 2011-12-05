@@ -303,12 +303,12 @@ ConstMapping* BaseMacLayer::createSingleFrequencyMapping(simtime_t_cref         
 	return res;
 }
 
-BaseConnectionManager* BaseMacLayer::getConnectionManager() {
+BaseConnectionManager* BaseMacLayer::getConnectionManager() const {
 	cModule* nic = getParentModule();
 	return ChannelAccess::getConnectionManager(nic);
 }
 
-const LAddress::L2Type& BaseMacLayer::getUpperDestinationFromControlInfo(const cObject *const pCtrlInfo) {
+const LAddress::L2Type& BaseMacLayer::getUpperDestinationFromControlInfo(const cObject *const pCtrlInfo) const {
 	return NetwToMacControlInfo::getDestFromControlInfo(pCtrlInfo);
 }
 

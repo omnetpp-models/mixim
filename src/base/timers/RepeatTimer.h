@@ -59,7 +59,7 @@ public:
 	}
 
 	virtual void init(BaseModule * parent);
-	virtual void handleRepeatTimer(unsigned int index){}
+	virtual void handleRepeatTimer(unsigned int /*index*/){}
 };
 
 #endif

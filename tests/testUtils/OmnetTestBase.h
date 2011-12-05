@@ -182,7 +182,7 @@ public:
 		assertTrue("Tests should have been executed!", testsExecuted, true);
 	}
 	
-	virtual void initialize(int stage){
+	virtual void initialize(int /*stage*/){
 		planTests();
 		runTests();
 	}

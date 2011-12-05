@@ -55,7 +55,7 @@ class MIXIM_API NetwControlInfo : public cObject
     virtual ~NetwControlInfo(){};
 
     /** @brief Getter method*/
-    virtual const LAddress::L3Type& getNetwAddr(){
+    virtual const LAddress::L3Type& getNetwAddr() const {
 	return netwAddr;
     };
 
@@ -78,7 +78,7 @@ class MIXIM_API NetwControlInfo : public cObject
      * @param pMsg	The message where the "control info" shall be attached.
      * @param pAddr	The network address of to save.
      */
-    static cObject *const setControlInfo(cMessage *const pMsg, const LAddress::L3Type& pAddr) {
+    static cObject* setControlInfo(cMessage *const pMsg, const LAddress::L3Type& pAddr) {
     	NetwControlInfo *const cCtrlInfo = new NetwControlInfo(pAddr);
     	pMsg->setControlInfo(cCtrlInfo);
 

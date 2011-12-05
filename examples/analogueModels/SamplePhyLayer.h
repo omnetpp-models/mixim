@@ -31,10 +31,10 @@ protected:
 	 * by them).
 	 */
 	virtual AnalogueModel* getAnalogueModelFromName(std::string name,
-													ParameterMap& params);
+													ParameterMap& params) const;
 
-	AnalogueModel* createRandomFreqTimeModel(ParameterMap & params);
-	AnalogueModel* createRandomFrequencyOnlyModel(ParameterMap & params);
+	AnalogueModel* createRandomFreqTimeModel(ParameterMap & params) const;
+	AnalogueModel* createRandomFrequencyOnlyModel(ParameterMap & params) const;
 
 	/**
 	 * @brief This method is called by the PhyLayer to initialize
@@ -46,7 +46,7 @@ protected:
 	 */
 	virtual Decider* getDeciderFromName(std::string name, ParameterMap& params);
 
-	void log(std::string msg);
+	void log(std::string msg) const;
 
 	/**
 	 * Converts the passed value to a string. There has to be
@@ -55,7 +55,7 @@ protected:
 	 *
 	 * std::ostream& operator<<(std::ostream& o, const T& v)
 	 */
-	template<class T> std::string toString(const T& v) {
+	template<class T> std::string toString(const T& v) const {
 		std::ostringstream o;
 		o << v;
 		return o.str();

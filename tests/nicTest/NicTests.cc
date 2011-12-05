@@ -87,7 +87,7 @@ void NicTests::planTestRun5()
 	planTest("1", "Channel usage should be about same as run 2.");
 }
 
-void NicTests::testRun1(int stage, cMessage* msg)
+void NicTests::testRun1(int stage, cMessage* /*msg*/)
 {
 	if(stage == 0) {
 		getModule<TestApp>("app1")->testRun1(stage);
@@ -118,7 +118,7 @@ void NicTests::testRun1(int stage, cMessage* msg)
 	//getModule<TestMacLayer>("mac0")->testRun1(stage, msg);
 }
 
-void NicTests::testRun2(int stage, cMessage* msg)
+void NicTests::testRun2(int stage, cMessage* /*msg*/)
 {
 	if(stage == 0) {
 		TestApp* app1 = getModule<TestApp>("app1");
@@ -138,7 +138,7 @@ void NicTests::testRun2(int stage, cMessage* msg)
 	}
 }
 
-void NicTests::testRun3(int stage, cMessage* msg)
+void NicTests::testRun3(int stage, cMessage* /*msg*/)
 {
 	if(stage == 0) {
 		TestApp* app1 = getModule<TestApp>("app1");
@@ -158,7 +158,7 @@ void NicTests::testRun3(int stage, cMessage* msg)
 	}
 }
 
-void NicTests::testRun4(int stage, cMessage* msg)
+void NicTests::testRun4(int stage, cMessage* /*msg*/)
 {
 	if(stage == 0) {
 		TestApp* app1 = getModule<TestApp>("app1");
@@ -178,7 +178,7 @@ void NicTests::testRun4(int stage, cMessage* msg)
 	}
 }
 
-void NicTests::testRun5(int stage, cMessage* msg)
+void NicTests::testRun5(int stage, cMessage* /*msg*/)
 {
 	if(stage == 0) {
 		TestApp* app1 = getModule<TestApp>("app1");

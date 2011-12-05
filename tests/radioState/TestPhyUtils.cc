@@ -209,12 +209,12 @@ public:
 	DiagRSAM(double initValue, bool currentlyTracking, simtime_t_cref initTime)
 			: RadioStateAnalogueModel(initValue, currentlyTracking, initTime) {}
 
-	bool getTrackingFlag() { return currentlyTracking; }
+	bool getTrackingFlag() const { return currentlyTracking; }
 
 
-	int getRecvListSize() { return ((int) radioStateAttenuation.size()); }
+	int getRecvListSize() const { return ((int) radioStateAttenuation.size()); }
 
-	ListEntry getFirstRecvListEntry() { return radioStateAttenuation.front(); }
+	ListEntry getFirstRecvListEntry() const { return radioStateAttenuation.front(); }
 
 
 	bool compareRecvLists(RSList refRecvList)

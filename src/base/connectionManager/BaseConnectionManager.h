@@ -184,14 +184,14 @@ private:
 		/**
 		 * @brief Returns the number of GridCoords currently saved in this set.
 		 */
-		unsigned getSize() { return size; }
+		unsigned getSize() const { return size; }
 
 		/**
 		 * @brief Returns the maximum number of elements which can be stored inside
 		 * this set.
 		 * To prevent collisions the set should never be more than 75% filled.
 		 */
-		unsigned getmaxSize() { return maxSize; }
+		unsigned getmaxSize() const { return maxSize; }
 	};
 
 protected:
@@ -266,25 +266,25 @@ private:
     /**
      * @brief Calculates the corresponding cell of a coordinate.
      */
-    GridCoord getCellForCoordinate(const Coord& c);
+    GridCoord getCellForCoordinate(const Coord& c) const;
 
     /**
      * @brief Returns the NicEntries of the cell with specified
      * coordinate.
      */
-    NicEntries& getCellEntries(GridCoord& cell);
+    NicEntries& getCellEntries(const GridCoord& cell);
 
 	/**
 	 * If the value is outside of its bounds (zero and max) this function
 	 * returns -1 if useTorus is false and the wrapped value if useTorus is true.
 	 * Otherwise its just returns the value unchanged.
 	 */
-    int wrapIfTorus(int value, int max);
+    int wrapIfTorus(int value, int max) const;
 
 	/**
 	 * @brief Adds every direct Neighbor of a GridCoord to a union of coords.
 	 */
-    void fillUnionWithNeighbors(CoordSet& gridUnion, GridCoord cell);
+    void fillUnionWithNeighbors(CoordSet& gridUnion, const GridCoord& cell) const;
 protected:
 
 	/**

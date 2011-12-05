@@ -100,7 +100,7 @@ protected:
     virtual void disconnectFrom(NicEntry*) = 0;
 
     /** @brief return the actual gateList*/
-    const GateList& getGateList(){
+    const GateList& getGateList() const {
     	return outConns;
     }
 
@@ -117,9 +117,9 @@ protected:
      *
      * @param to pointer to the NicEntry to which the packet is about to be sent
      */
-    const cGate* getOutGateTo(const NicEntry* to)
+    const cGate* getOutGateTo(const NicEntry* to) const
     {
-    	return outConns[to];
+    	return outConns.at(to);
     };
 
 };

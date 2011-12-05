@@ -41,38 +41,38 @@ protected:
 	 * - LogNormalShadowing
 	 * - JakesFading
 	 */
-	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params);
+	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
 
 	/**
 	 * @brief Creates and initializes a SimplePathlossModel with the
 	 * passed parameter values.
 	 */
-	AnalogueModel* initializeSimplePathlossModel(ParameterMap& params);
+	AnalogueModel* initializeSimplePathlossModel(ParameterMap& params) const;
 
 	/**
 	 * @brief Creates and initializes a LogNormalShadowing with the
 	 * passed parameter values.
 	 */
-	AnalogueModel* initializeLogNormalShadowing(ParameterMap& params);
+	AnalogueModel* initializeLogNormalShadowing(ParameterMap& params) const;
 
 	/**
 	 * @brief Creates and initializes a JakesFading with the
 	 * passed parameter values.
 	 */
-	AnalogueModel* initializeJakesFading(ParameterMap& params);
+	AnalogueModel* initializeJakesFading(ParameterMap& params) const;
 
 	/**
 	 * @brief Creates and initializes a BreakpointPathlossModel with the
 	 * passed parameter values.
 	 */
-	virtual AnalogueModel* initializeBreakpointPathlossModel(ParameterMap& params);
+	virtual AnalogueModel* initializeBreakpointPathlossModel(ParameterMap& params) const;
 
 	/**
 	 * @brief Creates a simple Packet Error Rate model that attenuates a percentage
 	 * of the packets to zero, and does not attenuate the other packets.
 	 *
 	 */
-	virtual AnalogueModel* initializePERModel(ParameterMap& params);
+	virtual AnalogueModel* initializePERModel(ParameterMap& params) const;
 
 	/**
 	 * @brief Creates and returns an instance of the Decider with the specified

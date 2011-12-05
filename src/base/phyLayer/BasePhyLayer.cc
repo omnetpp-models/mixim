@@ -30,21 +30,24 @@ BasePhyLayer::BasePhyLayer():
 	world(NULL)
 {}
 
-template<class T> T BasePhyLayer::readPar(const char* parName, const T defaultValue){
+template<class T> T BasePhyLayer::readPar(const char* parName, const T defaultValue) const {
 	if(hasPar(parName))
 		return par(parName);
-	else
-		return defaultValue;
+	return defaultValue;
 }
 
 // the following line is needed to allow linking when compiled in RELEASE mode.
 // Add a declaration for each parameterization of the template used in
 // code to be linked, e.g. in modules or in examples, if it is not already
 // used in base (double and simtime_t). Needed with (at least): gcc 4.4.1.
-template int BasePhyLayer::readPar<int>(const char* parName, const int);
-template double BasePhyLayer::readPar<double>(const char* parName, const double);
-template simtime_t BasePhyLayer::readPar<simtime_t>(const char* parName, const simtime_t);
-template bool BasePhyLayer::readPar<bool>(const char* parName, const bool);
+template int BasePhyLayer::readPar<int>(const char* parName, const int) const;
+template double BasePhyLayer::readPar<double>(const char* parName, const double) const;
+template<> simtime_t BasePhyLayer::readPar<simtime_t>(const char* parName, const simtime_t defaultValue) const {
+	if(hasPar(parName))
+		return simtime_t( par(parName).doubleValue() );
+	return defaultValue;
+}
+template bool BasePhyLayer::readPar<bool>(const char* parName, const bool) const;
 
 void BasePhyLayer::initialize(int stage) {
 
@@ -106,7 +109,7 @@ void BasePhyLayer::initialize(int stage) {
 	}
 }
 
-Radio* BasePhyLayer::initializeRadio() {
+Radio* BasePhyLayer::initializeRadio() const {
 	int initialRadioState = par("initialRadioState").longValue();
 	double radioMinAtt = par("radioMinAtt").doubleValue();
 	double radioMaxAtt = par("radioMaxAtt").doubleValue();
@@ -138,7 +141,7 @@ Radio* BasePhyLayer::initializeRadio() {
 	return radio;
 }
 
-void BasePhyLayer::getParametersFromXML(cXMLElement* xmlData, ParameterMap& outputMap) {
+void BasePhyLayer::getParametersFromXML(cXMLElement* xmlData, ParameterMap& outputMap) const {
 	cXMLElementList parameters = xmlData->getElementsByTagName("Parameter");
 
 	for(cXMLElementList::const_iterator it = parameters.begin();
@@ -231,7 +234,7 @@ void BasePhyLayer::initializeDecider(cXMLElement* xmlConfig) {
 	coreEV << "Decider \"" << name << "\" loaded." << endl;
 }
 
-Decider* BasePhyLayer::getDeciderFromName(std::string name, ParameterMap& params)
+Decider* BasePhyLayer::getDeciderFromName(std::string /*name*/, ParameterMap& /*params*/)
 {
 	return 0;
 }
@@ -308,7 +311,7 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
 
 }
 
-AnalogueModel* BasePhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& params) {
+AnalogueModel* BasePhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& /*params*/) const {
 
 	// add default analogue models here
 
@@ -642,7 +645,7 @@ void BasePhyLayer::filterSignal(AirFrame *frame) {
 	const Coord sendersPos  = sendersMobility  ? sendersMobility->getCurrentPosition(/*sStart*/) : NoMobiltyPos;
 	const Coord receiverPos = receiverMobility ? receiverMobility->getCurrentPosition(/*sStart*/): NoMobiltyPos;
 
-	for(AnalogueModelList::const_iterator it = analogueModels.begin(); it != analogueModels.end(); it++)
+	for(AnalogueModelList::const_iterator it = analogueModels.begin(); it != analogueModels.end(); ++it)
 		(*it)->filterSignal(frame, sendersPos, receiverPos);
 }
 
@@ -686,14 +689,13 @@ BasePhyLayer::~BasePhyLayer() {
 	AnalogueModel* rsamPointer = radio ? radio->getAnalogueModel() : NULL;
 
 	//free AnalogueModels
-	for(AnalogueModelList::iterator it = analogueModels.begin();
-		it != analogueModels.end(); it++) {
+	for(AnalogueModelList::const_iterator it = analogueModels.begin();
+		it != analogueModels.end(); ++it) {
 
-		AnalogueModel* tmp = *it;
+		AnalogueModelList::value_type tmp = *it;
 
 		// do not delete the RSAM, it's not allocated by new!
-		if (tmp == rsamPointer)
-		{
+		if (tmp == rsamPointer) {
 			rsamPointer = 0;
 			continue;
 		}
@@ -705,15 +707,14 @@ BasePhyLayer::~BasePhyLayer() {
 
 
 	// free radio
-	if(radio != 0)
-	{
+	if(radio != 0) {
 		delete radio;
 	}
 }
 
 //--MacToPhyInterface implementation-----------------------
 
-int BasePhyLayer::getRadioState() {
+int BasePhyLayer::getRadioState() const {
 	Enter_Method_Silent();
 	assert(radio);
 	return radio->getCurrentState();
@@ -753,13 +754,13 @@ simtime_t BasePhyLayer::setRadioState(int rs) {
 	return switchTime;
 }
 
-ChannelState BasePhyLayer::getChannelState() {
+ChannelState BasePhyLayer::getChannelState() const {
 	Enter_Method_Silent();
 	assert(decider);
 	return decider->getChannelState();
 }
 
-int BasePhyLayer::getPhyHeaderLength() {
+int BasePhyLayer::getPhyHeaderLength() const {
 	Enter_Method_Silent();
 	if (headerLength < 0)
 	    return par("headerLength").longValue();
@@ -776,11 +777,11 @@ void BasePhyLayer::setCurrentRadioChannel(int newRadioChannel) {
 	coreEV << "Switched radio to channel " << newRadioChannel << endl;
 }
 
-int BasePhyLayer::getCurrentRadioChannel() {
+int BasePhyLayer::getCurrentRadioChannel() const {
 	return radio->getCurrentChannel();
 }
 
-int BasePhyLayer::getNbRadioChannels() {
+int BasePhyLayer::getNbRadioChannels() const {
 	return par("nbRadioChannels");
 }
 
@@ -790,7 +791,7 @@ void BasePhyLayer::getChannelInfo(simtime_t_cref from, simtime_t_cref to, AirFra
 	channelInfo.getAirFrames(from, to, out);
 }
 
-ConstMapping* BasePhyLayer::getThermalNoise(simtime_t_cref from, simtime_t_cref to) {
+ConstMapping* BasePhyLayer::getThermalNoise(simtime_t_cref from, simtime_t_cref /*to*/) {
 	if(thermalNoise)
 		thermalNoise->initializeArguments(Argument(from));
 
@@ -842,7 +843,7 @@ void BasePhyLayer::drawCurrent(double amount, int activity) {
 	BatteryAccess::drawCurrent(amount, activity);
 }
 
-BaseWorldUtility* BasePhyLayer::getWorldUtility() {
+BaseWorldUtility* BasePhyLayer::getWorldUtility() const {
 	return world;
 }
 
@@ -853,7 +854,7 @@ void BasePhyLayer::recordScalar(const char *name, double value, const char *unit
 /**
  * Attaches a "control info" (PhyToMac) structure (object) to the message pMsg.
  */
-cObject *const BasePhyLayer::setUpControlInfo(cMessage *const pMsg, DeciderResult *const pDeciderResult)
+cObject* BasePhyLayer::setUpControlInfo(cMessage *const pMsg, DeciderResult *const pDeciderResult)
 {
 	return PhyToMacControlInfo::setControlInfo(pMsg, pDeciderResult);
 }

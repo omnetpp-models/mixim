@@ -27,11 +27,11 @@ public:
 	}
 
     // CSEM Jerome Rousselot
-    const std::vector<bool>* getDecodedBits()
+    const std::vector<bool>* getDecodedBits() const
         { return decodedBits; }
 
 
-    const double getSNR() { return snr; }
+    double getSNR() const { return snr; }
 
 private:
 	std::vector<bool>* decodedBits;

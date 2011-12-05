@@ -11,39 +11,6 @@ Scenario: $repetition=0
 Assigned runID=Test1-0-20100616-13:39:23-4962
 Setting up network `ccSim'...
 Initializing...
-updatePosition:  HostMove  startPos: (277,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (369,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (200,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (184,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,367,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,368,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,369,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,276,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,200,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,184,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (341,341,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (342,342,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (369,369,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,276,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (213,213,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (211,211,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,278,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (213,341,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (211,343,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (341,276,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (342,275,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (369,211,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (92,0,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (92,499,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (400,499,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (400,0,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (0,92,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (499,92,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (499,400,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (0,400,0) direction: (0,0,0) startTime: 0 speed: 0
 
 Running simulation...
 ** Event #1   T=0   Elapsed: 0.000s (0m 00s)  0% completed
@@ -105,39 +72,6 @@ Scenario: $repetition=0
 Assigned runID=Test2-0-20100616-13:39:23-4963
 Setting up network `ccSim'...
 Initializing...
-updatePosition:  HostMove  startPos: (277,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (369,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (200,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (184,277,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,367,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,368,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,369,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,276,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,200,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,184,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (341,341,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (342,342,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (369,369,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,276,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (213,213,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (211,211,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,278,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (213,341,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (211,343,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (341,276,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (342,275,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (369,211,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (92,0,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (92,499,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (400,499,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (400,0,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (0,92,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (499,92,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (499,400,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (0,400,0) direction: (0,0,0) startTime: 0 speed: 0
 
 Running simulation...
 ** Event #1   T=0   Elapsed: 0.000s (0m 00s)  0% completed
@@ -199,74 +133,6 @@ Scenario: $repetition=0
 Assigned runID=Test3-0-20100616-13:39:23-4964
 Setting up network `ccSim'...
 Initializing...
-updatePosition:  HostMove  startPos: (322,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,276,276) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,367,276) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,276,367) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,276,276) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,367,367) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,276,367) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,367,276) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,367,367) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,275,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,275,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,275,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,368,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,368,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,368,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,322,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,275,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,275,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,275,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,322,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,368,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,368,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,368,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,322,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,275,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,275,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,275,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,322,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,368,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,368,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,368,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,230,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,230,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,230,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,414,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,414,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,414,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,322,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,230,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,230,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,322,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,414,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,414,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,414,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,322,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,230,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,230,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,230,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,322,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,414,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,414,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,414,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (92,0,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (92,499,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (400,499,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (400,0,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (0,92,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (499,92,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (499,400,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (0,400,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,92,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,92,499) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,400,499) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,400,0) direction: (0,0,0) startTime: 0 speed: 0
 
 Running simulation...
 ** Event #1   T=0   Elapsed: 0.000s (0m 00s)  0% completed
@@ -363,74 +229,6 @@ Scenario: $repetition=0
 Assigned runID=Test4-0-20100616-13:39:23-4965
 Setting up network `ccSim'...
 Initializing...
-updatePosition:  HostMove  startPos: (322,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,276,276) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,367,276) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,276,367) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,276,276) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (276,367,367) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,276,367) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,367,276) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (367,367,367) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,275,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,275,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,275,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,368,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,368,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,368,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,322,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,275,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,275,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,275,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,322,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,368,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,368,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,368,275) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,322,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,275,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,275,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,275,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,322,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (368,368,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,368,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (275,368,368) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,230,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,230,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,230,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,322,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,414,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,414,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,414,322) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,322,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,230,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,230,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,322,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,414,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,414,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,414,230) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,322,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,230,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,230,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,230,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,322,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (414,414,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (322,414,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (230,414,414) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (92,0,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (92,499,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (400,499,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (400,0,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (0,92,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (499,92,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (499,400,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (0,400,277) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,92,0) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,92,499) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,400,499) direction: (0,0,0) startTime: 0 speed: 0
-updatePosition:  HostMove  startPos: (277,400,0) direction: (0,0,0) startTime: 0 speed: 0
 
 Running simulation...
 ** Event #1   T=0   Elapsed: 0.000s (0m 00s)  0% completed

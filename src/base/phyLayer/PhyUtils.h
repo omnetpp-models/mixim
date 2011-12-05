@@ -367,7 +367,7 @@ public:
 	 * @brief Returns the channel the radio is currently set to.
 	 * @return The current channel of the radio, between 0 and nbChannels-1.
 	 */
-	int getCurrentChannel() {
+	int getCurrentChannel() const {
 		return currentChannel;
 	}
 

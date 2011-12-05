@@ -2,20 +2,20 @@
 
 Register_Class(AggrPkt);
 
-void AggrPkt::setStoredPacketsArraySize(unsigned int size) { }
+void AggrPkt::setStoredPacketsArraySize(unsigned int /*size*/) { }
 
 unsigned int AggrPkt::getStoredPacketsArraySize() const {
 	return storedPackets.size();
 }
 
 // should not be used -- implemented only because omnet++ expects it
-pApplPkt& AggrPkt::getStoredPackets(unsigned int k) {
+pApplPkt& AggrPkt::getStoredPackets(unsigned int /*k*/) {
 	pApplPkt& pkt = storedPackets.front();
 	return pkt ;
 }
 
 // should not be used -- implemented only because omnet++ expects it
-void AggrPkt::setStoredPackets(unsigned int k, const pApplPkt& storedPackets_var) {
+void AggrPkt::setStoredPackets(unsigned int /*k*/, const pApplPkt& /*storedPackets_var*/) {
 
 }
 

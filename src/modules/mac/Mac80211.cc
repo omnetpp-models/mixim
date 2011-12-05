@@ -544,7 +544,7 @@ void Mac80211::handleDATAframe(Mac80211Pkt * af)
 /**
  *  Handle ACK and delete corresponding packet from queue
  */
-void Mac80211::handleACKframe(Mac80211Pkt * af)
+void Mac80211::handleACKframe(Mac80211Pkt * /*af*/)
 {
     // cancel time-out event
     cancelEvent(timeout);

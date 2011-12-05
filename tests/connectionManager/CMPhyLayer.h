@@ -63,7 +63,7 @@ public:
     virtual void handleMessage( cMessage* );
 
 	virtual void handleSelfMsg() { assertFalse("This phy layer expects no self-msg!", true); }
-	virtual void handleLowerMsg(const LAddress::L2Type& srcAddr) { assertFalse("This phy layer expects no msg!", true); }
+	virtual void handleLowerMsg(const LAddress::L2Type& /*srcAddr*/) { assertFalse("This phy layer expects no msg!", true); }
 
 protected:
 

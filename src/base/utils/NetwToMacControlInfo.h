@@ -85,7 +85,7 @@ class MIXIM_API NetwToMacControlInfo : public cObject
      * @param pMsg		The message where the "control info" shall be attached.
      * @param pDestAddr	The MAC address of the message receiver.
      */
-    static cObject *const setControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr);
+    static cObject* setControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr);
     /**
      * @brief Extracts the MAC address from the "control info" structure (object).
      *

@@ -499,7 +499,7 @@ void csma::updateStatusWaitAck(t_mac_event event, cMessage *msg) {
 
 }
 
-void csma::manageMissingAck(t_mac_event event, cMessage *msg) {
+void csma::manageMissingAck(t_mac_event /*event*/, cMessage */*msg*/) {
 	if (txAttempts < macMaxFrameRetries + 1) {
 		// increment counter
 		txAttempts++;

@@ -52,7 +52,7 @@ protected:
 	 *
 	 *
 	 */
-	virtual bool checkIfAboveThreshold(Mapping* map, simtime_t_cref start, simtime_t_cref end);
+	virtual bool checkIfAboveThreshold(Mapping* map, simtime_t_cref start, simtime_t_cref end) const;
 
 	/**
 	 * @brief Processes a new Signal. Returns the time it wants to
@@ -136,7 +136,7 @@ public:
 	 * immediately (in contrast to sending a ChannelSenseRequest,
 	 * i.e. sending a cMessage over the OMNeT-control-channel)
 	 */
-	virtual ChannelState getChannelState();
+	virtual ChannelState getChannelState() const;
 };
 
 #endif /* SNRTHRESHOLDDECIDER_H_ */

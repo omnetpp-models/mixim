@@ -145,7 +145,7 @@ public:
 	 * immediately (in contrast to sending a ChannelSenseRequest,
 	 * i.e. sending a cMessage over the OMNeT-control-channel)
 	 */
-	virtual ChannelState getChannelState();
+	virtual ChannelState getChannelState() const;
 
 	/**
 	 * @brief This function is called by the PhyLayer to hand over a
@@ -182,7 +182,7 @@ protected:
 	 *
 	 * Default implementation does not handle signal headers.
 	 */
-	virtual simtime_t processSignalHeader(AirFrame* frame) {
+	virtual simtime_t processSignalHeader(AirFrame* /*frame*/) {
 		opp_error("BaseDecider does not handle Signal headers!");
 		return notAgain;
 	}
@@ -211,7 +211,7 @@ protected:
 	 * is the "currentSignal" and returns its state or if not
 	 * "NEW".
 	 */
-	virtual int getSignalState(AirFrame* frame);
+	virtual int getSignalState(AirFrame* frame) const;
 
 	/**
 	 * @brief Handles a new incoming ChannelSenseRequest and returns the next
@@ -254,7 +254,7 @@ protected:
 	 * Default implementation returns the maximum RSSI value inside the
 	 * passed interval.
 	 */
-	virtual double calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref end);
+	virtual double calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref end) const;
 
 	/**
 	 * @brief Answers the ChannelSenseRequest (CSR) from the passed CSRInfo.
@@ -286,7 +286,7 @@ protected:
 	 * @param out The output vector in which to put the AirFrames.
 	 */
 	virtual void getChannelInfo(simtime_t_cref start, simtime_t_cref end,
-								AirFrameVector& out) const;
+	                            AirFrameVector& out) const;
 
 	//------Utility methods------------
 
@@ -311,9 +311,9 @@ protected:
 	 * exclude is omitted OR to calculate a Noise-Strength-Mapping in case the
 	 * AirFrame of the received Signal is passed as parameter exclude.
 	 */
-	virtual Mapping* calculateRSSIMapping(	simtime_t_cref start,
-											simtime_t_cref end,
-											AirFrame*      exclude = NULL);
+	virtual Mapping* calculateRSSIMapping( simtime_t_cref start,
+	                                       simtime_t_cref end,
+	                                       AirFrame*      exclude = NULL) const;
 };
 
 #endif /* BASEDECIDER_H_ */

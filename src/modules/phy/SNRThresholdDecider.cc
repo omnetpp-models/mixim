@@ -50,7 +50,7 @@ simtime_t SNRThresholdDecider::processNewSignal(AirFrame* frame)
 }
 
 // TODO: for now we check a larger mapping within an interval
-bool SNRThresholdDecider::checkIfAboveThreshold(Mapping* map, simtime_t_cref start, simtime_t_cref end)
+bool SNRThresholdDecider::checkIfAboveThreshold(Mapping* map, simtime_t_cref start, simtime_t_cref end) const
 {
 	assert(map);
 
@@ -98,7 +98,7 @@ bool SNRThresholdDecider::checkIfAboveThreshold(Mapping* map, simtime_t_cref sta
 	return true;
 }
 
-ChannelState SNRThresholdDecider::getChannelState() {
+ChannelState SNRThresholdDecider::getChannelState() const {
 
 	simtime_t now = phy->getSimTime();
 	double rssiValue = calcChannelSenseRSSI(now, now);
