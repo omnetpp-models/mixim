@@ -1,4 +1,4 @@
-**.node[*].mobType = "ConstSpeedMobility"
+**.node[*].mobilityType = "ConstSpeedMobility"
 **.node[*].mobility.debug = false
 **.node[*].mobility.speed = 1mps
 **.node[*].mobility.updateInterval = 0.1s

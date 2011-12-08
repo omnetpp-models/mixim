@@ -106,8 +106,8 @@ NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt) {
     return pkt;
 }
 
-cMessage* DummyRoute::decapsMsg(NetwPkt *msg) {
-	cMessage *m = msg->decapsulate();
+cPacket* DummyRoute::decapsMsg(NetwPkt *msg) {
+	cPacket *m = msg->decapsulate();
 	setUpControlInfo(m, msg->getSrcAddr());
 		// delete the netw packet
 	delete msg;

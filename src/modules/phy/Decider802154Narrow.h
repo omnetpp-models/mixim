@@ -106,6 +106,10 @@ public:
 		nbFramesWithoutInterference(0),
 		nbFramesWithInterferenceDropped(0),
 		nbFramesWithoutInterferenceDropped(0),
+		snirDropped(),
+		snirReceived(),
+		snrlog(),
+		berlog(),
 		recordStats(recordStats)
 	{
 		//TODO: publish initial rssi/channel state

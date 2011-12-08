@@ -44,6 +44,16 @@ protected:
     virtual void initialize(int stage);
 
 public:
+	WorldUtilityStats()
+		: BaseWorldUtility()
+		, cListener()
+		, bitsSent(0)
+		, bitsReceived(0)
+		, sent()
+		, rcvd()
+		, recordVectors(false)
+		, bitrate(0)
+	{}
 	virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
 	virtual void finish();

@@ -41,6 +41,14 @@ class ChannelSenseRequest;
  */
 class MIXIM_API  Mac80211 : public BaseMacLayer
 {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	Mac80211(const Mac80211&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	Mac80211& operator=(const Mac80211&);
+
 public:
 
 	/** @brief frame kinds */
@@ -81,6 +89,8 @@ protected:
         int              fsc;
         simtime_t        age;
         double           bitrate;
+
+        NeighborEntry() : address(), fsc(0), age(), bitrate(0) {}
     };
 
     /** @brief Type for a list of NeighborEntries.*/
@@ -157,10 +167,10 @@ protected:
     void sendBROADCASTframe();
 
     /** @brief encapsulate packet */
-    Mac80211Pkt* encapsMsg(cPacket *netw);
+    virtual MacPkt* encapsMsg(cPacket *netw);
 
     /** @brief decapsulate packet */
-    cMessage* decapsMsg(Mac80211Pkt *frame);
+    virtual cPacket* decapsMsg(MacPkt *frame);
 
     /** @brief start a new contention period */
     virtual void beginNewCycle();
@@ -275,8 +285,6 @@ protected:
 
     /** @brief Current bit rate at which data is transmitted */
     double bitrate;
-    /** @brief and category number */
-    int catBitrate;
     /** @brief Auto bit rate adaptation -- switch */
     bool autoBitrate;
     /** @brief Hold RSSI thresholds at which to change the bitrates */

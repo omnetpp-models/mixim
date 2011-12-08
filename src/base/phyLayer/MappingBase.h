@@ -48,7 +48,7 @@ protected:
 	static DimensionIDMap& dimensionIDs();
 
 	/**
-	 * @brief ConstMapping from id to name of registered dimensions.
+	 * @brief Mapping from id to name of registered dimensions.
 	 *
 	 * Uses "construct-on-first-use" idiom to ensure correct initialization
 	 * of static members.
@@ -175,8 +175,20 @@ public:
  * @author Karl Wessel
  * @ingroup mapping
  */
-class MIXIM_API DimensionSet:public std::set<Dimension> {
+class MIXIM_API DimensionSet /*:public std::set<Dimension>*/ {
+protected:
+	typedef std::set<Dimension> _Base;
+
+	_Base Storage;
 public:
+	typedef _Base::value_type       value_type;
+	typedef _Base::iterator         iterator;
+	typedef _Base::reverse_iterator reverse_iterator;
+	typedef _Base::reverse_iterator const_reverse_iterator;
+	typedef _Base::const_iterator   const_iterator;
+	typedef _Base::size_type        size_type;
+	typedef _Base::const_reference  const_reference;
+
 	/** @brief Shortcut to a DimensionSet which only contains time. */
 	static const DimensionSet timeDomain;
 
@@ -186,31 +198,67 @@ public:
 	/**
 	 * @brief Default constructor creates an empty DimensionSet
 	 */
-	DimensionSet() {}
+	DimensionSet() : Storage() {}
+
+	/**
+	 * @brief Copy constructor.
+	 */
+	DimensionSet(const DimensionSet& o) : Storage(o.Storage)
+	{}
+
+	/**
+	 *  @brief  %DimensionSet assignment operator.
+	 *  @param  copy  A %DimensionSet of identical element and allocator types.
+	 *
+	 *  All the elements of @a copy are copied.
+	 */
+	DimensionSet& operator=(DimensionSet const& copy)
+	{
+		DimensionSet tmp(copy); // All resource all allocation happens here.
+	                            // If this fails the copy will throw an exception
+	                            // and 'this' object is unaffected by the exception.
+		swap(tmp);
+		return *this;
+	}
+
+	/**
+	 *  @brief  Swaps data with another %DimensionSet.
+	 *  @param  s  A %DimensionSet of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two DimensionSet's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(DimensionSet& s)
+	{
+		// X::swap(s); // swap the base class members
+		/* Swap all D members */
+		std::swap(Storage, s.Storage);
+	}
 
 	/**
 	 * @brief Creates a new DimensionSet with the passed Dimension as
 	 * initial Dimension
 	 */
-	DimensionSet(const DimensionSet::value_type& d){
-		this->insert(d);
+	DimensionSet(const DimensionSet::value_type& d) : Storage() {
+		Storage.insert(d);
 	}
 	/**
 	 * @brief Creates a new DimensionSet with the passed Dimensions as
 	 * initial Dimensions (convenience method)
 	 */
-	DimensionSet(const DimensionSet::value_type& d1, const DimensionSet::value_type& d2){
-		this->insert(d1);
-		this->insert(d2);
+	DimensionSet(const DimensionSet::value_type& d1, const DimensionSet::value_type& d2) : Storage() {
+		Storage.insert(d1);
+		Storage.insert(d2);
 	}
 	/**
 	 * @brief Creates a new DimensionSet with the passed Dimensions as
 	 * initial Dimensions (convenience method)
 	 */
-	DimensionSet(const DimensionSet::value_type& d1, const DimensionSet::value_type& d2, const DimensionSet::value_type& d3){
-		this->insert(d1);
-		this->insert(d2);
-		this->insert(d3);
+	DimensionSet(const DimensionSet::value_type& d1, const DimensionSet::value_type& d2, const DimensionSet::value_type& d3) : Storage() {
+		Storage.insert(d1);
+		Storage.insert(d2);
+		Storage.insert(d3);
 	}
 
 	/**
@@ -222,10 +270,10 @@ public:
 	 * DimensionSet.
 	 */
 	bool isSubSet(const DimensionSet& other) const{
-		if(this->size() < other.size())
+		if(Storage.size() < other.Storage.size())
 			return false;
 
-		return std::includes(this->begin(), this->end(), other.begin(), other.end());
+		return std::includes(Storage.begin(), Storage.end(), other.Storage.begin(), other.Storage.end());
 	}
 
 	/**
@@ -238,34 +286,118 @@ public:
 	 * which isn't in the other set.
 	 */
 	bool isRealSubSet(const DimensionSet& other) const{
-		if(this->size() <= other.size())
+		if(size() <= other.size())
 			return false;
 
-		return std::includes(this->begin(), this->end(), other.begin(), other.end());
+		return std::includes(begin(), end(), other.begin(), other.end());
 	}
 
 	/**
 	 * @brief Adds the passed dimension to the DimensionSet.
 	 */
 	void addDimension(const DimensionSet::value_type& d) {
-		this->insert(d);
+		Storage.insert(d);
 	}
 
 	/**
 	 * @brief Returns true if the passed Dimension is inside this DimensionSet.
 	 */
 	bool hasDimension(const DimensionSet::value_type& d) const{
-		return this->count(d) > 0;
+		return Storage.count(d) > 0;
 	}
 
 	/**
 	 * @brief Returns true if the dimensions of both sets are equal.
 	 */
-	bool operator==(const DimensionSet& o){
+	bool operator==(const DimensionSet& o) const {
 		if(size() != o.size())
 			return false;
 
 		return std::equal(begin(), end(), o.begin());
+	}
+
+	iterator begin() {
+		return Storage.begin();
+	}
+
+	iterator end() {
+		return Storage.end();
+	}
+
+	const_iterator begin() const {
+		return Storage.begin();
+	}
+
+	const_iterator end() const {
+		return Storage.end();
+	}
+
+	reverse_iterator rbegin() {
+		return Storage.rbegin();
+	}
+
+	reverse_iterator rend() {
+		return Storage.rend();
+	}
+
+	const_reverse_iterator rbegin() const {
+		return Storage.rbegin();
+	}
+
+	const_reverse_iterator rend() const {
+		return Storage.rend();
+	}
+
+	const_iterator find(const value_type& __x) const {
+		return Storage.find(__x);
+	}
+
+	///  Returns the size of the %DimensionSet.
+	size_type size() const {
+		return Storage.size();
+	}
+
+	/**
+	 *  @brief A template function that attempts to insert a range
+	 *  of elements.
+	 *  @param  first  Iterator pointing to the start of the range to be
+	 *                 inserted.
+	 *  @param  last  Iterator pointing to the end of the range.
+	 *
+	 *  Complexity similar to that of the range constructor.
+	 */
+	template<typename _InputIterator>
+	void
+	insert(_InputIterator __first, _InputIterator __last)
+	{ Storage.insert(__first, __last); }
+
+	/**
+	 *  @brief Attempts to insert an element into the %DimensionSet.
+	 *  @param  position  An iterator that serves as a hint as to where the
+	 *                    element should be inserted.
+	 *  @param  x  Element to be inserted.
+	 *  @return  An iterator that points to the element with key of @a x (may
+	 *           or may not be the element passed in).
+	 *
+	 *  This function is not concerned about whether the insertion took place,
+	 *  and thus does not return a boolean like the single-argument insert()
+	 *  does.  Note that the first parameter is only a hint and can
+	 *  potentially improve the performance of the insertion process.  A bad
+	 *  hint would cause no gains in efficiency.
+	 *
+	 *  For more on @a hinting, see:
+	 *  http://gcc.gnu.org/onlinedocs/libstdc++/manual/bk01pt07ch17.html
+	 *
+	 *  Insertion requires logarithmic time (if the hint is not taken).
+	 */
+	iterator
+	insert(const_iterator __position, const value_type& __x) {
+		return Storage.insert(__position, __x);
+	}
+
+	///  Returns true if the %DimensionSet is empty.
+	bool empty() const {
+		return Storage.empty();
 	}
 };
 
@@ -494,7 +626,7 @@ public:
 	 * @brief Fast implementation of the copy-operator then the default
 	 * implementation.
 	 */
-	void operator=(const Argument& o);
+	Argument& operator=(const Argument& o);
 
 	/**
 	 * @brief Returns an iterator to the first argument value in this Argument.
@@ -578,7 +710,31 @@ public:
 	typedef Argument::mapped_type      argument_value_t;
 	typedef Argument::mapped_type_cref argument_value_cref_t;
 public:
+	ConstMappingIterator() {}
 	virtual ~ConstMappingIterator() {}
+
+	/**
+	 * @brief Copy constructor.
+	 */
+	ConstMappingIterator(const ConstMappingIterator&) {}
+
+	/**
+	 *  @brief  %ConstMappingIterator assignment operator.
+	 *  @param  copy  A %ConstMappingIterator of identical element and allocator types.
+	 *
+	 *  All the elements of @a copy are copied.
+	 */
+	ConstMappingIterator& operator=(const ConstMappingIterator&) {return *this;}
+
+	/**
+	 *  @brief  Swaps data with another %ConstMappingIterator.
+	 *  @param  s  A %ConstMappingIterator of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two ConstMappingIterator's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(ConstMappingIterator&) {}
 
 	/**
 	 * @brief Returns the position the next call to "next()" of this
@@ -702,6 +858,34 @@ protected:
 	/** @brief The dimensions of this mappings domain.*/
 	DimensionSet dimensions;
 
+public:
+	/**
+	 *  @brief  %ConstMapping assignment operator.
+	 *  @param  copy  A %ConstMapping of identical element and allocator types.
+	 *
+	 *  All the elements of @a copy are copied.
+	 */
+	ConstMapping& operator=(const ConstMapping& copy)
+	{
+		dimensions = copy.dimensions;
+		return *this;
+	}
+
+	/**
+	 *  @brief  Swaps data with another %ConstMapping.
+	 *  @param  s  A %ConstMapping of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two DimensionSet's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(ConstMapping& s)
+	{
+		//::swap(s); // swap the base class members
+		/* Swap all D members */
+		dimensions.swap(s.dimensions);
+	}
+
 private:
 	template<class T>
 	std::string toString(T v, unsigned int length) const {
@@ -726,6 +910,8 @@ public:
 	 */
 	ConstMapping():
 		dimensions(Dimension::time) {}
+	ConstMapping(const ConstMapping& o):
+		dimensions(o.dimensions) {}
 
 	/**
 	 * @brief Initializes the ConstMapping with the passed DimensionSet as
@@ -995,6 +1181,8 @@ public:
  */
 class MIXIM_API MappingIterator:public ConstMappingIterator {
 public:
+	MappingIterator() : ConstMappingIterator() {}
+
 	virtual ~MappingIterator() {}
 	/**
 	 * @brief Changes the value of the Mapping at the current
@@ -1031,7 +1219,31 @@ public:
 		LINEAR
 	};
 
-protected:
+public:
+	/**
+	 *  @brief  %Mapping assignment operator.
+	 *  @param  copy  A %Mapping of identical element and allocator types.
+	 *
+	 *  All the elements of @a copy are copied.
+	 */
+	Mapping& operator=(const Mapping& copy)
+	{
+		ConstMapping::operator=(copy);
+		return *this;
+	}
+	/**
+	 *  @brief  Swaps data with another %Mapping.
+	 *  @param  s  A %Mapping of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two DimensionSet's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(Mapping& s)
+	{
+		ConstMapping::swap(s); // swap the base class members
+		/* Swap all D members */
+	}
 
 public:
 
@@ -1048,6 +1260,9 @@ public:
 	 */
 	Mapping():
 			ConstMapping() {}
+
+	Mapping(const Mapping& o):
+		ConstMapping(o) {}
 
 	virtual ~Mapping() {}
 
@@ -1110,8 +1325,6 @@ public:
 		return dynamic_cast<ConstMappingIterator*>( const_cast<Mapping*>(this)->createIterator(pos) );
 	}
 
-
-
 	/**
 	 * @brief Returns a deep copy of this Mapping.
 	 */
@@ -1170,6 +1383,14 @@ protected:
 	/** @brief An iterator over the key entry set which defines the next bigger
 	 * entry of the current position.*/
 	KeyEntrySet::const_iterator nextEntry;
+
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	SimpleConstMappingIterator(const SimpleConstMappingIterator&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	SimpleConstMappingIterator& operator=(const SimpleConstMappingIterator&);
 
 public:
 	/**
@@ -1372,7 +1593,30 @@ public:
 	 * passed DimensionSet as domain.
 	 */
 	SimpleConstMapping(const DimensionSet& dims):
-		ConstMapping(dims) {}
+		ConstMapping(dims), keyEntries() {}
+	SimpleConstMapping(const SimpleConstMapping& o):
+		ConstMapping(o), keyEntries(o.keyEntries) {}
+
+	/**
+	 *  @brief  %SimpleConstMapping assignment operator.
+	 *  @param  copy  A %SimpleConstMapping of identical element and allocator types.
+	 *
+	 *  All the elements of @a copy are copied.
+	 */
+	SimpleConstMapping& operator=(const SimpleConstMapping& copy) {
+		ConstMapping::operator=(copy);
+		return *this;
+	}
+
+	/**
+	 *  @brief  Swaps data with another %SimpleConstMapping.
+	 *  @param  s  A %SimpleConstMapping of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two SimpleConstMapping's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(SimpleConstMapping& s) { ConstMapping::swap(s); /* swap the base class members */ }
 
 	/**
 	 * @brief Fully initializes this mapping with the passed position
@@ -1383,7 +1627,7 @@ public:
 	 */
 	SimpleConstMapping(const DimensionSet& dims,
 					   const Argument& key):
-		ConstMapping(dims){
+		ConstMapping(dims), keyEntries() {
 
 		initializeArguments(key);
 	}
@@ -1397,7 +1641,7 @@ public:
 	 */
 	SimpleConstMapping(const DimensionSet& dims,
 					   const Argument& key1, const Argument& key2):
-		ConstMapping(dims){
+		ConstMapping(dims), keyEntries() {
 
 		initializeArguments(key1, key2);
 	}
@@ -1411,7 +1655,7 @@ public:
 	 */
 	SimpleConstMapping(const DimensionSet& dims,
 					   const Argument& min, const Argument& max, const Argument& interval):
-		ConstMapping(dims){
+		ConstMapping(dims), keyEntries() {
 
 		initializeArguments(min, max, interval);
 	}

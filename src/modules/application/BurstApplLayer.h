@@ -42,6 +42,14 @@
 class MIXIM_API BurstApplLayer : public TestApplLayer
 {
  public:
+  BurstApplLayer()
+  	  : TestApplLayer()
+  	  , burstSize(0)
+  	  , bSendReply(true)
+  {}
+
+  virtual ~BurstApplLayer() {}
+
   /** @brief Initialize module parameters*/
   virtual void initialize(int);
 

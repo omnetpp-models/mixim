@@ -8,7 +8,7 @@ DeciderUWBIREDSync::DeciderUWBIREDSync(DeciderToPhyInterface* iface,
 					DeciderUWBIRED(iface, _uwbiface,
 						_syncThreshold, _syncAlwaysSucceeds, _stats, _trace,
 						alwaysFailOnDataInterference),
-						tmin(_tmin){
+						tmin(_tmin), syncVector(), argSync() {
 
 };
 

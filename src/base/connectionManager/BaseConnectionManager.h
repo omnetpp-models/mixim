@@ -65,31 +65,28 @@ private:
 		/**
 		 * @brief Simple copy-constructor.
 		 */
-		GridCoord(const GridCoord& o) {
-			x = o.x;
-			y = o.y;
-			z = o.z;
-        }
+		GridCoord(const GridCoord& o)
+			:x(o.x), y(o.y), z(o.z) {};
 
 		/**
 		 * @brief Creates a GridCoord from a given Coord by dividing the
 		 * x,y and z-values by "gridCellWidth".
 		 * The dimension of the GridCoord depends on the Coord.
 		 */
-        GridCoord(const Coord& c, const Coord& gridCellSize = Coord(1.0,1.0,1.0)) {
-            x = static_cast<int>(c.x / gridCellSize.x);
-            y = static_cast<int>(c.y / gridCellSize.y);
-            z = static_cast<int>(c.z / gridCellSize.z);
-        }
+		GridCoord(const Coord& c, const Coord& gridCellSize = Coord(1.0,1.0,1.0))
+			: x( static_cast<int>(c.x / gridCellSize.x) )
+			, y( static_cast<int>(c.y / gridCellSize.y) )
+			, z( static_cast<int>(c.z / gridCellSize.z) )
+		{}
 
-        /** @brief Output string for this coordinate.*/
-        std::string info() const {
+		/** @brief Output string for this coordinate.*/
+		std::string info() const {
 			std::stringstream os;
 			os << "(" << x << "," << y << "," << z << ")";
 			return os.str();
 		}
 
-        /** @brief Comparison operator for coordinates.*/
+		/** @brief Comparison operator for coordinates.*/
 		friend bool operator==(const GridCoord& a, const GridCoord& b) {
 			return a.x == b.x && a.y == b.y && a.z == b.z;
 		}
@@ -142,7 +139,7 @@ private:
 		 * @brief Initializes the set (hashtable) with the a specified size.
 		 */
 		CoordSet(unsigned sz)
-			:maxSize(sz), size(0), current(0)
+			:data(), maxSize(sz), size(0), current(0)
 		{
 			data.resize(maxSize);
 		}
@@ -151,9 +148,9 @@ private:
 		 * @brief Delete every created GridCoord
 		 */
 		~CoordSet() {
-			for(unsigned i = 0; i < maxSize; i++) {
-				if(data[i] != 0) {
-					delete data[i];
+			for(std::vector<GridCoord*>::const_iterator it = data.begin(); it != data.end(); ++it) {
+				if(*it) {
+					delete *it;
 				}
 			}
 		}
@@ -338,8 +335,16 @@ protected:
 	 */
 	virtual bool isInRange(NicEntries::mapped_type pFromNic, NicEntries::mapped_type pToNic);
 
-public:
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	BaseConnectionManager(const BaseConnectionManager&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	BaseConnectionManager& operator=(const BaseConnectionManager&);
 
+public:
+	BaseConnectionManager();
 	virtual ~BaseConnectionManager();
 
 	/** @brief Needs two initialization stages.*/

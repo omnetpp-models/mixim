@@ -8,7 +8,7 @@ Signal::Signal(simtime_t_cref sendingStart, simtime_t_cref duration):
 	propagationDelay(0),
 	power(0), bitrate(0),
 	txBitrate(0),
-	rcvPower(0)
+	attenuations(), rcvPower(0)
 {}
 
 Signal::Signal(const Signal & o):
@@ -17,7 +17,7 @@ Signal::Signal(const Signal & o):
 	propagationDelay(o.propagationDelay),
 	power(0), bitrate(0),
 	txBitrate(0),
-	rcvPower(0)
+	attenuations(), rcvPower(0)
 {
 	if (o.power) {
 		power = o.power->constClone();
@@ -37,7 +37,7 @@ Signal::Signal(const Signal & o):
 	}
 }
 
-const Signal& Signal::operator=(const Signal& o) {
+Signal& Signal::operator=(const Signal& o) {
 	sendingStart = o.sendingStart;
 	duration = o.duration;
 	propagationDelay = o.propagationDelay;
@@ -73,18 +73,33 @@ const Signal& Signal::operator=(const Signal& o) {
 		txBitrate = o.txBitrate->clone();
 
 	for(ConstMappingList::const_iterator it = attenuations.begin();
-		it != attenuations.end(); it++){
+		it != attenuations.end(); ++it){
 		delete(*it);
 	}
 
 	attenuations.clear();
 
 	for(ConstMappingList::const_iterator it = o.attenuations.begin();
-		it != o.attenuations.end(); it++){
+		it != o.attenuations.end(); ++it){
 		attenuations.push_back((*it)->constClone());
 	}
 
 	return *this;
+}
+
+void Signal::swap(Signal& s) {
+	std::swap(senderModuleID,   s.senderModuleID);
+	std::swap(senderFromGateID, s.senderFromGateID);
+	std::swap(receiverModuleID, s.receiverModuleID);
+	std::swap(receiverToGateID, s.receiverToGateID);
+	std::swap(sendingStart,     s.sendingStart);
+	std::swap(duration,         s.duration);
+	std::swap(propagationDelay, s.propagationDelay);
+	std::swap(power,            s.power);
+	std::swap(bitrate,          s.bitrate);
+	std::swap(txBitrate,        s.txBitrate);
+	std::swap(attenuations,     s.attenuations);
+	std::swap(rcvPower,         s.rcvPower);
 }
 
 Signal::~Signal()

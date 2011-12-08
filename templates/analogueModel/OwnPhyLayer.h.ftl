@@ -15,7 +15,7 @@ public:
 	 * Is able to initialize the following AnalogueModels:
 	 * - ${amName}
 	 */
-	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params);
+	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
 
 	/**
 	 * @brief Creates and initializes a ${amName} with the
@@ -23,7 +23,7 @@ public:
 	 *
 	 * TODO: write a better and more specific documentation
 	 */
-	AnalogueModel* initialize${amName}(ParameterMap& params);
+	AnalogueModel* initialize${amName}(ParameterMap& params) const;
 };
 
 #endif /* ${(phyName?upper_case)}_H_ */

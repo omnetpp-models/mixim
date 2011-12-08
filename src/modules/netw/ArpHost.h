@@ -44,6 +44,13 @@ class MIXIM_API ArpHost : public ArpInterface,
 {
     int offset;
 public:
+    ArpHost()
+    	: ArpInterface()
+    	, AddressingInterface()
+    	, BaseModule()
+    	, offset(0)
+    {}
+
     virtual void initialize(int stage);
     virtual ~ArpHost() {}
 

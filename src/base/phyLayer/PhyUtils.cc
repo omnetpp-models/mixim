@@ -87,8 +87,9 @@ Radio::Radio(int numRadioStates,
 			 int initialState,
 			 Argument::mapped_type_cref minAtt, Argument::mapped_type_cref maxAtt,
 			 int currentChannel, int nbChannels):
-	state(initialState), nextState(initialState),
+	radioStates(), radioChannels(), state(initialState), nextState(initialState),
 	numRadioStates(numRadioStates),
+	swTimes(NULL),
 	minAtt(minAtt), maxAtt(maxAtt),
 	rsam(mapStateToAtt(initialState)),
 	currentChannel(currentChannel), nbChannels(nbChannels)
@@ -198,16 +199,16 @@ void Radio::endSwitch(simtime_t_cref now)
 	return;
 }
 
-
-
-
-RSAMConstMappingIterator::RSAMConstMappingIterator
-							(const RadioStateAnalogueModel* rsam,
+RSAMConstMappingIterator::RSAMConstMappingIterator( const RadioStateAnalogueModel* rsam,
 							 simtime_t_cref signalStart,
-							 simtime_t_cref signalEnd) :
-	rsam(rsam),
-	signalStart(signalStart),
-	signalEnd(signalEnd)
+                                                    simtime_t_cref                 signalEnd )
+	: ConstMappingIterator()
+	, rsam(rsam)
+	, it()
+	, position()
+	, nextPosition()
+	, signalStart(signalStart)
+	, signalEnd(signalEnd)
 {
 	assert(rsam);
 

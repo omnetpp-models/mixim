@@ -100,7 +100,7 @@ void csma::initialize(int stage) {
 		txPower = par("txPower").doubleValue();
 
 		droppedPacket.setReason(DroppedPacket::NONE);
-		nicId = getParentModule()->getId();
+		nicId = getNic()->getId();
 
 		// initialize the timers
 		backoffTimer = new cMessage("timer-backoff");
@@ -111,8 +111,7 @@ void csma::initialize(int stage) {
 		txAttempts = 0;
 
 		//check parameters for consistency
-		cModule* phyModule = FindModule<BasePhyLayer*>
-								::findSubModule(getParentModule());
+		cModule* phyModule = FindModule<BasePhyLayer*>::findSubModule(getNic());
 
 		//aTurnaroundTime should match (be equal or bigger) the RX to TX
 		//switching time of the radio

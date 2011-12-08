@@ -69,13 +69,21 @@ class MIXIM_API Decider
 {
 protected:
 	/** @brief A pointer to the physical layer of this Decider. */
-	DeciderToPhyInterface* phy;
+	DeciderToPhyInterface* const phy;
 
 	/** @brief simtime that tells the Phy-Layer not to pass an AirFrame again */
 	const simtime_t notAgain;
 
 	/** @brief Defines what an AirFrameVector shall be here */
 	typedef DeciderToPhyInterface::AirFrameVector AirFrameVector;
+
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	Decider(const Decider&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	Decider& operator=(const Decider&);
 
 public:
 

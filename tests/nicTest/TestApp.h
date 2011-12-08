@@ -29,8 +29,15 @@
 class TestApp : public BaseModule,
 				public TestModule
 {
-protected:
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	TestApp(const TestApp&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	TestApp& operator=(const TestApp&);
 
+protected:
 	cGate* out;
 	int myIndex;
 	Mac80211MultiChannel* mac;
@@ -46,9 +53,17 @@ protected:
 
     simtime_t in(simtime_t delta);
 
-
-
   public:
+    TestApp()
+    	: BaseModule()
+    	, TestModule()
+    	, out(NULL)
+    	, myIndex(0)
+    	, mac(NULL)
+    	, pingsSent(0)
+    	, lastPong()
+    {}
+
     enum {
     	WAITING = 2224,
 		TESTPACKET = 22331,

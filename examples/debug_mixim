@@ -1,4 +1,30 @@
-#! /bin/sh
-DIR=`dirname $0`
-gdb --args opp_run -l$DIR/../base/miximbase -l$DIR/../modules/miximmodules -n $DIR/../examples:$DIR/../base:$DIR/../modules $*
+#!/bin/bash
 
+DIR=`dirname $0`
+
+lPATH='.'
+LIBSREF=( )
+lINETPath="${DIR}/../../inet/src"
+for lP in "${DIR}/../src" \
+          "${DIR}/../src/base" \
+          "${DIR}/../src/modules" \
+          "$lINETPath"; do
+    for pr in 'mixim' 'inet'; do
+        if [ -d "$lP" ] && [ -f "${lP}/lib${pr}$(basename $lP).so" -o -f "${lP}/lib${pr}$(basename $lP).dll" ]; then
+            lPATH="${lP}:$lPATH"
+            LIBSREF=( '-l' "${lP}/${pr}$(basename $lP)" "${LIBSREF[@]}" )
+        elif [ -d "$lP" ] && [ -f "${lP}/lib${pr}.so" -o -f "${lP}/lib${pr}.dll" ]; then
+            lPATH="${lP}:$lPATH"
+            LIBSREF=( '-l' "${lP}/${pr}" "${LIBSREF[@]}" )
+        fi
+    done
+done
+PATH="${PATH}:${lPATH}" #needed for windows
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
+NEDPATH="${DIR}/../src:${DIR}"
+[ -d "$lINETPath" ] && NEDPATH="${NEDPATH}:$lINETPath"
+export PATH
+export NEDPATH
+export LD_LIBRARY_PATH
+
+gdb --args opp_run "${LIBSREF[@]}" "$@"

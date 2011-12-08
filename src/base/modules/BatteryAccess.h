@@ -63,6 +63,14 @@ protected:
 public:
 	BatteryAccess();
 	BatteryAccess(unsigned stacksize);
+
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	BatteryAccess(const BatteryAccess&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	BatteryAccess& operator=(const BatteryAccess&);
 };
 
 #endif /* BATTERYACCESS_H_ */

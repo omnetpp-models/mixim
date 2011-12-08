@@ -39,8 +39,26 @@ class DeviceEntry;
  */
 class MIXIM_API BatteryStats : public BaseModule
 {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	BatteryStats(const BatteryStats&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	BatteryStats& operator=(const BatteryStats&);
 
 public:
+	BatteryStats()
+		: BaseModule()
+		, doDetail(0)
+		, doTimeSeries(0)
+		, residualVec()
+		, relativeVec()
+		, estimateVec()
+		, estimateRelVec()
+		, battery(NULL)
+	{}
+
 	/** @brief Signal for the BatteryStats.*/
 	const static simsignalwrap_t catBatteryStateSignal;
 

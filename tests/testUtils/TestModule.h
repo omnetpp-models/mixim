@@ -200,6 +200,14 @@ public:
  * @author Karl Wessel
  */
 class TestModule {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	TestModule(const TestModule&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	TestModule& operator=(const TestModule&);
+
 protected:
 	/** @brief Unique name of this module.*/
 	std::string name;
@@ -213,7 +221,6 @@ protected:
 	MessageDescList expectedMsgs;
 	
 private:
-	
 	/**
 	 * @brief Proceeds the message assert to the correct destination.
 	 */
@@ -441,6 +448,11 @@ protected:
 		manager->testForClose(name, expected, actual);
 	}
 public:
+	TestModule()
+		: name()
+		, manager(NULL)
+		, expectedMsgs()
+	{}
 	virtual ~TestModule() {}
 };
 

@@ -52,6 +52,13 @@ class UWBIRMacPkt;
  * @ingroup macLayer
  */
 class MIXIM_API UWBIRMac : public BaseMacLayer {
+private:
+    /** @brief Copy constructor is not allowed.
+     */
+    UWBIRMac(const UWBIRMac&);
+    /** @brief Assignment operator is not allowed.
+     */
+    UWBIRMac& operator=(const UWBIRMac&);
 
 public:
 
@@ -59,7 +66,32 @@ public:
 
     virtual void finish();
 
-    UWBIRMac(): packet(100) { }
+    UWBIRMac()
+    	: BaseMacLayer()
+    	, debug(false)
+    	, stats(false)
+    	, trace(false)
+    	, rsDecoder(false)
+    	, packetsAlwaysValid(false)
+    	, totalRxBits(0), errRxBits(0)
+    	, phy(NULL)
+    	, packet(100)
+    	, prf(0)
+    	, packetsBER()
+    	, dataLengths()
+    	, erroneousSymbols()
+    	, sentPulses()
+    	, receivedPulses()
+    	, meanPacketBER()
+    	, packetSuccessRate()
+    	, packetSuccessRateNoRS()
+    	, ber()
+    	, meanBER()
+    	, RSErrorRate()
+    	, success(), successNoRS()
+    	, nbReceivedPacketsNoRS(0), nbReceivedPacketsRS(0), nbSentPackets(0), nbSymbolErrors(0)
+    	, nbSymbolsReceived(0), nbHandledRxPackets(0), nbFramesDropped(0)
+    { }
 
 protected:
     bool debug;

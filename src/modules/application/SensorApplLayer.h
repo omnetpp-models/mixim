@@ -51,16 +51,50 @@ class BaseWorldUtility;
  **/
 class MIXIM_API SensorApplLayer:public BaseLayer
 {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	SensorApplLayer(const SensorApplLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	SensorApplLayer& operator=(const SensorApplLayer&);
+
 public:
-
-
   /** @brief Initialization of the module and some variables*/
   virtual void initialize(int);
   virtual void finish();
 
   virtual ~SensorApplLayer();
   
-  SensorApplLayer(): packet(100) {} // we must specify a packet length for Packet.h
+  SensorApplLayer()
+  	  : BaseLayer()
+  	  , delayTimer(NULL)
+  	  , myAppAddr()
+  	  , destAddr()
+  	  , sentPackets(0)
+  	  , initializationTime()
+  	  , firstPacketGeneration()
+  	  , lastPacketReception()
+  	  , trafficType(0)
+  	  , trafficParam(0.0)
+  	  , nbPackets(0)
+  	  , nbPacketsSent(0)
+  	  , nbPacketsReceived(0)
+  	  , stats(false)
+  	  , trace(false)
+  	  , debug(false)
+  	  , broadcastPackets(false)
+  	  , latencies()
+  	  , latency()
+  	  , latenciesRaw()
+  	  , packet(100)
+  	  , headerLength(0)
+  	  , world(NULL)
+  	  , dataOut(0)
+  	  , dataIn(0)
+  	  , ctrlOut(0)
+  	  , ctrlIn(0)
+  {} // we must specify a packet length for Packet.h
 
   enum APPL_MSG_TYPES
   {

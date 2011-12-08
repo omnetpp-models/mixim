@@ -19,15 +19,27 @@ Coord NoMobiltyPos = Coord::ZERO;
 
 //--Initialization----------------------------------
 
-BasePhyLayer::BasePhyLayer():
-	protocolId(GENERIC),
-	thermalNoise(0),
-	radio(0),
-	decider(0),
-	radioSwitchingOverTimer(0),
-	txOverTimer(0),
-	headerLength(-1),
-	world(NULL)
+BasePhyLayer::BasePhyLayer()
+	: ChannelAccess()
+	, DeciderToPhyInterface()
+	, MacToPhyInterface()
+	, protocolId(GENERIC)
+	, thermalNoise(NULL)
+	, maxTXPower(0)
+	, sensitivity(0)
+	, recordStats(false)
+	, channelInfo()
+	, radio(NULL)
+	, decider(NULL)
+	, analogueModels()
+	, upperLayerIn(-1)
+	, upperLayerOut(-1)
+	, upperControlOut(-1)
+	, upperControlIn(-1)
+	, radioSwitchingOverTimer(NULL)
+	, txOverTimer(NULL)
+	, headerLength(-1)
+	, world(NULL)
 {}
 
 template<class T> T BasePhyLayer::readPar(const char* parName, const T defaultValue) const {
@@ -193,9 +205,9 @@ void BasePhyLayer::finish(){
 
 void BasePhyLayer::initializeDecider(cXMLElement* xmlConfig) {
 
-	decider = 0;
+	decider = NULL;
 
-	if(xmlConfig == 0) {
+	if(xmlConfig == NULL) {
 		opp_error("No decider configuration file specified.");
 		return;
 	}
@@ -216,7 +228,7 @@ void BasePhyLayer::initializeDecider(cXMLElement* xmlConfig) {
 
 	const char* name = deciderData->getAttribute("type");
 
-	if(name == 0) {
+	if(name == NULL) {
 		opp_error("Could not read type of decider from configuration file.");
 		return;
 	}
@@ -226,7 +238,7 @@ void BasePhyLayer::initializeDecider(cXMLElement* xmlConfig) {
 
 	decider = getDeciderFromName(name, params);
 
-	if(decider == 0) {
+	if(decider == NULL) {
 		opp_error("Could not find a decider with the name \"%s\".", name);
 		return;
 	}

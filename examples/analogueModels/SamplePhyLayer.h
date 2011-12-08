@@ -62,6 +62,10 @@ protected:
 	};
 
 public:
+	SamplePhyLayer()
+		: PhyLayer()
+		, myIndex(-1)
+	{}
 	virtual void initialize(int stage);
 
 	/**

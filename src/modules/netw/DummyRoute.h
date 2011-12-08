@@ -28,6 +28,13 @@ class NetwPkt;
 class MIXIM_API DummyRoute : public BaseNetwLayer
 {
 public:
+	DummyRoute()
+		: BaseNetwLayer()
+		, stats(false)
+		, trace(false)
+		, networkID(-1)
+	{}
+
     /** @brief Initialization of the module and some variables*/
     virtual void initialize(int);
     virtual void finish();
@@ -52,10 +59,10 @@ protected:
 
     virtual void handleUpperControl(cMessage* msg) { delete msg; }
 
-    NetwPkt* encapsMsg(cPacket *appPkt);
+    virtual NetwPkt* encapsMsg(cPacket *appPkt);
 
     /** @brief Decapsulate a message */
-    cMessage* decapsMsg(NetwPkt *msg);
+    virtual cPacket* decapsMsg(NetwPkt *msg);
 
 };
 

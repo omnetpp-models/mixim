@@ -33,14 +33,14 @@ void PhyLayerBattery::initialize(int stage) {
 		 * power levels and corresponding txCurrent */
 		sleepCurrent = rxCurrent = decodingCurrentDelta = txCurrent = 0;
 		setupRxCurrent = setupTxCurrent = rxTxCurrent = txRxCurrent = 0;
-		sleepCurrent = getParentModule()->par( "sleepCurrent" );
-		rxCurrent = getParentModule()->par( "rxCurrent" );
-		decodingCurrentDelta = getParentModule()->par( "decodingCurrentDelta" );
-		txCurrent = getParentModule()->par( "txCurrent" );
-		setupRxCurrent = getParentModule()->par( "setupRxCurrent" );
-		setupTxCurrent = getParentModule()->par( "setupTxCurrent" );
-		rxTxCurrent = getParentModule()->par( "rxTxCurrent" );
-		txRxCurrent = getParentModule()->par( "txRxCurrent" );
+		sleepCurrent = getNic()->par( "sleepCurrent" );
+		rxCurrent = getNic()->par( "rxCurrent" );
+		decodingCurrentDelta = getNic()->par( "decodingCurrentDelta" );
+		txCurrent = getNic()->par( "txCurrent" );
+		setupRxCurrent = getNic()->par( "setupRxCurrent" );
+		setupTxCurrent = getNic()->par( "setupTxCurrent" );
+		rxTxCurrent = getNic()->par( "rxTxCurrent" );
+		txRxCurrent = getNic()->par( "txRxCurrent" );
 	} else {
 		registerWithBattery("physical layer", numActivities);
 		setRadioCurrent(radio->getCurrentState());

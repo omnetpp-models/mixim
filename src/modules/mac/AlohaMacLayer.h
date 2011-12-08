@@ -35,6 +35,20 @@
  * @ingroup macLayer
  */
 class MIXIM_API AlohaMacLayer : public UWBIRMac {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	AlohaMacLayer(const AlohaMacLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	AlohaMacLayer& operator=(const AlohaMacLayer&);
+
+  public:
+	AlohaMacLayer()
+		: UWBIRMac()
+		, minBE(0)
+		, maxBE(0)
+	{}
 
 public:
 

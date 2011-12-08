@@ -103,7 +103,45 @@ protected:
 	 **/
 	void sendToChannel(cPacket *msg);
 
+	/** @brief Pointer to nic Module.
+	 */
+	const cModule* getNic() const {
+		return getParentModule();
+	}
+	cModule* getNic() {
+		return getParentModule();
+	}
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	ChannelAccess(const ChannelAccess&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	ChannelAccess& operator=(const ChannelAccess&);
+
 public:
+	ChannelAccess()
+		: BatteryAccess()
+		, ChannelMobilityAccessType()
+		, useSendDirect(false)
+		, cc(NULL)
+		, coreDebug(false)
+		, usePropagationDelay(false)
+		, isRegistered(false)
+		, world(NULL)
+	{}
+	ChannelAccess(unsigned sz)
+		: BatteryAccess(sz)
+		, ChannelMobilityAccessType()
+		, useSendDirect(false)
+		, cc(NULL)
+		, coreDebug(false)
+		, usePropagationDelay(false)
+		, isRegistered(false)
+		, world(NULL)
+	{}
+	virtual ~ChannelAccess() {}
+
 	/**
 	 * @brief Returns a pointer to the ConnectionManager responsible for the
 	 * passed NIC module.
@@ -112,7 +150,7 @@ public:
 	 * @return a pointer to a connection manager module or NULL if an error
 	 * occurred
 	 */
-	static BaseConnectionManager* getConnectionManager(cModule* nic);
+	static BaseConnectionManager* getConnectionManager(const cModule* nic);
 
 	/** @brief Register with ConnectionManager.
 	 *

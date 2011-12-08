@@ -39,6 +39,14 @@
  */
 
 class MIXIM_API SimpleBattery: public BaseBattery {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	SimpleBattery(const SimpleBattery&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	SimpleBattery& operator=(const SimpleBattery&);
+
 public:
     SimpleBattery();
 	virtual ~SimpleBattery();

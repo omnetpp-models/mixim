@@ -16,6 +16,16 @@ protected:
 	/** @brief A pointer to the signal representing the transmission.*/
 	Signal* signal;
 
+	MacToPhyControlInfo(const MacToPhyControlInfo& o)
+		: cObject()
+		, signal(o.signal ? new Signal(*o.signal) : o.signal)
+	{}
+	MacToPhyControlInfo& operator=(const MacToPhyControlInfo& o)
+	{
+		signal = o.signal ? new Signal(*o.signal) : o.signal;
+		return *this;
+	}
+
 public:
 	/**
 	 * @brief Initialize the MacToPhyControlInfo with the passed
@@ -24,8 +34,10 @@ public:
 	 * NOTE: Once a signal is passed to the MacToPhyControlInfo,
 	 * 		 MacToPhyControlInfo takes the ownership of the Signal.
 	 */
-	MacToPhyControlInfo(Signal* signal = NULL):
-		signal(signal) {}
+	MacToPhyControlInfo(Signal* signal = NULL)
+		: cObject()
+		, signal(signal)
+	{}
 
 	/**
 	 * @brief Delete the signal if it is still in our ownership.
@@ -60,7 +72,7 @@ public:
 	 */
 	Signal* retrieveSignal() {
 		Signal* tmp = signal;
-		signal = 0;
+		signal = NULL;
 		return tmp;
 	}
 

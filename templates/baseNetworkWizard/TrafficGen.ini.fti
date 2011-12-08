@@ -1,4 +1,4 @@
-**.node[*].applType = "TrafficGen"
+**.node[*].applicationType = "TrafficGen"
 **.node[*].appl.debug = false
 **.node[*].appl.headerLength = 512bit
 **.node[*].appl.burstSize = 1

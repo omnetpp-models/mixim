@@ -434,7 +434,7 @@ Mapping* Mapping::subtract(ConstMapping &f1, ConstMapping &f2, const Argument& f
 
 
 LinearIntplMappingIterator::LinearIntplMappingIterator(ConstMappingIterator* leftIt, ConstMappingIterator* rightIt, Mapping::argument_value_cref_t f):
-	leftIt(leftIt), rightIt(rightIt), factor(f) {
+	MappingIterator(), leftIt(leftIt), rightIt(rightIt), factor(f) {
 
 	assert(leftIt->getPosition() == rightIt->getPosition());
 }

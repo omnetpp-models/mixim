@@ -65,15 +65,18 @@ double JakesFadingMapping::getValue(const Argument& pos) const {
 
 
 JakesFading::JakesFading(int fadingPaths, simtime_t_cref delayRMS,
-						 double carrierFrequency, simtime_t_cref interval):
-	fadingPaths(fadingPaths),
-	carrierFrequency(carrierFrequency),
-	interval(interval)
+						 double carrierFrequency, simtime_t_cref interval)
+	: AnalogueModel()
+	, fadingPaths(fadingPaths)
+	, angleOfArrival(NULL)
+	, delay(NULL)
+	, carrierFrequency(carrierFrequency)
+	, interval(interval)
 {
 	angleOfArrival = new double[fadingPaths];
 	delay = new simtime_t[fadingPaths];
 
-	for (int i = 0; i < fadingPaths; i++) {
+	for (int i = 0; i < fadingPaths; ++i) {
 		angleOfArrival[i] = cos(uniform(0, M_PI));
 		delay[i] = exponential(delayRMS);
 	}

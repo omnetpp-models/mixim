@@ -109,6 +109,15 @@ protected:
     const cModule* findHost(void) const;
     /** @brief Function to get the logging name of id*/
     //std::string getLogName(int);
+
+private:
+    /** @brief Copy constructor is not allowed.
+     */
+    BaseModule(const BaseModule&);
+    /** @brief Assignment operator is not allowed.
+     */
+    BaseModule& operator=(const BaseModule&);
+
   public:
 
     BaseModule();

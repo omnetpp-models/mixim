@@ -246,9 +246,10 @@ bool Argument::operator==(const Argument & o) const
 	return compare(o) == 0;
 }
 
-void Argument::operator=(const Argument& o){
+Argument& Argument::operator=(const Argument& o){
 	values = o.values;
 	time   = o.time;
+	return *this;
 }
 
 bool Argument::operator<(const Argument & o) const
@@ -309,10 +310,12 @@ int Argument::compare(const Argument& o, const DimensionSet *const dims /*= NULL
 SimpleConstMappingIterator::SimpleConstMappingIterator(const ConstMapping*                            mapping,
                                                        const SimpleConstMappingIterator::KeyEntrySet* keyEntries,
                                                        const Argument&                                start)
-	: mapping(mapping)
+	: ConstMappingIterator()
+	, mapping(mapping)
 	, dimensions(mapping->getDimensionSet())
 	, position(mapping->getDimensionSet(), start.getTime())
 	, keyEntries(keyEntries)
+	, nextEntry()
 {
 	assert(keyEntries);
 
@@ -330,10 +333,12 @@ SimpleConstMappingIterator::SimpleConstMappingIterator(const ConstMapping*      
 
 SimpleConstMappingIterator::SimpleConstMappingIterator(const ConstMapping*                            mapping,
                                                        const SimpleConstMappingIterator::KeyEntrySet* keyEntries)
-	: mapping(mapping)
+	: ConstMappingIterator()
+	, mapping(mapping)
 	, dimensions(mapping->getDimensionSet())
 	, position(dimensions)
 	, keyEntries(keyEntries)
+	, nextEntry()
 {
 	assert(keyEntries);
 
@@ -407,8 +412,3 @@ void SimpleConstMapping::initializeArguments(const Argument& min,
 	else
 		createKeyEntries(min, max, interval, dimIt, pos);
 }
-
-
-
-
-

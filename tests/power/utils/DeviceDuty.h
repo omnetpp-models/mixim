@@ -30,8 +30,24 @@
  */
 class DeviceDuty : public BatteryAccess
 {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	DeviceDuty(const DeviceDuty&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	DeviceDuty& operator=(const DeviceDuty&);
 
 public:
+	DeviceDuty()
+		: BatteryAccess()
+		, on0(NULL)
+		, gap01(NULL)
+		, on1(NULL)
+		, off(NULL)
+		, period(0), dutyCycle0(0), current0(0), gap(0), dutyCycle1(0), current1(0), wakeup(0)
+	{}
+
   virtual void initialize(int);
   virtual void handleMessage( cMessage* );
   virtual void handleHostState(const HostState& state);

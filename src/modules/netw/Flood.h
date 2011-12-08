@@ -90,7 +90,19 @@ protected:
     simtime_t bcDelTime;
 
 public:
-
+    Flood()
+    	: BaseNetwLayer()
+    	, seqNum(0)
+    	, defaultTtl(0)
+    	, plainFlooding(false)
+    	, bcMsgs()
+    	, bcMaxEntries(0)
+    	, bcDelTime()
+    	, nbDataPacketsReceived(0)
+    	, nbDataPacketsSent(0)
+    	, nbDataPacketsForwarded(0)
+    	, nbHops(0)
+    {}
 
     /** @brief Initialization of omnetpp.ini parameters*/
     virtual void initialize(int);
@@ -116,7 +128,7 @@ protected:
     bool notBroadcasted( NetwPkt* );
 
     //overloading encaps method
-    NetwPkt* encapsMsg(cPacket*);
+    virtual NetwPkt* encapsMsg(cPacket*);
 };
 
 #endif

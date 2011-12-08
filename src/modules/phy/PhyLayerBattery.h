@@ -156,6 +156,12 @@ protected:
 	virtual void finishRadioSwitching();
 
 public:
+	PhyLayerBattery()
+		: PhyLayer()
+		, numActivities(0)
+		, sleepCurrent(0), rxCurrent(0), decodingCurrentDelta(0), txCurrent(0)
+		, setupRxCurrent(0), setupTxCurrent(0), rxTxCurrent(0), txRxCurrent(0)
+	{}
 	virtual void initialize(int stage);
 
 	/**

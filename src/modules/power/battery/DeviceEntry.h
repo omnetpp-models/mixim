@@ -50,18 +50,69 @@ class MIXIM_API DeviceEntry
     simtime_t	*times;
 
     /** @brief New empty device entry.*/
-    DeviceEntry() {
-      name = NULL;
-      draw = 0.0;
-      numAccts = 0;
-      currentActivity = -1;
-      accts = NULL;
-      times = NULL;
+    DeviceEntry()
+    	: name()
+      	, draw(0)
+    	, currentActivity(-1)
+    	, numAccts(0)
+    	, accts(NULL)
+    	, times(NULL)
+    {}
+    DeviceEntry(const DeviceEntry& o)
+    	: name(o.name)
+      	, draw(o.draw)
+    	, currentActivity(o.currentActivity)
+    	, numAccts(o.numAccts)
+    	, accts(NULL)
+    	, times(NULL)
+    {
+    	if (o.accts) {
+    		accts = new double[numAccts];
+    		for (int i = 0; i < numAccts; ++i) {
+    			accts[i] = o.accts[i];
+    		}
+    	}
+    	if (o.times) {
+			times = new simtime_t[numAccts];
+			for (int i = 0; i < numAccts; ++i) {
+				times[i] = o.times[i];
+			}
+    	}
+    }
+    /**
+     *  @brief  %DeviceEntry assignment operator.
+     *  @param  copy  A %DeviceEntry of identical element and allocator types.
+     *
+     *  All the elements of @a copy are copied.
+     */
+    DeviceEntry& operator=(const DeviceEntry& copy) {
+    	DeviceEntry Temp(copy);
+
+    	swap(Temp);
+    	return *this;
+    }
+    /**
+     *  @brief  Swaps data with another %DeviceEntry.
+     *  @param  s  A %DeviceEntry of the same element and allocator types.
+     *
+     *  This exchanges the elements between two DeviceEntry's in constant time.
+     *  Note that the global std::swap() function is specialized such that
+     *  std::swap(s1,s2) will feed to this function.
+     */
+    void swap(DeviceEntry& s) {
+        std::swap(name, s.name);
+        std::swap(draw, s.draw);
+        std::swap(currentActivity, s.currentActivity);
+        std::swap(numAccts, s.numAccts);
+        std::swap(accts, s.accts);
+        std::swap(times, s.times);
     }
 
     ~DeviceEntry() {
-      delete []  accts;
-      delete [] times;
+    	if (accts)
+            delete [] accts;
+    	if (times)
+            delete [] times;
     }
   };
 

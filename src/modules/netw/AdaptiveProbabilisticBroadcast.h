@@ -25,18 +25,23 @@
 class MIXIM_API AdaptiveProbabilisticBroadcast : public ProbabilisticBroadcast
 {
 public:
-
+    AdaptiveProbabilisticBroadcast()
+        : ProbabilisticBroadcast()
+        , timeInNeighboursTable()
+        , bvec()
+        , neighMap()
+    {}
 
     /** @brief Initialization of the module and some variables*/
     virtual void initialize(int);
 
 protected:
-	typedef std::map<LAddress::L3Type, cMessage*> NeighborMap;
+    typedef std::map<LAddress::L3Type, cMessage*> NeighborMap;
 
-	/** @brief Handle messages from lower layer */
-	virtual void handleLowerMsg(cMessage* msg);
+    /** @brief Handle messages from lower layer */
+    virtual void handleLowerMsg(cMessage* msg);
 
-	/** @brief Handle self messages */
+    /** @brief Handle self messages */
     virtual void handleSelfMsg(cMessage* msg);
 
     void updateNeighMap(ProbabilisticBroadcastPkt* m);
@@ -44,12 +49,8 @@ protected:
     void updateBeta();
 
     //read from omnetpp.ini
-    simtime_t timeInNeighboursTable; //Default ttl for NeighborTable entries in seconds
-
-
-    cOutVector bvec;
-
-
+    simtime_t   timeInNeighboursTable; ///< @brief Default ttl for NeighborTable entries in seconds
+    cOutVector  bvec;
     NeighborMap neighMap;
 
 };

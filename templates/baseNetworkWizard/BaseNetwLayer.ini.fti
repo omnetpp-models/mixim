@@ -1,4 +1,4 @@
-**.node[*].netwType = "BaseNetwLayer"
-**.node[*].net.debug = false
-**.node[*].net.stats = false
-**.node[*].net.headerLength = 32bit
+**.node[*].networkType = "BaseNetwLayer"
+**.node[*].netwl.debug = false
+**.node[*].netwl.stats = false
+**.node[*].netwl.headerLength = 32bit

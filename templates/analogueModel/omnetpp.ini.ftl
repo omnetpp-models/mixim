@@ -16,6 +16,7 @@ network = ${amName}TestNetwork
 #			WorldUtility parameters                      #
 ##########################################################
 **.world.useTorus = false
+**.world.use2D = false
 
 ##########################################################
 #			         channel parameters                  #
@@ -63,14 +64,14 @@ network = ${amName}TestNetwork
 **.node[1].mobility.y = 150
 
 
-**.node[*].applType = "BurstApplLayer"
+**.node[*].applicationType = "BurstApplLayer"
 **.node[*].appl.debug = false
 **.node[*].appl.headerLength = 512bit
 **.node[*].appl.burstSize = 3
 
-**.node[*].netwType = "BaseNetwLayer"
-**.node[*].net.debug = false
-**.node[*].net.stats = false
-**.node[*].net.headerLength = 32bit
+**.node[*].networkType = "BaseNetwLayer"
+**.node[*].netwl.debug = false
+**.node[*].netwl.stats = false
+**.node[*].netwl.headerLength = 32bit
 
 </#if>

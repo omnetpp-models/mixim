@@ -10,8 +10,8 @@
 class MIXIM_API UWBIRMacPkt : public UWBIRMacPkt_Base
 {
    public:
-     UWBIRMacPkt(const char *name=NULL, int kind=0) : UWBIRMacPkt_Base(name,kind) {}
-     UWBIRMacPkt(const UWBIRMacPkt& other) : UWBIRMacPkt_Base(other.getName()) {operator=(other);}
+     UWBIRMacPkt(const char *name=NULL, int kind=0) : UWBIRMacPkt_Base(name,kind), bitValues() {}
+     UWBIRMacPkt(const UWBIRMacPkt& other) : UWBIRMacPkt_Base(other.getName()), bitValues() {operator=(other);}
      UWBIRMacPkt& operator=(const UWBIRMacPkt& other);
      virtual UWBIRMacPkt *dup() const {return new UWBIRMacPkt(*this);}
      // ADD CODE HERE to redefine and implement pure virtual functions from UWBIRMacPkt_Base

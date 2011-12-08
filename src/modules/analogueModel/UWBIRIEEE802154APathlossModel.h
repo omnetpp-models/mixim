@@ -55,15 +55,42 @@
  * @ingroup ieee802154a
  */
 class MIXIM_API UWBIRIEEE802154APathlossModel : public AnalogueModel {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	UWBIRIEEE802154APathlossModel(const UWBIRIEEE802154APathlossModel&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	UWBIRIEEE802154APathlossModel& operator=(const UWBIRIEEE802154APathlossModel&);
 
 public:
 
 	/*
 	 * @brief Default constructor.
 	 */
-    UWBIRIEEE802154APathlossModel(int _channelModel, double _threshold, bool shadowing=true):
-    	channelModel(_channelModel), tapThreshold(_threshold), doShadowing(shadowing),
-    	doSmallScaleShadowing(false), nbCalls(0)  {
+	UWBIRIEEE802154APathlossModel(int _channelModel, double _threshold, bool shadowing=true)
+		: AnalogueModel()
+		, channelModel(_channelModel)
+		, cfg()
+		, tapThreshold(_threshold)
+		, doShadowing(shadowing)
+ 		, doSmallScaleShadowing(false)
+		, newTxPower(NULL)
+		, txPower(NULL)
+		, arg()
+		, pulsesIter(NULL)
+		, L(0)
+		, S(0)
+		, clusterStart()
+		, gamma_l()
+		, Mcluster(0)
+		, Omega_l(0)
+		, distance(0)
+		, averagePower(0)
+		, nbCalls(0)
+		, averagePowers()
+		, pathlosses()
+    {
     	// Check that this model is supported
     	assert(implemented_CMs[channelModel]);
     	// load the model parameters

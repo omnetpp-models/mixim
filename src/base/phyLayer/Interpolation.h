@@ -122,10 +122,10 @@ protected:
 
 public:
 	InterpolatorBase():
-		continueOutOfRange(true), outOfRangeVal(mapped_type()) {}
+		comp(), continueOutOfRange(true), outOfRangeVal(mapped_type()) {}
 
 	InterpolatorBase(mapped_cref_type oorv):
-		continueOutOfRange(false), outOfRangeVal(oorv) {}
+		comp(), continueOutOfRange(false), outOfRangeVal(oorv) {}
 
 	virtual ~InterpolatorBase() {}
 
@@ -572,6 +572,7 @@ public:
 
 		jumpToBegin();
 	}
+	virtual ~ConstInterpolateableIterator() {}
 
 	bool operator==(const ConstInterpolateableIterator& other) {
 		return position == other.position && right == other.right;
@@ -740,6 +741,7 @@ public:
 	InterpolateableIterator(container_type& cont, const interpolator_type& intpl):
 		base_class_type(cont.begin(), cont.end(), intpl), cont(cont) {}
 
+	virtual ~InterpolateableIterator() {}
 	/**
 	 * @brief: Changes (and adds if necessary) the value for the entry at the
 	 * current position of the iterator to the passed value
@@ -798,7 +800,8 @@ protected:
 	interpolator_type interpolate;
 public:
 
-	InterpolateableMap() {}
+	InterpolateableMap():
+		interpolate() {}
 
 	InterpolateableMap(mapped_cref_type oorv):
 		interpolate(oorv) {}

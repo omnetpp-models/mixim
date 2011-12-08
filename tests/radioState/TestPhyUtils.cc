@@ -250,10 +250,15 @@ private:
 	RSList variableList;
 
 public:
-	RadioStateTest(){
-		initTime = 0.1;
-		offset = 0.1;
-	}
+	RadioStateTest()
+		: SimpleTest()
+		, initTime(0.1)
+		, offset(0.1)
+		, emptyList()
+		, oneElemList()
+		, manyElemList()
+		, variableList()
+	{}
 	virtual ~RadioStateTest() {}
 
 private:

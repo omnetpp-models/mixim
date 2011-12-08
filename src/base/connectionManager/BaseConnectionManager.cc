@@ -11,6 +11,21 @@
 #define ccEV (ev.isDisabled()||!coreDebug) ? ev : ev << getName() << ": "
 #endif
 
+BaseConnectionManager::BaseConnectionManager()
+  : cSimpleModule()
+  , nics()
+  , coreDebug(false)
+  , sendDirect(false)
+  , playgroundSize(NULL)
+  , maxInterferenceDistance(0.0)
+  , maxDistSquared(0.0)
+  , useTorus(false)
+  , drawMIR(false)
+  , nicGrid()
+  , findDistance()
+  , gridDim()
+{}
+
 void BaseConnectionManager::initialize(int stage)
 {
 	//BaseModule::initialize(stage);
@@ -305,7 +320,7 @@ bool BaseConnectionManager::registerNic(cModule* nic,
 	// fill nicEntry
 	nicEntry->nicPtr = nic;
 	nicEntry->nicId = nicID;
-	nicEntry->hostId = nic->getParentModule()->getId();
+	nicEntry->hostId   = FindModule<>::findHost(nic)->getId();
 	nicEntry->pos = nicPos;
 	nicEntry->chAccess = chAccess;
 
@@ -317,7 +332,7 @@ bool BaseConnectionManager::registerNic(cModule* nic,
 	updateConnections(nicID, nicPos, nicPos);
 
 	if(drawMIR) {
-		nic->getParentModule()->getDisplayString().setTagArg("r", 0, maxInterferenceDistance);
+		FindModule<>::findHost(nic)->getDisplayString().setTagArg("r", 0, maxInterferenceDistance);
 	}
 
 	return sendDirect;

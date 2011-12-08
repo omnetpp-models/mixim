@@ -26,12 +26,29 @@
 Define_Module(SimpleBattery);
 
 SimpleBattery::SimpleBattery()
-{
-    timeout = NULL;
-    publish = NULL;
-    devices = NULL;
-    batteryState = NULL;
-}
+	: BaseBattery()
+	, numDevices(0)
+	, capmAh(0)
+	, nominalCapmAh(0)
+	, voltage(0)
+	, resolution()
+	, timeout(NULL)
+	, publish(NULL)
+	, publishDelta(0)
+	, publishTime()
+	, batteryState(NULL)
+	, hostState()
+	, capacity(0)
+	, nominalCapacity(0)
+	, residualCapacity(0)
+	, lastPublishCapacity(0)
+	, lifetime()
+	, residualVec()
+	, devices(NULL)
+	, registeredDevices(0)
+	, lastUpdateTime()
+	, host(NULL)
+{}
 
 void SimpleBattery::initialize(int stage) {
 	BaseBattery::initialize(stage);

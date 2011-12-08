@@ -28,15 +28,15 @@ void PhyLayerUWBIR::initialize(int stage) {
 		 * power levels and corresponding txCurrent */
 		sleepCurrent = rxCurrent = decodingCurrentDelta = txCurrent = 0;
 		setupRxCurrent = setupTxCurrent = rxTxCurrent = txRxCurrent = 0;
-		sleepCurrent = getParentModule()->par( "sleepCurrent" );
-		rxCurrent = getParentModule()->par( "rxCurrent" );
-//		decodingCurrentDelta = getParentModule()->par( "decodingCurrentDelta" );
-		txCurrent = getParentModule()->par( "txCurrent" );
-		setupRxCurrent = getParentModule()->par( "setupRxCurrent" );
-		setupTxCurrent = getParentModule()->par( "setupTxCurrent" );
-		rxTxCurrent = getParentModule()->par( "rxTxCurrent" );
-		txRxCurrent = getParentModule()->par( "txRxCurrent" );
-		syncCurrent = getParentModule()->par( "syncCurrent" ); // assume instantaneous transitions between rx and sync
+		sleepCurrent = getNic()->par( "sleepCurrent" );
+		rxCurrent = getNic()->par( "rxCurrent" );
+//		decodingCurrentDelta = getNic()->par( "decodingCurrentDelta" );
+		txCurrent = getNic()->par( "txCurrent" );
+		setupRxCurrent = getNic()->par( "setupRxCurrent" );
+		setupTxCurrent = getNic()->par( "setupTxCurrent" );
+		rxTxCurrent = getNic()->par( "rxTxCurrent" );
+		txRxCurrent = getNic()->par( "txRxCurrent" );
+		syncCurrent = getNic()->par( "syncCurrent" ); // assume instantaneous transitions between rx and sync
 		uwbradio    = dynamic_cast<RadioUWBIR*>(radio);
 	} else if (stage == 1) {
 		registerWithBattery("physical layer", numActivities);

@@ -27,8 +27,13 @@ Define_Module(BaseWorldUtility);
 
 const double BaseWorldUtility::speedOfLight = 299792458.0; ///< meters per second
 
-BaseWorldUtility::BaseWorldUtility():
-		isInitialized(false)
+BaseWorldUtility::BaseWorldUtility()
+	: cSimpleModule()
+	, playgroundSize()
+	, useTorusFlag(false)
+	, use2DFlag(false)
+	, airFrameId(0)
+	, isInitialized(false)
 {}
 
 void BaseWorldUtility::initialize(int stage) {
@@ -51,7 +56,7 @@ void BaseWorldUtility::initializeIfNecessary()
 
     playgroundSize = Coord(par("playgroundSizeX").doubleValue(),
                            par("playgroundSizeY").doubleValue(),
-                           par("playgroundSizeZ").doubleValue());
+                           use2DFlag ? 0. : par("playgroundSizeZ").doubleValue());
 
 	if(playgroundSize.x < 0) {
 		opp_error("Playground size in X direction is invalid: "\
@@ -61,7 +66,7 @@ void BaseWorldUtility::initializeIfNecessary()
 		opp_error("Playground size in Y direction is invalid: "\
 				  "(%f). Should be greater than or equal to zero.", playgroundSize.y);
 	}
-	if(playgroundSize.z < 0) {
+	if(!use2DFlag && playgroundSize.z < 0) {
 		opp_error("Playground size in Z direction is invalid: "\
 				  "(%f). Should be greater than or equal to zero.", playgroundSize.z);
 	}
@@ -79,6 +84,6 @@ Coord BaseWorldUtility::getRandomPosition()
 
     return Coord(uniform(0, playgroundSize.x),
                  uniform(0, playgroundSize.y),
-                 uniform(0, playgroundSize.z));
+                 use2DFlag ? 0. : uniform(0, playgroundSize.z));
 }
 

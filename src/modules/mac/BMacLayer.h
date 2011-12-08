@@ -58,7 +58,36 @@ class MacPkt;
  */
 class MIXIM_API  BMacLayer : public BaseMacLayer
 {
+  private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	BMacLayer(const BMacLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	BMacLayer& operator=(const BMacLayer&);
+
   public:
+	BMacLayer()
+		: BaseMacLayer()
+		, macQueue()
+		, nbTxDataPackets(0), nbTxPreambles(0), nbRxDataPackets(0), nbRxPreambles(0)
+		, nbMissedAcks(0), nbRecvdAcks(0), nbDroppedDataPackets(0), nbTxAcks(0)
+		, macState(INIT)
+		, resend_data(NULL), ack_timeout(NULL), start_bmac(NULL), wakeup(NULL)
+		, send_ack(NULL), cca_timeout(NULL), ack_tx_over(NULL), send_preamble(NULL), stop_preambles(NULL)
+		, data_tx_over(NULL), data_timeout(NULL)
+		, lastDataPktSrcAddr()
+		, lastDataPktDestAddr()
+		, txAttempts(0)
+		, droppedPacket()
+		, nicId(-1)
+		, queueLength(0)
+		, animation(false)
+		, slotDuration(0), bitrate(0), headerLength(0), checkInterval(0), txPower(0)
+		, useMacAcks(0)
+		, maxTxAttempts(0)
+		, stats(false)
+	{}
 	virtual ~BMacLayer();
 
     /** @brief Initialization of the module and some variables*/

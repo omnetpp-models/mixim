@@ -32,6 +32,7 @@
  */
 class MIXIM_API AddressingInterface {
 public:
+    virtual ~AddressingInterface() {}
     /** @brief Returns the L2 address for the passed mac.*/
     virtual LAddress::L2Type myMacAddr(const cModule* mac) const = 0;
 

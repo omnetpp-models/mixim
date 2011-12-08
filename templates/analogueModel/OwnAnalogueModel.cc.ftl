@@ -3,6 +3,8 @@ ${bannerComment}
 
 #include "${amName}.h"
 
+#include <AirFrame_m.h>
+
 ${amName}::${amName}(<#if par1Name!="">${par1CType} ${par1Name}</#if><#if par2Name!="">,${par2CType} ${par2Name}</#if>)<#if par1Name!="">:
 	${par1Name}(${par1Name})</#if><#if par2Name!="">,
 	${par2Name}(${par2Name})</#if>
@@ -10,10 +12,11 @@ ${amName}::${amName}(<#if par1Name!="">${par1CType} ${par1Name}</#if><#if par2Na
 
 ${amName}::~${amName}() {}
 
-void ${amName}::filterSignal(Signal& s)
+void ${amName}::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
 {
-	simtime_t start = s.getSignalStart();
-	simtime_t end = start + s.getSignalLength();
+	Signal&   signal = frame->getSignal();
+	simtime_t start  = signal.getReceptionStart();
+	simtime_t end    = signal.getReceptionEnd();
 	ev << "Filtering a signal from " << start << " to " << end << "." << endl;
 
 	//create an appropriate mapping to represent our attenuation
@@ -25,5 +28,5 @@ void ${amName}::filterSignal(Signal& s)
 
 	//add attenuation to the signals attenuation list
 	//this makes our attenuation affect the signal
-	s.addAttenuation(attenuation);
+	signal.addAttenuation(attenuation);
 }

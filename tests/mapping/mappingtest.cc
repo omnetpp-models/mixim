@@ -127,6 +127,14 @@ void assertEqualNotSmaller(std::string msg, T& v1, T& v2){
 
 
 class MappingTest:public SimpleTest {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	MappingTest(const MappingTest&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	MappingTest& operator=(const MappingTest&);
+
 protected:
 	std::map<Argument::mapped_type, std::map<simtime_t, Argument> > a;
 	std::map<simtime_t, Argument> t;
@@ -179,10 +187,17 @@ protected:
 
 	Mapping* createMappingBuffer;
 public:
-	MappingTest():
-		SimpleTest(),
-		time(Dimension::time), freq("frequency"), channel(freq), space("space"),
-		A(freq, space), createMappingBuffer(0){
+	MappingTest()
+		: SimpleTest()
+		, a()
+		, t()
+		, time(Dimension::time)
+		, freq("frequency")
+		, channel(freq)
+		, space("space")
+		, A(freq, space)
+		, createMappingBuffer(0)
+	{
 		for(Argument::mapped_type i = 0.0; i <= 6.0; i+=0.25) {
 			for(simtime_t j = SIMTIME_ZERO; j <= 6.0; j+=0.25) {
 				a[i][j].setTime(j);

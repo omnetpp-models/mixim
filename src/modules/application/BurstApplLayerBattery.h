@@ -42,6 +42,13 @@
 class MIXIM_API BurstApplLayerBattery : public BurstApplLayer
 {
  public:
+  BurstApplLayerBattery()
+  	  : BurstApplLayer()
+  	  , bcastOut(0)
+  	  , replyOut(0)
+  	  , replyIn(0)
+  {}
+  virtual ~BurstApplLayerBattery() {}
 
   /** @brief Initialite module parameters*/
   virtual void initialize(int);

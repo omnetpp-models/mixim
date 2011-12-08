@@ -51,8 +51,7 @@ void TestApplication::initialize(int stage) {
 
         if (stats) {
             // we should collect statistics
-            cModule *host = getParentModule();
-            int nbNodes = host->size();
+            int nbNodes = getNode()->size();
             for (int i = 0; i < nbNodes; i++) {
                 std::ostringstream oss;
                 oss << "latency";

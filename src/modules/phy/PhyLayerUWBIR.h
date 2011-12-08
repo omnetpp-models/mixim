@@ -117,9 +117,23 @@ class DeciderUWBIREDSync;
 class MIXIM_API PhyLayerUWBIR : public BasePhyLayer
 {
 	friend class DeciderUWBIRED;
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	PhyLayerUWBIR(const PhyLayerUWBIR&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	PhyLayerUWBIR& operator=(const PhyLayerUWBIR&);
 
 public:
-        PhyLayerUWBIR() : BasePhyLayer() {}
+	PhyLayerUWBIR()
+		: BasePhyLayer()
+		, uwbdecider(NULL)
+		, uwbradio(NULL)
+		, numActivities(0)
+		, sleepCurrent(0), rxCurrent(0), decodingCurrentDelta(0), txCurrent(0), syncCurrent(0)
+		, setupRxCurrent(0), setupTxCurrent(0), rxTxCurrent(0), txRxCurrent(0)
+	{}
 
     void finish();
 

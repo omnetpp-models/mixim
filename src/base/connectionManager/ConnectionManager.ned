@@ -20,6 +20,23 @@
 
 package org.mixim.base.connectionManager;
 
+moduleinterface IConnectionManager
+{
+    parameters:
+        // debug switch for core framework
+        bool coreDebug;
+        // send directly to the node or create separate gates for every connection
+        bool sendDirect;
+        // maximum sending power used for this network [mW]
+        double pMax @unit(mW);
+        // minimum signal attenuation threshold [dBm]
+        double sat @unit(dBm);
+        // minimum path loss coefficient
+        double alpha;
+        // minimum carrier frequency of the channel [Hz]
+        double carrierFrequency @unit(Hz);
+}
+
 // Module to control all connection related stuff
 //
 // The central module that coordinates the connections between all
@@ -36,7 +53,7 @@ package org.mixim.base.connectionManager;
 // @author Steffen Sroka, Daniel Willkomm, Karl Wessel
 // @see MobilityBase
 //
-simple ConnectionManager
+simple ConnectionManager like IConnectionManager
 {
     parameters:
         // debug switch for core framework

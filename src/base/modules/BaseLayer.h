@@ -63,13 +63,37 @@ public:
      * in statistic recording mode.*/
     PassedMessage *passedMsg;
 
+private:
+    /** @brief Copy constructor is not allowed.
+     */
+    BaseLayer(const BaseLayer&);
+    /** @brief Assignment operator is not allowed.
+     */
+    BaseLayer& operator=(const BaseLayer&);
+
 public:
     BaseLayer()
         : BatteryAccess()
+    	, upperLayerIn(-1)
+    	, upperLayerOut(-1)
+    	, lowerLayerIn(-1)
+    	, lowerLayerOut(-1)
+    	, upperControlIn(-1)
+    	, upperControlOut(-1)
+    	, lowerControlIn(-1)
+    	, lowerControlOut(-1)
         , passedMsg(NULL)
     {}
     BaseLayer(unsigned stacksize)
         : BatteryAccess(stacksize)
+        , upperLayerIn(-1)
+        , upperLayerOut(-1)
+        , lowerLayerIn(-1)
+        , lowerLayerOut(-1)
+        , upperControlIn(-1)
+        , upperControlOut(-1)
+        , lowerControlIn(-1)
+        , lowerControlOut(-1)
         , passedMsg(NULL)
     {}
     virtual ~BaseLayer();

@@ -57,7 +57,49 @@ class MacPkt;
 class MIXIM_API  csma : public BaseMacLayer
 {
   public:
-
+	csma()
+		: BaseMacLayer()
+		, nbTxFrames(0)
+		, nbRxFrames(0)
+		, nbMissedAcks(0)
+		, nbRecvdAcks(0)
+		, nbDroppedFrames(0)
+		, nbTxAcks(0)
+		, nbDuplicates(0)
+		, nbBackoffs(0)
+		, backoffValues(0)
+		, stats(false)
+		, trace(false)
+		, backoffTimer(NULL), ccaTimer(NULL), sifsTimer(NULL), rxAckTimer(NULL)
+		, macState(IDLE_1)
+		, status(STATUS_OK)
+		, sifs()
+		, macAckWaitDuration()
+		, transmissionAttemptInterruptedByRx(false)
+		, ccaDetectionTime()
+		, rxSetupTime()
+		, aTurnaroundTime()
+		, macMaxCSMABackoffs(0)
+		, macMaxFrameRetries(0)
+		, aUnitBackoffPeriod()
+		, useMACAcks(false)
+		, backoffMethod(CONSTANT)
+		, macMinBE(0)
+		, macMaxBE(0)
+		, initialCW(0)
+		, txPower(0)
+		, NB(0)
+		, macQueue()
+		, queueLength(0)
+		, txAttempts(0)
+		, bitrate(0)
+		, droppedPacket()
+		, nicId(-1)
+		, ackLength(0)
+		, ackMessage(NULL)
+		, SeqNrParent()
+		, SeqNrChild()
+	{}
 
 	virtual ~csma();
 
@@ -129,7 +171,7 @@ class MIXIM_API  csma : public BaseMacLayer
 
     /** @name Pointer for timer messages.*/
     /*@{*/
-    cMessage * backoffTimer, * ccaTimer, * txTimer, * sifsTimer, * rxAckTimer;
+    cMessage * backoffTimer, * ccaTimer, * sifsTimer, * rxAckTimer;
     /*@}*/
 
     /** @brief MAC state machine events.
@@ -288,6 +330,14 @@ protected:
 
 	//sequence numbers for receiving
 	std::map<LAddress::L2Type, unsigned long> SeqNrChild; //child -> sequence number
+
+private:
+  	/** @brief Copy constructor is not allowed.
+  	 */
+    csma(const csma&);
+  	/** @brief Assignment operator is not allowed.
+  	 */
+    csma& operator=(const csma&);
 
 };
 

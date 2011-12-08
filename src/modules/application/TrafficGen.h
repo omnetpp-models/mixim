@@ -65,7 +65,26 @@ protected:
 	/** @brief Pointer to world utility module.*/
 	BaseWorldUtility* world;
 
+private:
+  	/** @brief Copy constructor is not allowed.
+  	 */
+	TrafficGen(const TrafficGen&);
+  	/** @brief Assignment operator is not allowed.
+  	 */
+	TrafficGen& operator=(const TrafficGen&);
+
 public:
+	TrafficGen()
+		: BaseApplLayer()
+		, packetTime()
+		, pppt(0.0)
+		, burstSize(0)
+		, remainingBurst(0)
+		, nbPacketDropped(0)
+		, delayTimer(NULL)
+		, world(NULL)
+	{}
+
 	virtual ~TrafficGen();
 	/** @brief Omnet++ Initialisation.*/
 	virtual void initialize(int stage);

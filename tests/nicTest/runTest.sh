@@ -49,6 +49,7 @@ diff -I '^Assigned runID=' \
      -I '^Version: ' \
      -I '^     Speed:' \
      -I '^** Event #' \
+     -I '<=.*<=' \
      -w exp-output - >diff.log 2>/dev/null
 
 if [ -s diff.log ]; then

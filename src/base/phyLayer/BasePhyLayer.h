@@ -389,6 +389,14 @@ protected:
 	 */
 	virtual bool isKnownProtocolId(int id) const { return id == myProtocolId(); }
 
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	BasePhyLayer(const BasePhyLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	BasePhyLayer& operator=(const BasePhyLayer&);
+
 public:
 	BasePhyLayer();
 

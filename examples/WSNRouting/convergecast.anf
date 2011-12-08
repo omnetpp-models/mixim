@@ -5,7 +5,7 @@
   </inputs>
   <datasets>
     <datasets name="nbPacketsReceived">
-      <items xsi:type="scave:Add" filterPattern="module(WSNRouting.node[0].app) AND name(latency:count)"/>
+      <items xsi:type="scave:Add" filterPattern="module(WSNRouting.node[0].appl) AND name(latency:count)"/>
       <items xsi:type="scave:Add" filterPattern="module(*) AND name(dist)"/>
       <items xsi:type="scave:ScatterChart" name="received packets" xDataPattern="module(.) AND name(dist)">
         <properties name="Axes.Grid" value="All"/>
@@ -14,7 +14,7 @@
       </items>
     </datasets>
     <datasets name="meanNbHops">
-      <items xsi:type="scave:Add" filterPattern="module(WSNRouting.node[0].net) AND name(meanNbHops)"/>
+      <items xsi:type="scave:Add" filterPattern="module(WSNRouting.node[0].netwl) AND name(meanNbHops)"/>
       <items xsi:type="scave:Add" filterPattern="module(*) AND name(dist)"/>
       <items xsi:type="scave:ScatterChart" name="mean number of hops" xDataPattern="module(.) AND name(dist)">
         <properties name="X.Axis.Title" value="distance [meters]"/>
@@ -25,7 +25,7 @@
       </items>
     </datasets>
     <datasets name="meanLatency">
-      <items xsi:type="scave:Add" filterPattern="module(WSNRouting.node[0].app) AND name(latency:mean)"/>
+      <items xsi:type="scave:Add" filterPattern="module(WSNRouting.node[0].appl) AND name(latency:mean)"/>
       <items xsi:type="scave:Add" filterPattern="module(*) AND name(dist)"/>
       <items xsi:type="scave:ScatterChart" name="mean latency" xDataPattern="module(.) AND name(dist)">
         <properties name="X.Axis.Title" value="distance [meters]"/>

@@ -56,9 +56,9 @@ protected:
 
 	public:
 		/** @brief Initializes the entry with the passed values.*/
-		ListEntry(simtime_t_cref time, Argument::mapped_type_cref value) {
-			basicTimestamp = std::make_pair(time, value);
-		}
+		ListEntry(simtime_t_cref time, Argument::mapped_type_cref value)
+			: basicTimestamp(time, value)
+		{}
 
 		virtual ~ListEntry() {}
 
@@ -126,7 +126,9 @@ public:
 	RadioStateAnalogueModel(Argument::mapped_type_cref initValue,
 							bool currentlyTracking = false,
 							simtime_t_cref initTime = SIMTIME_ZERO)
-		: currentlyTracking(currentlyTracking)
+		: AnalogueModel()
+		, currentlyTracking(currentlyTracking)
+		, radioStateAttenuation()
 	{
 		// put the initial time-stamp to the list
 		radioStateAttenuation.push_back(ListEntry(initTime, initValue));
@@ -256,6 +258,14 @@ protected:
 
 	/** @brief Number of available channels. */
 	int nbChannels;
+
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	Radio(const Radio&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	Radio& operator=(const Radio&);
 
 public:
 
@@ -446,6 +456,14 @@ protected:
 	/** @brief The end time of the signal this iterators mapping attenuates.*/
 	simtime_t signalEnd;
 
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	RSAMConstMappingIterator(const RSAMConstMappingIterator&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	RSAMConstMappingIterator& operator=(const RSAMConstMappingIterator&);
+
 public:
 
 	/** @brief Initializes the iterator with the passed values.*/
@@ -571,6 +589,45 @@ protected:
 	simtime_t signalStart;
 	/** @brief End of the signal this mapping defines attenuation for.*/
 	simtime_t signalEnd;
+
+public:
+	/**
+	 * @brief Copy constructor.
+	 */
+	RSAMMapping(const RSAMMapping& o)
+		: ConstMapping(o)
+		, rsam(o.rsam)
+		, signalStart(o.signalStart)
+		, signalEnd(o.signalEnd)
+	{ }
+
+	/**
+	 *  @brief  %RSAMMapping assignment operator.
+	 *  @param  copy  A %RSAMMapping of identical element and allocator types.
+	 *
+	 *  All the elements of @a copy are copied.
+	 */
+	RSAMMapping& operator=(const RSAMMapping& copy) {
+		RSAMMapping tmp(copy);
+
+		swap(tmp);
+		return *this;
+	}
+
+	/**
+	 *  @brief  Swaps data with another %RSAMMapping.
+	 *  @param  s  A %RSAMMapping of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two RSAMMapping's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(RSAMMapping& s) {
+		ConstMapping::swap(s);
+		std::swap(rsam,        s.rsam);
+		std::swap(signalStart, s.signalStart);
+		std::swap(signalEnd,   s.signalEnd);
+	}
 
 public:
 	/**

@@ -46,7 +46,17 @@ class MIXIM_API phyPER : public  BaseModule
 
   public:
 
-    phyPER(): packet(100) {}
+    phyPER()
+    	: BaseModule()
+    	, nbSyncAttempts(0)
+    	, nbSyncSuccesses(0)
+	, nbRx(0)
+	, nbRxnoRS(0)
+	, packet(100)
+	, uwbirpacket()
+	, maiPER()
+	, maiPERnoRS()
+    {}
 
 	/** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
     virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);

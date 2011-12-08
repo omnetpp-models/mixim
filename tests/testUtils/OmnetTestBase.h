@@ -17,9 +17,12 @@ protected:
 	CheckList executedTests;
 	TestPlan plannedTests;
 
-
-
 public:
+	TestModuleBase()
+		: executedTests()
+		, plannedTests()
+	{}
+	virtual ~TestModuleBase() {}
 	/**
 	 * @brief Executes a previously planned test case with the passed name.
 	 *

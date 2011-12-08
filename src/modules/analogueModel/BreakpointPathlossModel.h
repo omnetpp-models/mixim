@@ -64,15 +64,20 @@ public:
 	 * @param debug display debug messages?
 	 */
 	BreakpointPathlossModel(double L01, double L02, double alpha1, double alpha2, double breakpointDistance,
-					double carrierFrequency, bool useTorus, const Coord& playgroundSize, bool debug):
-//		closeRangeModel(L01, alpha1, carrierFrequency, useTorus, playgroundSize, debug),
-//		farRangeModel(L02, alpha2, carrierFrequency, useTorus, playgroundSize, debug),
-//		breakpointDistance2(breakpointDistance*breakpointDistance),
-		PL01(L01), PL02(L02), alpha1(alpha1), alpha2(alpha2), breakpointDistance(breakpointDistance),
-		carrierFrequency(carrierFrequency),
-		useTorus(useTorus),
-		playgroundSize(playgroundSize),
-		debug(debug)
+					double carrierFrequency, bool useTorus, const Coord& playgroundSize, bool debug)
+		: AnalogueModel()
+		, PL01(L01)
+		, PL02(L02)
+		, PL01_real(0)
+		, PL02_real(0)
+		, alpha1(alpha1)
+		, alpha2(alpha2)
+		, breakpointDistance(breakpointDistance)
+		, carrierFrequency(carrierFrequency)
+		, useTorus(useTorus)
+		, playgroundSize(playgroundSize)
+		, debug(debug)
+		, pathlosses()
 	{
 		PL01_real =  pow(10, PL01/10);
 		PL02_real =  pow(10, PL02/10);

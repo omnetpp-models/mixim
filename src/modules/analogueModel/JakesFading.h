@@ -29,6 +29,11 @@ class JakesFading;
  * @ingroup mapping
  */
 class MIXIM_API JakesFadingMapping: public SimpleConstMapping {
+private:
+	/** @brief Assignment operator is not allowed.
+	 */
+	JakesFadingMapping& operator=(const JakesFadingMapping&);
+
 protected:
 	static DimensionSet dimensions;
 
@@ -46,10 +51,19 @@ public:
 	JakesFadingMapping(JakesFading* model, double relSpeed,
 					   const Argument& start,
 					   const Argument& interval,
-					   const Argument& end):
-		SimpleConstMapping(dimensions, start, end, interval),
-		model(model), relSpeed(relSpeed)
+					   const Argument& end)
+		: SimpleConstMapping(dimensions, start, end, interval)
+		, model(model)
+		, relSpeed(relSpeed)
 	{}
+
+	JakesFadingMapping(const JakesFadingMapping& o)
+		: SimpleConstMapping(o)
+		, model(o.model)
+		, relSpeed(o.relSpeed)
+	{}
+
+	virtual ~JakesFadingMapping() {}
 
 	virtual double getValue(const Argument& pos) const;
 
@@ -93,6 +107,14 @@ public:
  * @author Hermann S. Lichte, Karl Wessel (port for MiXiM)
  */
 class MIXIM_API JakesFading: public AnalogueModel {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	JakesFading(const JakesFading&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	JakesFading& operator=(const JakesFading&);
+
 protected:
 	friend class JakesFadingMapping;
 

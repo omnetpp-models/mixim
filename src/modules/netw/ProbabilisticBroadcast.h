@@ -26,8 +26,36 @@
  **/
 class MIXIM_API ProbabilisticBroadcast : public BaseNetwLayer
 {
-public:
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	ProbabilisticBroadcast(const ProbabilisticBroadcast&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	ProbabilisticBroadcast& operator=(const ProbabilisticBroadcast&);
 
+public:
+	ProbabilisticBroadcast()
+		: BaseNetwLayer()
+		, broadcastPeriod()
+		, beta(0)
+		, timeToLive()
+		, maxNbBcast(0)
+		, maxFirstBcastBackoff(0)
+		, timeInQueueAfterDeath(0)
+		, headerLength(0)
+		, trace(false), stats(false), debug(false)
+		, broadcastTimer(NULL)
+		, knownMsgIds()
+		, msgQueue()
+		, debugMsgIdSet()
+		, nbDataPacketsReceived(0)
+		, nbDataPacketsSent(0)
+		, nbHops(0)
+		, debugNbMessageKnown(0)
+		, nbDataPacketsForwarded(0)
+ 		, oneHopLatencies()
+	{}
 
     /** @brief Initialization of the module and some variables*/
     virtual void initialize(int);
@@ -93,12 +121,12 @@ protected:
 	/** @brief Returns a network layer packet which encapsulates the upper layer
 	 *         packet passed to the function.
 	 **/
-	virtual ProbabilisticBroadcastPkt* encapsMsg(cMessage* msg);
+	virtual NetwPkt* encapsMsg(cPacket* msg);
 
 	/** @brief extracts and returns the application layer packet which is encapsulated
 	 *         in the network layer packet given in argument.
 	 **/
-	virtual cMessage* decapsMsg(ProbabilisticBroadcastPkt *msg);
+	virtual cPacket* decapsMsg(NetwPkt *msg);
 
 	/** @brief Insert a new message in both known ID list and message queue.
 	 *         The message comes either from upper layer or from lower layer.

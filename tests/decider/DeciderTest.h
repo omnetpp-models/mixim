@@ -11,6 +11,12 @@
 
 class DeciderTest : public DeciderToPhyInterface, public SimpleTest {
 private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	DeciderTest(const DeciderTest&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	DeciderTest& operator=(const DeciderTest&);
 
 protected:
 
@@ -50,9 +56,8 @@ protected:
 	public:
 
 		TestWorld()
-		{
-			airFrameId = 0;
-		}
+			: airFrameId(0)
+		{}
 
 		~TestWorld() {}
 

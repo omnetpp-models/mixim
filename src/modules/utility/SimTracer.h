@@ -40,9 +40,33 @@
  */
 class MIXIM_API SimTracer: public cSimpleModule, cListener
 {
+private:
+  /** @brief Copy constructor is not allowed.
+   */
+  SimTracer(const SimTracer&);
+  /** @brief Assignment operator is not allowed.
+   */
+  SimTracer& operator=(const SimTracer&);
 
 public:
-  SimTracer(): packet(100) {}
+  SimTracer()
+  	  : cSimpleModule()
+  	  , cListener()
+  	  , namFile(), radioEnergyFile(), treeFile()
+  	  , packetsColors()
+  	  , goodputVec()
+	  , pSinkVec()
+	  , pSensorVec()
+	  , powerConsumptions()
+	  , packet(100)
+	  , nbApplPacketsSent(0)
+	  , nbApplPacketsReceived(0)
+	  , catEnergy(0)
+	  , powerConsumptions2()
+	  , currPower()
+	  , lastUpdates()
+	  , world(NULL)
+  {}
 
 	/** @brief Initialization of the module and some variables*/
   virtual void initialize(int);

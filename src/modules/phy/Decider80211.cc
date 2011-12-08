@@ -30,7 +30,7 @@ Decider80211::Decider80211(	DeciderToPhyInterface* phy,
 							int myIndex,
 							bool debug):
 	BaseDecider(phy, sensitivity, myIndex, debug),
-	snrThreshold(threshold)
+	snrThreshold(threshold), centerFrequency(0)
 {
 	assert(1 <= channel);
 	assert(channel  <= 14);

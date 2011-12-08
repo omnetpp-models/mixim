@@ -6,17 +6,15 @@ ${bannerComment}
 
 Define_Module(${phyName});
 
-AnalogueModel* ${phyName}::getAnalogueModelFromName(std::string name, ParameterMap& params) {
+AnalogueModel* ${phyName}::getAnalogueModelFromName(std::string name, ParameterMap& params) const {
 
-	if (name == "${amName}")
-	{
+	if (name == "${amName}") {
 		return initialize${amName}(params);
 	}
-
 	return PhyLayer::getAnalogueModelFromName(name, params);
 }
 
-AnalogueModel* ${phyName}::initialize${amName}(ParameterMap& params){
+AnalogueModel* ${phyName}::initialize${amName}(ParameterMap& params) const {
 	<#if par1Name!="">
 	${par1CType} ${par1Name} = params["${par1Name}"].${par1Type}Value();	
 	</#if>

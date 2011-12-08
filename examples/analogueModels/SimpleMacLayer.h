@@ -20,6 +20,14 @@ class MacToPhyInterface;
  * @ingroup exampleAM
  */
 class SimpleMacLayer:public BaseModule {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	SimpleMacLayer(const SimpleMacLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	SimpleMacLayer& operator=(const SimpleMacLayer&);
+
 protected:
 	/** @brief Pointer to the phy module of this host.*/
 	MacToPhyInterface* phy;
@@ -67,6 +75,16 @@ protected:
 	void log(std::string msg);
 
 public:
+	SimpleMacLayer()
+		: BaseModule()
+		, phy(NULL)
+		, dataOut(-1)
+		, dataIn(-1)
+		, myIndex(-1)
+		, nextReceiver(-1)
+		, dimensions()
+	{}
+
 	//---Omnetpp parts-------------------------------
 	virtual void initialize(int stage);
 

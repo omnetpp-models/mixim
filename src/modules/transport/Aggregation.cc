@@ -10,8 +10,14 @@ using std::map;
 
 Define_Module(Aggregation);
 
-Aggregation::Aggregation() :
-		aggregationTimer(NULL)
+Aggregation::Aggregation()
+	: BaseLayer()
+	, destInfos()
+	, aggregationTimer(NULL)
+	, interPacketDelay()
+	, nbMaxPacketsPerAggregation()
+	, nbAggrPktSentDown(0)
+	, nbAggrPktReceived(0)
 {}
 
 void Aggregation::initialize(int stage) {

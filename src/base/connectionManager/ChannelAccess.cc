@@ -38,7 +38,7 @@ using std::endl;
 
 const simsignalwrap_t ChannelAccess::mobilityStateChangedSignal = simsignalwrap_t(MIXIM_SIGNAL_MOBILITY_CHANGE_NAME);
 
-BaseConnectionManager* ChannelAccess::getConnectionManager(cModule* nic)
+BaseConnectionManager* ChannelAccess::getConnectionManager(const cModule* nic)
 {
 	std::string cmName = nic->hasPar("connectionManagerName")
 						 ? nic->par("connectionManagerName").stringValue()
@@ -62,8 +62,7 @@ void ChannelAccess::initialize( int stage )
 
         findHost()->subscribe(mobilityStateChangedSignal, this);
 
-        cModule* nic = getParentModule();
-        cc = getConnectionManager(nic);
+        cc = getConnectionManager(getNic());
         if( cc == NULL ) error("Could not find connectionmanager module");
         isRegistered = false;
     }
@@ -75,7 +74,7 @@ void ChannelAccess::initialize( int stage )
 
 void ChannelAccess::sendToChannel(cPacket *msg)
 {
-    const NicEntry::GateList& gateList = cc->getGateList( getParentModule()->getId());
+    const NicEntry::GateList& gateList = cc->getGateList( getNic()->getId());
     NicEntry::GateList::const_iterator i = gateList.begin();
 
     if(useSendDirect){
@@ -157,12 +156,12 @@ void ChannelAccess::receiveSignal(cComponent */*source*/, simsignal_t signalID, 
         Coord                        pos      = mobility->getCurrentPosition();
 
         if(isRegistered) {
-            cc->updateNicPos(getParentModule()->getId(), &pos);
+            cc->updateNicPos(getNic()->getId(), &pos);
         }
         else {
             // register the nic with ConnectionManager
             // returns true, if sendDirect is used
-            useSendDirect = cc->registerNic(getParentModule(), this, &pos);
+            useSendDirect = cc->registerNic(getNic(), this, &pos);
             isRegistered  = true;
         }
     }

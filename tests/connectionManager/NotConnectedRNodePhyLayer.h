@@ -17,9 +17,12 @@
 class NotConnectedRNodePhyLayer : public CMPhyLayer
 {
 public:
-    //Module_Class_Members(NotConnectedRNodePhyLayer, CMPhyLayer, 0);
-
 	bool broadcastReceived;
+
+	NotConnectedRNodePhyLayer()
+		: CMPhyLayer()
+		, broadcastReceived(false)
+	{}
 
 	virtual void initialize(int stage) {
 		CMPhyLayer::initialize(stage);

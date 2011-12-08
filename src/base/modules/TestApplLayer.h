@@ -54,6 +54,14 @@ class MIXIM_API TestApplLayer : public BaseApplLayer
 		LAST_TEST_APPL_MESSAGE_KIND
     };
 
+private:
+    /** @brief Copy constructor is not allowed.
+     */
+    TestApplLayer(const TestApplLayer&);
+    /** @brief Assignment operator is not allowed.
+     */
+    TestApplLayer& operator=(const TestApplLayer&);
+
 protected:
     /** @brief Timer message for scheduling next message.*/
     cMessage *delayTimer;

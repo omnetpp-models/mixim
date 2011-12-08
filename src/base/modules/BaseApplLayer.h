@@ -43,6 +43,14 @@
  **/
 class MIXIM_API BaseApplLayer : public BaseLayer
 {
+private:
+  	/** @brief Copy constructor is not allowed.
+  	 */
+	BaseApplLayer(const BaseApplLayer&);
+  	/** @brief Assignment operator is not allowed.
+  	 */
+	BaseApplLayer& operator=(const BaseApplLayer&);
+
 public:
 	/** @brief The message kinds this layer uses.*/
 	enum BaseApplMessageKinds {
@@ -64,9 +72,13 @@ protected:
 
 public:
 	//Module_Class_Members(BaseApplLayer, BaseLayer, 0);
-	BaseApplLayer() : BaseLayer()
+	BaseApplLayer()
+		: BaseLayer()
+		, headerLength(0)
 	{}
-	BaseApplLayer(unsigned stacksize) : BaseLayer(stacksize)
+	BaseApplLayer(unsigned stacksize)
+		: BaseLayer(stacksize)
+		, headerLength(0)
 	{}
 
 	/** @brief Initialization of the module and some variables*/
@@ -149,7 +161,7 @@ protected:
 	 * We use the node module index as application address
 	 **/
 	virtual LAddress::L3Type myApplAddr() const {
-		return LAddress::L3Type( getParentModule()->getIndex() );
+		return LAddress::L3Type( getNode()->getIndex() );
 	};
 
 };

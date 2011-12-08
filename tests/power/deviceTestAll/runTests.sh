@@ -37,7 +37,7 @@ if [ ! -e "${lSingle}" -a ! -e "${lSingle}.exe" ]; then
     fi
 fi
           
-rm *.vec results/*.sca
+rm *.vec results/*.sca 2>/dev/null
 for i in One 
 do
  ./${lSingle} -c $i "${LIBSREF[@]}"

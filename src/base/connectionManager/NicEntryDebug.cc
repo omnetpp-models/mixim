@@ -71,7 +71,7 @@ void NicEntryDebug::disconnectFrom(NicEntry* other) {
 
 int NicEntryDebug::collectGates(const char* pattern, GateStack& gates)
 {
-	cModule* host = nicPtr->getParentModule();
+	cModule* host = FindModule<>::findHost(nicPtr);
 	int i = 1;
 	char gateName[20];
 	//create the unique name for the gate (composed of the nic module id and a counter)
@@ -130,8 +130,9 @@ cGate* NicEntryDebug::requestInGate(void) {
 		sprintf(gateName, "in%d-%d", nicId, inCnt);
 
 		// create a new gate for the host module
-		nicPtr->getParentModule()->addGate(gateName, cGate::INPUT);
-		hostGate = nicPtr->getParentModule()->gate(gateName);
+		cModule* const pHost = FindModule<>::findHost(nicPtr);
+		pHost->addGate(gateName, cGate::INPUT);
+		hostGate = pHost->gate(gateName);
 
 		// gate of the nic
 		cGate *nicGate;
@@ -184,8 +185,9 @@ cGate* NicEntryDebug::requestOutGate(void) {
 		sprintf(gateName, "out%d-%d", nicId, outCnt);
 
 		// create a new gate for the host module
-		nicPtr->getParentModule()->addGate(gateName, cGate::OUTPUT);
-		hostGate = nicPtr->getParentModule()->gate(gateName);
+		cModule* const pHost = FindModule<>::findHost(nicPtr);
+		pHost->addGate(gateName, cGate::OUTPUT);
+		hostGate = pHost->gate(gateName);
 
 		// gate of the nic
 		cGate *nicGate;

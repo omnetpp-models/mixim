@@ -1,4 +1,4 @@
-**.node[*].netwType = "Flood"
-#**.node[*].net.debug = true
-**.node[*].net.stats = true
-**.node[*].net.headerLength = 24 bit
+**.node[*].networkType = "Flood"
+#**.node[*].netwl.debug = true
+**.node[*].netwl.stats = true
+**.node[*].netwl.headerLength = 24 bit

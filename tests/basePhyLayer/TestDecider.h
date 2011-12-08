@@ -23,19 +23,25 @@ protected:
 	}
 
 public:
-	TestDecider(DeciderToPhyInterface* phy, int index, int run, int RECEIVING_STATE):
-		Decider(phy), myIndex(index), run(run), RECEIVING_STATE(RECEIVING_STATE), state(false), rssi(0.0) {
-
+	TestDecider(DeciderToPhyInterface* phy, int index, int run, int RECEIVING_STATE)
+		: Decider(phy)
+		, myIndex(index)
+		, run(run)
+		, RECEIVING_STATE(RECEIVING_STATE)
+		, state(false)
+		, rssi(0.0)
+		, senseStart()
+	{
 		init("decider" + toString(myIndex));
 	}
 
-	ChannelState getChannelState() {
-		state = !state;
-		rssi += 1.0;
+	virtual ChannelState getChannelState() const {
+		(const_cast<TestDecider*>(this))->state = !state;
+		(const_cast<TestDecider*>(this))->rssi += 1.0;
 		return ChannelState(state, rssi);
 	}
 
-	simtime_t handleChannelSenseRequest(ChannelSenseRequest* request) {
+	virtual simtime_t handleChannelSenseRequest(ChannelSenseRequest* request) {
 		announceMessage(request);
 
 		simtime_t time = phy->getSimTime();

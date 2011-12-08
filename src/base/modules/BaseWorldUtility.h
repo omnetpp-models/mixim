@@ -32,17 +32,20 @@
 class MIXIM_API BaseWorldUtility : public cSimpleModule
 {
 protected:
-	/**
-	 * @brief Size of the area the nodes are in (in meters)
-	 *
-	 * Note: The playground is in the range [0, playground size].
-	 * Meaning the upper borders (at pg-size) as well as the lower
-	 * borders (at 0) are part of the playground.
-	 **/
+    /**
+     * @brief Size of the area the nodes are in (in meters)
+     *
+     * Note: The playground is in the range [0, playground size].
+     * Meaning the upper borders (at pg-size) as well as the lower
+     * borders (at 0) are part of the playground.
+    **/
     Coord playgroundSize;
 
     /** @brief Should the playground be treatend as a torus?*/
     bool useTorusFlag;
+
+    /** @brief Should the world be 2-dimensional? */
+    bool use2DFlag;
 
     /** @brief Provides a unique number for AirFrames per simulation */
     long airFrameId;
@@ -52,7 +55,7 @@ protected:
 
 public:
     /** @brief Speed of light in meters per second. */
-	static const double speedOfLight;
+    static const double speedOfLight;
 
 protected:
     /**
@@ -64,16 +67,16 @@ protected:
     virtual void initializeIfNecessary();
 
 public:
-	BaseWorldUtility();
+    BaseWorldUtility();
 
-	virtual void initialize(int stage);
+    virtual void initialize(int stage);
 
     /**
      * @brief Returns the playgroundSize
      *
      * Note: The playground is in the range [0, playground size].
-	 * Meaning the upper borders (at pg-size) as well as the lower
-	 * borders (at 0) are part of the playground.
+     * Meaning the upper borders (at pg-size) as well as the lower
+     * borders (at 0) are part of the playground.
      **/
     const Coord* getPgs(){
     	initializeIfNecessary();
@@ -86,8 +89,8 @@ public:
     	return useTorusFlag;
     };
 
-	/** @brief Random position somewhere in the playground */
-	virtual Coord getRandomPosition();
+    /** @brief Random position somewhere in the playground */
+    virtual Coord getRandomPosition();
 
     /** @brief Returns an Id for an AirFrame, at the moment simply an incremented long-value */
     long getUniqueAirFrameId()

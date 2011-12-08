@@ -109,7 +109,9 @@ class NicEntryDebug: public NicEntry
     	NicEntry(debug),
     	inCnt(0),
     	outCnt(0),
-    	checkFreeGates(true)
+    	checkFreeGates(true),
+    	freeInGates(),
+    	freeOutGates()
     {};
 
     /**

@@ -7,13 +7,11 @@
 DeciderUWBIREDSyncOnAddress::DeciderUWBIREDSyncOnAddress(DeciderToPhyInterface* iface,
 				PhyLayerUWBIR* _uwbiface,
 				double _syncThreshold, bool _syncAlwaysSucceeds, bool _stats,
-				bool _trace, const LAddress::L2Type& _addr, bool alwaysFailOnDataInterference) :
-					DeciderUWBIRED(iface, _uwbiface,
-						_syncThreshold, _syncAlwaysSucceeds, _stats, _trace, alwaysFailOnDataInterference),
-						syncAddress(_addr) {
-
-};
-
+                                                          bool _trace, const LAddress::L2Type& _addr, bool alwaysFailOnDataInterference)
+	: DeciderUWBIRED(iface, _uwbiface, _syncThreshold, _syncAlwaysSucceeds, _stats, _trace, alwaysFailOnDataInterference)
+	, currFrame(NULL)
+	, syncAddress(_addr)
+{ }
 
 bool DeciderUWBIREDSyncOnAddress::attemptSync(Signal* /*s*/) {
 	cMessage* encaps = currFrame->getEncapsulatedPacket();

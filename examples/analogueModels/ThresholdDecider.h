@@ -196,7 +196,7 @@ protected:
 
 public:
 	ThresholdDecider(DeciderToPhyInterface* phy, int myIndex, double threshold):
-		Decider(phy), myIndex(myIndex), threshold(threshold) {}
+		Decider(phy), myIndex(myIndex), threshold(threshold), currentSignals() {}
 
 	/**
 	 * @brief this method is called by the BasePhylayer whenever it gets

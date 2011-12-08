@@ -18,6 +18,7 @@
 #include "MacToNetwControlInfo.h"
 #include "NetwToMacControlInfo.h"
 #include "BaseMacLayer.h"
+#include "FindModule.h"
 
 /**
  * @brief This is an implementation of a simple network layer
@@ -42,6 +43,14 @@
  */
 class SimpleNetwLayer : public BaseModule{
 //--------members----------
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	SimpleNetwLayer(const SimpleNetwLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	SimpleNetwLayer& operator=(const SimpleNetwLayer&);
+
 protected:
 	bool isSwitch;
 	/** @brief time after when the module gets bored and starts jabbering. */
@@ -220,6 +229,18 @@ protected:
 	}
 
 public:
+	SimpleNetwLayer()
+		: BaseModule()
+		, isSwitch(false)
+		, boredTime()
+		, maxTtl(0)
+		, ip()
+		, dataIn(-1)
+		, dataOut(-1)
+		, startJabberTimer(NULL)
+		, runningSeqNumber(0)
+		, routingTable()
+	{}
 	virtual ~SimpleNetwLayer() {
 		cancelAndDelete(startJabberTimer);
 	}
@@ -232,9 +253,9 @@ public:
 
 			isSwitch = par("isSwitch").boolValue();
 
-			if(isSwitch)
-				getParentModule()->getParentModule()->getDisplayString().setTagArg("i",0,"device/accesspoint");
-
+			if(isSwitch) {
+				FindModule<>::findHost(this)->getDisplayString().setTagArg("i",0,"device/accesspoint");
+			}
 			ip = LAddress::L3Type(par("ip").longValue());
 			maxTtl = par("maxTtl").longValue();
 			boredTime = par("boredTime").doubleValue();

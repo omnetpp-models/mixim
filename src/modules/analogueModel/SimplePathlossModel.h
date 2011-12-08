@@ -23,6 +23,11 @@ class SimplePathlossModel;
  */
 class MIXIM_API SimplePathlossConstMapping : public SimpleConstMapping
 {
+private:
+	/** @brief Assignment operator is not allowed.
+	 */
+	SimplePathlossConstMapping& operator=(const SimplePathlossConstMapping&);
+
 
 protected:
 	/** @brief The factor dependent on the distance of the transmission.*/
@@ -41,6 +46,9 @@ public:
 							   SimplePathlossModel* model,
 							   const double distFactor);
 
+	/** @brief Copy constructor.
+	 */
+	SimplePathlossConstMapping(const SimplePathlossConstMapping&);
 	/**
 	 * @brief Calculates attenuation from the distance factor and
 	 * the current positions frequency (or the models carrier frequency

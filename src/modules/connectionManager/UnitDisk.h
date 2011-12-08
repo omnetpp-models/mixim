@@ -29,10 +29,12 @@ protected:
 	/** @brief Holds the maximum interference range.*/
 	double radioRange;
 
-	/** @brief Enables debugging for this module.*/
-	bool debug;
-
 public:
+	UnitDisk()
+		: ConnectionManager()
+		, radioRange(0)
+	{}
+
 	/** @brief Called by Omnet++ during initialisation.*/
 	void initialize(int stage);
 

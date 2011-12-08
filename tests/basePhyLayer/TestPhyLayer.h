@@ -9,6 +9,14 @@
 
 class TestPhyLayer:public BasePhyLayer, public TestModule {
 private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	TestPhyLayer(const TestPhyLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	TestPhyLayer& operator=(const TestPhyLayer&);
+
+private:
 
 	class TestAnalogueModel:public AnalogueModel {
 	public:
@@ -37,6 +45,14 @@ protected:
 	virtual int myProtocolId() const;
 
 public:
+	TestPhyLayer()
+		: BasePhyLayer()
+		, TestModule()
+		, myIndex(0)
+		, protocolID(0)
+		, testRSSIMap(NULL)
+	{}
+
 	virtual void initialize(int stage);
 
 	virtual void handleMessage(cMessage* msg);

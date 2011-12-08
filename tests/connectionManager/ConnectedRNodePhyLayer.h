@@ -19,9 +19,12 @@ using std::endl;
 class ConnectedRNodePhyLayer : public CMPhyLayer
 {
 public:
-    //Module_Class_Members(ConnectedRNodePhyLayer, CMPhyLayer, 0);
-
 	bool broadcastReceived;
+
+	ConnectedRNodePhyLayer()
+		: CMPhyLayer()
+		, broadcastReceived(false)
+	{}
 
 	virtual void initialize(int stage) {
 		CMPhyLayer::initialize(stage);

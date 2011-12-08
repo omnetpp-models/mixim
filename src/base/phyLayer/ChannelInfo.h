@@ -420,8 +420,11 @@ protected:
 	}
 
 public:
-	ChannelInfo():
-		recordStartTime(-1)
+	ChannelInfo()
+		: activeAirFrames()
+		, inactiveAirFrames()
+		, airFrameStarts()
+		, recordStartTime(-1)
 	{}
 
 	virtual ~ChannelInfo() {}

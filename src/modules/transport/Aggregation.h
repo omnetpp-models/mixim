@@ -37,6 +37,14 @@ class ApplPkt;
  *
  */
 class MIXIM_API Aggregation: public BaseLayer {
+private:
+	    /** @brief Copy constructor is not allowed.
+	     */
+	    Aggregation(const Aggregation&);
+	    /** @brief Assignment operator is not allowed.
+	     */
+	    Aggregation& operator=(const Aggregation&);
+
 public:
 	Aggregation();
 	virtual void initialize(int);

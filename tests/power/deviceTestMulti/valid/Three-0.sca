@@ -1,14 +1,14 @@
 version 2
-run Three-0-20100408-14:34:15-4273
+run Three-0-20111207-22:07:19-3872
 attr configname Three
-attr datetime 20100408-14:34:15
+attr datetime 20111207-22:07:19
 attr experiment Three
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvars2 $repetition=0
 attr measurement ""
 attr network sim
-attr processid 4273
+attr processid 3872
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -17,11 +17,11 @@ attr seedset 0
 
 scalar sim.host[0].batteryStats 	nominal 	10800
 attr unit  mW-s
-scalar sim.host[0].batteryStats 	total 	11070
+scalar sim.host[0].batteryStats 	total 	10800
 attr unit  mW-s
 scalar sim.host[0].batteryStats 	lifetime 	6.3
 attr unit  s
-scalar sim.host[0].batteryStats 	"Mean power consumption" 	738
+scalar sim.host[0].batteryStats 	"Mean power consumption" 	720
 attr unit  mW
 scalar sim.host[0].batteryStats 	"num devices" 	2
 scalar sim.host[0].batteryStats 	DeviceDutySimple 	0

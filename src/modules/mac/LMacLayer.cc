@@ -14,6 +14,7 @@
 #include "FWMath.h"
 #include "MacToPhyInterface.h"
 #include "LMacPkt_m.h"
+#include "FindModule.h"
 
 Define_Module( LMacLayer )
 
@@ -42,7 +43,7 @@ void LMacLayer::initialize(int stage)
 		txPower = par("txPower");
 
         droppedPacket.setReason(DroppedPacket::NONE);
-        nicId = getParentModule()->getId();
+        nicId = getNic()->getId();
         debugEV << "My Mac address is" << myMacAddr << " and my Id is " << myId << endl;
 
 
@@ -118,7 +119,7 @@ void LMacLayer::finish() {
  */
 void LMacLayer::handleUpperMsg(cMessage *msg)
 {
-    LMacPkt *mac = static_cast<LMacPkt *>(encapsMsg(msg));
+    LMacPkt *mac = static_cast<LMacPkt *>(encapsMsg(static_cast<cPacket*>(msg)));
 
     // message has to be queued if another message is waiting to be send
     // or if we are already trying to send another message
@@ -136,7 +137,7 @@ void LMacLayer::handleUpperMsg(cMessage *msg)
         mac->setKind(PACKET_DROPPED);
         sendControlUp(mac);
         droppedPacket.setReason(DroppedPacket::QUEUE);
-        emit(catDroppedPacket, &droppedPacket);
+        emit(BaseLayer::catDroppedPacketSignal, &droppedPacket);
 		debugEV <<  "ERROR: Queue is full, forced to delete.\n";
     }
 }
@@ -172,14 +173,14 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 			}
 
 			if (myId >= reservedMobileSlots)
-				mySlot = ((int) getParentModule()->getParentModule()->getId() )% (numSlots - reservedMobileSlots);
+				mySlot = ((int) FindModule<>::findHost(this)->getId() ) % (numSlots - reservedMobileSlots);
 			else
 				mySlot = myId;
 			//occSlotsDirect[mySlot] = myMacAddr;
 			//occSlotsAway[mySlot] = myMacAddr;
 			currSlot = 0;
 
-			debugEV << "ID: " << getParentModule()->getParentModule()->getId() << ". Picked random slot: " << mySlot << endl;
+			debugEV << "ID: " << FindModule<>::findHost(this)->getId() << ". Picked random slot: " << mySlot << endl;
 
 			macState=SLEEP;
 			debugEV << "Old state: INIT, New state: SLEEP" << endl;
@@ -665,14 +666,14 @@ void LMacLayer::findNewSlot()
 		EV << "ERROR: My new slot is : " << mySlot << endl;
 	}
 	EV << "ERROR: I needed to find new slot\n";
-	slotChange->recordWithTimestamp(simTime(), getParentModule()->getParentModule()->getId()-4);
+	slotChange->recordWithTimestamp(simTime(), FindModule<>::findHost(this)->getId()-4);
 }
 
 /**
  * Encapsulates the received network-layer packet into a MacPkt and set all needed
  * header fields.
  */
-MacPkt *LMacLayer::encapsMsg(cMessage * msg)
+MacPkt *LMacLayer::encapsMsg(cPacket* msg)
 {
 
     LMacPkt *pkt = new LMacPkt(msg->getName(), msg->getKind());

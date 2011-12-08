@@ -81,10 +81,34 @@ protected:
 	bool isChannelIdle;
 
 	/** @brief Data about an currently ongoing ChannelSenseRequest. */
-	typedef struct{
+	typedef struct tCSRInfo {
 		ChannelSenseRequest* first;
 		simtime_t second;
 		simtime_t canAnswerAt;
+
+		tCSRInfo()
+			: first(NULL)
+			, second()
+			, canAnswerAt()
+		{}
+		tCSRInfo(const tCSRInfo& o)
+			: first(o.first)
+			, second(o.second)
+			, canAnswerAt(o.canAnswerAt)
+		{}
+		tCSRInfo& operator=(const tCSRInfo& copy)
+		{
+			first       = copy.first;
+			second      = copy.second;
+			canAnswerAt = copy.canAnswerAt;
+			return *this;
+		}
+		void swap(tCSRInfo& s)
+		{
+			std::swap(first,       s.first);
+			std::swap(second,      s.second);
+			std::swap(canAnswerAt, s.canAnswerAt);
+		}
 
 		ChannelSenseRequest* getRequest() const { return first; }
 		void setRequest(ChannelSenseRequest* request) { first = request; }
@@ -113,12 +137,14 @@ public:
 	 * host and the debug flag.
 	 */
 	BaseDecider(DeciderToPhyInterface* phy, double sensitivity,
-				int myIndex, bool debug):
-		Decider(phy),
-		sensitivity(sensitivity),
-		isChannelIdle(true),
-		myIndex(myIndex),
-		debug(debug)
+	            int myIndex, bool debug)
+		: Decider(phy)
+		, sensitivity(sensitivity)
+		, currentSignal()
+		, isChannelIdle(true)
+		, currentChannelSenseRequest()
+		, myIndex(myIndex)
+		, debug(debug)
 	{
 		currentSignal.first = 0;
 		currentSignal.second = NEW;

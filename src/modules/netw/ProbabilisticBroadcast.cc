@@ -48,7 +48,7 @@ void ProbabilisticBroadcast::handleUpperMsg(cMessage* msg)
 	ProbabilisticBroadcastPkt* pkt;
 
 	// encapsulate message in a network layer packet.
-	pkt = encapsMsg(msg);
+	pkt = static_cast<ProbabilisticBroadcastPkt*>(encapsMsg(static_cast<cPacket*>(msg)));
 	nbDataPacketsSent++;
 	EV << "PBr: " << simTime() << " n"  << myNetwAddr << " handleUpperMsg(): Pkt ID = " << pkt->getId() << " TTL = " << pkt->getAppTtl() << endl;
 	// submit packet for first insertion in queue.
@@ -281,10 +281,9 @@ ProbabilisticBroadcast::tMsgDesc* ProbabilisticBroadcast::popFirstMessageUpdateQ
 	return msgDesc;
 }
 
-ProbabilisticBroadcastPkt* ProbabilisticBroadcast::encapsMsg(cMessage* message)
+NetwPkt* ProbabilisticBroadcast::encapsMsg(cPacket* message)
 {
-  assert(static_cast<cPacket*>(message));
-  cPacket* msg = static_cast<cPacket*>(message);
+	cPacket* msg = static_cast<cPacket*>(message);
 	ProbabilisticBroadcastPkt* pkt = new ProbabilisticBroadcastPkt(msg->getName(), DATA);
 //	ProbBcastNetwControlInfo* cInfo = dynamic_cast<ProbBcastNetwControlInfo*>(msg->removeControlInfo());
 	cObject* cInfo = msg->removeControlInfo();
@@ -343,9 +342,9 @@ void ProbabilisticBroadcast::insertNewMessage(ProbabilisticBroadcastPkt* pkt, bo
 	}
 }
 
-cMessage* ProbabilisticBroadcast::decapsMsg(ProbabilisticBroadcastPkt *msg)
+cPacket* ProbabilisticBroadcast::decapsMsg(NetwPkt *msg)
 {
-	cMessage *m = msg->decapsulate();
+	cPacket *m = msg->decapsulate();
 	m->setControlInfo(new ProbBcastNetwControlInfo(msg->getSrcAddr()));
 	// delete the network layer packet
 	delete msg;

@@ -57,7 +57,7 @@ void UWBIRMac::initialize(int stage) {
 		assert(prf == 4 || prf == 16);
 		packetsAlwaysValid = par("packetsAlwaysValid");
 		rsDecoder = par("RSDecoder").boolValue();
-		phy = FindModule<MacToPhyInterface*>::findSubModule( this->getParentModule() );
+		phy = FindModule<MacToPhyInterface*>::findSubModule( this->getNic() );
 		initCounters();
 	}
 }

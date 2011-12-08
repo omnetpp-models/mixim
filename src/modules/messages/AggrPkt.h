@@ -10,8 +10,8 @@
 class MIXIM_API AggrPkt : public AggrPkt_Base
 {
   public:
-    AggrPkt(const char *name=NULL, int kind=0) : AggrPkt_Base(name,kind) {}
-    AggrPkt(const AggrPkt& other) : AggrPkt_Base(other.getName()) {operator=(other);}
+    AggrPkt(const char *name=NULL, int kind=0) : AggrPkt_Base(name,kind), storedPackets() {}
+    AggrPkt(const AggrPkt& other) : AggrPkt_Base(other.getName()), storedPackets() {operator=(other);}
     AggrPkt& operator=(const AggrPkt& other) {AggrPkt_Base::operator=(other); return *this;}
     virtual AggrPkt *dup() const {return new AggrPkt(*this);}
 

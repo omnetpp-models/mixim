@@ -7,16 +7,20 @@
 
 #include "BatteryAccess.h"
 
+#include <cassert>
+
 #include "FindModule.h"
 
 BatteryAccess::BatteryAccess():
 	BaseModule(),
-	battery(NULL)
+	battery(NULL),
+	deviceID(-1)
 {}
 
 BatteryAccess::BatteryAccess(unsigned stacksize):
 	BaseModule(stacksize),
-	battery(NULL)
+	battery(NULL),
+	deviceID(-1)
 {}
 
 void BatteryAccess::registerWithBattery(const std::string& name, int numAccounts) {

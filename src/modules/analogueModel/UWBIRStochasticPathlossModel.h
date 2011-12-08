@@ -81,8 +81,23 @@ public:
     int myIndex;
     std::string myName;
 
-    UWBIRStochasticPathlossModel(double _PL0, double _mu_gamma, double _sigma_gamma, double _mu_sigma, double _sigma_sigma, bool _enabled, bool _shadowing=true) :
-    PL0(_PL0), mu_gamma(_mu_gamma), sigma_gamma(_sigma_gamma), mu_sigma(_mu_sigma), sigma_sigma(_sigma_sigma), isEnabled(_enabled), shadowing(_shadowing), frequency("frequency")
+    UWBIRStochasticPathlossModel(double _PL0, double _mu_gamma, double _sigma_gamma, double _mu_sigma, double _sigma_sigma, bool _enabled, bool _shadowing=true)
+    	: AnalogueModel()
+    	, PL0(_PL0)
+    	, mu_gamma(_mu_gamma), sigma_gamma(_sigma_gamma)
+    	, mu_sigma(_mu_sigma), sigma_sigma(_sigma_sigma)
+    	, gamma(0.0), S(0.0), sigma(0.0)
+    	, n1(0.0), n2(0.0), n3(0.0)
+    	, isEnabled(_enabled)
+    	, shadowing(_shadowing)
+    	, distances()
+    	, srcPosX(), srcPosY(), dstPosX(), dstPosY()
+    	, pathloss_exponent(0.0)
+    	, fading(0.0)
+    	, frequency("frequency")
+    	, pathlosses()
+    	, myIndex(-1)
+    	, myName()
     {
     	distances.setName("distances");
     	srcPosX.setName("srcPosX");

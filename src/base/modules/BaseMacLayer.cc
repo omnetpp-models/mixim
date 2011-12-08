@@ -54,7 +54,7 @@ void BaseMacLayer::initialize(int stage)
     if(stage==0)
     {
     	// get handle to phy layer
-        if ((phy = FindModule<MacToPhyInterface*>::findSubModule(getParentModule())) == NULL) {
+        if ((phy = FindModule<MacToPhyInterface*>::findSubModule(getNic())) == NULL) {
         	error("Could not find a PHY module.");
         }
         headerLength= par("headerLength");
@@ -71,7 +71,7 @@ void BaseMacLayer::initialize(int stage)
         } else {
             const std::string addressString = par("address").stringValue();
             if (addressString.empty() || addressString == "auto")
-                myMacAddr = LAddress::L2Type(getParentModule()->getId());
+                myMacAddr = LAddress::L2Type(getNic()->getId());
             else
                 myMacAddr = LAddress::L2Type(addressString.c_str());
             // use streaming operator for string conversion, this makes it more
@@ -304,8 +304,7 @@ ConstMapping* BaseMacLayer::createSingleFrequencyMapping(simtime_t_cref         
 }
 
 BaseConnectionManager* BaseMacLayer::getConnectionManager() const {
-	cModule* nic = getParentModule();
-	return ChannelAccess::getConnectionManager(nic);
+	return ChannelAccess::getConnectionManager(getNic());
 }
 
 const LAddress::L2Type& BaseMacLayer::getUpperDestinationFromControlInfo(const cObject *const pCtrlInfo) const {

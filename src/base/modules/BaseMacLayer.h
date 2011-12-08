@@ -92,17 +92,31 @@ protected:
      */
     int phyHeaderLength;
 
+private:
+    /** @brief Copy constructor is not allowed.
+     */
+    BaseMacLayer(const BaseMacLayer&);
+    /** @brief Assignment operator is not allowed.
+     */
+    BaseMacLayer& operator=(const BaseMacLayer&);
+
 public:
     //Module_Class_Members( BaseMacLayer, BaseLayer, 0 );
     BaseMacLayer() 
       : BaseLayer()
       , phy(NULL)
+      , headerLength(0)
       , myMacAddr(LAddress::L2NULL)
+      , coreDebug(false)
+      , phyHeaderLength(0)
     {}
     BaseMacLayer(unsigned stacksize) 
       : BaseLayer(stacksize)
       , phy(NULL)
+      , headerLength(0)
       , myMacAddr(LAddress::L2NULL)
+      , coreDebug(false)
+      , phyHeaderLength(0)
     {}
 
     /** @brief Initialization of the module and some variables*/
@@ -237,6 +251,15 @@ protected:
      * @param pSignal	The signal which should be send.
      */
     virtual cObject* setDownControlInfo(cMessage *const pMsg, Signal *const pSignal);
+
+    /** @brief Pointer to nic Module.
+     */
+    const cModule* getNic() const {
+        return getParentModule();
+    }
+    cModule* getNic() {
+        return getParentModule();
+    }
 };
 
 #endif

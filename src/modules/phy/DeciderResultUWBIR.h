@@ -36,6 +36,12 @@ public:
 private:
 	std::vector<bool>* decodedBits;
 	double snr;
+	/** @brief Copy constructor is not allowed.
+	 */
+	DeciderResultUWBIR(const DeciderResultUWBIR&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	DeciderResultUWBIR& operator=(const DeciderResultUWBIR&);
 
 };
 #endif

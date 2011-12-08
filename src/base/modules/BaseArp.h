@@ -56,6 +56,14 @@ class MIXIM_API BaseArp : public ArpInterface,
     bool coreDebug;
 
 public:
+    BaseArp()
+    	: ArpInterface()
+    	, AddressingInterface()
+    	, BaseModule()
+    	, coreDebug(false)
+    {}
+    virtual ~BaseArp() {}
+
     virtual void initialize(int stage);
 
     /** @brief should not be called,

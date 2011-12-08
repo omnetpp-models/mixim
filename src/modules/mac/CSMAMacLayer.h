@@ -47,7 +47,33 @@
  */
 class MIXIM_API CSMAMacLayer : public BaseMacLayer
 {
+  private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	CSMAMacLayer(const CSMAMacLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	CSMAMacLayer& operator=(const CSMAMacLayer&);
+
   public:
+	CSMAMacLayer()
+		: BaseMacLayer()
+		, macState(RX)
+		, slotDuration(0)
+		, difs(0)
+		, macQueue()
+		, queueLength(0)
+		, backoffTimer(NULL)
+		, minorMsg(NULL)
+		, txAttempts(0)
+		, maxTxAttempts(0)
+		, bitrate(0)
+		, txPower(0)
+		, initialCW(0)
+		, nbBackoffs(0)
+		, backoffValues(0)
+		, nbTxFrames(0)
+	{}
 	virtual ~CSMAMacLayer();
 
   protected:

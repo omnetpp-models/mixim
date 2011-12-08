@@ -65,7 +65,7 @@ void BMacLayer::initialize(int stage)
 
 		// init the dropped packet info
 		droppedPacket.setReason(DroppedPacket::NONE);
-		nicId = getParentModule()->getId();
+		nicId = getNic()->getId();
 		WATCH(macState);
     }
 

@@ -52,7 +52,50 @@ class WiseRoutePkt;
  **/
 class MIXIM_API WiseRoute : public BaseNetwLayer
 {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	WiseRoute(const WiseRoute&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	WiseRoute& operator=(const WiseRoute&);
+
 public:
+	WiseRoute()
+		: BaseNetwLayer()
+		, routeTable()
+		, floodTable()
+		, headerLength(0)
+		, macaddress()
+		, sinkAddress()
+		, useSimTracer(false)
+		, rssiThreshold(0)
+		, routeFloodsInterval(0)
+		, floodSeqNumber(0)
+		, tracer(NULL)
+		, routeFloodTimer(NULL)
+		, nbDataPacketsForwarded(0)
+		, nbDataPacketsReceived(0)
+		, nbDataPacketsSent(0)
+		, nbDuplicatedFloodsReceived(0)
+		, nbFloodsSent(0)
+		, nbPureUnicastSent(0)
+		, nbRouteFloodsSent(0)
+		, nbRouteFloodsReceived(0)
+		, nbUnicastFloodForwarded(0)
+		, nbPureUnicastForwarded(0)
+		, nbGetRouteFailures(0)
+		, nbRoutesRecorded(0)
+		, nbHops(0)
+		, receivedRSSI()
+		, routeRSSI()
+		, allReceivedRSSI()
+		, allReceivedBER()
+		, routeBER()
+		, receivedBER()
+		, nextHopSelectionForSink()
+		, trace(false), stats(false), debug(false)
+	{}
     /** @brief Initialization of the module and some variables*/
     virtual void initialize(int);
     virtual void finish();

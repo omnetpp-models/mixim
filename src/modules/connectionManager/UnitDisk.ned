@@ -19,20 +19,10 @@
 
 package org.mixim.modules.connectionManager;
 
-simple UnitDisk
+import org.mixim.base.connectionManager.ConnectionManager;
+
+simple UnitDisk extends ConnectionManager
 {
     parameters:
-        bool   debug = default(false); // debug switch
-        double radioRange;
-
-        // below are unused here, but needed for BasePhyLayer
-        // maximum sending power used for this network (in mW)
-        double pMax; // maximum sending power used for this network (in mW)
-        // minimum signal attenuation threshold (in dBm)
-        double sat; // minimum signal attenuation threshold (in dBm)
-        // minimum path loss coefficient
-        double alpha; // minimum path loss coefficient
-        // minimum carrier frequency of the channel (in Hz)
-        double carrierFrequency; // minimum carrier frequency of the channel (in Hz)
+        double radioRange @unit(m);
 }
-

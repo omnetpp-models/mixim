@@ -106,7 +106,17 @@ public:
 	 * @brief Overwrites the copy operator to make sure that the
 	 * mappings are cloned correct.
 	 */
-	const Signal& operator=(const Signal& o);
+	Signal& operator=(const Signal& o);
+
+	/**
+	 *  @brief  Swaps data with another %Signal.
+	 *  @param  s  A %Signal of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two Signal's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(Signal&);
 
 	/**
 	 * @brief Delete the functions of this signal.

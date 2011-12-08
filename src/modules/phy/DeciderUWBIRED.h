@@ -109,18 +109,41 @@ public:
 	DeciderUWBIRED(DeciderToPhyInterface* iface,
 			PhyLayerUWBIR* _uwbiface,
 			double _syncThreshold, bool _syncAlwaysSucceeds, bool _stats,
-			bool _trace, bool alwaysFailOnDataInterference=false) :
-		Decider(iface), trace(_trace),
-				stats(_stats), nbRandomBits(0), nbFailedSyncs(0),
-				nbSuccessfulSyncs(0), nbSymbols(0), allThresholds(0), vsignal2(0), vnoise2(0), snirEvals(0), pulseSnrs(0), syncThreshold(_syncThreshold),
-				syncAlwaysSucceeds(_syncAlwaysSucceeds),
-				channelSensing(false), synced(false), alwaysFailOnDataInterference(alwaysFailOnDataInterference),
-				uwbiface(_uwbiface), tracking(0), nbFramesWithInterference(0), nbFramesWithoutInterference(0),
-				nbCancelReceptions(0), nbFinishTrackingFrames(0), nbFinishNoiseFrames(0)
+	               bool _trace, bool alwaysFailOnDataInterference=false)
+		: Decider(iface)
+		, trace(_trace), stats(_stats)
+		, nbRandomBits(0)
+		, nbFailedSyncs(0), nbSuccessfulSyncs(0)
+		, nbSymbols(0), allThresholds(0)
+		, vsignal2(0), vnoise2(0), snirs(0), snirEvals(0), pulseSnrs(0)
+		, packetSNIR(0), packetSignal(0), packetNoise(0), packetSamples(0)
+		, cfg()
+		, snrLastPacket(0)
+		, syncThreshold(_syncThreshold)
+		, syncAlwaysSucceeds(_syncAlwaysSucceeds)
+		, channelSensing(false)
+		, synced(false)
+		, alwaysFailOnDataInterference(alwaysFailOnDataInterference)
+		, packet()
+		, epulseAggregate(0), enoiseAggregate(0)
+		, currentSignals()
+		, receivedPulses()
+		, syncThresholds()
+		, uwbiface(_uwbiface)
+		, tracking(NULL)
+		, nbFramesWithInterference(0), nbFramesWithoutInterference(0)
+		, nbCancelReceptions(0)
+		, nbFinishTrackingFrames(0)
+		, nbFinishNoiseFrames(0)
+		, receivingPowers()
+		, signalPower(NULL)
+		, offsets()
+		, airFrameVector()
+		, airFrameIter()
 	{
 		receivedPulses.setName("receivedPulses");
 		syncThresholds.setName("syncThresholds");
-	};
+	}
 
 	virtual simtime_t processSignal(AirFrame* frame);
 
@@ -163,6 +186,13 @@ protected:
 			simtime_t_cref burst, Signal* signal);
 
 	simtime_t handleChannelSenseRequest(ChannelSenseRequest* request);
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	DeciderUWBIRED(const DeciderUWBIRED&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	DeciderUWBIRED& operator=(const DeciderUWBIRED&);
 
 };
 

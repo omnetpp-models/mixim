@@ -4,7 +4,10 @@
 
 Define_Module(DeciderTest);
 
-DeciderTest::DeciderTest() : decider(0)
+DeciderTest::DeciderTest()
+	: DeciderToPhyInterface()
+	, SimpleTest()
+	, decider(NULL)
 {
 	// initializing members for testing
 	world = new TestWorld();

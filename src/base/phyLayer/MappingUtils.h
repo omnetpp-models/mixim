@@ -34,12 +34,23 @@ public:
 protected:
 	Base* origIterator;
 
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	BaseFilteredIterator(const BaseFilteredIterator&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	BaseFilteredIterator& operator=(const BaseFilteredIterator&);
+
 public:
-	BaseFilteredIterator(Base* orig):
-		origIterator(orig) {}
+	BaseFilteredIterator(Base* orig)
+		: Base()
+		, origIterator(orig)
+	{}
 
 	virtual ~BaseFilteredIterator() {
-		delete origIterator;
+		if (origIterator)
+			delete origIterator;
 	}
 
 	virtual const Argument& getNextPosition() const { return origIterator->getNextPosition(); }
@@ -141,14 +152,30 @@ public:
 	/**
 	 * @brief Initializes the Iterator to use the passed InterpolateableMapIterator.
 	 */
-	TimeMappingIterator(const iterator& it):
-		valueIt(it), isStepMapping(it.getInterpolator().isStepping()), atPreStep(false) {
+	TimeMappingIterator(const iterator& it)
+		: MappingIterator()
+		, valueIt(it)
+		, position()
+		, nextPosition()
+		, isStepMapping(it.getInterpolator().isStepping())
+		, atPreStep(false)
+	{
 		interpolator_type UsedInterpolator;
 
 		isStepMapping = UsedInterpolator.isStepping();
 		position.setTime(valueIt.getPosition());
 		updateNextPos();
 	}
+	TimeMappingIterator(const TimeMappingIterator<Interpolator>& o)
+		: MappingIterator(o)
+		, valueIt(o.valueIt)
+		, position(o.position)
+		, nextPosition(o.nextPosition)
+		, isStepMapping(o.isStepMapping)
+		, atPreStep(o.atPreStep)
+	{}
+
+	virtual ~TimeMappingIterator() {}
 
 	/**
 	 * @brief Lets the iterator point to the passed position.
@@ -306,6 +333,8 @@ public:
 	 */
 	TimeMapping():
 		Mapping(), entries() {}
+	TimeMapping(const TimeMapping<Interpolator>& o):
+		Mapping(o), entries(o.entries) {}
 
 	/**
 	 * @brief Initializes the Mapping with the passed Interpolation method.
@@ -313,6 +342,7 @@ public:
 	TimeMapping(mapped_cref_type outOfRangeVal):
 		Mapping(), entries(outOfRangeVal) {}
 
+	virtual ~TimeMapping() {}
 	/**
 	 * @brief returns a deep copy of this mapping instance.
 	 */
@@ -380,6 +410,14 @@ protected:
 	/** @brief The factor defining how strong the left and the right Mapping
 	 * affect the interpolation.*/
 	argument_value_t      factor;
+
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	LinearIntplMappingIterator(const LinearIntplMappingIterator&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	LinearIntplMappingIterator& operator=(const LinearIntplMappingIterator&);
 
 public:
 	/**
@@ -493,13 +531,38 @@ protected:
 	argument_value_t    factor;
 
 public:
+	LinearIntplMapping(const LinearIntplMapping& o)
+		: Mapping(o), left(o.left), right(o.right), factor(o.factor) {}
+
+	LinearIntplMapping& operator=(const LinearIntplMapping& copy)
+	{
+		LinearIntplMapping tmp(copy); // All resource all allocation happens here.
+		                              // If this fails the copy will throw an exception
+		                              // and 'this' object is unaffected by the exception.
+		swap(tmp);
+		return *this;
+	}
+	// swap is usually trivial to implement
+	// and you should easily be able to provide the no-throw guarantee.
+	void swap(LinearIntplMapping& s)
+	{
+		Mapping::swap(s); // swap the base class members
+		/* Swap all D members */
+		std::swap(left,   s.left);
+		std::swap(right,  s.right);
+		std::swap(factor, s.factor);
+	}
+
+public:
 
 	/**
 	 * @brief Initializes the LinearIntplMapping with the passed left and right
 	 * Mapping to interpolate by the passed interpolation value.
 	 */
 	LinearIntplMapping(const ConstMapping *const left = NULL, const ConstMapping *const right = NULL, argument_value_cref_t f = Argument::MappedZero):
-		left(left), right(right), factor(f) {}
+		Mapping(), left(left), right(right), factor(f) {}
+
+	virtual ~LinearIntplMapping() {}
 
 	/**
 	 * @brief Interpolated mappings are not supposed to be cloned!
@@ -567,10 +630,11 @@ public:
 template<>
 class Interpolated<Mapping*> {
 protected:
-	typedef Mapping*          value_type;
-	typedef const value_type& value_cref_type;
-	typedef value_type&       value_ref_type;
-	typedef value_type*       value_ptr_type;
+	typedef Mapping*                 value_type;
+	typedef const value_type&        value_cref_type;
+	typedef value_type&              value_ref_type;
+	typedef value_type*              value_ptr_type;
+	typedef Interpolated<value_type> _Self;
 
 	/** @brief Holds the temporary InterpolatedMapping if necessary.*/
 	LinearIntplMapping mapping;
@@ -591,7 +655,7 @@ public:
 	 * Sets "isInterpolated" to true.
 	 */
 	Interpolated(const LinearIntplMapping& m):
-		mapping(m), isPointer(false), isInterpolated(true) {
+		mapping(m), value(), isPointer(false), isInterpolated(true) {
 
 		value = &mapping;
 	}
@@ -608,7 +672,7 @@ public:
 	/**
 	 * @brief Copy-constructor which assures that the internal storage is used correctly.
 	 */
-	Interpolated(const Interpolated<value_type>& o):
+	Interpolated(const _Self& o):
 		mapping(), value(o.value), isPointer(o.isPointer), isInterpolated(o.isInterpolated) {
 		if(!isPointer) {
 			mapping = o.mapping;
@@ -616,11 +680,13 @@ public:
 		}
 	}
 
+	~Interpolated() {}
+
 	/**
 	 * @brief Assignment operator which assures that the internal storage is copied
 	 * correctly.
 	 */
-	const Interpolated<value_type>& operator=(const Interpolated<value_type>& o){
+	const _Self& operator=(const _Self& o){
 		isInterpolated = o.isInterpolated;
 		isPointer      = o.isPointer;
 		value          = o.value;
@@ -652,7 +718,7 @@ public:
 	 * the represented Mapping is the same as well as the "isInterpolated"
 	 * value.
 	 */
-	bool operator==(const Interpolated<value_type>& other) const {
+	bool operator==(const _Self& other) const {
 		return value == other.value && isInterpolated == other.isInterpolated;
 	}
 
@@ -661,7 +727,7 @@ public:
 	 * the represented Mapping differs or the "isInterpolated"
 	 * value.
 	 */
-	bool operator!=(const Interpolated<value_type>& other) const {
+	bool operator!=(const _Self& other) const {
 		return value != other.value || isInterpolated != other.isInterpolated;
 	}
 };
@@ -677,6 +743,7 @@ template<>
 class Linear< std::map<Argument::mapped_type, Mapping*> > : public InterpolatorBase< std::map<Argument::mapped_type, Mapping*> >  {
 protected:
 	typedef InterpolatorBase< std::map<Argument::mapped_type, Mapping*> > base_class_type;
+	typedef Linear< std::map<Argument::mapped_type, Mapping*> >           _Self;
 
 public:
 	typedef base_class_type::storage_type     storage_type;
@@ -697,6 +764,9 @@ public:
 
 	Linear(mapped_cref_type oorv):
 		base_class_type(oorv) {}
+
+	Linear(const _Self& o):
+		base_class_type(o) {}
 
 	virtual ~Linear() {}
 
@@ -774,6 +844,11 @@ public:
 							   argument_value_cref_t val):
 		SimpleConstMapping(dims, key), value(val) {}
 
+	ConstantSimpleConstMapping(const ConstantSimpleConstMapping& o):
+		SimpleConstMapping(o), value(o.value) {}
+
+	virtual ~ConstantSimpleConstMapping() {}
+
 	virtual argument_value_t getValue(const Argument&) const {
 		return value;
 	}
@@ -808,9 +883,17 @@ public:
 class MIXIM_API ConstMappingIteratorWrapper : public MappingIterator {
 protected:
 	ConstMappingIterator *const iterator;
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	ConstMappingIteratorWrapper(const ConstMappingIteratorWrapper&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	ConstMappingIteratorWrapper& operator=(const ConstMappingIteratorWrapper&);
+
 public:
 	ConstMappingIteratorWrapper(ConstMappingIterator* it):
-		iterator(it) {}
+		MappingIterator(), iterator(it) {}
 
 	virtual ~ConstMappingIteratorWrapper() {
 		if(iterator)
@@ -851,9 +934,18 @@ class MIXIM_API ConstMappingWrapper : public Mapping {
 protected:
 	const ConstMapping* mapping;
 
+private:
+	/** @brief Assignment operator is not allowed.
+	 */
+	ConstMappingWrapper& operator=(const ConstMappingWrapper&);
+
 public:
 	ConstMappingWrapper(const ConstMapping* m):
 		Mapping(m->getDimensionSet()), mapping(m) {}
+	ConstMappingWrapper(const ConstMappingWrapper& o):
+		Mapping(o), mapping(o.mapping) {}
+
+	virtual ~ConstMappingWrapper() {}
 
 	virtual void setValue(const Argument&, argument_value_cref_t) { assert(false); }
 
@@ -1017,6 +1109,10 @@ protected:
 			nextPosition.setArgValues(subIterator->getNextPosition());
 		}
 	}
+private:
+	/** @brief Assignment operator is not allowed.
+	 */
+	MultiDimMappingIterator& operator=(const MultiDimMappingIterator&);
 
 public:
 	/**
@@ -1024,10 +1120,10 @@ public:
 	 * its position two the first entry of the passed MultiDimMapping.
 	 */
 	MultiDimMappingIterator(MultiDimMapping<Interpolator>& pMapping):
-		mapping(pMapping),
+		MappingIterator(), mapping(pMapping),
 		valueIt(pMapping.entries.beginIntpl()),
 		subMapping(0), subIterator(NULL),
-		position()
+		position(), nextPosition()
 	{
 		subMapping = valueIt.getValue();
 		if(!subMapping.isInterpolated && *subMapping) {
@@ -1047,10 +1143,10 @@ public:
 	 * its position two the passed position.
 	 */
 	MultiDimMappingIterator(MultiDimMapping<Interpolator>& pMapping, const Argument& pos):
-		mapping(pMapping),
+		MappingIterator(), mapping(pMapping),
 		valueIt(pMapping.entries.beginIntpl()/*pMapping.entries.findIntpl(pos.getArgValue(pMapping.myDimension))*/), //ATTENTION: pMapping.entries.findIntpl(...) results in GCC-Crash at -O2
 		subMapping(0), subIterator(NULL),
-		position(pos)
+		position(pos), nextPosition()
 	{
 		// valueIt was not initialized with pMapping.entries.findIntpl(...), so we need the jumpTo-call
 		valueIt.jumpTo(position.getArgValue(mapping.myDimension));
@@ -1061,6 +1157,18 @@ public:
 		nextPosition = position;
 
 		updateNextPosition();
+	}
+
+	MultiDimMappingIterator(const MultiDimMappingIterator& o):
+		MappingIterator(o), mapping(o.mapping),
+		valueIt(o.valueIt),
+		subMapping(o.subMapping), subIterator(NULL),
+		position(o.position), nextPosition(o.nextPosition)
+	{
+		// valueIt was not initialized with pMapping.entries.findIntpl(...), so we need the jumpTo-call
+		if(*subMapping){
+			subIterator = (*subMapping)->createIterator(position);
+		}
 	}
 
 	/**
@@ -1391,6 +1499,7 @@ public:
 		outOfRangeMapping(0),
 		wrappedOORMapping(0),
 		entries(),
+		myDimension(),
 		isMaster(true){
 
 		myDimension = *(dimensions.rbegin());
@@ -1406,6 +1515,7 @@ public:
 		outOfRangeMapping(new ConstantSimpleConstMapping(myDims, oorv)),
 		wrappedOORMapping(new ConstMappingWrapper(outOfRangeMapping)),
 		entries(wrappedOORMapping),
+		myDimension(),
 		isMaster(true) {
 
 		myDimension = *(dimensions.rbegin());
@@ -1589,6 +1699,14 @@ public:
 protected:
 	Mapping*      fillRef;
 	const KeyMap& keys;
+
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	FilledUpMapping(const FilledUpMapping&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	FilledUpMapping& operator=(const FilledUpMapping&);
 
 //--------methods----------
 protected:
@@ -1919,6 +2037,14 @@ class MIXIM_API ConcatConstMappingIterator : public FilteredConstMappingIterator
 protected:
 	ConstMapping* baseMapping;
 
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	ConcatConstMappingIterator(const ConcatConstMappingIterator&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	ConcatConstMappingIterator& operator=(const ConcatConstMappingIterator&);
+
 public:
 	ConcatConstMappingIterator(ConstMapping* baseMapping):
 		FilteredConstMappingIterator(baseMapping->createConstIterator()),
@@ -1929,6 +2055,7 @@ public:
 		baseMapping(baseMapping) {}
 
 	virtual ~ConcatConstMappingIterator() {
+		if (baseMapping)
 		delete baseMapping;
 	}
 };
@@ -1945,13 +2072,58 @@ class ConcatConstMapping: public ConstMapping {
 protected:
 	typedef std::pair<Dimension, Argument::const_iterator> DimIteratorPair;
 	typedef std::list<ConstMapping*> MappingSet;
+
 	MappingSet            mappings;
 	ConstMapping*         refMapping;
 
 	bool                  continueOutOfRange;
 	Argument::mapped_type oorValue;
+	Operator              op;
 
-	Operator op;
+public:
+	ConcatConstMapping(const ConcatConstMapping& o)
+		: ConstMapping(o)
+		, mappings(o.mappings)
+		, refMapping(NULL)
+		, continueOutOfRange(o.continueOutOfRange)
+		, oorValue(o.oorValue)
+		, op()
+	{}
+
+	/**
+	 *  @brief  %ConcatConstMapping assignment operator.
+	 *  @param  copy  A %ConcatConstMapping of identical element and allocator types.
+	 *
+	 *  All the elements of @a copy are copied.
+	 */
+	ConcatConstMapping& operator=(const ConcatConstMapping& copy)
+	{
+		ConcatConstMapping tmp(copy); // All resource all allocation happens here.
+	                                  // If this fails the copy will throw an exception
+	                                  // and 'this' object is unaffected by the exception.
+		swap(tmp);
+		return *this;
+	}
+
+	/**
+	 *  @brief  Swaps data with another %ConcatConstMapping.
+	 *  @param  s  A %ConcatConstMapping of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two ConcatConstMapping's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(ConcatConstMapping& s)
+	{
+		ConstMapping::swap(s); // swap the base class members
+		/* Swap all D members */
+		std::swap(mappings,           s.mappings);
+		std::swap(refMapping,         s.refMapping);
+		std::swap(continueOutOfRange, s.continueOutOfRange);
+		std::swap(oorValue,           s.oorValue);
+		std::swap(op,                 s.op);
+	}
+
 public:
 	/**
 	 * @brief Initializes with the passed reference Mapping, the operator
@@ -1961,9 +2133,10 @@ public:
 	ConcatConstMapping(ConstMapping* refMapping,
 	                   Iterator first, Iterator last,
 	                   bool continueOutOfRange = true,
-	                   Argument::mapped_type_cref oorValue = Argument::mapped_type(0),
+	                   Argument::mapped_type_cref oorValue = Argument::MappedZero,
 	                   Operator op = Operator()):
 		ConstMapping(refMapping->getDimensionSet()),
+		mappings(),
 		refMapping(refMapping),
 		continueOutOfRange(continueOutOfRange),
 		oorValue(oorValue),
@@ -1981,9 +2154,10 @@ public:
 	 */
 	ConcatConstMapping(ConstMapping* refMapping, ConstMapping* other,
 	                   bool continueOutOfRange = true,
-	                   Argument::mapped_type_cref oorValue = Argument::mapped_type(0),
+	                   Argument::mapped_type_cref oorValue = Argument::MappedZero,
 	                   Operator op = Operator()):
 		ConstMapping(refMapping->getDimensionSet()),
+		mappings(),
 		refMapping(refMapping),
 		continueOutOfRange(continueOutOfRange),
 		oorValue(oorValue),
@@ -1991,6 +2165,8 @@ public:
 	{
 		mappings.push_back(other);
 	}
+
+	virtual ~ConcatConstMapping() {}
 
 	/**
 	 * @brief Adds another Mapping to the list of Mappings to
@@ -2093,7 +2269,7 @@ protected:
 
 public:
 	BaseDelayedIterator(Iterator* it, simtime_t_cref delay):
-		Base(it), delay(delay) {
+		Base(it), delay(delay), position(), nextPosition() {
 
 		updatePosition();
 	}
@@ -2158,12 +2334,46 @@ protected:
 	Base* mapping;
 	simtime_t delay;
 
-
 protected:
 	Argument delayPosition(const Argument& pos) const {
 		Argument res(pos);
 		res.setTime(res.getTime() - delay);
 		return res;
+	}
+
+public:
+	BaseDelayedMapping(const BaseDelayedMapping& o):
+		Base(o), mapping(o.mapping), delay(o.delay) {}
+
+	/**
+	 *  @brief  %BaseDelayedMapping assignment operator.
+	 *  @param  copy  A %BaseDelayedMapping of identical element and allocator types.
+	 *
+	 *  All the elements of @a copy are copied.
+	 */
+	BaseDelayedMapping& operator=(const BaseDelayedMapping& copy)
+	{
+		BaseDelayedMapping tmp(copy); // All resource all allocation happens here.
+	                                  // If this fails the copy will throw an exception
+	                                  // and 'this' object is unaffected by the exception.
+		swap(tmp);
+		return *this;
+	}
+
+	/**
+	 *  @brief  Swaps data with another %BaseDelayedMapping.
+	 *  @param  s  A %BaseDelayedMapping of the same element and allocator types.
+	 *
+	 *  This exchanges the elements between two BaseDelayedMapping's in constant time.
+	 *  Note that the global std::swap() function is specialized such that
+	 *  std::swap(s1,s2) will feed to this function.
+	 */
+	void swap(BaseDelayedMapping& s)
+	{
+		Base::swap(s); // swap the base class members
+		/* Swap all D members */
+		std::swap(mapping, s.mapping);
+		std::swap(delay,   s.delay);
 	}
 
 public:

@@ -1,4 +1,4 @@
-**.node[*].applType = "SensorApplLayer"
+**.node[*].applicationType = "SensorApplLayer"
 **.appl.trafficType = "periodic"
 **.appl.trafficParam = 1 #in seconds
 **.appl.broadcastPackets = true

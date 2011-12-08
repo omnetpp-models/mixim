@@ -39,6 +39,14 @@ class NetwPkt;
  **/
 class MIXIM_API BaseNetwLayer : public BaseLayer
 {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	BaseNetwLayer(const BaseNetwLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	BaseNetwLayer& operator=(const BaseNetwLayer&);
+
 public:
 	/** @brief Message kinds used by this layer.*/
 	enum BaseNetwMessageKinds {
@@ -73,12 +81,18 @@ public:
     //Module_Class_Members(BaseNetwLayer,BaseLayer,0);
     BaseNetwLayer() 
       : BaseLayer()
+      , headerLength(0)
       , arp(NULL)
+      , myNetwAddr()
+      , coreDebug(false)
     {}
 
     BaseNetwLayer(unsigned stacksize) 
       : BaseLayer(stacksize)
+      , headerLength(0)
       , arp(NULL)
+      , myNetwAddr()
+      , coreDebug(false)
     {}
 
     /** @brief Initialization of the module and some variables*/

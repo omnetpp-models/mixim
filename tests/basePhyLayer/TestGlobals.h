@@ -9,6 +9,14 @@ enum {
 };
 
 class AssertAirFrame:public AssertMessage {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	AssertAirFrame(const AssertAirFrame&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	AssertAirFrame& operator=(const AssertAirFrame&);
+
 protected:	
 	AirFrame* pointer;
 	simtime_t arrival;
@@ -17,9 +25,11 @@ public:
 	AssertAirFrame(	std::string msg, int state,
 					simtime_t arrival,
 					AirFrame* frame = 0,
-					bool continuesTests = false):
-		AssertMessage(msg, false, continuesTests),
-		pointer(frame), arrival(arrival), state(state)
+					bool continuesTests = false)
+		: AssertMessage(msg, false, continuesTests)
+		, pointer(frame)
+		, arrival(arrival)
+		, state(state)
 	{}
 	
 	virtual ~AssertAirFrame() {}

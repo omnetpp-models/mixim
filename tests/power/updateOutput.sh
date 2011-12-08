@@ -1,3 +1,5 @@
+#!/bin/bash
+
 for f in *.vec 
 do
  cp $f valid/$f

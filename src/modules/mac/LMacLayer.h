@@ -62,7 +62,41 @@ class LMacPkt;
  **/
 class MIXIM_API  LMacLayer : public BaseMacLayer
 {
+  private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	LMacLayer(const LMacLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	LMacLayer& operator=(const LMacLayer&);
+
   public:
+	LMacLayer()
+		: BaseMacLayer()
+		, SETUP_PHASE(true)
+		, slotChange()
+		, macState()
+		, radioState()
+		, slotDuration(0)
+		, controlDuration(0)
+		, mySlot(0)
+		, numSlots(0)
+		, currSlot()
+		, reservedMobileSlots(0)
+		, macQueue()
+		, queueLength(0)
+		, wakeup(NULL)
+		, timeout(NULL)
+		, sendData(NULL)
+		, initChecker(NULL)
+		, checkChannel(NULL)
+		, start_lmac(NULL)
+		, send_control(NULL)
+		, bitrate(0)
+		, droppedPacket()
+		, nicId(-1)
+		, txPower(0)
+	{}
 	/** @brief Clean up messges.*/
 	virtual ~LMacLayer();
 
@@ -85,8 +119,7 @@ class MIXIM_API  LMacLayer : public BaseMacLayer
     virtual void handleLowerControl(cMessage *msg);
 
     /** @brief Encapsulate the NetwPkt into an MacPkt */
-    virtual MacPkt* encapsMsg(cMessage*);
-	
+    virtual MacPkt* encapsMsg(cPacket*);
 
   protected:
     typedef std::list<LMacPkt*> MacQueue;
@@ -142,13 +175,6 @@ class MIXIM_API  LMacLayer : public BaseMacLayer
     /** @brief Current state of active channel (radio), set using radio, updated via BB */
     Radio::RadioState radioState;
 	
-    /** @brief category number given by bb for RadioState */
-    int catRadioState;
-	
-	/** @brief track and publish current occupation state of medium */
-    int catIndication;
-
-
     /** @brief Duration of a slot */
     double slotDuration;
 	/** @brief Duration of teh control time in each slot */
@@ -190,9 +216,6 @@ class MIXIM_API  LMacLayer : public BaseMacLayer
 	
     /** @brief Inspect reasons for dropped packets */
     DroppedPacket droppedPacket;
-    
-    /** @brief plus category from BB */
-    int catDroppedPacket;
     
     /** @brief publish dropped packets nic wide */
     int nicId;

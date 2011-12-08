@@ -16,6 +16,7 @@
 #include "WorldUtilityStats.h"
 #include "Packet.h"
 #include "BaseLayer.h"
+#include "FindModule.h"
 
 Define_Module(WorldUtilityStats);
 
@@ -30,7 +31,7 @@ void WorldUtilityStats::initialize(int stage)
 		bitsReceived = 0;
 
 		//register for global stats to collect
-		subscribe(BaseLayer::catPacketSignal, this);
+		FindModule<>::findNetwork(this)->subscribe(BaseLayer::catPacketSignal, this);
 
 		sent.setName("Bits generated");
 		rcvd.setName("Bits received");
@@ -61,9 +62,19 @@ void WorldUtilityStats::finish()
 	recordScalar("GlobalTrafficGenerated", bitsSent, "bit");
 	recordScalar("GlobalTrafficReceived", bitsReceived, "bit");
 
-	recordScalar("Traffic", bitsSent / bitrate / simTime());
+	if (bitrate) {
+		recordScalar("Traffic", bitsSent / bitrate / simTime());
+	}
+	else {
+		recordScalar("Traffic", bitsSent / simTime());
+	}
 	double hosts = simulation.getSystemModule()->par("numHosts");
 	if(!par("bcTraffic"))
 		hosts = 2;
-	recordScalar("Usage", bitsReceived / bitrate / simTime() / (hosts-1));
+	if (bitrate && hosts > 1) {
+		recordScalar("Usage", bitsReceived / bitrate / simTime() / (hosts-1));
+	}
+	else {
+		recordScalar("Usage", bitsReceived / simTime());
+	}
 }

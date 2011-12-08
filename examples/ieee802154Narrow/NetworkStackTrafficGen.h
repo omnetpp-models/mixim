@@ -31,10 +31,16 @@
  */
 class NetworkStackTrafficGen : public BaseLayer
 {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	NetworkStackTrafficGen(const NetworkStackTrafficGen&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	NetworkStackTrafficGen& operator=(const NetworkStackTrafficGen&);
+
 public:
-
 	enum TrafficGenMessageKinds{
-
 		SEND_BROADCAST_TIMER = 1,
 		BROADCAST_MESSAGE
 	};
@@ -59,6 +65,21 @@ protected:
 	BaseWorldUtility* world;
 
 public:
+	NetworkStackTrafficGen()
+		: BaseLayer()
+		, packetLength(0)
+		, packetTime()
+		, pppt(0)
+		, burstSize(0)
+		, remainingBurst(0)
+		, destination()
+		, nbPacketDropped(0)
+		, arp(NULL)
+		, myNetwAddr()
+		, delayTimer(NULL)
+		, world(NULL)
+	{}
+
 	virtual ~NetworkStackTrafficGen();
 
 	virtual void initialize(int stage);

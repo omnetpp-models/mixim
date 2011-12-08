@@ -2,7 +2,7 @@ v2.2.1
 + getAnalogueModelFromName() is now a const method
 + fixed typename-error for GCC<4.5
 + fixed gcc-release compile crash
-+ fixed all -Wall -Wextra warnings
++ fixed all -Wall -Wextra -Weffc++ warnings
 + adjusted tests scripts diff-compare
 + regenerated makemakefiles
 

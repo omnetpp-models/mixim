@@ -84,10 +84,50 @@ protected:
     /**
      * @brief Constructor, initializes all members
      */
-    NicEntry(bool debug) : nicId(0), nicPtr(0), hostId(0){
-        coreDebug = debug;
-    };
+    NicEntry(bool debug)
+      : cObject()
+      , nicId(0)
+      , nicPtr(NULL)
+      , hostId(0)
+      , pos()
+      , chAccess(NULL)
+      , coreDebug(debug)
+      , outConns()
+    { }
 
+    NicEntry(const NicEntry& o)
+      : cObject(o)
+      , nicId(o.nicId)
+      , nicPtr(o.nicPtr)
+      , hostId(o.hostId)
+      , pos(o.pos)
+      , chAccess(o.chAccess)
+      , coreDebug(o.coreDebug)
+      , outConns(o.outConns)
+    { }
+
+    void swap(NicEntry& s)
+    {
+    	std::swap(nicId, s.nicId);
+    	std::swap(nicPtr, s.nicPtr);
+    	std::swap(hostId, s.hostId);
+    	std::swap(pos, s.pos);
+    	std::swap(chAccess, s.chAccess);
+    	std::swap(coreDebug, s.coreDebug);
+    	std::swap(outConns, s.outConns);
+    }
+
+    NicEntry& operator=(const NicEntry& o)
+    {
+    	nicId     = o.nicId;
+    	nicPtr    = o.nicPtr;
+    	hostId    = o.hostId;
+    	pos       = o.pos;
+    	chAccess  = o.chAccess;
+    	coreDebug = o.coreDebug;
+    	outConns  = o.outConns;
+    	return *this;
+    }
     /**
      * @brief Destructor -- needs to be there...
      */

@@ -60,7 +60,7 @@ void BatteryStats::initialize(int stage)
       residualVec.setUnit("mW-s");
       relativeVec.setName("capacity(relative)");
 
-      BaseBattery* batteryModule = FindModule<BaseBattery*>::findSubModule(getParentModule());
+      BaseBattery* batteryModule = FindModule<BaseBattery*>::findSubModule(getNode());
       if (batteryModule) {
         battery = batteryModule;
       }

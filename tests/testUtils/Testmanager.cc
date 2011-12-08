@@ -2,11 +2,18 @@
 
 Define_Module(TestManager);
 
-TestManager::TestManager():
-	finishCalled(false)
+TestManager::TestManager()
+	: cSimpleModule()
+	, TestModuleBase()
+	, modules()
+	, plannedModules()
+	, run(0)
+	, stage(0)
+	, finishCalled(false)
+	, errorExpected("")
+	, testForErrorTest()
 {
 	testForErrorTest = plannedTests.end();
-	errorExpected = "";
 }
 
 TestManager::~TestManager()

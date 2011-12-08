@@ -50,6 +50,13 @@ class PhyLayerUWBIR;
 */
 
 class MIXIM_API DeciderUWBIREDSyncOnAddress: public DeciderUWBIRED {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	DeciderUWBIREDSyncOnAddress(const DeciderUWBIREDSyncOnAddress&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	DeciderUWBIREDSyncOnAddress& operator=(const DeciderUWBIREDSyncOnAddress&);
 
 public:
 	DeciderUWBIREDSyncOnAddress(DeciderToPhyInterface* iface,

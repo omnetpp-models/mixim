@@ -29,12 +29,34 @@
 Define_Module(Mac80211);
 
 Mac80211::Mac80211()
-{
-    timeout = NULL;
-    nav = NULL;
-    contention = NULL;
-    endSifs = NULL;
-}
+	: BaseMacLayer()
+	, timeout()
+	, nav(NULL)
+	, contention(NULL)
+	, endSifs(NULL)
+	, chSenseStart()
+	, state()
+	, defaultBitrate(0)
+	, txPower(0)
+	, centerFreq(0)
+	, bitrate(0)
+	, autoBitrate(false)
+	, snrThresholds()
+	, queueLength(0)
+	, nextIsBroadcast(false)
+	, fromUpperLayer()
+	, longRetryCounter(0)
+	, shortRetryCounter(0)
+	, remainingBackoff()
+	, currentIFS()
+	, rtsCtsThreshold(0)
+	, delta()
+	, neighborhoodCacheSize(0)
+	, neighborhoodCacheMaxAge()
+	, neighbors()
+	, switching(false)
+	, fsc(0)
+{}
 
 void Mac80211::initialize(int stage)
 {
@@ -164,7 +186,7 @@ void Mac80211::handleUpperMsg(cMessage *msg)
         return;
     }
 
-    Mac80211Pkt *mac = encapsMsg(pkt);
+    Mac80211Pkt *mac = static_cast<Mac80211Pkt*>(encapsMsg(pkt));
     debugEV << "packet " << pkt << " received from higher layer, dest=" << mac->getDestAddr() << ", encapsulated\n";
 
     fromUpperLayer.push_back(mac);
@@ -182,7 +204,7 @@ void Mac80211::handleUpperMsg(cMessage *msg)
  * Encapsulates the received network-layer packet into a MacPkt and set all needed
  * header fields.
  */
-Mac80211Pkt *Mac80211::encapsMsg(cPacket * netw)
+MacPkt *Mac80211::encapsMsg(cPacket* netw)
 {
 
     Mac80211Pkt *pkt = new Mac80211Pkt(netw->getName());
@@ -212,8 +234,8 @@ Mac80211Pkt *Mac80211::encapsMsg(cPacket * netw)
     return pkt;
 }
 
-cMessage *Mac80211::decapsMsg(Mac80211Pkt *frame) {
-    cMessage *m = frame->decapsulate();
+cPacket *Mac80211::decapsMsg(MacPkt *frame) {
+    cPacket *m = frame->decapsulate();
     setUpControlInfo(m, frame->getSrcAddr());
     debugEV << " message decapsulated " << endl;
     return m;

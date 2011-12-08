@@ -11,6 +11,14 @@ class MacPkt;
 
 class TestMacLayer:public BaseModule, public TestModule
 {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	TestMacLayer(const TestMacLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	TestMacLayer& operator=(const TestMacLayer&);
+
 protected:
 	MacToPhyInterface* phy;
 	TestPhyLayer* testPhy;
@@ -28,6 +36,18 @@ protected:
 
 
 public:
+	TestMacLayer()
+		: BaseModule()
+		, TestModule()
+		, phy(NULL)
+		, testPhy(NULL)
+		, dataOut(-1)
+		, dataIn(-1)
+		, controlOut(-1)
+		, controlIn(-1)
+		, myIndex(0)
+		, run(0)
+	{}
 	//---Omnetpp parts-------------------------------
 	virtual void initialize(int stage);
 

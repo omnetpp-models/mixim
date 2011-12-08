@@ -19,6 +19,14 @@ protected:
 	/** The result of the decider evaluation.*/
 	DeciderResult* result;
 
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	PhyToMacControlInfo(const PhyToMacControlInfo&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	PhyToMacControlInfo& operator=(const PhyToMacControlInfo&);
+
 public:
 	/**
 	 * @brief Initializes the PhyToMacControlInfo with the passed DeciderResult.

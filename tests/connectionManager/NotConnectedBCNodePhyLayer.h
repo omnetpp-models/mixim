@@ -23,6 +23,11 @@ public:
 
 	bool broadcastAnswered;
 
+	NotConnectedBCNodePhyLayer()
+		: CMPhyLayer()
+		, broadcastAnswered(false)
+	{}
+
 	virtual void initialize(int stage) {
 		CMPhyLayer::initialize(stage);
 		if(stage==0){

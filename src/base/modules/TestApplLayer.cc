@@ -28,9 +28,10 @@
 using std::endl;
 
 TestApplLayer::TestApplLayer()
-{
-    delayTimer = NULL;
-}
+	: BaseApplLayer()
+	, delayTimer(NULL)
+	, coreDebug(false)
+{}
 
 /**
  * First we have to initialize the module from which we derived ours,

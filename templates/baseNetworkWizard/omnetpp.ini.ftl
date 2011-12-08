@@ -56,6 +56,11 @@ network = ${targetTypeName}
 #			WorldUtility parameters                      #
 ##########################################################
 **.world.useTorus = false
+<#if dimensions="3-dimensional">
+**.world.use2D = false
+<#else>
+**.world.use2D = true
+</#if>
 
 <#--########### Protocoll dependent include#############-->
 <#include nicIni>
