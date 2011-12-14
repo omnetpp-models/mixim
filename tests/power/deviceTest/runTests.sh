@@ -29,11 +29,14 @@ export LD_LIBRARY_PATH
 
 lCombined='miximtests'
 lSingle='deviceTest'
+lIsComb=0
 if [ ! -e "${lSingle}" -a ! -e "${lSingle}.exe" ]; then
     if [ -e "../../${lCombined}.exe" ]; then
         ln -s "../../${lCombined}.exe" "${lSingle}.exe"
+        lIsComb=1
     elif [ -e "../../${lCombined}" ]; then
         ln -s "../../${lCombined}"     "${lSingle}"
+        lIsComb=1
     fi
 fi
           
@@ -42,3 +45,4 @@ for i in One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen
 do
  ./${lSingle} -c $i "${LIBSREF[@]}"
 done
+[ x$lIsComb = x1 ] && rm -f ${lSingle} ${lSingle}.exe >/dev/null 2>&1

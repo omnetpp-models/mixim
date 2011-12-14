@@ -18,7 +18,7 @@ package org.mixim.examples.bmac;
 import org.mixim.base.modules.BaseNetwork;
 import org.mixim.modules.node.HostBMAC;
 
-network BMAC extends BaseNetwork
+network BMACExampleNetwork extends BaseNetwork
 {
     parameters:
         int numNodes; // total number of hosts in the network

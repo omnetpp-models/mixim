@@ -18,7 +18,7 @@ package org.mixim.examples.lmac;
 import org.mixim.base.modules.BaseNetwork;
 import org.mixim.modules.node.HostLMAC;
 
-network LMAC extends BaseNetwork
+network LMACExampleNetwork extends BaseNetwork
 {
     parameters:
         int numNodes; // total number of hosts in the network

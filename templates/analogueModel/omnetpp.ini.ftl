@@ -55,13 +55,13 @@ network = ${amName}TestNetwork
 ################ NETW layer parameters ####################
 
 ################ Mobility parameters #####################
-**.node[*].mobility.z = 0
+**.node[*].mobility.initialZ = 0m
 
-**.node[0].mobility.x = 150
-**.node[0].mobility.y = 150
+**.node[0].mobility.initialX = 150m
+**.node[0].mobility.initialY = 150m
 
-**.node[1].mobility.x = 250
-**.node[1].mobility.y = 150
+**.node[1].mobility.initialX = 250m
+**.node[1].mobility.initialY = 150m
 
 
 **.node[*].applicationType = "BurstApplLayer"

@@ -13,27 +13,22 @@
 package org.mixim.tests.power.deviceTestMulti;
 
 import org.mixim.tests.power.utils.DeviceDutySimple;
-import org.mixim.modules.power.battery.SimpleBattery;
-import org.mixim.modules.power.battery.BatteryStats;
+import org.mixim.tests.power.PowerTestNode;
 
-module SimpleHost
+// Empty host with two devices for simple power test. 
+module PowerDuoTestHost extends PowerTestNode
 {
     parameters:
-        @display("bgb=250,250,$color,,;bgp=10,10");
+        @display("bgb=190,153,$color;bgp=10,10");
+        battery.numDevices = 2;
+
     submodules:
         firstDevice: DeviceDutySimple {
             parameters:
-                @display("p=200,160;b=30,25");
+                @display("p=131,112;b=30,25");
         }
         secondDevice: DeviceDutySimple {
             parameters:
-                @display("p=125,100;b=30,25");
+                @display("p=45,112;b=30,25");
         }
-        battery: SimpleBattery {
-            parameters:
-                numDevices = 2;
-                @display("p=125,100;b=30,25");
-        }
-        batteryStats: BatteryStats;
-
 }

@@ -40,7 +40,7 @@ import org.mixim.modules.node.Host80211;
 //
 //The default configuration in omnetpp.ini uses no propagation delay.
 //
-network Mac80211 extends BaseNetwork
+network Mac80211ExampleNet extends BaseNetwork
 {
     parameters:
         int numHosts; // total number of hosts in the network  

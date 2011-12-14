@@ -9,14 +9,17 @@
 //# merchantability and fitness for a particular purpose.
 //#
 //######################################################################
-// test module only (subscribes to and records Host failure notifications
+package org.mixim.tests.power.utils;
+
+import org.mixim.tests.TestObject;
+
+// test module only (subscribes to and records Host failure notifications)
 //
 // note that all modules that generate msgs should cancel them in
 // response to host failure
-package org.mixim.tests.power.utils;
-
-simple Subscriber
+simple Subscriber extends TestObject
 {
     parameters:
+        @class(Subscriber);
         bool debug = default(false);
 }

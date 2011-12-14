@@ -52,7 +52,6 @@ protected:
     simtime_t   timeInNeighboursTable; ///< @brief Default ttl for NeighborTable entries in seconds
     cOutVector  bvec;
     NeighborMap neighMap;
-
 };
 
 #endif /* ADAPTIVEPROBABILISTICBROADCAST_H_ */

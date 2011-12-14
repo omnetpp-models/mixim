@@ -74,35 +74,27 @@ network = ${targetTypeName}
 ################ Mobility parameters #####################
 <#include mobIni>
 
-**.node[0].mobility.x = 150
-**.node[0].mobility.y = 200
-**.node[0].mobility.z = 250
+**.node[0].mobility.initialX = 150m
+**.node[0].mobility.initialY = 200m
+**.node[0].mobility.initialZ = 250m
 
-**.node[1].mobility.x = 250
-**.node[1].mobility.y = 100
-**.node[1].mobility.z = 100
+**.node[1].mobility.initialX = 250m
+**.node[1].mobility.initialY = 100m
+**.node[1].mobility.initialZ = 100m
 
-**.node[2].mobility.x = 250
-**.node[2].mobility.y = 200
-**.node[2].mobility.z = 200
+**.node[2].mobility.initialX = 250m
+**.node[2].mobility.initialY = 200m
+**.node[2].mobility.initialZ = 200m
 
-**.node[3].mobility.x = 50
-**.node[3].mobility.y = 100
-**.node[3].mobility.z = 110
+**.node[3].mobility.initialX = 50m
+**.node[3].mobility.initialY = 100m
+**.node[3].mobility.initialZ = 110m
 
-**.node[4].mobility.x = 150
-**.node[4].mobility.y = 180
-**.node[4].mobility.z = 100
+**.node[4].mobility.initialX = 150m
+**.node[4].mobility.initialY = 180m
+**.node[4].mobility.initialZ = 100m
 
-**.node[5].mobility.x = 50
-**.node[5].mobility.y = 200
-**.node[5].mobility.z = 10
-
-
-
-
-
-
-
-
+**.node[5].mobility.initialX = 50m
+**.node[5].mobility.initialY = 200m
+**.node[5].mobility.initialZ = 10m
 

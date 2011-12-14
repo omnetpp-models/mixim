@@ -9,20 +9,17 @@
 // merchantability and fitness for a particular purpose.
 //
 //*********************************************************************
-package org.mixim.tests.power.deviceTest;
+package org.mixim.tests.power;
 
-import org.mixim.tests.power.PowerTestNetwork;
+import org.mixim.tests.BaseTestNetwork;
 
-// Fundamental test case, used for basic unit testing. The Host includes
-// only the Battery and the DutyCycleSimple device.
-network PowerDeviceTestNet extends PowerTestNetwork
+// Base test network for power (battery) tests.
+network PowerTestNetwork extends BaseTestNetwork
 {
     parameters:
+        double playgroundSizeX;
+        double playgroundSizeY;
+        int    numHosts;
 
-    submodules:
-        host[numHosts]: PowerTestHost {
-            parameters:
-                @display("p=50,50;b=30,25,rect");
-        }
     connections allowunconnected:
 }

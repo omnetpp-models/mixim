@@ -1,12 +1,11 @@
 package org.mixim.tests.basePhyLayer;
 
-import org.mixim.base.modules.BaseNetwork;
+import org.mixim.tests.ExtTestNetwork;
 
-
-network tbpSim extends BaseNetwork
+// Test network for PHY implementation tests.
+network tbpSim extends ExtTestNetwork
 {
     parameters:
-        int numHosts; // total number of hosts in the network
         int run; // total number of hosts in the network
         bool showPassed;
     submodules:

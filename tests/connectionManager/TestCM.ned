@@ -15,12 +15,14 @@
 
 package org.mixim.tests.connectionManager;
 
+import org.mixim.base.connectionManager.ConnectionManager;
 
 //
-// TODO auto-generated module
+// Test module for ConnectionManager.
 //
-simple TestCM
+simple TestCM extends ConnectionManager
 {
     parameters:
+        @class(TestCM);
         double maxInterferenceDistance @unit(m);
 }

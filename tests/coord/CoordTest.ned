@@ -1,6 +1,10 @@
 package org.mixim.tests.coord;
 
-simple CoordTest
+import org.mixim.tests.TestObject;
+
+// Test network for class Coord tests.
+simple CoordTest extends TestObject
 {
+    @class(CoordTest);
     @isNetwork(true);
 }

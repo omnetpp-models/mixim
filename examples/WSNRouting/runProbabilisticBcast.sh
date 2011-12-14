@@ -2,11 +2,12 @@
 
 lPATH='.'
 LIBSREF=( )
-lINETPath='../../../inet/src'
-for lP in '../../src' \
-          '../../src/base' \
-          '../../src/modules' \
-          "$lINETPath"; do
+lINETPath='../../../inet'
+lMiXiMPath='../..'
+for lP in "${lMiXiMPath}/src" \
+          "${lMiXiMPath}/src/base" \
+          "${lMiXiMPath}/src/modules" \
+          "${lINETPath}/src"; do
     for pr in 'mixim' 'inet'; do
         if [ -d "$lP" ] && [ -f "${lP}/lib${pr}$(basename $lP).so" -o -f "${lP}/lib${pr}$(basename $lP).dll" ]; then
             lPATH="${lP}:$lPATH"
@@ -19,21 +20,28 @@ for lP in '../../src' \
 done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
-NEDPATH="../../src:.."
-[ -d "$lINETPath" ] && NEDPATH="${NEDPATH}:$lINETPath"
+NEDPATH="${lMiXiMPath}/src:.."
+[ -d "${lINETPath}/src" ] && NEDPATH="${NEDPATH}:${lINETPath}/src"
 export PATH
 export NEDPATH
 export LD_LIBRARY_PATH
 
 lCombined='miximexamples'
 lSingle='WSNRouting'
+lIsComb=0
 if [ ! -e ${lSingle} -a ! -e ${lSingle}.exe ]; then
     if [ -e ../${lCombined}.exe ]; then
         ln -s ../${lCombined}.exe ${lSingle}.exe
+        lIsComb=1
     elif [ -e ../${lCombined} ]; then
         ln -s ../${lCombined}     ${lSingle}
+        lIsComb=1
     fi
 fi
 
 rm -f results/probabilisticBcast*
-./${lSingle} -u Cmdenv -c probabilisticBcast "${LIBSREF[@]}"
+echo 'Run all ProbabilisticBcast...'
+./${lSingle} -u Cmdenv -c probabilisticBcast "${LIBSREF[@]}" >  outpro.tmp 2>errpro.tmp
+
+[ x$lIsComb = x1 ] && rm -f ${lSingle} ${lSingle}.exe >/dev/null 2>&1
+[ ! -s outpro.tmp ] && \rm -f outpro.tmp >/dev/null 2>&1

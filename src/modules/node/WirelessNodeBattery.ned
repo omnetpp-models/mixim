@@ -10,6 +10,7 @@ import org.mixim.modules.power.battery.SimpleBattery;
 module WirelessNodeBattery extends WirelessNode
 {
     parameters:
+        applicationType = default("BurstApplLayerBattery");  //type of the application layer
         @display("bgb=210,450,white;i=device/palm;i2=status/battery;b=40,40,rect");
     submodules:
         batteryStats: BatteryStats {

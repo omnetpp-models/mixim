@@ -1,7 +1,6 @@
 package org.mixim.examples.ieee802154Narrow;
 
-import org.mixim.base.connectionManager.ConnectionManager;
-
+import org.mixim.base.modules.BaseNetwork;
 
 //
 //This example shows how to use MiXiMs implementation of the ieee802154
@@ -80,33 +79,18 @@ import org.mixim.base.connectionManager.ConnectionManager;
 //- Chart 4 - amount of nodes present.
 //			  These bars should increase exponential 2, 4, 8, 16, 32, ...
 //
-network ieee802154Narrow
+network ieee802154Narrow extends BaseNetwork
 {
     parameters:
-        double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
-        double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
-        double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
-        double numHosts; // total number of hosts in the network
+        int numHosts; // total number of hosts in the network
+        wuType = "WorldUtilityStats";
 
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
     submodules:
-        world: WorldUtilityStats {
-            parameters:
-                playgroundSizeX = playgroundSizeX;
-                playgroundSizeY = playgroundSizeY;
-                playgroundSizeZ = playgroundSizeZ;
-                @display("p=129,40;i=misc/globe");
-
-        }
-        connectionManager: ConnectionManager {
-            parameters:
-                @display("p=225,40;b=42,42,rect,yellow;i=abstract/multicast");
-
-        }
         node[numHosts]: PhyMacHost {
             parameters:
                 numHosts = numHosts;
-                @display("p=75,130;b=42,42,rect,yellow;i=device/wifilaptop");
+                @display("p=147,100;b=42,42,rect,yellow;i=device/wifilaptop");
 
         }
     connections allowunconnected:

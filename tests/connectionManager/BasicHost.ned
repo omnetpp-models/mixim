@@ -27,13 +27,14 @@ package org.mixim.tests.connectionManager;
 
 import inet.mobility.models.StationaryMobility;
 
+import org.mixim.tests.TestNode;
 
 // The BasicHost is a compound module that implements a very
 // simple host. It only consists of basic modules and is the
 // most basic host you can create for the MF
 //
 // @author Daniel Willkomm
-module BasicHost
+module BasicHost extends TestNode
 {
     parameters:
         double numHosts; // total number of hosts in the network

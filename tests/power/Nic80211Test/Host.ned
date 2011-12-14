@@ -13,68 +13,10 @@
 // 802.11 module
 package org.mixim.tests.power.Nic80211Test;
 
-import inet.mobility.models.ConstSpeedMobility;
-import org.mixim.base.modules.BaseArp;
-import org.mixim.base.modules.BaseNetwLayer;
-import org.mixim.modules.application.BurstApplLayerBattery;
-import org.mixim.modules.nic.Nic80211Battery;
-import org.mixim.modules.power.battery.BatteryStats;
-import org.mixim.modules.power.battery.SimpleBattery;
+import org.mixim.modules.node.WirelessNodeBattery;
 
-
-module Host
+module Nic80211TestHost extends WirelessNodeBattery
 {
     parameters:
-        @display("bgb=250,250,white,,;bgp=10,10");
-        @node();
-    gates:
-        input radioIn; // gate for sendDirect
-    submodules:
-        mobility: ConstSpeedMobility {
-            parameters:
-                @display("p=200,150;b=30,25");
-
-        }
-        battery: SimpleBattery {
-            parameters:
-                numDevices = 1;
-                @display("p=60,200;b=30,25;rect");
-        }
-        batteryStats: BatteryStats {
-            parameters:
-                @display("p=120,200;b=30,25;rect");
-
-        }
-        appl: BurstApplLayerBattery {
-            parameters:
-                @display("p=90,50;b=100,20,rect");
-
-        }
-        arp: BaseArp {
-            parameters:
-                @display("p=200,225;b=30,25,rect");
-
-        }
-        net: BaseNetwLayer {
-            parameters:
-                @display("p=90,100;b=100,20,rect");
-
-        }
-        nic: Nic80211Battery {
-            parameters:
-                @display("p=90,150;b=100,20,rect");
-
-        }
-    connections:
-        nic.upperLayerOut --> net.lowerLayerIn;
-        nic.upperLayerIn <-- net.lowerLayerOut;
-        nic.upperControlOut --> net.lowerControlIn;
-        nic.upperControlIn <-- net.lowerControlOut;
-
-        net.upperLayerOut --> appl.lowerLayerIn;
-        net.upperLayerIn <-- appl.lowerLayerOut;
-        net.upperControlOut --> appl.lowerControlIn;
-        net.upperControlIn <-- appl.lowerControlOut;
-
-        radioIn --> nic.radioIn;
+		nicType = "org.mixim.modules.nic.Nic80211Battery";
 }

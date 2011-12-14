@@ -4,7 +4,7 @@ BasePath="$( cd $(dirname $0); pwd )"
 
 echo ' ========== Running power tests =============='
 e='--------------------------------'
-for f in deviceTest deviceTestMulti deviceTestAccts deviceTestAll
+for f in deviceTest deviceTestMulti deviceTestAccts deviceTestAll #Nic80211Test
 do
  if [ -d "${BasePath}/$f" -a -f "${BasePath}/$f/runTests.sh" ]; then
   echo " -------------$f${e:${#f}}"
@@ -15,7 +15,7 @@ done
 
 iErrs=0
 echo ' ======== Checking results of tests =========='
-for f in deviceTest deviceTestMulti deviceTestAccts deviceTestAll
+for f in deviceTest deviceTestMulti deviceTestAccts deviceTestAll #Nic80211Test
 do
  if [ -d "${BasePath}/$f" -a -f "${BasePath}/checkResults.sh" ]; then
   echo " -------------$f${e:${#f}}"

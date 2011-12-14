@@ -11,22 +11,18 @@
 //*********************************************************************
 package org.mixim.tests.power.deviceTestMulti;
 
-module Network
+import org.mixim.tests.power.PowerTestNetwork;
+
+// The test host now has two DutyCycleSimple devices,
+// each with different parameters.
+network PowerDeviceTestMultiNet extends PowerTestNetwork
 {
     parameters:
-        double playgroundSizeX;
-        double playgroundSizeY;
-        double numHosts;
 
     submodules:
-        host[numHosts]: SimpleHost {
+        host[numHosts]: PowerDuoTestHost {
             parameters:
                 @display("p=50,50;b=30,25,rect");
         }
     connections allowunconnected:
-}
-
-network sim extends Network
-{
-    parameters:
 }

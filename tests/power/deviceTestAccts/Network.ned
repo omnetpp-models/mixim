@@ -11,22 +11,18 @@
 //*********************************************************************
 package org.mixim.tests.power.deviceTestAccts;
 
-module Network
+import org.mixim.tests.power.PowerTestNetwork;
+
+// Test uses the two-phase DutyCycle device, which
+// assigns each of the two ON periods to a different activity.
+network PowerDeviceTestAcctsNet extends PowerTestNetwork
 {
     parameters:
-        double playgroundSizeX;
-        double playgroundSizeY;
-        double numHosts;
 
     submodules:
-        host[numHosts]: SimpleHost {
+        host[numHosts]: PowerTestHost {
             parameters:
                 @display("p=50,50;b=30,25,rect");
         }
     connections allowunconnected:
-}
-
-network sim extends Network
-{
-    parameters:
 }

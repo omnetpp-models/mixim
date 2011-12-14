@@ -39,7 +39,7 @@ public:
 
 protected:
 	virtual void handleLowerMsg( const LAddress::L2Type& srcAddr) {
-		ev << "Not Connected R-Node " << myAddr() << ": got broadcast message from " << srcAddr << endl;
+		ev << "Not Connected R-Node " << findHost()->getIndex() << ": got broadcast message from " << srcAddr << endl;
 
 		broadcastReceived = true;
 	}

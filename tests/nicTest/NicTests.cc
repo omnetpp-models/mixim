@@ -245,12 +245,10 @@ void NicTests::testForRange(	std::string test,
 {
 	std::string testMsg = executePlannedTest(test);
 	if(from <= act && act <= to) {
-		pass(testMsg + " - ("
-			 + toString(from) + "<=" + toString(act) + "<=" + toString(to)
-			 + ")");
+		pass(testMsg);
 	} else {
 		fail(testMsg + " - ("
-			 + toString(from) + "<=" + toString(act) + "<=" + toString(to)
+			 + toString(from) + " <= " + toString(act) + " <= " + toString(to)
 			 + ")");
 	}
 }

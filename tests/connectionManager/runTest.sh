@@ -28,11 +28,14 @@ export LD_LIBRARY_PATH
 
 lCombined='miximtests'
 lSingle='connectionManager'
+lIsComb=0
 if [ ! -e ${lSingle} -a ! -e ${lSingle}.exe ]; then
     if [ -e ../${lCombined}.exe ]; then
         ln -s ../${lCombined}.exe ${lSingle}.exe
+        lIsComb=1
     elif [ -e ../${lCombined} ]; then
         ln -s ../${lCombined}     ${lSingle}
+        lIsComb=1
     fi
 fi
 
@@ -41,11 +44,13 @@ fi
 ./${lSingle} -c Test3 "${LIBSREF[@]}">> out.tmp 2>> err.tmp
 ./${lSingle} -c Test4 "${LIBSREF[@]}">> out.tmp 2>> err.tmp
 
+[ x$lIsComb = x1 ] && rm -f ${lSingle} ${lSingle}.exe >/dev/null 2>&1
 diff -I '^Assigned runID=' \
      -I '^Loading NED files from' \
      -I '^OMNeT++ Discrete Event Simulation' \
      -I '^Version: ' \
      -I '^     Speed:' \
+     -I '^Setting up network' \
      -I '^** Event #' \
      -w exp-output out.tmp >diff.log 2>/dev/null
 

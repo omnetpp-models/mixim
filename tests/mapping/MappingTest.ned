@@ -1,6 +1,9 @@
 package org.mixim.tests.mapping;
 
-simple MappingTest
+import org.mixim.tests.TestObject;
+
+simple MappingTest extends TestObject
 {
+    @class(MappingTest);
     @isNetwork(true);
 }

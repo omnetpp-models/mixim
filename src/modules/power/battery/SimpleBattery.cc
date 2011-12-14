@@ -19,9 +19,19 @@
  */
 #include "SimpleBattery.h"
 
+#include <limits>
+
 #include "FWMath.h"
 #include "BatteryStats.h"
 #include "FindModule.h"
+
+/** @brief Checks if value %x is less or equal to null.
+ *
+ * @param x The value which should be tested.
+ */
+static inline bool lessOrEqualNull(register double x) {
+	return x <= 0.0 || x <= 1.0e-12;
+}
 
 Define_Module(SimpleBattery);
 
@@ -79,10 +89,10 @@ void SimpleBattery::initialize(int stage) {
 		resolution = par("resolution");
 
 		debugEV<< "capacity = " << capmAh << "mA-h (nominal = " << nominalCapmAh <<
-		") at " << voltage << "V" << endl;
+		") at " << voltage << "V" << std::endl;
 		debugEV << "publishDelta = " << publishDelta * 100 << "%, publishTime = "
 		<< publishTime << "s, resolution = " << resolution << "sec"
-		<< endl;
+		<< std::endl;
 
 		capacity = capmAh * 60 * 60 * voltage; // use mW-sec internally
 		nominalCapacity = nominalCapmAh * 60 * 60 * voltage;
@@ -146,20 +156,20 @@ int SimpleBattery::registerDevice(const std::string& name, int numAccts)
 	devices[deviceID].numAccts = numAccts;
 
 	double *accts = new double[numAccts];
-	for (int i = 0; i < numAccts; i++) {
+	for (int i = 0; i < numAccts; ++i) {
 		accts[i] = 0.0;
 	}
 	devices[deviceID].accts = accts;
 
 	simtime_t *times = new simtime_t[numAccts];
-	for (int i = 0; i < numAccts; i++) {
+	for (int i = 0; i < numAccts; ++i) {
 		times[i] = 0.0;
 	}
 	devices[deviceID].times = times;
 
 	debugEV<< "initialized device " << devices[deviceID].name << " as device "
 	<< deviceID << " with " << devices[deviceID].numAccts <<
-	" accounts" << endl;
+	" accounts" << std::endl;
 
 	return deviceID;
 }
@@ -182,7 +192,7 @@ void SimpleBattery::draw(int deviceID, DrawAmount& amount, int activity)
 
 		debugEV << simTime() << " device " << deviceID <<
 		" (" << devices[deviceID].name << ") draw current " << current <<
-		"mA, activity = " << activity << endl;
+		"mA, activity = " << activity << std::endl;
 
 		// update the residual capacity (finish previous current draw)
 		deductAndCheck();
@@ -204,7 +214,7 @@ void SimpleBattery::draw(int deviceID, DrawAmount& amount, int activity)
 
 		debugEV << simTime() << " device " << deviceID <<
 		" (" << devices[deviceID].name << ") deduct " << energy <<
-		" mW-s, activity = " << activity << endl;
+		" mW-s, activity = " << activity << std::endl;
 
 		// deduct a fixed energy cost
 
@@ -213,7 +223,7 @@ void SimpleBattery::draw(int deviceID, DrawAmount& amount, int activity)
 
 		if (residualCapacity > nominalCapacity)
 			residualCapacity = nominalCapacity;
-		else if (residualCapacity < 0.0)
+		else if (lessOrEqualNull(residualCapacity))
 			residualCapacity = 0;
 
 		// update the residual capacity (ongoing current draw), mostly
@@ -262,7 +272,7 @@ void SimpleBattery::deductAndCheck() {
     Enter_Method_Silent();
 	// already depleted, devices should have stopped sending drawMsg,
 	// but we catch any leftover messages in queue
-	if (residualCapacity <= 0) {
+	if (lessOrEqualNull(residualCapacity)) {
 		return;
 	}
 
@@ -284,8 +294,8 @@ void SimpleBattery::deductAndCheck() {
 			if (energy != 0) {
 				if (residualCapacity >= energy || residualCapacity != 0.0) {
 					devices[i].accts[currentActivity] += energy;
-					devices[i].times[currentActivity] += tDeltaT;
 				}
+				devices[i].times[currentActivity] += tDeltaT;
 				residualCapacity -= energy;
 			}
 		}
@@ -295,7 +305,7 @@ void SimpleBattery::deductAndCheck() {
 
 	if (residualCapacity > nominalCapacity)
 		residualCapacity = nominalCapacity;
-	else if (residualCapacity < 0.0)
+	else if (lessOrEqualNull(residualCapacity))
 		residualCapacity = 0;
 
 	if (dLastResCap != residualCapacity) {
@@ -316,15 +326,15 @@ void SimpleBattery::deductAndCheck() {
 		else if((dCapacityRatio < 0.2) && (dCapacityRatio > 0.0)) {
 			host->getDisplayString().setTagArg("i2",0,"status/battery_20");
 		}
-		else if (residualCapacity <= 0.0 ) {
+		else if (lessOrEqualNull(residualCapacity) ) {
 			host->getDisplayString().setTagArg("i2",0,"status/battery_0");
 		}
 	}
 
 	// battery is depleted
-	if (residualCapacity <= 0.0 ) {
+	if (lessOrEqualNull(residualCapacity)) {
 
-		EV << "battery depleted at t = " << now << "s" << endl;
+		EV << "battery depleted at t = " << now << "s" << std::endl;
 
 		lifetime = now;
 
@@ -342,7 +352,6 @@ void SimpleBattery::deductAndCheck() {
 		// no more resolution-based timeouts
 		cancelEvent(timeout);
 	}
-
 	// battery is not depleted, continue
 	else {
 		batteryState->set(residualCapacity);
@@ -376,8 +385,10 @@ double SimpleBattery::getVoltage() const {
 
 double SimpleBattery::estimateResidualAbs() const {
 	Enter_Method_Silent();
-	double value = std::max(0.0, residualCapacity);
-	return value;
+
+	if (lessOrEqualNull(residualCapacity))
+		return 0.0;
+	return residualCapacity;
 }
 
 // Return host's own estimate of residual capacity (relative to
@@ -385,36 +396,38 @@ double SimpleBattery::estimateResidualAbs() const {
 
 double SimpleBattery::estimateResidualRelative() const {
 	Enter_Method_Silent();
-	double value = std::max(0.0, residualCapacity);
-	return value / nominalCapacity;
+
+	if (lessOrEqualNull(residualCapacity))
+		return 0.0;
+	return residualCapacity / nominalCapacity;
 }
 
 void SimpleBattery::finish() {
 	// do a final update of battery capacity
 	deductAndCheck();
 
-	for (int i = 0; i < numDevices; i++) {
+	for (int i = 0; i < numDevices; ++i) {
 
-		double total = 0;
-		for (int j = 0; j < devices[i].numAccts; j++) {
-			total += devices[i].accts[j];
+		double    Total   = 0;
+		simtime_t TotTime = 0;
+
+		for (int j = 0; j < devices[i].numAccts; ++j) {
+			Total   += devices[i].accts[j];
+			TotTime += devices[i].times[j];
 		}
-		debugEV<< "device " << i << " (" << devices[i].name << ") consumed "
-		<< total << " mW-s at" << endl;
+		debugEV << "device " << i << " (" << devices[i].name << ") consumed "
+		        << Total << " mW-s at " << TotTime <<"s" << std::endl;
 
-		for (int j = 0; j < devices[i].numAccts; j++) {
-			debugEV << "activity " << j << ": " << devices[i].accts[j] << " mWs and "
-			<< devices[i].times[j] << "sec" << endl;
+		for (int j = 0; j < devices[i].numAccts && devices[i].numAccts > 1; ++j) {
+			debugEV << "device " << i << ", activity " << j << ": " << devices[i].accts[j] << " mWs and "
+			        << devices[i].times[j] << "s" << std::endl;
 		}
 
 		// check that total time in all states matches simulation time
-		simtime_t sum = 0;
-		for (int j = 0; j < devices[i].numAccts; j++)
-		sum += devices[i].times[j];
-		if (FWMath::round(SIMTIME_DBL(sum) * 1000000) - FWMath::round(SIMTIME_DBL(simTime()) * 1000000) != 0)
+		if (FWMath::round(SIMTIME_DBL(TotTime) * 1000000) - FWMath::round(SIMTIME_DBL(simTime()) * 1000000) != 0)
 		{
-			EV << "WARNING: device " << devices[i].name << " total time " << sum
-			<< " != sim time " << simTime() << " (may not matter)" << endl;
+			EV << "WARNING: device " << devices[i].name << " total time " << TotTime
+			   << "s != sim time " << simTime() << "s (may not matter)" << std::endl;
 		}
 	}
 

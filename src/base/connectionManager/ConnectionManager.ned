@@ -20,6 +20,7 @@
 
 package org.mixim.base.connectionManager;
 
+// Generic ConnectionMananger interface definition.
 moduleinterface IConnectionManager
 {
     parameters:

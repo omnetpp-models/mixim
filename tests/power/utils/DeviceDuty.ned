@@ -9,6 +9,10 @@
 //# merchantability and fitness for a particular purpose.
 //#
 //######################################################################
+package org.mixim.tests.power.utils;
+
+import org.mixim.tests.TestObject;
+
 // Test module of a two phase duty cycle device.  Primarily for
 // testing multiple accounts.
 // 
@@ -22,12 +26,10 @@
 //              draw 'current1'(mA) for dutyCycle1 * period(sec)
 //              draw 0 mA for rest of period 
 //              draw 'wakeup' (mWs) for each off->on transition
-package org.mixim.tests.power.utils;
-
-simple DeviceDuty
-
+simple DeviceDuty extends TestObject
 {
     parameters:
+        @class(DeviceDuty);
         bool debug = default(false);
         volatile double period @unit(s);
         volatile double dutyCycle0;

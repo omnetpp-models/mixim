@@ -212,16 +212,21 @@ bool DeciderUWBIRED::decodePacket(Signal* signal,
 
 	// debugging information (start)
 	if (trace) {
-		ConstMappingIterator* iteratorDbg = signalPower->createConstIterator();
-		iteratorDbg->jumpToBegin();
-		while (iteratorDbg->hasNext()) {
-			iteratorDbg->next();
-			receivedPulses.recordWithTimestamp(
-			  iteratorDbg->getPosition().getTime(),
-			  signalPower->getValue(iteratorDbg->getPosition())
-			);
+		ConstMappingIterator *const mIt = signalPower->createConstIterator();
+		while(mIt->inRange()){
+			receivedPulses.recordWithTimestamp(mIt->getPosition().getTime(), mIt->getValue());
+
+			if(!mIt->hasNext())
+				break;
+
+			mIt->next();
 		}
-		delete iteratorDbg;
+		/*mIt->jumpToBegin();
+		while (mIt->hasNext()) {
+			receivedPulses.recordWithTimestamp(mIt->getPosition().getTime(), mIt->getValue());
+			mIt->next();
+		}*/
+		delete mIt;
 	}
 	// debugging information (end)
 

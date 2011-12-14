@@ -42,9 +42,9 @@ protected:
 	virtual void handleLowerMsg( const LAddress::L2Type& srcAddr) {
 		broadcastReceived = true;
 
-		ev << "Connected R-Node " << myAddr() << ": got broadcast message from " << srcAddr << endl;
+		ev << "Connected R-Node " << findHost()->getIndex() << ": got broadcast message from " << srcAddr << endl;
 
-		ev << "Connected R-Node " << myAddr() << ": Sending answer packet!" << endl;
+		ev << "Connected R-Node " << findHost()->getIndex() << ": Sending answer packet!" << endl;
 		sendDown(srcAddr);
 	}
 };

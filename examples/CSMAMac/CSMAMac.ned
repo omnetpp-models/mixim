@@ -27,7 +27,7 @@ import org.mixim.base.modules.BaseNetwork;
 //						  lead to more collisions
 //- "Perftest"			- used with CmdEnv for performance testing (time limited)
 //
-network CSMAMac extends BaseNetwork
+network CSMAMacExampleNetwork extends BaseNetwork
 {
     parameters:
         int numHosts; // total number of hosts in the network

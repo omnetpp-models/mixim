@@ -43,12 +43,12 @@ public:
 protected:
 	virtual void handleLowerMsg(const LAddress::L2Type& srcAddr) {
 		broadcastAnswered = true;
-		ev << "Connected BC-Node " << myAddr() << ": got answer message from " << srcAddr << endl;
+		ev << "Connected BC-Node " << findHost()->getIndex() << ": got answer message from " << srcAddr << endl;
 	}
 
 	virtual void handleSelfMsg() {
 		// we should send a broadcast packet ...
-		ev << "Connected BC-Node " << myAddr() << ": Sending broadcast packet!" << endl;
+		ev << "Connected BC-Node " << findHost()->getIndex() << ": Sending broadcast packet!" << endl;
 		sendDown(LAddress::L2BROADCAST);
 	}
 };

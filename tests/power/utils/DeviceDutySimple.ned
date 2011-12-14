@@ -9,6 +9,10 @@
 //# merchantability and fitness for a particular purpose.
 //#
 //######################################################################
+package org.mixim.tests.power.utils;
+
+import org.mixim.tests.TestObject;
+
 // Test module of a simple duty cycle device
 // 
 // Alternates between ON (draws current CURRENT) and OFF state.  Switching
@@ -16,16 +20,13 @@
 //    
 // Primarily used for testing, as it's not connected to the operation
 // of the host.  Can also be used to model e.g. a simple sensor. 
-
 // parameters: 	consume 'current'(mA) for 'dutyCycle' * 'period'(sec)
 //		consume 0 mA for (1 - 'dutyCycle') * 'period'(sec)
 //		consume 'wakeup' mWs for each off->on transition
-package org.mixim.tests.power.utils;
-
-simple DeviceDutySimple
-
+simple DeviceDutySimple extends TestObject
 {
     parameters:
+        @class(DeviceDutySimple);
         bool debug = default(false);
         volatile double period @unit(s);
         volatile double dutyCycle;

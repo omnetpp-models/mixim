@@ -1,7 +1,7 @@
 package org.mixim.examples.multiConnectionManager;
 
 import org.mixim.base.connectionManager.ConnectionManager;
-import org.mixim.base.modules.BaseWorldUtility;
+import org.mixim.base.modules.BaseNetwork;
 
 //
 //This example shows how to use multiple ConnectionManagers in your simulation. 
@@ -26,44 +26,28 @@ import org.mixim.base.modules.BaseWorldUtility;
 //- Config4 - Same as Config3 but with propagation delay.
 //- General - Same as Config3
 //
-network MultiConnectionManager
+network MultiConnectionManager extends BaseNetwork
 {
     parameters:
-        double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
-        double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
-        double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
-        double numGSMHosts; // total number of weak hosts in the network
-        double numISMHosts; // total number of strong hosts in the network
+        int numGSMHosts; // total number of weak hosts in the network
+        int numISMHosts; // total number of strong hosts in the network
 
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
     submodules:
-        world: BaseWorldUtility {
-            parameters:
-                playgroundSizeX = playgroundSizeX;
-                playgroundSizeY = playgroundSizeY;
-                playgroundSizeZ = playgroundSizeZ;
-                @display("p=250,0;i=misc/globe");
-
-        }
         ISMChannel: ConnectionManager {
             parameters:
-                @display("p=350,0;b=42,42,rect,green,,;i=abstract/multicast");
-        }
-        GSMChannel: ConnectionManager {
-            parameters:
-                @display("p=450,0;b=42,42,rect,red,,;i=abstract/multicast");
-
+                @display("p=121,0;i=abstract/multicast;is=s");
         }
         GSMNode[numGSMHosts]: PhyMacHost {
             parameters:
                 numHosts = numGSMHosts;
-                @display("p=50,50;b=42,42,rect,red,,;i=device/palm");
+                @display("p=70,91;b=42,42,rect,red;i=device/palm");
 
         }
         ISMNode[numISMHosts]: PhyMacHost {
             parameters:
                 numHosts = numISMHosts;
-                @display("p=75,50;b=42,42,rect,green,,;i=device/wifilaptop");
+                @display("p=202,91;b=42,42,rect,green;i=device/wifilaptop");
 
         }
     connections allowunconnected:

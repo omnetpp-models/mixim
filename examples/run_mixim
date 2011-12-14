@@ -4,11 +4,12 @@ DIR=`dirname $0`
 
 lPATH='.'
 LIBSREF=( )
-lINETPath="${DIR}/../../inet/src"
-for lP in "${DIR}/../src" \
-          "${DIR}/../src/base" \
-          "${DIR}/../src/modules" \
-          "$lINETPath"; do
+lINETPath="${DIR}/../../inet"
+lMiXiMPath="${DIR}/.."
+for lP in "${lMiXiMPath}/src" \
+          "${lMiXiMPath}/src/base" \
+          "${lMiXiMPath}/src/modules" \
+          "${lINETPath}/src"; do
     for pr in 'mixim' 'inet'; do
         if [ -d "$lP" ] && [ -f "${lP}/lib${pr}$(basename $lP).so" -o -f "${lP}/lib${pr}$(basename $lP).dll" ]; then
             lPATH="${lP}:$lPATH"
@@ -21,8 +22,8 @@ for lP in "${DIR}/../src" \
 done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
-NEDPATH="${DIR}/../src:${DIR}"
-[ -d "$lINETPath" ] && NEDPATH="${NEDPATH}:$lINETPath"
+NEDPATH="${lMiXiMPath}/src:.."
+[ -d "${lINETPath}/src" ] && NEDPATH="${NEDPATH}:${lINETPath}/src"
 export PATH
 export NEDPATH
 export LD_LIBRARY_PATH

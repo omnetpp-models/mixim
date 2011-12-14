@@ -6,18 +6,18 @@ Signal::Signal(simtime_t_cref sendingStart, simtime_t_cref duration):
 	senderModuleID(-1), senderFromGateID(-1), receiverModuleID(-1), receiverToGateID(-1),
 	sendingStart(sendingStart), duration(duration),
 	propagationDelay(0),
-	power(0), bitrate(0),
-	txBitrate(0),
-	attenuations(), rcvPower(0)
+	power(NULL), bitrate(NULL),
+	txBitrate(NULL),
+	attenuations(), rcvPower(NULL)
 {}
 
 Signal::Signal(const Signal & o):
 	senderModuleID(o.senderModuleID), senderFromGateID(o.senderFromGateID), receiverModuleID(o.receiverModuleID), receiverToGateID(o.receiverToGateID),
 	sendingStart(o.sendingStart), duration(o.duration),
 	propagationDelay(o.propagationDelay),
-	power(0), bitrate(0),
-	txBitrate(0),
-	attenuations(), rcvPower(0)
+	power(NULL), bitrate(NULL),
+	txBitrate(NULL),
+	attenuations(), rcvPower(NULL)
 {
 	if (o.power) {
 		power = o.power->constClone();
@@ -50,17 +50,17 @@ Signal& Signal::operator=(const Signal& o) {
 
 	if(power){
 		delete power;
-		power = 0;
+		power = NULL;
 	}
 
 	if(bitrate){
 		delete bitrate;
-		bitrate = 0;
+		bitrate = NULL;
 	}
 
 	if(txBitrate){
 		delete txBitrate;
-		txBitrate = 0;
+		txBitrate = NULL;
 	}
 
 	if(o.power)

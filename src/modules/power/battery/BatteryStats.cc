@@ -31,7 +31,6 @@
 #include <iostream>
 
 #include "BatteryState.h"
-#include "FindModule.h"
 #include "DeviceEntry.h"
 
 Define_Module(BatteryStats);
@@ -60,13 +59,6 @@ void BatteryStats::initialize(int stage)
       residualVec.setUnit("mW-s");
       relativeVec.setName("capacity(relative)");
 
-      BaseBattery* batteryModule = FindModule<BaseBattery*>::findSubModule(getNode());
-      if (batteryModule) {
-        battery = batteryModule;
-      }
-      else {
-        error("no battery module found, please check your Host.ned");
-      }
       estimateVec.setName("estimate");
       estimateVec.setUnit("mW-s");
       estimateRelVec.setName("estimate(relative)");
@@ -90,7 +82,7 @@ void BatteryStats::summary(double init, double final, simtime_t_cref lifetime)
   recordScalar("Mean power consumption", (init - final)/SIMTIME_DBL(simTime()), "mW");
 }
 
-void BatteryStats::detail(DeviceEntry *devices, int numDevices)
+void BatteryStats::detail(const DeviceEntry *devices, int numDevices)
 {
   Enter_Method_Silent();
   if (!doDetail)
@@ -98,14 +90,14 @@ void BatteryStats::detail(DeviceEntry *devices, int numDevices)
 
   recordScalar("num devices", numDevices);
 
-  for (int i = 0; i < numDevices; i++){
+  for (int i = 0; i < numDevices; ++i){
     double total = 0;
-    for (int j = 0; j < devices[i].numAccts; j++) {
+    for (int j = 0; j < devices[i].numAccts; ++j) {
       total += devices[i].accts[j];
     }
     recordScalar(devices[i].name.c_str(), i);
     recordScalar("device total (mWs)", total);
-    for (int j = 0; j < devices[i].numAccts; j++) {
+    for (int j = 0; j < devices[i].numAccts; ++j) {
       recordScalar("account", j);
       recordScalar("energy (mWs)", devices[i].accts[j]);
       recordScalar("time (s)", devices[i].times[j]);
@@ -119,24 +111,28 @@ void BatteryStats::receiveSignal(cComponent *source, simsignal_t signalID, cObje
     BaseModule::receiveSignal(source, signalID, obj);
 
     if (signalID == catBatteryStateSignal) {
-      double residualCapacity;
-      double relativeCapacity;
+		double residualCapacity;
+		double relativeCapacity;
 
-      // battery time series never publishes capacity < 0, just 0
-      const BatteryState* pBatState = dynamic_cast<const BatteryState*>(obj);
-      residualCapacity = pBatState->getAbs();
-      residualVec.record(residualCapacity);
-      relativeCapacity = pBatState->getRel();
-      relativeVec.record(relativeCapacity);
+		// battery time series never publishes capacity < 0, just 0
+		const BatteryState* pBatState = dynamic_cast<const BatteryState*>(obj);
+		if (!pBatState)
+			return;
+		residualCapacity = pBatState->getAbs();
+		residualVec.record(residualCapacity);
+		relativeCapacity = pBatState->getRel();
+		relativeVec.record(relativeCapacity);
 
-      // for comparison, also get the estimated residual capacity
-      double estimate = battery->estimateResidualAbs();
-      estimateVec.record(estimate);
+		BaseBattery *const battery = dynamic_cast<BaseBattery*>(source);
+		if (battery) {
+			// for comparison, also get the estimated residual capacity
+			double estimate = battery->estimateResidualAbs();
+			estimateVec.record(estimate);
 
-      double estimateRel = battery->estimateResidualRelative();
-      estimateRelVec.record(estimateRel);
+			double estimateRel = battery->estimateResidualRelative();
+			estimateRelVec.record(estimateRel);
+		}
     }
-
 }
 
 void BatteryStats::finish() {

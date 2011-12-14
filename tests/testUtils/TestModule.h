@@ -118,7 +118,7 @@ public:
 	 * arrival time to an out stream.
 	 */
 	virtual std::ostream& concat(std::ostream& o) const{
-		o << ": kind = " << kind << ", arrival = " << arrival << "s";
+		o << ": kind = " << kind; // << ",  = " << arrival << "s";
 		return o;
 	}
 };
@@ -164,8 +164,12 @@ public:
 	 * arrival time to an out stream.
 	 */
 	virtual std::ostream& concat(std::ostream& o) const{
-		o << ": kind = " << kind
-		  << ", arrival = (" << intvStart << "<=t<=" << intvEnd << ") t was " << msgArrivalTime;
+		if (intvStart <= msgArrivalTime && msgArrivalTime <= intvEnd) {
+			o << ": kind = " << kind << ", " << "arrival time was in range";
+		}
+		else {
+			o << ": kind = " << kind << ", " << "arrival = (" << intvStart << "<=t<=" << intvEnd << ") t was " << msgArrivalTime;
+		}
 		return o;
 	}
 };

@@ -11,22 +11,19 @@
 //*********************************************************************
 package org.mixim.tests.power.deviceTestAll;
 
-module Network
+import org.mixim.tests.power.PowerTestNetwork;
+
+// Combines PowerDeviceTestMultiNet and PowerDeviceTestAllNet. Uses three instances of
+// the DeviceDuty and DeviceDutySimple devices, one of which has no
+// continuous CURRENT draw, only discrete ENERGY draw from the Battery.
+network PowerDeviceTestAllNet extends PowerTestNetwork
 {
     parameters:
-        double playgroundSizeX;
-        double playgroundSizeY;
-        double numHosts;
 
     submodules:
-        host[numHosts]: SimpleHost {
+        host[numHosts]: PowerTrippleTestHost {
             parameters:
                 @display("p=50,50;b=30,25,rect");
         }
     connections allowunconnected:
-}
-
-network sim extends Network
-{
-    parameters:
 }

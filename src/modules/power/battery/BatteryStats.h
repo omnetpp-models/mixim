@@ -56,7 +56,6 @@ public:
 		, relativeVec()
 		, estimateVec()
 		, estimateRelVec()
-		, battery(NULL)
 	{}
 
 	/** @brief Signal for the BatteryStats.*/
@@ -76,7 +75,7 @@ public:
 	 *
 	 * (should not rely on BatteryStats::finish() to clean up resources
 	 */
-	virtual void detail( DeviceEntry *, int);
+	virtual void detail( const DeviceEntry *, int );
 
 protected:
 	int doDetail;
@@ -90,8 +89,5 @@ protected:
 	cOutVector estimateVec;
 	cOutVector estimateRelVec;
 	/*@}*/
-
-	/** @brief Pointer to the battery module.*/
-	BaseBattery *battery;
 };
 #endif

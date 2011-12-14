@@ -11,6 +11,9 @@
 #define ccEV (ev.isDisabled()||!coreDebug) ? ev : ev << getName() << ": "
 #endif
 
+static const NicEntryDirect cEmptyNicDirect(false);
+static const NicEntryDebug  cEmptyNicDebug(false);
+
 BaseConnectionManager::BaseConnectionManager()
   : cSimpleModule()
   , nics()
@@ -318,10 +321,10 @@ bool BaseConnectionManager::registerNic(cModule* nic,
 		nicEntry = new NicEntryDebug(coreDebug);
 
 	// fill nicEntry
-	nicEntry->nicPtr = nic;
-	nicEntry->nicId = nicID;
+	nicEntry->nicPtr   = nic;
+	nicEntry->nicId    = nicID;
 	nicEntry->hostId   = FindModule<>::findHost(nic)->getId();
-	nicEntry->pos = nicPos;
+	nicEntry->pos      = nicPos;
 	nicEntry->chAccess = chAccess;
 
 	// add to map
@@ -388,9 +391,10 @@ bool BaseConnectionManager::unregisterNic(cModule* nicModule)
 void BaseConnectionManager::updateNicPos(int nicID, const Coord* newPos)
 {
 	NicEntries::iterator ItNic = nics.find(nicID);
-	if (ItNic == nics.end())
-		error("No nic with this ID (%d) is registered with this ConnectionManager.", nicID);
-
+	if (ItNic == nics.end()) {
+		opp_warning("No nic with this ID (%d) is registered with this ConnectionManager, no position update done.", nicID);
+		return;
+	}
     Coord oldPos = ItNic->second->pos;
     ItNic->second->pos = newPos;
 
@@ -400,18 +404,22 @@ void BaseConnectionManager::updateNicPos(int nicID, const Coord* newPos)
 const NicEntry::GateList& BaseConnectionManager::getGateList(int nicID) const
 {
 	NicEntries::const_iterator ItNic = nics.find(nicID);
-	if (ItNic == nics.end())
-		error("No nic with this ID (%d) is registered with this ConnectionManager.", nicID);
+	if (ItNic == nics.end()) {
+		opp_warning("No nic with this ID (%d) is registered with this ConnectionManager, return empty GateList", nicID);
+		if(sendDirect)
+			return cEmptyNicDirect.getGateList();
+		return cEmptyNicDebug.getGateList();
+	}
 
     return ItNic->second->getGateList();
 }
 
 const cGate* BaseConnectionManager::getOutGateTo(const NicEntry* nic,
-												 const NicEntry* targetNic) const
+                                                 const NicEntry* targetNic) const
 {
 	NicEntries::const_iterator ItNic = nics.find(nic->nicId);
 	if (ItNic == nics.end())
-		error("No nic with this ID (%d) is registered with this ConnectionManager.", nic->nicId);
+		error("No nic with this id (%d) is registered with this ConnectionManager.", nic->nicId);
 
     return ItNic->second->getOutGateTo(targetNic);
 }

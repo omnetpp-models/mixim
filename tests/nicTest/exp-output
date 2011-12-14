@@ -18,31 +18,31 @@ Passed: [app0] - Expected module - Receiving Host of pair A
 Passed: [app1] - Expected module - Sending Host of pair A
 Passed: [app2] - Expected module - Receiving Host of pair B
 Passed: [app3] - Expected module - Sending Host of pair B
-Passed: [app0] - Expected "[1.1] - A same channel but different time as B": kind = 22332, arrival = (0.0025<=t<=0.0038) t was 0.003652
-Passed: [app2] - Expected "Com A at receiver B": kind = 22332, arrival = (0.0025<=t<=0.0038) t was 0.003652
-Passed: [app3] - Expected "Com A at sender B": kind = 22332, arrival = (0.0025<=t<=0.0038) t was 0.003652
-Passed: [app0] - Expected "Com B at receiver A": kind = 22334, arrival = (0.006152<=t<=0.007452) t was 0.00655
-Passed: [app1] - Expected "Com B at sender A": kind = 22334, arrival = (0.006152<=t<=0.007452) t was 0.00655
-Passed: [app2] - Expected "[1.2] - B same channel but different time as A": kind = 22334, arrival = (0.006152<=t<=0.007452) t was 0.00655
-Passed: [app1] - Expected "Waiting for 0.0015s.": kind = 2224, arrival = 0.00805s
-Passed: [app0] - Expected "[2.1] - A same channel same time as B": kind = 22332, arrival = (0.00905<=t<=0.01035) t was 0.009908
-Passed: [app2] - Expected "Com A at receiver B": kind = 22332, arrival = (0.00905<=t<=0.01035) t was 0.009908
-Passed: [app3] - Expected "Com A at sender B": kind = 22332, arrival = (0.00905<=t<=0.01035) t was 0.009908
-Passed: [app0] - Expected "Com B at receiver A": kind = 22334, arrival = (0.01155<=t<=0.014149999999) t was 0.012786
-Passed: [app1] - Expected "Com B at sender A": kind = 22334, arrival = (0.01155<=t<=0.014149999999) t was 0.012786
-Passed: [app2] - Expected "[2.2] - B same channel same time as A": kind = 22334, arrival = (0.01155<=t<=0.014149999999) t was 0.012786
+Passed: [app0] - Expected "[1.1] - A same channel but different time as B": kind = 22332, arrival time was in range
+Passed: [app2] - Expected "Com A at receiver B": kind = 22332, arrival time was in range
+Passed: [app3] - Expected "Com A at sender B": kind = 22332, arrival time was in range
+Passed: [app0] - Expected "Com B at receiver A": kind = 22334, arrival time was in range
+Passed: [app1] - Expected "Com B at sender A": kind = 22334, arrival time was in range
+Passed: [app2] - Expected "[1.2] - B same channel but different time as A": kind = 22334, arrival time was in range
+Passed: [app1] - Expected "Waiting for 0.0015s.": kind = 2224
+Passed: [app0] - Expected "[2.1] - A same channel same time as B": kind = 22332, arrival time was in range
+Passed: [app2] - Expected "Com A at receiver B": kind = 22332, arrival time was in range
+Passed: [app3] - Expected "Com A at sender B": kind = 22332, arrival time was in range
+Passed: [app0] - Expected "Com B at receiver A": kind = 22334, arrival time was in range
+Passed: [app1] - Expected "Com B at sender A": kind = 22334, arrival time was in range
+Passed: [app2] - Expected "[2.2] - B same channel same time as A": kind = 22334, arrival time was in range
 Passed: [3] - Sender of B switches to different channel
-Passed: [app3] - Expected "Waiting for 5s.": kind = 2224, arrival = 5.012786s
+Passed: [app3] - Expected "Waiting for 5s.": kind = 2224
 Passed: [4] - B different channel between sender and receiver
 Passed: [5] - Receiver of B switches to different channel
-Passed: [app2] - Expected "[6] - B sender and receiver back to same channel": kind = 22334, arrival = (5.015286<=t<=5.016586) t was 5.015664
-Passed: [app1] - Expected "Waiting for 0.0015s.": kind = 2224, arrival = 5.017164s
-Passed: [app0] - Expected "[7.1] - A different channel same time as B": kind = 22332, arrival = (5.018164<=t<=5.019464) t was 5.018722
-Passed: [app2] - Expected "[7.2] - B different channel same time as A": kind = 22334, arrival = (5.019664<=t<=5.020964) t was 5.020042
-Passed: [app3] - Expected "Waiting for 0.00225s.": kind = 2224, arrival = 5.022292s
-Passed: [app2] - Expected "Waiting for 0.00193s.": kind = 2224, arrival = 5.024222s
+Passed: [app2] - Expected "[6] - B sender and receiver back to same channel": kind = 22334, arrival time was in range
+Passed: [app1] - Expected "Waiting for 0.0015s.": kind = 2224
+Passed: [app0] - Expected "[7.1] - A different channel same time as B": kind = 22332, arrival time was in range
+Passed: [app2] - Expected "[7.2] - B different channel same time as A": kind = 22334, arrival time was in range
+Passed: [app3] - Expected "Waiting for 0.00225s.": kind = 2224
+Passed: [app2] - Expected "Waiting for 0.00193s.": kind = 2224
 Passed: [8] - B receiver changes channel during reception.
-Passed: [app3] - Expected "Waiting for 0.00225s.": kind = 2224, arrival = 5.026472s
+Passed: [app3] - Expected "Waiting for 0.00225s.": kind = 2224
 Passed: [9] - B sender changes channel during transmission.
 Passed: 1.1 - Test has been executed.
 Passed: 1.2 - Test has been executed.
@@ -75,7 +75,7 @@ Passed: Host 0 on channel 1
 Passed: [0.1] - A on Channel 1.
 Passed: Host 2 on channel 1
 Passed: [0.2] - B on Channel 1.
-Passed: [1] - Channel usage ratio should be very good (over 1.0). - (1<=1.443761388894<=2)
+Passed: [1] - Channel usage ratio should be very good (over 1.0).
 Passed: 0.1 - Test has been executed.
 Passed: 0.2 - Test has been executed.
 Passed: 1 - Test has been executed.
@@ -98,7 +98,7 @@ Passed: Host 0 on channel 1
 Passed: [0.1] - A on Channel 1.
 Passed: Host 2 on channel 2
 Passed: [0.2] - B on Channel 2.
-Passed: [1] - Channel usage should be about the same as run 2. - (1<=1.445353219469<=2)
+Passed: [1] - Channel usage should be about the same as run 2.
 Passed: 0.1 - Test has been executed.
 Passed: 0.2 - Test has been executed.
 Passed: 1 - Test has been executed.
@@ -121,7 +121,7 @@ Passed: Host 0 on channel 1
 Passed: [0.1] - A on Channel 1.
 Passed: Host 2 on channel 1
 Passed: [0.2] - B on Channel 1.
-Passed: [1] - Channel usage ratio should be very bad (half of run 2). - (0.2<=0.750189888564<=0.8)
+Passed: [1] - Channel usage ratio should be very bad (half of run 2).
 Passed: 0.1 - Test has been executed.
 Passed: 0.2 - Test has been executed.
 Passed: 1 - Test has been executed.
@@ -144,7 +144,7 @@ Passed: Host 0 on channel 1
 Passed: [0.1] - A on Channel 1.
 Passed: Host 2 on channel 2
 Passed: [0.2] - B on Channel 2.
-Passed: [1] - Channel usage should be about same as run 2. - (1<=1.445353219469<=2)
+Passed: [1] - Channel usage should be about same as run 2.
 Passed: 0.1 - Test has been executed.
 Passed: 0.2 - Test has been executed.
 Passed: 1 - Test has been executed.

@@ -24,31 +24,21 @@
 // **************************************************************************/
 package org.mixim.tests.power.Nic80211Test;
 
-import org.mixim.base.connectionManager.ConnectionManager;
-import org.mixim.base.modules.BaseWorldUtility;
+import org.mixim.base.modules.BaseNetwork;
 
-network sim
+network Nic80211PowerTest extends BaseNetwork
 {
     parameters:
         // parametes for the framework
-        double playgroundSizeX @unit(m) = default(40m);
-        double playgroundSizeY @unit(m) = default(40m);
-        double numHosts = default(2);
+        playgroundSizeX = default(40m);
+        playgroundSizeY = default(40m);
+        playgroundSizeZ = default(40m);
+        int numHosts = default(2);
 
-
-        @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=0,0");
     submodules:
-        world: BaseWorldUtility {
+        host[numHosts]: Nic80211TestHost {
             parameters:
-                playgroundSizeX = playgroundSizeX;
-                playgroundSizeY = playgroundSizeY;
-        }
-        channelcontrol: ConnectionManager {
-            parameters:
-                @display("p=50,25;i=-");
-        }
-        host[numHosts]: Host {
-            parameters:
+                
                 @display("p=141,112;i=misc/node");
 
         }

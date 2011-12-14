@@ -28,11 +28,14 @@ export LD_LIBRARY_PATH
 
 lCombined='miximtests'
 lSingle='nicTest'
+lIsComb=0
 if [ ! -e ${lSingle} -a ! -e ${lSingle}.exe ]; then
     if [ -e ../${lCombined}.exe ]; then
         ln -s ../${lCombined}.exe ${lSingle}.exe
+        lIsComb=1
     elif [ -e ../${lCombined} ]; then
         ln -s ../${lCombined}     ${lSingle}
+        lIsComb=1
     fi
 fi
 
@@ -42,6 +45,7 @@ fi
 ./${lSingle} -c Test4 "${LIBSREF[@]}" >> out.tmp 2>> err.tmp
 ./${lSingle} -c Test5 "${LIBSREF[@]}" >> out.tmp 2>> err.tmp
 
+[ x$lIsComb = x1 ] && rm -f ${lSingle} ${lSingle}.exe >/dev/null 2>&1
 cat out.tmp |grep -e "Passed" -e "FAILED" |\
 diff -I '^Assigned runID=' \
      -I '^Loading NED files from' \
@@ -49,7 +53,6 @@ diff -I '^Assigned runID=' \
      -I '^Version: ' \
      -I '^     Speed:' \
      -I '^** Event #' \
-     -I '<=.*<=' \
      -w exp-output - >diff.log 2>/dev/null
 
 if [ -s diff.log ]; then

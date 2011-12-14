@@ -15,12 +15,12 @@
 
 package org.mixim.tests.nicTest;
 
-import org.mixim.base.modules.BaseNetwork;
+import org.mixim.tests.ExtTestNetwork;
 
-network NicTest extends BaseNetwork
+// Test network for NIC implementation tests.
+network NicTest extends ExtTestNetwork
 {
     parameters:
-        int numHosts; // total number of hosts in the network
         int run; // total number of hosts in the network
         bool showPassed;
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,10");

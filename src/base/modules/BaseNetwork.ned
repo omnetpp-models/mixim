@@ -15,8 +15,8 @@
 
 package org.mixim.base.modules;
 
-import org.mixim.base.connectionManager.ConnectionManager;
-import org.mixim.base.modules.BaseWorldUtility;
+import org.mixim.base.connectionManager.IConnectionManager;
+import org.mixim.base.modules.IWorldUtility;
 
 network BaseNetwork
 {
@@ -24,15 +24,17 @@ network BaseNetwork
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
+        string cmType = default("org.mixim.base.connectionManager.ConnectionManager"); // connection manager to use
+        string wuType = default("org.mixim.base.modules.BaseWorldUtility");            // world utility to use
 
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white;bgp=0,0");
 
     submodules:
-        connectionManager: ConnectionManager {
+        connectionManager: <cmType> like IConnectionManager {
             parameters:
                 @display("p=201,0;i=abstract/multicast;is=s");
         }
-        world: BaseWorldUtility {
+        world: <wuType> like IWorldUtility {
             parameters:
                 playgroundSizeX = playgroundSizeX;
                 playgroundSizeY = playgroundSizeY;

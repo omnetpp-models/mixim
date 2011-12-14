@@ -10,25 +10,23 @@
 //#
 //######################################################################
 // empty host to test energy framework.  see README.txt for details.
-package org.mixim.tests.power.deviceTest;
+package org.mixim.tests.power;
 
-import org.mixim.tests.power.utils.DeviceDutySimple;
-import org.mixim.tests.power.utils.Subscriber;
-import org.mixim.tests.power.PowerTestNode;
+import org.mixim.modules.power.battery.SimpleBattery;
+import org.mixim.modules.power.battery.BatteryStats;
+import org.mixim.tests.TestNode;
 
-// Empty host for simple power test. 
-module PowerTestHost extends PowerTestNode
+module PowerTestNode extends TestNode
 {
     parameters:
-        @display("bgb=190,171,$color;bgp=10,10");
+        @display("bgb=175,158,$color;bgp=10,10");
     submodules:
-        device: DeviceDutySimple {
+        battery: SimpleBattery {
             parameters:
-                @display("p=45,120;b=30,25");
+                numDevices = default(1);
+                @display("p=45,40;b=30,25");
         }
-        subscriber: Subscriber {
-            @display("p=131,121");
+        batteryStats: BatteryStats {
+            @display("p=131,40");
         }
-    connections:
-
 }

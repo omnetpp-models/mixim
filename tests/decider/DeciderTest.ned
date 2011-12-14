@@ -1,6 +1,10 @@
 package org.mixim.tests.decider;
 
-simple DeciderTest
+import org.mixim.tests.TestObject;
+
+simple DeciderTest extends TestObject
 {
+    parameters:
+    	@class(DeciderTest);
     @isNetwork(true);
 }

@@ -32,11 +32,7 @@ public:
 		CMPhyLayer::initialize(stage);
 		if(stage==0){
 			broadcastAnswered = false;
-#ifdef MIXIM_INET
-			scheduleAt(simTime() + 1.0 + (static_cast<double>(myAddr().getInt())) * 0.1, new cMessage(0,10));
-#else
-			scheduleAt(simTime() + 1.0 + (static_cast<double>(myAddr())) * 0.1, new cMessage(0,10));
-#endif
+			scheduleAt(simTime() + 1.0 + (static_cast<double>(findHost()->getIndex())) * 0.1, new cMessage(0,10));
 		}
 	}
 
@@ -49,12 +45,12 @@ public:
 protected:
 	virtual void handleLowerMsg(const LAddress::L2Type& srcAddr) {
 		broadcastAnswered = true;
-		ev << "Not Connected BC-Node " << myAddr() << ": got answer message from " << srcAddr << endl;
+		ev << "Not Connected BC-Node " << findHost()->getIndex() << ": got answer message from " << srcAddr << endl;
 	}
 
 	virtual void handleSelfMsg() {
 		// we should send a broadcast packet ...
-		ev << "Not Connected BC-Node " << myAddr() << ": Sending broadcast packet!" << endl;
+		ev << "Not Connected BC-Node " << findHost()->getIndex() << ": Sending broadcast packet!" << endl;
 		sendDown(LAddress::L2BROADCAST);
 	}
 };

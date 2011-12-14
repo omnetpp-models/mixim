@@ -51,7 +51,7 @@ protected:
 			ev << "Passed: ";
 		}
 
-		ev << "Test Node " << myAddr() << ": " << msg << std::endl;
+		ev << "Test Node " << findHost()->getIndex() << ": " << msg << std::endl;
 	}
 
 	void assertFalse(std::string msg, bool value) { assertTrue(msg, !value); }

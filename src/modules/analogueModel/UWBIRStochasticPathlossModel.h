@@ -92,12 +92,12 @@ public:
     	, shadowing(_shadowing)
     	, distances()
     	, srcPosX(), srcPosY(), dstPosX(), dstPosY()
+    	, myIndex(-1)
+    	, myName()
     	, pathloss_exponent(0.0)
     	, fading(0.0)
     	, frequency("frequency")
     	, pathlosses()
-    	, myIndex(-1)
-    	, myName()
     {
     	distances.setName("distances");
     	srcPosX.setName("srcPosX");
