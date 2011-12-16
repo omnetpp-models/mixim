@@ -640,6 +640,24 @@ void Mac80211::handleEndContentionTimer()
 
     if(state == IDLE) {
         remainingBackoff = 0;
+        // bug: ID: 3460932
+        /*
+        In Mac80211, currentIFS is set to DIFS upon successful reception and EIFS
+        upon reception of a corrupted frame. This is correct. However, currentIFS
+        remains unchanged while performing post-backoff. As a result, the EIFS related
+        to reception of a corrupted frame (and subsequent post-backoff) is used again in
+        the minimum duration of idle time before a transmission is performed (i.e. the
+        mandatory IFS during which a station decides whether to transmit directly or go
+        do backoff). This results in incorrect behaviour, as this is a new opportunity.
+
+        A fix is simple: in handleEndContentionTimer(), add "currentIFS = DIFS;" inside the
+        state==IDLE if-clause. This is where post-backoff completes and not only remainingBackoff
+        but also currentIFS should be reset.
+
+        See also:
+        http://www.freeminded.org/?p=811
+        */
+        currentIFS       = DIFS;
     }
     else if(state == CONTEND) {
         // the node has won the channel, the backoff window is deleted and
