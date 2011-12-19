@@ -117,7 +117,15 @@ class NicEntryDebug: public NicEntry
     /**
      * @brief Removes all dynamically created out-/ingates.
      */
-    virtual ~NicEntryDebug() {}
+    virtual ~NicEntryDebug() {
+    	while (!outConns.empty()) {
+    		NicEntry *const other = const_cast<NicEntry*>(outConns.begin()->first);
+    		if (other->isConnected(this)) {
+    			other->disconnectFrom(this);
+    		}
+    		disconnectFrom(other);
+    	}
+    }
 
     /**
      * @brief Connect two nics

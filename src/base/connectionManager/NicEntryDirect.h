@@ -43,7 +43,15 @@ class NicEntryDirect: public NicEntry
     /**
      * @brief Destructor -- needs to be there...
      */
-    virtual ~NicEntryDirect() {}
+    virtual ~NicEntryDirect() {
+    	while (!outConns.empty()) {
+    		NicEntry *const other = const_cast<NicEntry*>(outConns.begin()->first);
+    		if (other->isConnected(this)) {
+    			other->disconnectFrom(this);
+    		}
+    		disconnectFrom(other);
+    	}
+    }
 
     /** @brief Connect two nics
      *

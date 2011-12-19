@@ -384,6 +384,7 @@ bool BaseConnectionManager::unregisterNic(cModule* nicModule)
 
 	// erase from list of known nics
 	nics.erase(nicID);
+	delete nicEntry;
 
 	return true;
 }
