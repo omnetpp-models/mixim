@@ -999,19 +999,43 @@ void Mac80211::beginNewCycle()
 
         setState(CONTEND);
         if(!contention->isScheduled()) {
-        	ChannelState channel = phy->getChannelState();
-        	debugEV << simTime() << " do contention: medium = " << channel.info() << ", backoff = "
+            ChannelState channel = phy->getChannelState();
+            debugEV << simTime() << " do contention: medium = " << channel.info() << ", backoff = "
                <<  remainingBackoff << endl;
 
             if(channel.isIdle()) {
-            	senseChannelWhileIdle(currentIFS + remainingBackoff);
+                senseChannelWhileIdle(currentIFS + remainingBackoff);
                 //scheduleAt(simTime() + currentIFS + remainingBackoff, contention);
+            }
+            else {
+                /*
+                Mac80211 in MiXiM uses the same mechanism for backoff and post-backoff, a senseChannelWhileIdle which
+                schedules a timer for a duration of IFS + remainingBackoff (i.e. The inter-frame spacing and the present
+                state of the backoff counter).
+
+                If Host A were doing post-backoff when the frame from Host B arrived, the remainingBackoff would have
+                been > 0 and backoff would have resumed after the frame from Host B finishes.
+
+                However, Host A has already completed its post-backoff (remainingBackoff was 0) so it essentially was
+                IDLE when the beacon was generated (actually, it was receiving Host B’s frame). So what happens now is
+                that all nodes which have an arrival during Host B’s frame AND have completed their post-backoff, will
+                wait one IFS and then transmit, resulting in synchronised collisions one IFS after a transmission (or
+                an EIFS after a collision).
+
+                The correct behaviour here is for Host A’s MAC to note that post-backoff has completed (remainingBackoff
+                has reached 0) and the medium is busy, so the MAC must draw a new backoff from the contention window.
+
+                http://www.freeminded.org/?p=801
+                */
+                //channel is busy
+                if(remainingBackoff==0) {
+                    remainingBackoff = backoff();
+                }
             }
         }
     }
     else {
         // post-xmit backoff (minor nit: if random backoff=0, we punt)
-
         if(remainingBackoff > 0 && !contention->isScheduled()) {
         	ChannelState channel = phy->getChannelState();
         	debugEV << simTime() << " do contention: medium = " << channel.info() << ", backoff = "
