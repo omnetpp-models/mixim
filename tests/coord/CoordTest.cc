@@ -114,10 +114,7 @@ void testConstructors() {
     
     //test Coord(Coord* other)
     //test Coord(Coord& other)
-    Coord testCoord2(&testCoord);
-    assertClose("x-value of (3D)Coord(Coord* other).", testCoord.x, testCoord2.x);
-    assertClose("y-value of (3D)Coord(Coord* other).", testCoord.y, testCoord2.y);
-    assertClose("z-value of (3D)Coord(Coord* other).", testCoord.z, testCoord2.z);
+    Coord testCoord2(testCoord);
 
     testCoord2 = Coord(testCoord);
     assertClose("x-value of (3D)Coord(Coord& other).", testCoord.x, testCoord2.x);
@@ -125,11 +122,6 @@ void testConstructors() {
     assertClose("z-value of (3D)Coord(Coord& other).", testCoord.z, testCoord2.z);
 
     testCoord = Coord(X, Y);
-    testCoord2 = Coord(&testCoord);
-    assertClose("x-value of (2D)Coord(Coord* other).", testCoord.x, testCoord2.x);
-    assertClose("y-value of (2D)Coord(Coord* other).", testCoord.y, testCoord2.y);
-    assertClose("z-value of (2D)Coord(Coord* other).", testCoord.z, testCoord2.z);
-
     
     testCoord2 = Coord(testCoord);
     assertClose("x-value of (2D)Coord(Coord& other).", testCoord.x, testCoord2.x);

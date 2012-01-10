@@ -1,6 +1,10 @@
 #ifndef BASECONNECTIONMANAGER_H_
 #define BASECONNECTIONMANAGER_H_
 
+#include <map>
+#include <vector>
+#include <string>
+
 #include "MiXiMDefs.h"
 #include "NicEntry.h"
 
@@ -193,7 +197,7 @@ private:
 
 protected:
 	/** @brief Type for map from nic-module id to nic-module pointer.*/
-	typedef std::map<int, NicEntry*> NicEntries;
+	typedef std::map<NicEntry::t_nicid, NicEntry*> NicEntries;
 
 	/** @brief Map from nic-module ids to nic-module pointers.*/
 	NicEntries nics;
@@ -256,9 +260,9 @@ private:
     /**
      * @brief Check connections of a nic in the grid
      */
-    void checkGrid(GridCoord& oldCell,
-                   GridCoord& newCell,
-                   int id);
+    void checkGrid(GridCoord&             oldCell,
+                   GridCoord&             newCell,
+                   NicEntry::t_nicid_cref id);
 
     /**
      * @brief Calculates the corresponding cell of a coordinate.
@@ -298,17 +302,31 @@ protected:
 
 	/**
 	 * @brief Called by "registerNic()" after the nic has been
+	 * unregistered. That means that the NicEntry for the nic has already been
+	 * disconnected and removed from nic map.
+	 *
+	 * You better know what you are doing if you want to override this
+	 * method. Most time you won't need to.
+	 *
+	 * See BaseConnectionManager::registerNicExt() for an example.
+	 *
+	 * @param nicID - the id of the NicEntry
+	 */
+	virtual void registerNicExt(NicEntry::t_nicid_cref nicID);
+
+	/**
+	 * @brief Called by "unregisterNic()" after the nic has been
 	 * registered. That means that the NicEntry for the nic has already been
 	 * created and added to nics map.
 	 *
 	 * You better know what you are doing if you want to override this
 	 * method. Most time you won't need to.
 	 *
-	 * See ConnectionManager::registerNicExt() for an example.
+	 * See BaseConnectionManager::unregisterNicExt() for an example.
 	 *
 	 * @param nicID - the id of the NicEntry
 	 */
-	virtual void registerNicExt(int nicID);
+	virtual void unregisterNicExt(NicEntry::t_nicid_cref nicID);
 
 	/**
 	 * @brief Updates the connections of the nic with "nicID".
@@ -322,7 +340,7 @@ protected:
 	 * @param oldPos the old position of the nic
 	 * @param newPos the new position of the nic
 	 */
-	virtual void updateConnections(int nicID, const Coord* oldPos, const Coord* newPos);
+	virtual void updateConnections(NicEntry::t_nicid_cref nicID, const Coord* oldPos, const Coord* newPos);
 	/**
 	 * @brief Check if the two nic's are in range.
 	 *
@@ -381,10 +399,10 @@ public:
 	bool unregisterNic(cModule* nic);
 
 	/** @brief Updates the position information of a registered nic.*/
-	void updateNicPos(int nicID, const Coord* newPos);
+	void updateNicPos(NicEntry::t_nicid_cref nicID, const Coord* newPos);
 
 	/** @brief Returns the ingates of all nics in range*/
-	const NicEntry::GateList& getGateList( int nicID) const;
+	const NicEntry::GateList& getGateList(NicEntry::t_nicid_cref nicID) const;
 
 	/** @brief Returns the ingate of the with id==targetID, or 0 if not in range*/
 	const cGate* getOutGateTo(const NicEntry* nic, const NicEntry* targetNic) const;

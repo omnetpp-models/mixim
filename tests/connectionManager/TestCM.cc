@@ -41,7 +41,7 @@ void TestCM::updateConnections(int nicID, const Coord* oldPos, const Coord* newP
 
 		if(useTorus)
 		{
-			distance = nic->pos.sqrTorusDist(nic_i->pos, playgroundSize);
+			distance = nic->pos.sqrTorusDist(nic_i->pos, *playgroundSize);
 		} else {
 			distance = nic->pos.sqrdist(nic_i->pos);
 		}
