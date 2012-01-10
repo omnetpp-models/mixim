@@ -41,7 +41,12 @@ class ChannelAccess;
  */
 class MIXIM_API NicEntry : public cObject
 {
-protected:
+  public:
+	/** @brief Type for NIC identifier. */
+	typedef int     t_nicid;
+	typedef t_nicid t_nicid_cref;
+
+	/** @brief Comparator class for %NicEntry for usage in STL containers. */
 	class NicEntryComparator {
 	  public:
 		bool operator() (const NicEntry* nic1, const NicEntry* nic2) const {
@@ -53,7 +58,7 @@ protected:
     typedef std::map<const NicEntry*, cGate*, NicEntryComparator> GateList;
 
     /** @brief module id of the nic for which information is stored*/
-    int nicId;
+    t_nicid nicId;
 
     /** @brief Pointer to the NIC module */
     cModule *nicPtr;

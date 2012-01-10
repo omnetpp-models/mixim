@@ -147,9 +147,9 @@ BaseConnectionManager::GridCoord BaseConnectionManager
     return GridCoord(c, findDistance);
 }
 
-void BaseConnectionManager::updateConnections(int nicID,
-											  const Coord* oldPos,
-											  const Coord* newPos)
+void BaseConnectionManager::updateConnections(NicEntry::t_nicid_cref nicID,
+                                              const Coord*           oldPos,
+                                              const Coord*           newPos)
 {
 	GridCoord oldCell = getCellForCoordinate(*oldPos);
     GridCoord newCell = getCellForCoordinate(*newPos);
@@ -163,7 +163,7 @@ BaseConnectionManager::NicEntries& BaseConnectionManager
     return nicGrid[cell.x][cell.y][cell.z];
 }
 
-void BaseConnectionManager::registerNicExt(int nicID)
+void BaseConnectionManager::registerNicExt(NicEntry::t_nicid_cref nicID)
 {
 	NicEntries::mapped_type nicEntry = nics[nicID];
 
@@ -178,7 +178,7 @@ void BaseConnectionManager::registerNicExt(int nicID)
 
 void BaseConnectionManager::checkGrid(BaseConnectionManager::GridCoord& oldCell,
                                       BaseConnectionManager::GridCoord& newCell,
-                                      int id)
+                                      NicEntry::t_nicid_cref            id)
 
 {
 
@@ -264,7 +264,7 @@ bool BaseConnectionManager::isInRange(BaseConnectionManager::NicEntries::mapped_
 	double dDistance = 0.0;
 
     if(useTorus) {
-    	dDistance = pFromNic->pos.sqrTorusDist(pToNic->pos, playgroundSize);
+    	dDistance = pFromNic->pos.sqrTorusDist(pToNic->pos, *playgroundSize);
     } else {
     	dDistance = pFromNic->pos.sqrdist(pToNic->pos);
     }
@@ -273,7 +273,7 @@ bool BaseConnectionManager::isInRange(BaseConnectionManager::NicEntries::mapped_
 
 void BaseConnectionManager::updateNicConnections(NicEntries& nmap, BaseConnectionManager::NicEntries::mapped_type   nic)
 {
-    int id = nic->nicId;
+    NicEntry::t_nicid_cref id = nic->nicId;
 
     for(NicEntries::iterator i = nmap.begin(); i != nmap.end(); ++i) {
     	NicEntries::mapped_type nic_i = i->second;
@@ -307,13 +307,14 @@ bool BaseConnectionManager::registerNic(cModule* nic,
 										ChannelAccess* chAccess,
 										const Coord* nicPos)
 {
-	assert(nic != 0);
+	assert(nic != NULL);
 
-	int nicID = nic->getId();
+	const NicEntry::t_nicid nicID = nic->getId();
 	ccEV << " registering nic #" << nicID << endl;
 
 	// create new NicEntry
 	NicEntries::mapped_type nicEntry;
+	cModule *const          pHostModule = FindModule<>::findHost(nic);
 
 	if(sendDirect)
 		nicEntry = new NicEntryDirect(coreDebug);
@@ -323,8 +324,8 @@ bool BaseConnectionManager::registerNic(cModule* nic,
 	// fill nicEntry
 	nicEntry->nicPtr   = nic;
 	nicEntry->nicId    = nicID;
-	nicEntry->hostId   = FindModule<>::findHost(nic)->getId();
-	nicEntry->pos      = nicPos;
+	nicEntry->hostId   = pHostModule ? pHostModule->getId() : NULL;
+	nicEntry->pos      = *nicPos;
 	nicEntry->chAccess = chAccess;
 
 	// add to map
@@ -334,8 +335,10 @@ bool BaseConnectionManager::registerNic(cModule* nic,
 
 	updateConnections(nicID, nicPos, nicPos);
 
-	if(drawMIR) {
-		FindModule<>::findHost(nic)->getDisplayString().setTagArg("r", 0, maxInterferenceDistance);
+	if(drawMIR && pHostModule) {
+		cDisplayString& Displ = pHostModule->getDisplayString();
+		if (!Displ.containsTag("r"))
+			Displ.setTagArg("r", 0, maxInterferenceDistance);
 	}
 
 	return sendDirect;
@@ -346,13 +349,16 @@ bool BaseConnectionManager::unregisterNic(cModule* nicModule)
 	assert(nicModule != 0);
 
 	// find nicEntry
-	int nicID = nicModule->getId();
+	const NicEntry::t_nicid nicID      = nicModule->getId();
+	NicEntries::iterator    nicEntryIt = nics.find(nicID);
 	ccEV << " unregistering nic #" << nicID << endl;
 
-	//we assume that the module was previously registered with this CM
-	//TODO: maybe change this to an omnet-error instead of an assertion
-	assert(nics.find(nicID) != nics.end());
-	NicEntries::mapped_type nicEntry = nics[nicID];
+	if (nicEntryIt == nics.end()) {
+		assert(false);
+		return false;
+	}
+
+	NicEntries::mapped_type nicEntry = nicEntryIt->second;
 
 	// get all affected grid squares
 	CoordSet gridUnion(74);
@@ -370,10 +376,14 @@ bool BaseConnectionManager::unregisterNic(cModule* nicModule)
 		NicEntries& nmap = getCellEntries(*c);
 		for(NicEntries::iterator i = nmap.begin(); i != nmap.end(); ++i) {
 			NicEntries::mapped_type other = i->second;
-			if (other == nicEntry) continue;
-			if (!other->isConnected(nicEntry)) continue;
-			other->disconnectFrom(nicEntry);
-			nicEntry->disconnectFrom(other);
+			if (other == nicEntry)
+				continue;
+			if (other->isConnected(nicEntry)) {
+				other->disconnectFrom(nicEntry);
+			}
+			if (nicEntry->isConnected(other)) {
+				nicEntry->disconnectFrom(other);
+			}
 		}
 		c = gridUnion.next();
 	}
@@ -382,27 +392,34 @@ bool BaseConnectionManager::unregisterNic(cModule* nicModule)
 	NicEntries& cellEntries = getCellEntries(cell);
 	cellEntries.erase(nicID);
 
+	unregisterNicExt(nicID);
+
 	// erase from list of known nics
-	nics.erase(nicID);
+	nics.erase(nicEntryIt);
 	delete nicEntry;
 
 	return true;
 }
 
-void BaseConnectionManager::updateNicPos(int nicID, const Coord* newPos)
+void BaseConnectionManager::unregisterNicExt(NicEntry::t_nicid_cref nicID)
+{
+	(void)nicID;
+}
+
+void BaseConnectionManager::updateNicPos(NicEntry::t_nicid_cref nicID, const Coord* newPos)
 {
 	NicEntries::iterator ItNic = nics.find(nicID);
 	if (ItNic == nics.end()) {
 		opp_warning("No nic with this ID (%d) is registered with this ConnectionManager, no position update done.", nicID);
 		return;
 	}
-    Coord oldPos = ItNic->second->pos;
-    ItNic->second->pos = newPos;
+	Coord oldPos = ItNic->second->pos;
+	ItNic->second->pos = *newPos;
 
 	updateConnections(nicID, &oldPos, newPos);
 }
 
-const NicEntry::GateList& BaseConnectionManager::getGateList(int nicID) const
+const NicEntry::GateList& BaseConnectionManager::getGateList(NicEntry::t_nicid_cref nicID) const
 {
 	NicEntries::const_iterator ItNic = nics.find(nicID);
 	if (ItNic == nics.end()) {
@@ -427,7 +444,7 @@ const cGate* BaseConnectionManager::getOutGateTo(const NicEntry* nic,
 
 BaseConnectionManager::~BaseConnectionManager()
 {
-	for (NicEntries::iterator ne = nics.begin(); ne != nics.end(); ne++) {
+	for (NicEntries::iterator ne = nics.begin(); ne != nics.end(); ++ne) {
 		delete ne->second;
 	}
 }
