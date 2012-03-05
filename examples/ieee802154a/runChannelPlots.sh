@@ -20,7 +20,7 @@ for lP in "${lMiXiMPath}/src" \
 done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
-NEDPATH="${lMiXiMPath}/src:.."
+NEDPATH="${lMiXiMPath}/src:..:."
 [ -d "${lINETPath}/src" ] && NEDPATH="${NEDPATH}:${lINETPath}/src"
 export PATH
 export NEDPATH

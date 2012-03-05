@@ -19,5 +19,5 @@ package org.mixim.modules.nic;
 module NicLMAC extends WirelessNicBattery
 {
     parameters:
-        macType = default("LMacLayer");
+        macType = "LMacLayer";
 }

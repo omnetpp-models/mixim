@@ -33,7 +33,7 @@ package org.mixim.modules.nic;
 module Nic802154_TI_CC2420 extends WirelessNicBattery
 {
     parameters:
-        macType = default("CSMA802154");
+        macType = "CSMA802154";
         
         // power consumption from boards (at 3.3V)
         sleepCurrent         = 0.000021mA; // 0.021 µA
@@ -48,7 +48,7 @@ module Nic802154_TI_CC2420 extends WirelessNicBattery
         phy.decider = xmldoc("Nic802154_TI_CC2420_Decider.xml");
         //publishRSSIAlways = false;
         phy.headerLength = 48 bit; // ieee 802.15.4                
-        phy.thermalNoise = -110 dBm;
+        phy.thermalNoise = default(-110 dBm);
         // From TI CC1100 datasheet rev. C
         phy.timeSleepToRX = 0.001792 s;
         phy.timeSleepToTX = 0.001792 s;

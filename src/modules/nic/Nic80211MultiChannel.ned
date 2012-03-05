@@ -48,7 +48,7 @@ module Nic80211MultiChannel extends WirelessNicBattery
         phy.headerLength        = 192bit;
         phy.sensitivity         = default(-119.5dBm);
         phy.decider             = default(xmldoc("Nic80211MultiChannel_Decider.xml"));
-        phy.nbRadioChannels     = default(15);
+        phy.nbRadioChannels     = 15;
         phy.initialRadioChannel = default(1);
             
         //Mac80211 does not support switching times

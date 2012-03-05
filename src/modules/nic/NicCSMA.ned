@@ -22,5 +22,5 @@ package org.mixim.modules.nic;
 module NicCSMA extends WirelessNic
 {
     parameters:
-        macType = default("csma");
+        macType = "csma";
 }

@@ -30,7 +30,7 @@ package org.mixim.modules.nic;
 module Nic802154_TI_CC1100 extends WirelessNicBattery
 {
     parameters:
-        macType = default("CSMA802154");
+        macType = "CSMA802154";
         
         // power consumption from boards (at 3V)
         sleepCurrent         = 0.02mA; // 20 µA
@@ -47,8 +47,8 @@ module Nic802154_TI_CC1100 extends WirelessNicBattery
         //publishRSSIAlways = false;
         phy.sensitivity   = -100 dBm;
         phy.headerLength  = 48 bit; // ieee 802.15.4
-        phy.thermalNoise  = -110 dBm;
-        phy.maxTXPower    = 1 mW;
+        phy.thermalNoise  = default(-110 dBm);
+        phy.maxTXPower    = default(1 mW);
         phy.initialRadioState = 0;
         // From TI CC1100 datasheet rev. C
         phy.timeSleepToRX = 0.00108 s;

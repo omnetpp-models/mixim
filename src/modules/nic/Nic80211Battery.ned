@@ -40,7 +40,7 @@ package org.mixim.modules.nic;
 module Nic80211Battery extends WirelessNicBattery
 {
     parameters:
-        macType = default("Mac80211");
+        macType = "Mac80211";
 
         @display("i=block/ifcard");
 
@@ -59,7 +59,7 @@ module Nic80211Battery extends WirelessNicBattery
         phy.sensitivity         = default(-119.5dBm);
         phy.decider             = default(xmldoc("Nic80211_Decider.xml"));
         phy.initialRadioChannel = default(1);
-        phy.nbRadioChannels     = default(15); //1 to 14, 0 is invalid
+        phy.nbRadioChannels     = 15; //1 to 14, 0 is invalid
         
         //Mac80211 does not support switching times
         phy.timeRXToTX          = 0s;

@@ -23,7 +23,7 @@ for lP in '../../src' \
 done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
-NEDPATH="../../src:.."
+NEDPATH="../../src:..:."
 [ -d "$lINETPath" ] && NEDPATH="${NEDPATH}:$lINETPath"
 export PATH
 export NEDPATH

@@ -23,8 +23,8 @@ package org.mixim.modules.nic;
 module Nic802154A extends WirelessNicBattery
 {
     parameters:
-        macType = default("AlohaMacLayer");
-        phyType = default("PhyLayerUWBIR");
+        macType = "AlohaMacLayer";
+        phyType = "PhyLayerUWBIR";
         
         // power consumption from boards (at 3.3V)
         sleepCurrent = .00303 mA; // 0.021 µA
