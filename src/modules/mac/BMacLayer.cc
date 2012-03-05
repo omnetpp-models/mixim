@@ -36,14 +36,14 @@ void BMacLayer::initialize(int stage)
 
     if (stage == 0) {
 
-		queueLength = hasPar("queueLength") ? par("queueLength") : 10;
-		animation = hasPar("animation") ? par("animation") : true;
-		slotDuration = hasPar("slotDuration") ? par("slotDuration") : 1;
-		bitrate = hasPar("bitrate") ? par("bitrate") : 15360;
-		headerLength = hasPar("headerLength") ? par("headerLength") : 10;
+		queueLength   = hasPar("queueLength")   ? par("queueLength")   : 10;
+		animation     = hasPar("animation")     ? par("animation")     : true;
+		slotDuration  = hasPar("slotDuration")  ? par("slotDuration")  : 1.;
+		bitrate       = hasPar("bitrate")       ? par("bitrate")       : 15360.;
+		headerLength  = hasPar("headerLength")  ? par("headerLength")  : 10.;
 		checkInterval = hasPar("checkInterval") ? par("checkInterval") : 0.1;
-		txPower = hasPar("txPower") ? par("txPower") : 50;
-		useMacAcks = hasPar("useMACAcks") ? par("useMACAcks") : false;
+		txPower       = hasPar("txPower")       ? par("txPower")       : 50.;
+		useMacAcks    = hasPar("useMACAcks")    ? par("useMACAcks")    : false;
 		maxTxAttempts = hasPar("maxTxAttempts") ? par("maxTxAttempts") : 2;
 		debugEV << "headerLength: " << headerLength << ", bitrate: " << bitrate << endl;
 

@@ -37,7 +37,7 @@ simple CSMAMacLayer extends BaseMacLayer
         // maximum time between a packet and its ack [s]
         double difs @unit(s);
         // maximum number of transmission attempts
-        double maxTxAttempts;
+        int maxTxAttempts;
         // length of the MAC queue
         int queueLength;
         // default channel 
@@ -47,5 +47,5 @@ simple CSMAMacLayer extends BaseMacLayer
         //tx power [mW]
         double txPower @unit(mW);
         // contention window
-        double contentionWindow;
+        int contentionWindow;
 }

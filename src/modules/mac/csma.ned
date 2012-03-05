@@ -41,7 +41,7 @@ simple csma extends BaseMacLayer
         // length of MAC header
         headerLength @unit(bit) = default(72 bit);
         // size of the MAC queue (maximum number of packets in Tx buffer)
-        double queueLength = default(100);
+        int queueLength = default(100);
         // bit rate 
         double bitrate @unit(bps) = default(250000 bps);        
           
@@ -56,25 +56,31 @@ simple csma extends BaseMacLayer
         
         // Send/Expect MAC acks for unicast traffic?
         bool useMACAcks;
-        // maximum number of frame retransmission
-        // only used when usage of MAC acks is enabled
-        double macMaxFrameRetries = default(3);        
-        // time to wait for an acknowledgement after transmitting a unicast frame.
-        // only used when usage of MAC acks is enabled
-        double macAckWaitDuration @unit(s) = default(0.00056 s);  // 1+12+10+12 symbols
-        // complete MAC ack message length (in bits) 
-        // (! headerLength is not added to this)
-        // only used when usage of MAC acks is enabled
+        // Maximum number of frame retransmission,
+        // only used when usage of MAC acks is enabled.
+        int macMaxFrameRetries = default(3);        
+        // Time to wait for an acknowledgement after transmitting a unicast frame.
+        // Only used when usage of MAC acks is enabled.
+        // Value is calculated from 1+12+10+12 symbols, which is defined for nonbeacon-enabled PAN.
+        // In the non-beacon-enabled case, the receiver responds at aTurnaroundTime 
+        // (i.e. the time for the sender and receiver to both be guaranteed to have 
+        // switched from Tx to Rx and vice verse).  This gives the value 192us + 
+        // 352us = 544us (there's been some discussion about the "extra" 1 symbol == 16us) 
+        // [section 7.5.6.4.2 of the specification].
+        double macAckWaitDuration @unit(s) = default(0.00056 s);
+        // Complete MAC ack message length (in bits) 
+        // (! headerLength is not added to this),
+        // only used when usage of MAC acks is enabled.
         double ackLength @unit(bit) = default(40 bit);   
-        // simple interframe space. Time to wait between receiving a frame and acknowledging it.
+        // Simple interframe space (12 symbols). Time to wait between receiving a frame and acknowledging it.
         // Should be bigger than the maximum time for switching between Tx and Rx at the receiver.
-        // only used when usage of MAC acks is enabled
-        double sifs @unit(s) = default(0.000192 s); // 12 symbols
+        // Only used when usage of MAC acks is enabled.
+        double sifs @unit(s) = default(0.000192 s);
         
-        //backoff method to use: constant, linear or exponential
+        //Backoff method to use: constant, linear or exponential
         string backoffMethod = default("linear");
         // maximum backoffs
-        double macMaxCSMABackoffs = default(5);
+        int macMaxCSMABackoffs = default(5);
         // base unit for all backoff calculations
         double aUnitBackoffPeriod @unit(s) = default(0.00032 s);
         // # of backoff periods of the initial contention window

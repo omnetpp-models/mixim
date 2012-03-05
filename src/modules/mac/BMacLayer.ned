@@ -56,7 +56,7 @@ simple BMacLayer extends BaseMacLayer
 		double checkInterval @unit(s) = default(0.01s);
 		
 		// size of the MAC queue (maximum number of packets in Tx buffer)
-        double queueLength = default(20);
+        int queueLength = default(20);
         
         // should we animate the nodes with colors depending on their state or 
         // not?
@@ -72,6 +72,6 @@ simple BMacLayer extends BaseMacLayer
         bool useMACAcks = default(false);
         // maximum number of frame retransmission
         // only used when usage of MAC acks is enabled
-        double macMaxFrameRetries = default(3);        
+        int macMaxFrameRetries = default(3);        
 }
 

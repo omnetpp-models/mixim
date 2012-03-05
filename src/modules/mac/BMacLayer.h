@@ -83,7 +83,7 @@ class MIXIM_API  BMacLayer : public BaseMacLayer
 		, nicId(-1)
 		, queueLength(0)
 		, animation(false)
-		, slotDuration(0), bitrate(0), headerLength(0), checkInterval(0), txPower(0)
+		, slotDuration(0), bitrate(0), checkInterval(0), txPower(0)
 		, useMacAcks(0)
 		, maxTxAttempts(0)
 		, stats(false)
@@ -211,7 +211,7 @@ class MIXIM_API  BMacLayer : public BaseMacLayer
 	int nicId;
 
 	/** @brief The maximum length of the queue */
-	double queueLength;
+	unsigned int queueLength;
 	/** @brief Animate (colorize) the nodes.
 	 *
 	 * The color of the node reflects its basic status (not the exact state!)
@@ -224,8 +224,6 @@ class MIXIM_API  BMacLayer : public BaseMacLayer
 	double slotDuration;
 	/** @brief The bitrate of transmission */
 	double bitrate;
-	/** @brief The length of the MAC header */
-	double headerLength;
 	/** @brief The duration of CCA */
 	double checkInterval;
 	/** @brief Transmission power of the node */

@@ -66,13 +66,13 @@ void csma::initialize(int stage) {
 		macMaxCSMABackoffs = par("macMaxCSMABackoffs");
 		macMaxFrameRetries = par("macMaxFrameRetries");
 		macAckWaitDuration = par("macAckWaitDuration").doubleValue();
-		aUnitBackoffPeriod = par("aUnitBackoffPeriod");
-		ccaDetectionTime = par("ccaDetectionTime").doubleValue();
-		rxSetupTime = par("rxSetupTime").doubleValue();
-		aTurnaroundTime = par("aTurnaroundTime").doubleValue();
-		bitrate = par("bitrate");
-		ackLength = par("ackLength");
-		ackMessage = NULL;
+		aUnitBackoffPeriod = par("aUnitBackoffPeriod").doubleValue();
+		ccaDetectionTime   = par("ccaDetectionTime").doubleValue();
+		rxSetupTime        = par("rxSetupTime").doubleValue();
+		aTurnaroundTime    = par("aTurnaroundTime").doubleValue();
+		bitrate            = par("bitrate");
+		ackLength          = par("ackLength");
+		ackMessage         = NULL;
 
 		//init parameters for backoff method
 		std::string backoffMethodStr = par("backoffMethod").stdstringValue();

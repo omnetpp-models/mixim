@@ -56,7 +56,7 @@ void Flood::initialize(int stage) {
 			//these parameters are only needed for plain flooding
 			hasPar("bcMaxEntries") ? bcMaxEntries = par("bcMaxEntries") : bcMaxEntries = 30;
 
-			hasPar("bcDelTime") ? bcDelTime = par("bcDelTime") : bcDelTime = 3.0;
+			hasPar("bcDelTime") ? bcDelTime = par("bcDelTime").doubleValue() : bcDelTime = 3.0;
 			EV <<"bcMaxEntries = "<<bcMaxEntries
 			<<" bcDelTime = "<<bcDelTime<<endl;
 		}

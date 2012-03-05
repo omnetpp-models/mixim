@@ -73,7 +73,7 @@ protected:
     /**
      * @brief Length of the MacPkt header
      **/
-    int headerLength;
+    long headerLength;
 
     /**
      * @brief MAC address.
@@ -90,7 +90,7 @@ protected:
      * the packet and therefore needs the length of the
      * phy header.
      */
-    int phyHeaderLength;
+    long phyHeaderLength;
 
 private:
     /** @brief Copy constructor is not allowed.
