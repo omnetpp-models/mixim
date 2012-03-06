@@ -35,7 +35,7 @@
 #include "FindModule.h"
 #include "WiseRoutePkt_m.h"
 #include "SimTracer.h"
-#include "ChannelAccess.h"
+#include "connectionManager/ChannelAccess.h"
 
 using std::make_pair;
 

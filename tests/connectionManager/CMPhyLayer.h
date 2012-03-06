@@ -21,7 +21,7 @@
 #ifndef TEST_PHY_LAYER_H
 #define TEST_PHY_LAYER_H
 
-#include "ChannelAccess.h"
+#include "connectionManager/ChannelAccess.h"
 #include <MacPkt_m.h>
 #include <iostream>
 

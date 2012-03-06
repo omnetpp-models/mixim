@@ -26,7 +26,7 @@
  **************************************************************************/
 
 
-#include "ChannelAccess.h"
+#include "connectionManager/ChannelAccess.h"
 
 #include <cassert>
 

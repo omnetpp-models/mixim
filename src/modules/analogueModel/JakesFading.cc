@@ -17,7 +17,7 @@
 
 #include "BaseWorldUtility.h"
 #include "AirFrame_m.h"
-#include "ChannelAccess.h"
+#include "connectionManager/ChannelAccess.h"
 
 DimensionSet JakesFadingMapping::dimensions(Dimension::time);
 

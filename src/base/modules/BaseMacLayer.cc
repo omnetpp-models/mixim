@@ -36,7 +36,7 @@
 #include "NetwToMacControlInfo.h"
 #include "MacToPhyControlInfo.h"
 #include "AddressingInterface.h"
-#include "ChannelAccess.h"
+#include "connectionManager/ChannelAccess.h"
 #include "FindModule.h"
 #include "MacPkt_m.h"
 

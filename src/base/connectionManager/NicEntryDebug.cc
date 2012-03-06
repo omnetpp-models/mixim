@@ -23,7 +23,7 @@
 
 #include <cassert>
 
-#include "ChannelAccess.h"
+#include "connectionManager/ChannelAccess.h"
 #include "FindModule.h"
 
 #ifndef nicEV

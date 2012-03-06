@@ -6,7 +6,7 @@
 #include <string>
 
 #include "MiXiMDefs.h"
-#include "ChannelAccess.h"
+#include "connectionManager/ChannelAccess.h"
 #include "DeciderToPhyInterface.h"
 #include "MacToPhyInterface.h"
 
@@ -146,7 +146,7 @@ protected:
 	cMessage* txOverTimer;
 
 	/** @brief The states of the receiving process for AirFrames.*/
-	enum AirFrameStates {
+	enum eAirFrameStates {
 		/** @brief Start of actual receiving process of the AirFrame. */
 		START_RECEIVE = 1,
 		/** @brief AirFrame is being received. */
