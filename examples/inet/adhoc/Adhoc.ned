@@ -17,7 +17,6 @@ network Adhoc extends BaseNetwork
         host[numHosts]: WirelessHost {
             parameters:
                 @display("r=,,#707070");
-                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         configurator: FlatNetworkConfigurator {
             parameters:

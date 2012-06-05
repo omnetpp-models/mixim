@@ -40,28 +40,23 @@ import org.mixim.base.modules.BaseNetwork;
 network BulkTransfer extends BaseNetwork
 {
     parameters:
-        **.wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         @display("bgb=$playgroundSizeX,$playgroundSizeY,white,,;bgp=10,50");
     submodules:
         client1: WirelessHost {
             parameters:
                 @display("p=131,67");
-                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         client2: WirelessHost {
             parameters:
                 @display("p=337,67");
-                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         client3: WirelessHost {
             parameters:
                 @display("p=337,247");
-                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         server: WirelessHost {
             parameters:
                 @display("p=131,247;i=device/pc2");
-                wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         configurator: FlatNetworkConfigurator {
             parameters:

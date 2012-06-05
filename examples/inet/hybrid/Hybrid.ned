@@ -37,7 +37,6 @@ network Hybrid
                 playgroundSizeY = playgroundSizeY;
                 playgroundSizeZ = playgroundSizeZ;
                 @display("p=159,25");
-
         }
         channel80211: ConnectionManager {
             parameters:
@@ -49,26 +48,16 @@ network Hybrid
         }
         hostEthernet: StandardHost {
             @display("r=,,#707070;p=38,132");
-            gates:
-                ethg[1];
-
         }
         host80211: WirelessHost {
             @display("r=,,#707070;p=166,181");
-            wlan[*].typename = "org.mixim.modules.nic.Nic80211";
         }
         host802154: WirelessHostWithBattery {
             @display("p=214,86");
-            wlan[*].typename = "org.mixim.modules.nic.Nic802154_TI_CC2420";
         }
         hybridRouter: RouterWithBattery {
             @display("r=,,#707070;p=121,99;i=device/accesspoint");
-            numRadios = 2;
-            wlan[0].typename = "org.mixim.modules.nic.Nic80211";
-            wlan[1].typename = "org.mixim.modules.nic.Nic802154_TI_CC2420";
-            gates:
-                ethg[1];
         }
     connections:
-        hostEthernet.ethg[0] <--> { datarate = 10Mbps; delay = 0.1us; } <--> hybridRouter.ethg[0];
+        hostEthernet.ethg++ <--> { datarate = 10Mbps; delay = 0.1us; } <--> hybridRouter.ethg++;
 }
