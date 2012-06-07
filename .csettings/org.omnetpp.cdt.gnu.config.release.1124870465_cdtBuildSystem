@@ -7,7 +7,7 @@
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465." name="/" resourcePath="">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1895549436" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release">
 					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform.927705249" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
-					<builder id="org.omnetpp.cdt.gnu.builder.release.1181366573" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="OMNeT++ Make Builder (opp_makemake)" superClass="org.omnetpp.cdt.gnu.builder.release"/>
+					<builder id="org.omnetpp.cdt.gnu.builder.release.1181366573" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="OMNEST Make Builder (opp_makemake)" superClass="org.omnetpp.cdt.gnu.builder.release"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.149835420" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1272844555" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 						<option id="gnu.cpp.compiler.option.preprocessor.def.346802242" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
@@ -62,16 +62,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.982076545" name="/" resourcePath="tests/coord">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.220727738" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.452695007" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1344262755" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.1765497168" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.1765497168" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1825555912" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1396786432" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1746098000" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1746098000" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -86,16 +87,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.682703593" name="/" resourcePath="tests/channelInfo">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1806688706" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.33415766" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.802156899" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.913461683" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.913461683" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1012841338" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.981515473" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.2099495706" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.2099495706" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -110,16 +112,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.1539138871" name="/" resourcePath="tests/basePhyLayer">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1021839378" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.120846064" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.406581757" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.1670672379" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.1670672379" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1317237677" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.274451440" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1112780319" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1112780319" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -134,16 +137,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.843138814" name="/" resourcePath="tests/radioState">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1154380588" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1861211938" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1270699669" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.1981673176" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.1981673176" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1774974724" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1999344573" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1879087717" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1879087717" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -158,16 +162,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.1301437148" name="/" resourcePath="tests/nicTest">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1320724827" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1395676853" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.958801474" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.2120636377" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.2120636377" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.92391363" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.2000653507" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.306709145" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.306709145" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -182,16 +187,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.743785466" name="/" resourcePath="tests/power">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.2000218024" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.474187894" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.855825732" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.191122215" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.191122215" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.27630093" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.551235260" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.161749788" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.161749788" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -206,16 +212,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.1758038575" name="/" resourcePath="tests/mapping">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.2031679544" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.795716835" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.641269873" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.153898683" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.153898683" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.139953638" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1349131063" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1424926358" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1424926358" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -230,16 +237,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.208092058" name="/" resourcePath="tests/testUtils">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1694375108" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1964126601" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.708733707" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.339700465" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.339700465" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1137931322" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.876900468" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.642325321" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.642325321" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -254,16 +262,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.1938375837" name="/" resourcePath="tests/decider">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.2061335417" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.926646928" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1364376045"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1822610088" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.598771430">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.1993752230" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.1993752230" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.371508729" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1573384194" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.1302806465">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.156812806" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.156812806" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -328,16 +337,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.708690485" name="/" resourcePath="examples/ieee802154a">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.241327360" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1874965807" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.636777565" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.2118794515" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.2118794515" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1975371232" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1476110625" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.2098190875" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.2098190875" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -350,42 +360,19 @@
 					</tool>
 				</toolChain>
 			</folderInfo>
-			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.1715986936" name="/" resourcePath="examples/lmac">
-				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.373390204" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
-					<tool id="cdt.managedbuild.tool.gnu.archiver.base.346069026" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
-					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.864859088" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.1715465330" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
-							<listOptionValue builtIn="false" value="MIXIM_INET"/>
-							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
-						</option>
-						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2015802514" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
-					</tool>
-					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1534539423" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1375982006" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
-							<listOptionValue builtIn="false" value="MIXIM_INET"/>
-							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
-						</option>
-						<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.511647351" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-					</tool>
-					<tool id="cdt.managedbuild.tool.gnu.c.linker.base.743999166" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base.233912627"/>
-					<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.1040214271" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base.187073540"/>
-					<tool id="cdt.managedbuild.tool.gnu.assembler.base.2029778721" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base.875609344">
-						<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1170340207" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-					</tool>
-				</toolChain>
-			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.794060913" name="/" resourcePath="examples/WSNRouting">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1761407937" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1653655196" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.2100925098" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.1953114234" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.1953114234" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.108442753" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1068462674" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1278849780" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1278849780" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -398,34 +385,44 @@
 					</tool>
 				</toolChain>
 			</folderInfo>
-			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.282312434" name="/" resourcePath="examples/analogueModels">
-				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.246278650" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
-					<tool id="cdt.managedbuild.tool.gnu.archiver.base.415790768" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
-					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1214662170" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.981875110" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.1715986936" name="/" resourcePath="examples/lmac">
+				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.373390204" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
+					<tool id="cdt.managedbuild.tool.gnu.archiver.base.346069026" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
+					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.864859088" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.1715465330" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+							<listOptionValue builtIn="false" value="MIXIM_INET"/>
+							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
+						</option>
+						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2015802514" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
-					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1370682919" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.287577401" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1534539423" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1375982006" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+							<listOptionValue builtIn="false" value="MIXIM_INET"/>
+							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
+						</option>
+						<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.511647351" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 					</tool>
-					<tool id="cdt.managedbuild.tool.gnu.c.linker.base.309434436" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base.233912627"/>
-					<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.483354499" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base.187073540"/>
-					<tool id="cdt.managedbuild.tool.gnu.assembler.base.729510507" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base.875609344">
-						<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2100650548" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+					<tool id="cdt.managedbuild.tool.gnu.c.linker.base.743999166" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base.233912627"/>
+					<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.1040214271" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base.187073540"/>
+					<tool id="cdt.managedbuild.tool.gnu.assembler.base.2029778721" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base.875609344">
+						<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1170340207" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 					</tool>
 				</toolChain>
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.638274316" name="/" resourcePath="examples/CSMAMac">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.957868750" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1540801263" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.754089084" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.2129226114" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.2129226114" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.126155036" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.17770113" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.140189553" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.140189553" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -440,16 +437,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.185172470" name="/" resourcePath="examples/Mac80211">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1419015314" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1955665378" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.125149171" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.858966218" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.858966218" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2121138854" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1992951425" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.292329587" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.292329587" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -464,16 +462,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.936269173" name="/" resourcePath="examples/multiConnectionManager">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1040347083" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1596222877" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.92731854" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.1755044443" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.1755044443" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.213585570" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1479266748" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.81795622" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.81795622" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -488,16 +487,17 @@
 			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.1676958515" name="/" resourcePath="examples/ieee802154Narrow">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1676899014" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.317240217" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.987099213" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.6103209" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.6103209" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.635869281" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1358091322" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.362291635" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.362291635" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -510,34 +510,19 @@
 					</tool>
 				</toolChain>
 			</folderInfo>
-			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.4359559" name="/" resourcePath="examples/baseNetwork">
-				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.1925084926" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
-					<tool id="cdt.managedbuild.tool.gnu.archiver.base.668897372" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
-					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1302133416" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1980915905" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
-					</tool>
-					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.493221275" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1621290647" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-					</tool>
-					<tool id="cdt.managedbuild.tool.gnu.c.linker.base.1231146057" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base.233912627"/>
-					<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.1792610534" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base.187073540"/>
-					<tool id="cdt.managedbuild.tool.gnu.assembler.base.753691665" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base.875609344">
-						<inputType id="cdt.managedbuild.tool.gnu.assembler.input.817468500" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-					</tool>
-				</toolChain>
-			</folderInfo>
 			<folderInfo id="org.omnetpp.cdt.gnu.config.release.1124870465.2133096659" name="/" resourcePath="examples/bmac">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.release.468069578" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.release" unusedChildren="">
+					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1972841997" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.224137742"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.938918179" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.1356174373">
-						<option id="gnu.cpp.compiler.option.preprocessor.def.140855491" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+						<option id="gnu.cpp.compiler.option.preprocessor.def.140855491" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1715316839" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1431542728" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.33512161">
-						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1678475962" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+						<option id="gnu.c.compiler.option.preprocessor.def.symbols.1678475962" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 							<listOptionValue builtIn="false" value="MIXIM_INET"/>
 							<listOptionValue builtIn="false" value="WITH_MIXIM_EXAMPLES"/>
 						</option>
@@ -551,15 +536,9 @@
 				</toolChain>
 			</folderInfo>
 			<sourceEntries>
-				<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="examples/WSNRouting"/>
-				<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="examples/multiConnectionManager"/>
-				<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="examples/Mac80211"/>
-				<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="examples/lmac"/>
-				<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="examples/ieee802154Narrow"/>
-				<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="examples/ieee802154a"/>
-				<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="examples/CSMAMac"/>
-				<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="examples/bmac"/>
 				<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+				<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="examples"/>
+				<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="tests"/>
 			</sourceEntries>
 		</configuration>
 	</storageModule>
