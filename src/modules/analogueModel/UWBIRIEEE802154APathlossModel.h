@@ -88,7 +88,7 @@ class MIXIM_API UWBIRIEEE802154APathlossModel : public AnalogueModel
         /*
          * @brief Applies the model to an incoming AirFrame's Signal.
          */
-        void filterSignal(AirFrame *, const Coord&, const Coord&);
+        void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
 
         /*@brief Utility function to use a Rayleigh random variable
          *

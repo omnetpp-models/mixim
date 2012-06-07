@@ -2,7 +2,7 @@
 
 #include "DeciderUWBIRED.h"
 #include "MacPkt_m.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
 DeciderUWBIREDSyncOnAddress::DeciderUWBIREDSyncOnAddress(DeciderToPhyInterface* iface, PhyLayerUWBIR* _uwbiface,
         double _syncThreshold, bool _syncAlwaysSucceeds, bool _stats, bool _trace, const LAddress::L2Type& _addr,
@@ -22,7 +22,7 @@ bool DeciderUWBIREDSyncOnAddress::attemptSync(Signal* /*s*/)
 }
 ;
 
-simtime_t DeciderUWBIREDSyncOnAddress::processSignal(AirFrame* frame)
+simtime_t DeciderUWBIREDSyncOnAddress::processSignal(MiximAirFrame* frame)
 {
     currFrame = frame;
     return DeciderUWBIRED::processSignal(frame);

@@ -99,7 +99,7 @@ class MIXIM_API UWBIRStochasticPathlossModel : public AnalogueModel
             pathlosses.setName("pathloss");
         }
 
-        void filterSignal(AirFrame *, const Coord&, const Coord&);
+        void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
 
     protected:
         double pathloss_exponent;

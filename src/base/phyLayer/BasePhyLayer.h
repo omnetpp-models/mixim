@@ -268,7 +268,7 @@ class MIXIM_API BasePhyLayer : public ChannelAccess, public DeciderToPhyInterfac
         /**
          * @brief Handles messages received from the channel (probably AirFrames).
          */
-        virtual void handleAirFrame(AirFrame* frame);
+        virtual void handleAirFrame(MiximAirFrame* frame);
 
         /**
          * @brief Handles messages received from the upper layer through the
@@ -297,22 +297,22 @@ class MIXIM_API BasePhyLayer : public ChannelAccess, public DeciderToPhyInterfac
         /**
          * @brief Handles incoming AirFrames with the state FIRST_RECEIVE.
          */
-        void handleAirFrameFirstReceive(AirFrame* msg);
+        void handleAirFrameFirstReceive(MiximAirFrame* msg);
 
         /**
          * @brief Handles incoming AirFrames with the state START_RECEIVE.
          */
-        virtual void handleAirFrameStartReceive(AirFrame* msg);
+        virtual void handleAirFrameStartReceive(MiximAirFrame* msg);
 
         /**
          * @brief Handles incoming AirFrames with the state RECEIVING.
          */
-        virtual void handleAirFrameReceiving(AirFrame* msg);
+        virtual void handleAirFrameReceiving(MiximAirFrame* msg);
 
         /**
          * @brief Handles incoming AirFrames with the state END_RECEIVE.
          */
-        virtual void handleAirFrameEndReceive(AirFrame* msg);
+        virtual void handleAirFrameEndReceive(MiximAirFrame* msg);
 
         /*@}*/
 
@@ -334,7 +334,7 @@ class MIXIM_API BasePhyLayer : public ChannelAccess, public DeciderToPhyInterfac
         /**
          * @brief Sends the passed AirFrame to the channel
          */
-        void sendMessageDown(AirFrame* pkt);
+        void sendMessageDown(MiximAirFrame* pkt);
 
         /**
          * @brief Schedule self message to passed point in time.
@@ -347,12 +347,12 @@ class MIXIM_API BasePhyLayer : public ChannelAccess, public DeciderToPhyInterfac
          * @brief This function encapsulates messages from the upper layer into an
          * AirFrame and sets all necessary attributes.
          */
-        virtual AirFrame *encapsMsg(cPacket *msg);
+        virtual MiximAirFrame *encapsMsg(cPacket *msg);
 
         /**
          * @brief Filters the passed AirFrame's Signal by every registered AnalogueModel.
          */
-        virtual void filterSignal(AirFrame *frame);
+        virtual void filterSignal(MiximAirFrame *frame);
 
         /**
          * @brief Called the moment the simulated switching process of the Radio is finished.
@@ -512,7 +512,7 @@ class MIXIM_API BasePhyLayer : public ChannelAccess, public DeciderToPhyInterfac
          * the corresponding DeciderResult up to MACLayer
          *
          */
-        virtual void sendUp(AirFrame* packet, DeciderResult* result);
+        virtual void sendUp(MiximAirFrame* packet, DeciderResult* result);
 
         /**
          * @brief Returns the current simulation time

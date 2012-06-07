@@ -77,7 +77,7 @@ class MIXIM_API BreakpointPathlossModel : public AnalogueModel
          * @brief Filters a specified AirFrame's Signal by adding an attenuation
          * over time to the Signal.
          */
-        virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
+        virtual void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
 
         virtual bool isActiveAtDestination()
         {

@@ -101,7 +101,7 @@ class MIXIM_API Decider
          * @brief This function processes a AirFrame given by the PhyLayer and
          * returns the time point when Decider wants to be given the AirFrame again.
          */
-        virtual simtime_t processSignal(AirFrame* frame);
+        virtual simtime_t processSignal(MiximAirFrame* frame);
 
         /**
          * @brief A function that returns information about the channel state

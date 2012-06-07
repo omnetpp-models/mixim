@@ -2,10 +2,10 @@
 
 #include <cassert>
 
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 #include "Mapping.h"
 
-simtime_t SNRThresholdDecider::processNewSignal(AirFrame* frame)
+simtime_t SNRThresholdDecider::processNewSignal(MiximAirFrame* frame)
 {
     //the rssi level changes therefore we need to check if we can
     //answer an ongoing ChannelSenseRequest now
@@ -183,7 +183,7 @@ simtime_t SNRThresholdDecider::canAnswerCSR(const CSRInfo& requestInfo)
     return answerTime;
 }
 
-simtime_t SNRThresholdDecider::processSignalEnd(AirFrame* frame)
+simtime_t SNRThresholdDecider::processSignalEnd(MiximAirFrame* frame)
 {
     assert(frame == currentSignal.first);
     // here the Signal is finally processed

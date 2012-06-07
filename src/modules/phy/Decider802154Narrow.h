@@ -62,9 +62,9 @@ class MIXIM_API Decider802154Narrow : public BaseDecider
 
     protected:
         /** @brief Process a new signal the first time.*/
-        virtual simtime_t processNewSignal(AirFrame* frame);
+        virtual simtime_t processNewSignal(MiximAirFrame* frame);
 
-        virtual simtime_t processSignalHeader(AirFrame* frame);
+        virtual simtime_t processSignalHeader(MiximAirFrame* frame);
 
         /**
          * @brief Process the end of a signal.
@@ -72,13 +72,13 @@ class MIXIM_API Decider802154Narrow : public BaseDecider
          * Checks if signal was received correct and sends it
          * up to the MAC layer.
          */
-        virtual simtime_t processSignalEnd(AirFrame* frame);
+        virtual simtime_t processSignalEnd(MiximAirFrame* frame);
 
         double getBERFromSNR(double snr);
 
-        bool syncOnSFD(AirFrame* frame);
+        bool syncOnSFD(MiximAirFrame* frame);
 
-        double evalBER(AirFrame* frame);
+        double evalBER(MiximAirFrame* frame);
 
         bool recordStats;
 

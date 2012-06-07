@@ -51,7 +51,7 @@ class MIXIM_API Decider80211MultiChannel : public Decider80211Battery
          * @param frame The AirFrame to process.
          * @return The time the AirFrame should be handled next by this decider.
          */
-        virtual simtime_t processNewSignal(AirFrame* frame);
+        virtual simtime_t processNewSignal(MiximAirFrame* frame);
 
         /**
          * @brief Checks if the passed completed AirFrame was received correctly.
@@ -62,7 +62,7 @@ class MIXIM_API Decider80211MultiChannel : public Decider80211Battery
          *
          * @return	The result of the decider for the passed AirFrame.
          */
-        virtual DeciderResult* checkIfSignalOk(AirFrame* frame);
+        virtual DeciderResult* checkIfSignalOk(MiximAirFrame* frame);
 
     public:
         /**

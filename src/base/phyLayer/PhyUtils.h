@@ -152,7 +152,7 @@ class MIXIM_API RadioStateAnalogueModel : public AnalogueModel
          * this instance RadioStateAnalogueModel, hence the pointer is valid as long
          * as the Radio instance exists that has this RSAM as a member.
          */
-        virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
+        virtual void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
 
         /**
          * @brief sets tracking mode

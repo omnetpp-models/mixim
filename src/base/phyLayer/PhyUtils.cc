@@ -1,10 +1,11 @@
 #include "PhyUtils.h"
 
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
 using namespace std;
 
-void RadioStateAnalogueModel::filterSignal(AirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
+void RadioStateAnalogueModel::filterSignal(MiximAirFrame *frame, const Coord& /*sendersPos*/,
+        const Coord& /*receiverPos*/)
 {
     Signal& signal = frame->getSignal();
     RSAMMapping* attMapping = new RSAMMapping(this, signal.getReceptionStart(), signal.getReceptionEnd());

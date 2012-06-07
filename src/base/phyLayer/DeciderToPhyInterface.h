@@ -13,7 +13,7 @@
 
 #include "MiXiMDefs.h"
 
-class AirFrame;
+class MiximAirFrame;
 class BaseWorldUtility;
 class ConstMapping;
 
@@ -44,7 +44,7 @@ class MIXIM_API DeciderToPhyInterface
          *
          * Used as out-value in "getChannelInfo" method.
          */
-        typedef std::list<AirFrame*> AirFrameVector;
+        typedef std::list<MiximAirFrame*> AirFrameVector;
 
         virtual ~DeciderToPhyInterface()
         {
@@ -81,7 +81,7 @@ class MIXIM_API DeciderToPhyInterface
          * the corresponding DeciderResult up to MACLayer
          *
          */
-        virtual void sendUp(AirFrame* packet, DeciderResult* result) = 0;
+        virtual void sendUp(MiximAirFrame* packet, DeciderResult* result) = 0;
 
         /**
          * @brief Returns the current simulation time

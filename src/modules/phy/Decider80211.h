@@ -56,9 +56,9 @@ class MIXIM_API Decider80211 : public BaseDecider
          *
          * @return	The result of the decider for the passed AirFrame.
          */
-        virtual DeciderResult* checkIfSignalOk(AirFrame* frame);
+        virtual DeciderResult* checkIfSignalOk(MiximAirFrame* frame);
 
-        virtual simtime_t processNewSignal(AirFrame* frame);
+        virtual simtime_t processNewSignal(MiximAirFrame* frame);
 
         /**
          * @brief Processes a received AirFrame.
@@ -69,7 +69,7 @@ class MIXIM_API Decider80211 : public BaseDecider
          *
          * @return	usually return a value for: 'do not pass it again'
          */
-        virtual simtime_t processSignalEnd(AirFrame* frame);
+        virtual simtime_t processSignalEnd(MiximAirFrame* frame);
 
         /** @brief computes if packet is ok or has errors*/
         bool packetOk(double snirMin, int lengthMPDU, double bitrate);

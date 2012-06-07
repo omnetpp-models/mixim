@@ -75,7 +75,7 @@ class MIXIM_API BaseDecider : public Decider
         double sensitivity;
 
         /** @brief Pair of a AirFrame and the state it is in. */
-        typedef std::pair<AirFrame*, int> ReceivedSignal;
+        typedef std::pair<MiximAirFrame*, int> ReceivedSignal;
 
         /** @brief pointer to the currently received AirFrame */
         ReceivedSignal currentSignal;
@@ -178,7 +178,7 @@ class MIXIM_API BaseDecider : public Decider
          * Returns the time point when the decider wants to be given the AirFrame
          * again.
          */
-        virtual simtime_t processSignal(AirFrame* frame);
+        virtual simtime_t processSignal(MiximAirFrame* frame);
 
         /**
          * @brief A function that returns information about the channel state
@@ -213,7 +213,7 @@ class MIXIM_API BaseDecider : public Decider
          * to receive another AirFrame. If thats the case it waits for the end
          * of the signal.
          */
-        virtual simtime_t processNewSignal(AirFrame* frame);
+        virtual simtime_t processNewSignal(MiximAirFrame* frame);
 
         /**
          * @brief Processes the end of the header of a received Signal.
@@ -222,7 +222,7 @@ class MIXIM_API BaseDecider : public Decider
          *
          * Default implementation does not handle signal headers.
          */
-        virtual simtime_t processSignalHeader(AirFrame* /*frame*/)
+        virtual simtime_t processSignalHeader(MiximAirFrame* /*frame*/)
         {
             opp_error("BaseDecider does not handle Signal headers!");
             return notAgain;
@@ -237,13 +237,13 @@ class MIXIM_API BaseDecider : public Decider
          * Default implementation just decides every signal as correct and passes it
          * to the upper layer.
          */
-        virtual simtime_t processSignalEnd(AirFrame* frame);
+        virtual simtime_t processSignalEnd(MiximAirFrame* frame);
 
         /**
          * @brief Processes any Signal for which no state could be found.
          * (is an error case).
          */
-        virtual simtime_t processUnknownSignal(AirFrame* frame);
+        virtual simtime_t processUnknownSignal(MiximAirFrame* frame);
 
         /**
          * @brief Returns the SignalState for the passed AirFrame.
@@ -252,7 +252,7 @@ class MIXIM_API BaseDecider : public Decider
          * is the "currentSignal" and returns its state or if not
          * "NEW".
          */
-        virtual int getSignalState(AirFrame* frame) const;
+        virtual int getSignalState(MiximAirFrame* frame) const;
 
         /**
          * @brief Handles a new incoming ChannelSenseRequest and returns the next
@@ -341,7 +341,7 @@ class MIXIM_API BaseDecider : public Decider
          * Note: 'divided' means here the special element-wise operation on
          * mappings.
          */
-        virtual Mapping* calculateSnrMapping(AirFrame* frame);
+        virtual Mapping* calculateSnrMapping(MiximAirFrame* frame);
 
         /**
          * @brief Calculates a RSSI-Mapping (or Noise-Strength-Mapping) for a
@@ -351,7 +351,8 @@ class MIXIM_API BaseDecider : public Decider
          * exclude is omitted OR to calculate a Noise-Strength-Mapping in case the
          * AirFrame of the received Signal is passed as parameter exclude.
          */
-        virtual Mapping* calculateRSSIMapping(simtime_t_cref start, simtime_t_cref end, AirFrame* exclude = NULL) const;
+        virtual Mapping* calculateRSSIMapping(simtime_t_cref start, simtime_t_cref end,
+                MiximAirFrame* exclude = NULL) const;
 };
 
 #endif /* BASEDECIDER_H_ */

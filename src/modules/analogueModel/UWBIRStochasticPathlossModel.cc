@@ -20,7 +20,7 @@
 #include "UWBIRStochasticPathlossModel.h"
 
 #include "BaseWorldUtility.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
 //const double UWBIRStochasticPathlossModel::Gtx = 0.9, UWBIRStochasticPathlossModel::Grx = 0.9, UWBIRStochasticPathlossModel::ntx = 0.9, UWBIRStochasticPathlossModel::nrx = 0.9;
 const double UWBIRStochasticPathlossModel::Gtx = 1, UWBIRStochasticPathlossModel::Grx = 1,
@@ -44,7 +44,7 @@ double UWBIRStochasticPathlossModel::simtruncnormal(double mean, double stddev, 
     return res;
 }
 
-void UWBIRStochasticPathlossModel::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
+void UWBIRStochasticPathlossModel::filterSignal(MiximAirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
 {
     if (isEnabled)
     {

@@ -26,7 +26,7 @@ bool DeciderUWBIREDSync::attemptSync(Signal* s)
     AirFrameVector::iterator it = syncVector.begin();
     bool search = true;
     simtime_t latestSyncStart = s->getReceptionStart() + IEEE802154A::mandatory_preambleLength - tmin;
-    AirFrame* af = syncVector.front();
+    MiximAirFrame* af = syncVector.front();
     Signal & aSignal = af->getSignal();
 
     while (search

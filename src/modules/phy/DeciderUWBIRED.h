@@ -15,7 +15,7 @@
 #include "MiXiMDefs.h"
 #include "Signal_.h"
 #include "Mapping.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 #include "Decider.h"
 #include "IEEE802154A.h"
 #include "UWBIRPacket.h"
@@ -122,7 +122,7 @@ class MIXIM_API DeciderUWBIRED : public Decider
             syncThresholds.setName("syncThresholds");
         }
 
-        virtual simtime_t processSignal(AirFrame* frame);
+        virtual simtime_t processSignal(MiximAirFrame* frame);
 
         double getAvgThreshold() const
         {
@@ -160,7 +160,7 @@ class MIXIM_API DeciderUWBIRED : public Decider
         simtime_t handleHeaderOver(tSignalMap::iterator& it);
         virtual bool attemptSync(Signal* signal);
         simtime_t
-        handleSignalOver(tSignalMap::iterator& it, AirFrame* frame);
+        handleSignalOver(tSignalMap::iterator& it, MiximAirFrame* frame);
         // first value is energy from signal, other value is total window energy
         std::pair<double, double> integrateWindow(int symbol, simtime_t_cref now, simtime_t_cref burst, Signal* signal);
 

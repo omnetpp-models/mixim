@@ -139,12 +139,12 @@ class MIXIM_API JakesFading : public AnalogueModel
         /**
          * @brief Takes the number of fading paths, the maximum delay
          * on a path, the hosts move, the carrier frequency used and the
-         * interval in which to defien attenuation entries in.	 *
+         * interval in which to defien attenuation entries in.   *
          */
         JakesFading(int fadingPaths, simtime_t_cref delayRMS, double carrierFrequency, simtime_t_cref interval);
         virtual ~JakesFading();
 
-        virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
+        virtual void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
 };
 
 #endif /* JAKESFADING_H_ */

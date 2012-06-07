@@ -401,7 +401,7 @@ simtime_t PhyLayerUWBIR::setRadioState(int rs)
     return endSwitch;
 }
 
-AirFrame *PhyLayerUWBIR::encapsMsg(cPacket *macPkt)
+MiximAirFrame *PhyLayerUWBIR::encapsMsg(cPacket *macPkt)
 {
     // the cMessage passed must be a MacPacket... but no cast needed here
     // MacPkt* pkt = static_cast<MacPkt*>(msg);

@@ -65,7 +65,7 @@ class MIXIM_API SNRThresholdDecider : public BaseDecider
          * Also checks if the new AirFrame changed the power level in the way
          * that we can answer an ongoing channel sense request.
          */
-        virtual simtime_t processNewSignal(AirFrame* frame);
+        virtual simtime_t processNewSignal(MiximAirFrame* frame);
 
         /**
          * @brief Processes a received AirFrame.
@@ -76,7 +76,7 @@ class MIXIM_API SNRThresholdDecider : public BaseDecider
          *
          * @return	usually return a value for: 'do not pass it again'
          */
-        virtual simtime_t processSignalEnd(AirFrame* frame);
+        virtual simtime_t processSignalEnd(MiximAirFrame* frame);
 
         /**
          * @brief Returns point in time when the ChannelSenseRequest of the passed CSRInfo can be answered

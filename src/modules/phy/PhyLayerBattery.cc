@@ -120,7 +120,7 @@ void PhyLayerBattery::handleUpperMessage(cMessage* msg)
     PhyLayer::handleUpperMessage(msg);
 }
 
-void PhyLayerBattery::handleAirFrame(AirFrame* frame)
+void PhyLayerBattery::handleAirFrame(MiximAirFrame* frame)
 {
     if (battery && battery->getState() != HostState::ACTIVE)
     {

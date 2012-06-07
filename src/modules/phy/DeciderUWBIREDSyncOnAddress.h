@@ -13,7 +13,7 @@
 #include "SimpleAddress.h"
 #include "DeciderUWBIRED.h"
 
-class AirFrame;
+class MiximAirFrame;
 class Signal;
 class PhyLayerUWBIR;
 
@@ -66,10 +66,10 @@ class MIXIM_API DeciderUWBIREDSyncOnAddress : public DeciderUWBIRED
 
         virtual bool attemptSync(Signal* signal);
 
-        virtual simtime_t processSignal(AirFrame* frame);
+        virtual simtime_t processSignal(MiximAirFrame* frame);
 
     protected:
-        AirFrame* currFrame;
+        MiximAirFrame* currFrame;
         LAddress::L2Type syncAddress;
 };
 

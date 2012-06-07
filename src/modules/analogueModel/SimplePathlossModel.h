@@ -135,7 +135,7 @@ class MIXIM_API SimplePathlossModel : public AnalogueModel
          * @brief Filters a specified AirFrame's Signal by adding an attenuation
          * over time to the Signal.
          */
-        virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
+        virtual void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
 
         /**
          * @brief Method to calculate the attenuation value for pathloss.

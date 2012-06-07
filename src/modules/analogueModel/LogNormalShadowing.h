@@ -73,7 +73,7 @@ class MIXIM_API LogNormalShadowing : public AnalogueModel
         /**
          * @brief Calculates shadowing loss based on a normal gaussian function.
          */
-        virtual void filterSignal(AirFrame*, const Coord&, const Coord&);
+        virtual void filterSignal(MiximAirFrame*, const Coord&, const Coord&);
 };
 
 #endif /* LOGNORMALSHADOWING_H_ */

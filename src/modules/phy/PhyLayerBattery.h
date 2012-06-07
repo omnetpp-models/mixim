@@ -140,7 +140,7 @@ class MIXIM_API PhyLayerBattery : public PhyLayer
          *
          * Calls the base classes overriden method for normal handling.
          */
-        virtual void handleAirFrame(AirFrame* frame);
+        virtual void handleAirFrame(MiximAirFrame* frame);
 
         /**
          * @brief Captures changes in host state.

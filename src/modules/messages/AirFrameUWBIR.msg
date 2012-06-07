@@ -15,12 +15,12 @@
 
 cplusplus {{
 #include "IEEE802154A.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 }}
 
 class noncobject IEEE802154A::config;
-class AirFrame;
+class MiximAirFrame;
 
-message AirFrameUWBIR extends AirFrame {
+message AirFrameUWBIR extends MiximAirFrame {
     IEEE802154A::config cfg;
 }

@@ -164,7 +164,7 @@ class MIXIM_API PhyLayerUWBIR : public BasePhyLayer
     protected:
         DeciderUWBIRED* uwbdecider;
 
-        virtual AirFrame *encapsMsg(cPacket *msg);
+        virtual MiximAirFrame *encapsMsg(cPacket *msg);
 
         virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
 

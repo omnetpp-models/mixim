@@ -9,9 +9,9 @@
 
 #include <cassert>
 
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
-simtime_t BaseDecider::processSignal(AirFrame* frame)
+simtime_t BaseDecider::processSignal(MiximAirFrame* frame)
 {
 
     assert(frame);
@@ -30,7 +30,7 @@ simtime_t BaseDecider::processSignal(AirFrame* frame)
     }
 }
 
-simtime_t BaseDecider::processNewSignal(AirFrame* frame)
+simtime_t BaseDecider::processNewSignal(MiximAirFrame* frame)
 {
     if (currentSignal.first != 0)
     {
@@ -64,7 +64,7 @@ simtime_t BaseDecider::processNewSignal(AirFrame* frame)
     return signal.getReceptionEnd();
 }
 
-simtime_t BaseDecider::processSignalEnd(AirFrame* frame)
+simtime_t BaseDecider::processSignalEnd(MiximAirFrame* frame)
 {
     deciderEV << "packet was received correctly, it is now handed to upper layer...\n";
     phy->sendUp(frame, new DeciderResult(true));
@@ -78,7 +78,7 @@ simtime_t BaseDecider::processSignalEnd(AirFrame* frame)
     return notAgain;
 }
 
-simtime_t BaseDecider::processUnknownSignal(AirFrame* frame)
+simtime_t BaseDecider::processUnknownSignal(MiximAirFrame* frame)
 {
     opp_error("Unknown state for the AirFrame with ID %d", frame->getId());
     return notAgain;
@@ -144,7 +144,7 @@ void BaseDecider::handleSenseRequestEnd(CSRInfo& requestInfo)
     answerCSR(requestInfo);
 }
 
-int BaseDecider::getSignalState(AirFrame* frame) const
+int BaseDecider::getSignalState(MiximAirFrame* frame) const
 {
     if (frame == currentSignal.first)
         return currentSignal.second;
@@ -236,7 +236,7 @@ void BaseDecider::answerCSR(CSRInfo& requestInfo)
     requestInfo.canAnswerAt = -1;
 }
 
-Mapping* BaseDecider::calculateSnrMapping(AirFrame* frame)
+Mapping* BaseDecider::calculateSnrMapping(MiximAirFrame* frame)
 {
     /* calculate Noise-Strength-Mapping */
     Signal& signal = frame->getSignal();
@@ -263,7 +263,7 @@ void BaseDecider::getChannelInfo(simtime_t_cref start, simtime_t_cref end, AirFr
     phy->getChannelInfo(start, end, out);
 }
 
-Mapping* BaseDecider::calculateRSSIMapping(simtime_t_cref start, simtime_t_cref end, AirFrame* exclude) const
+Mapping* BaseDecider::calculateRSSIMapping(simtime_t_cref start, simtime_t_cref end, MiximAirFrame* exclude) const
 {
     if (exclude)
         deciderEV << "Creating RSSI map excluding AirFrame with id " << exclude->getId() << endl;

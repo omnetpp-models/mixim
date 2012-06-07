@@ -6,7 +6,7 @@
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
 /**
  * @brief This class is used by the BasePhyLayer to keep track of the AirFrames
@@ -46,7 +46,7 @@ class MIXIM_API ChannelInfo
 {
     public:
         /** The stored air frame pointer type */
-        typedef AirFrame* airframe_ptr_t;
+        typedef MiximAirFrame* airframe_ptr_t;
     protected:
         /**
          * The AirFrames are stored in a Matrix with start- and end time as

@@ -22,10 +22,10 @@
 #include "DeciderResult802154Narrow.h"
 #include "MacPkt_m.h"
 #include "PhyToMacControlInfo.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 #include "Mapping.h"
 
-bool Decider802154Narrow::syncOnSFD(AirFrame* frame)
+bool Decider802154Narrow::syncOnSFD(MiximAirFrame* frame)
 {
     double BER;
     double sfdErrorProbability;
@@ -36,7 +36,7 @@ bool Decider802154Narrow::syncOnSFD(AirFrame* frame)
     return sfdErrorProbability < uniform(0, 1, 0);
 }
 
-double Decider802154Narrow::evalBER(AirFrame* frame)
+double Decider802154Narrow::evalBER(MiximAirFrame* frame)
 {
     Signal& signal = frame->getSignal();
 
@@ -53,7 +53,7 @@ double Decider802154Narrow::evalBER(AirFrame* frame)
     return getBERFromSNR(rcvPower / noiseLevel); //std::max(0.5 * exp(-rcvPower / (2 * noiseLevel)), DEFAULT_BER_LOWER_BOUND);
 }
 
-simtime_t Decider802154Narrow::processNewSignal(AirFrame* frame)
+simtime_t Decider802154Narrow::processNewSignal(MiximAirFrame* frame)
 {
     //if we are already receiving another signal this is noise
     if (currentSignal.first != 0)
@@ -76,7 +76,7 @@ simtime_t Decider802154Narrow::processNewSignal(AirFrame* frame)
 
 }
 
-simtime_t Decider802154Narrow::processSignalHeader(AirFrame* frame)
+simtime_t Decider802154Narrow::processSignalHeader(MiximAirFrame* frame)
 {
     if (!syncOnSFD(frame))
     {
@@ -100,7 +100,7 @@ simtime_t Decider802154Narrow::processSignalHeader(AirFrame* frame)
     return s.getReceptionEnd();
 }
 
-simtime_t Decider802154Narrow::processSignalEnd(AirFrame* frame)
+simtime_t Decider802154Narrow::processSignalEnd(MiximAirFrame* frame)
 {
     ConstMapping* snrMapping = calculateSnrMapping(frame);
 

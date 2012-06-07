@@ -1,8 +1,8 @@
 #include "PERModel.h"
 
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
-void PERModel::filterSignal(AirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
+void PERModel::filterSignal(MiximAirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
 {
     Signal& signal = frame->getSignal();
     //simtime_t start  = signal.getReceptionStart();

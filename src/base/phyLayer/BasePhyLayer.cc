@@ -379,7 +379,7 @@ void BasePhyLayer::handleMessage(cMessage* msg)
     }
     else if (msg->getKind() == AIR_FRAME)
     {
-        handleAirFrame(static_cast<AirFrame*>(msg));
+        handleAirFrame(static_cast<MiximAirFrame*>(msg));
 
         //unknown message
     }
@@ -390,7 +390,7 @@ void BasePhyLayer::handleMessage(cMessage* msg)
     }
 }
 
-void BasePhyLayer::handleAirFrame(AirFrame* frame)
+void BasePhyLayer::handleAirFrame(MiximAirFrame* frame)
 {
     //TODO: ask jerome to set air frame priority in his UWBIRPhy
     //assert(frame->getSchedulingPriority() == airFramePriority);
@@ -415,7 +415,7 @@ void BasePhyLayer::handleAirFrame(AirFrame* frame)
     }
 }
 
-void BasePhyLayer::handleAirFrameStartReceive(AirFrame* frame)
+void BasePhyLayer::handleAirFrameStartReceive(MiximAirFrame* frame)
 {
     coreEV << "Received new AirFrame " << frame << " from channel." << endl;
 
@@ -458,7 +458,7 @@ void BasePhyLayer::handleAirFrameStartReceive(AirFrame* frame)
     }
 }
 
-void BasePhyLayer::handleAirFrameReceiving(AirFrame* frame)
+void BasePhyLayer::handleAirFrameReceiving(MiximAirFrame* frame)
 {
 
     Signal& signal = frame->getSignal();
@@ -497,7 +497,7 @@ void BasePhyLayer::handleAirFrameReceiving(AirFrame* frame)
     sendSelfMessage(frame, nextHandleTime);
 }
 
-void BasePhyLayer::handleAirFrameEndReceive(AirFrame* frame)
+void BasePhyLayer::handleAirFrameEndReceive(MiximAirFrame* frame)
 {
     coreEV << "End of Airframe with ID " << frame->getId() << "." << endl;
 
@@ -539,7 +539,7 @@ void BasePhyLayer::handleUpperMessage(cMessage* msg)
     // build the AirFrame to send
     assert(dynamic_cast<cPacket*>(msg) != 0);
 
-    AirFrame* frame = encapsMsg(static_cast<cPacket*>(msg));
+    MiximAirFrame* frame = encapsMsg(static_cast<cPacket*>(msg));
 
     // make sure there is no self message of kind TX_OVER scheduled
     // and schedule the actual one
@@ -549,7 +549,7 @@ void BasePhyLayer::handleUpperMessage(cMessage* msg)
     sendMessageDown(frame);
 }
 
-AirFrame *BasePhyLayer::encapsMsg(cPacket *macPkt)
+MiximAirFrame *BasePhyLayer::encapsMsg(cPacket *macPkt)
 {
     // the cMessage passed must be a MacPacket... but no cast needed here
     // MacPkt* pkt = static_cast<MacPkt*>(msg);
@@ -559,7 +559,7 @@ AirFrame *BasePhyLayer::encapsMsg(cPacket *macPkt)
     assert(ctrlInfo);
 
     // create the new AirFrame
-    AirFrame* frame = new AirFrame(macPkt->getName(), AIR_FRAME);
+    MiximAirFrame* frame = new MiximAirFrame(macPkt->getName(), AIR_FRAME);
 
     // Retrieve the pointer to the Signal-instance from the ControlInfo-instance.
     // We are now the new owner of this instance.
@@ -659,7 +659,7 @@ void BasePhyLayer::handleSelfMessage(cMessage* msg)
 
             //AirFrame
         case AIR_FRAME:
-            handleAirFrame(static_cast<AirFrame*>(msg));
+            handleAirFrame(static_cast<MiximAirFrame*>(msg));
             break;
 
             //ChannelSenseRequest
@@ -684,7 +684,7 @@ void BasePhyLayer::sendMacPktUp(cMessage* pkt)
     send(pkt, upperLayerOut);
 }
 
-void BasePhyLayer::sendMessageDown(AirFrame* msg)
+void BasePhyLayer::sendMessageDown(MiximAirFrame* msg)
 {
 
     sendToChannel(msg);
@@ -698,7 +698,7 @@ void BasePhyLayer::sendSelfMessage(cMessage* msg, simtime_t_cref time)
     scheduleAt(time, msg);
 }
 
-void BasePhyLayer::filterSignal(AirFrame *frame)
+void BasePhyLayer::filterSignal(MiximAirFrame *frame)
 {
     if (analogueModels.empty())
         return;
@@ -902,7 +902,7 @@ void BasePhyLayer::sendControlMsgToMac(cMessage* msg)
     sendControlMessageUp(msg);
 }
 
-void BasePhyLayer::sendUp(AirFrame* frame, DeciderResult* result)
+void BasePhyLayer::sendUp(MiximAirFrame* frame, DeciderResult* result)
 {
 
     coreEV

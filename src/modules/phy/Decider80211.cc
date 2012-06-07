@@ -21,7 +21,7 @@
 #include "Mac80211Pkt_m.h"
 #include "Consts80211.h"
 #include "Mapping.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
 Decider80211::Decider80211(DeciderToPhyInterface* phy, double threshold, double sensitivity, int channel, int myIndex,
         bool debug) :
@@ -32,7 +32,7 @@ Decider80211::Decider80211(DeciderToPhyInterface* phy, double threshold, double 
     centerFrequency = CENTER_FREQUENCIES[channel];
 }
 
-simtime_t Decider80211::processNewSignal(AirFrame* frame)
+simtime_t Decider80211::processNewSignal(MiximAirFrame* frame)
 {
     if (currentSignal.first != 0)
     {
@@ -88,7 +88,7 @@ double Decider80211::calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref e
     return rssi;
 }
 
-DeciderResult* Decider80211::checkIfSignalOk(AirFrame* frame)
+DeciderResult* Decider80211::checkIfSignalOk(MiximAirFrame* frame)
 {
     // check if the snrMapping is above the Decider's specific threshold,
     // i.e. the Decider has received it correctly
@@ -190,7 +190,7 @@ bool Decider80211::packetOk(double snirMin, int lengthMPDU, double bitrate)
     }
 }
 
-simtime_t Decider80211::processSignalEnd(AirFrame* frame)
+simtime_t Decider80211::processSignalEnd(MiximAirFrame* frame)
 {
     // here the Signal is finally processed
 

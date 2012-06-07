@@ -12,7 +12,7 @@ const double DeciderUWBIRED::noiseVariance = 101.085E-12; // P=-116.9 dBW // 404
 const double DeciderUWBIRED::peakPulsePower = 1.3E-3; //1.3E-3 W peak power of pulse to reach  0dBm during burst; // peak instantaneous power of the transmitted pulse (A=0.6V) : 7E-3 W. But peak limit is 0 dBm
 const simsignalwrap_t DeciderUWBIRED::catUWBIRPacketSignal = simsignalwrap_t(MIXIM_SIGNAL_UWBIRPACKET_NAME);
 
-simtime_t DeciderUWBIRED::processSignal(AirFrame* frame)
+simtime_t DeciderUWBIRED::processSignal(MiximAirFrame* frame)
 {
     Signal* s = &frame->getSignal();
     map<Signal*, int>::iterator it = currentSignals.find(s);
@@ -155,7 +155,7 @@ bool DeciderUWBIRED::attemptSync(Signal* s)
     }
 }
 
-simtime_t DeciderUWBIRED::handleSignalOver(map<Signal*, int>::iterator& it , AirFrame* frame)
+simtime_t DeciderUWBIRED::handleSignalOver(map<Signal*, int>::iterator& it, MiximAirFrame* frame)
 {
     if (it->first == tracking)
     {
@@ -270,7 +270,7 @@ bool DeciderUWBIRED::decodePacket(Signal* signal, vector<bool> * receivedBits)
     for (symbol = 0; cfg.preambleLength + symbol * aSymbol < signal->getDuration(); symbol++)
     {
 
-//		int hoppingPos = IEEE802154A::getHoppingPos(symbol);
+//      int hoppingPos = IEEE802154A::getHoppingPos(symbol);
         int decodedBit;
 
         if (stats)
@@ -361,7 +361,7 @@ pair<double, double> DeciderUWBIRED::integrateWindow(int /*symbol*/, simtime_t_c
             Signal & aSignal = (*airFrameIter)->getSignal();
             const ConstMapping * const currPower = aSignal.getReceivingPower();
             double measure = currPower->getValue(arg) * peakPulsePower; //TODO: de-normalize (peakPulsePower should be in AirFrame or in Signal, to be set at run-time)
-//			measure = measure * uniform(0, +1); // random point of Efield at sampling (due to pulse waveform and self interference)
+//          measure = measure * uniform(0, +1); // random point of Efield at sampling (due to pulse waveform and self interference)
             if (currPower == signalPower)
             {
                 signalValue = measure * 0.5; // we capture half of the maximum possible pulse energy to account for self  interference
@@ -375,7 +375,7 @@ pair<double, double> DeciderUWBIRED::integrateWindow(int /*symbol*/, simtime_t_c
             ++currSig;
         }
 
-//		double attenuatedPower = resPower / 10; // 10 dB = 6 dB implementation loss + 5 dB noise factor
+//      double attenuatedPower = resPower / 10; // 10 dB = 6 dB implementation loss + 5 dB noise factor
         vEfield = sqrt(50 * resPower); // P=V²/R
         // add thermal noise realization
         vThermalNoise = getNoiseValue();

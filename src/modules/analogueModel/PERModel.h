@@ -27,7 +27,7 @@ class MIXIM_API PERModel : public AnalogueModel
             assert(per <= 1 && per >= 0);
         }
 
-        virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
+        virtual void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
 
 };
 

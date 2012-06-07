@@ -10,7 +10,7 @@ Decider::Decider(DeciderToPhyInterface* phy) :
 {
 }
 
-simtime_t Decider::processSignal(AirFrame* /*s*/)
+simtime_t Decider::processSignal(MiximAirFrame* /*s*/)
 {
 
     return -1;

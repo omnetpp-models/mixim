@@ -25,7 +25,7 @@
 #include "MiXiMDefs.h"
 #include "AnalogueModel.h"
 #include "Mapping.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 #include "FWMath.h"
 
 /**
@@ -43,7 +43,7 @@ class MIXIM_API IntensityModel : public AnalogueModel
         virtual ~IntensityModel()
         {
         }
-        void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
+        void filterSignal(MiximAirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
         {
             Signal& s = frame->getSignal();
             TimeMapping<Linear>* attMapping = new TimeMapping<Linear>();

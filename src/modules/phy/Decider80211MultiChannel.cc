@@ -9,7 +9,7 @@
 
 #include "DeciderResult80211.h"
 #include "Consts80211.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
 Decider80211MultiChannel::Decider80211MultiChannel(DeciderToPhyInterface* phy, double threshold, double sensitivity,
         double decodingCurrentDelta, int currentChannel, int myIndex, bool debug) :
@@ -37,7 +37,7 @@ void Decider80211MultiChannel::getChannelInfo(simtime_t_cref start, simtime_t_cr
     }
 }
 
-simtime_t Decider80211MultiChannel::processNewSignal(AirFrame* frame)
+simtime_t Decider80211MultiChannel::processNewSignal(MiximAirFrame* frame)
 {
     if (frame->getChannel() != currentChannel)
         return notAgain;
@@ -45,7 +45,7 @@ simtime_t Decider80211MultiChannel::processNewSignal(AirFrame* frame)
     return Decider80211Battery::processNewSignal(frame);
 }
 
-DeciderResult* Decider80211MultiChannel::checkIfSignalOk(AirFrame* frame)
+DeciderResult* Decider80211MultiChannel::checkIfSignalOk(MiximAirFrame* frame)
 {
     DeciderResult* result = 0;
 

@@ -24,7 +24,7 @@
 #include <limits>
 
 #include "IEEE802154A.h"
-#include "AirFrame_m.h"
+#include "MiximAirFrame_m.h"
 
 const double UWBIRIEEE802154APathlossModel::PL0 = 0.000040738; // -43.9 dB
 const double UWBIRIEEE802154APathlossModel::pathloss_exponent = 1.79;
@@ -178,7 +178,7 @@ const UWBIRIEEE802154APathlossModel::CMconfig UWBIRIEEE802154APathlossModel::CMc
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } // CM9
 };
 
-void UWBIRIEEE802154APathlossModel::filterSignal(AirFrame *frame, const Coord& /*sendersPos*/,
+void UWBIRIEEE802154APathlossModel::filterSignal(MiximAirFrame *frame, const Coord& /*sendersPos*/,
         const Coord& /*receiverPos*/)
 {
     Signal& signal = frame->getSignal();
