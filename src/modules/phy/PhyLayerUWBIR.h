@@ -61,7 +61,6 @@
 // Second International Omnet++ Workshop,Simu'TOOLS, Rome, 6 Mar 09.
 // http://portal.acm.org/citation.cfm?id=1537714
 //
-
 #ifndef UWBIR_PHY_LAYER_H
 #define UWBIR_PHY_LAYER_H
 
@@ -76,9 +75,9 @@ class DeciderUWBIREDSync;
 #include "DeciderUWBIRED.h"
 
 #if (OMNETPP_VERSION >= 0x0402)
-	typedef cNEDValue 				  t_dynamic_expression_value;
+typedef cNEDValue t_dynamic_expression_value;
 #else
-	typedef cDynamicExpression::Value t_dynamic_expression_value;
+typedef cDynamicExpression::Value t_dynamic_expression_value;
 #endif
 
 /**
@@ -116,133 +115,135 @@ class DeciderUWBIREDSync;
  */
 class MIXIM_API PhyLayerUWBIR : public BasePhyLayer
 {
-	friend class DeciderUWBIRED;
-private:
-	/** @brief Copy constructor is not allowed.
-	 */
-	PhyLayerUWBIR(const PhyLayerUWBIR&);
-	/** @brief Assignment operator is not allowed.
-	 */
-	PhyLayerUWBIR& operator=(const PhyLayerUWBIR&);
+        friend class DeciderUWBIRED;
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        PhyLayerUWBIR(const PhyLayerUWBIR&);
+        /** @brief Assignment operator is not allowed.
+         */
+        PhyLayerUWBIR& operator=(const PhyLayerUWBIR&);
 
-public:
-	PhyLayerUWBIR()
-		: BasePhyLayer()
-		, uwbdecider(NULL)
-		, uwbradio(NULL)
-		, numActivities(0)
-		, sleepCurrent(0), rxCurrent(0), decodingCurrentDelta(0), txCurrent(0), syncCurrent(0)
-		, setupRxCurrent(0), setupTxCurrent(0), rxTxCurrent(0), txRxCurrent(0)
-	{}
+    public:
+        PhyLayerUWBIR() :
+                BasePhyLayer(), uwbdecider(NULL), uwbradio(NULL), numActivities(0), sleepCurrent(0), rxCurrent(0), decodingCurrentDelta(
+                        0), txCurrent(0), syncCurrent(0), setupRxCurrent(0), setupTxCurrent(0), rxTxCurrent(0), txRxCurrent(
+                        0)
+        {
+        }
 
-    void finish();
+        void finish();
 
-    // this function allows to include common xml documents for ned parameters as ned functions
-    static t_dynamic_expression_value ghassemzadehNLOSFunc(cComponent */*context*/, t_dynamic_expression_value argv[] __attribute__((unused)), int /*argc*/) {
-      const char * ghassemzadehnlosxml =
-    		  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-    		  "<root>"
-    		  "<AnalogueModels>"
-    		  "<AnalogueModel type=\"UWBIRStochasticPathlossModel\"><parameter name=\"PL0\" type=\"double\" value=\"-51\"/>"
-    		        "<parameter name=\"mu_gamma\" type=\"double\" value=\"3.5\"/>"
-                    "<parameter name=\"sigma_gamma\" type=\"double\" value=\"0.97\"/>"
-                    "<parameter name=\"mu_sigma\" type=\"double\" value=\"2.7\"/>"
-                    "<parameter name=\"sigma_sigma\" type=\"double\" value=\"0.98\"/>"
-                    "<parameter name=\"isEnabled\" type=\"bool\" value=\"true\"/>"
-                    "<parameter name=\"shadowing\" type=\"bool\" value=\"true\"/>"
-                "</AnalogueModel>"
-    		  "</AnalogueModels>"
-    		  "</root>";
-      cXMLParImpl xmlParser;
-      xmlParser.parse(ghassemzadehnlosxml);  // from char* to xml
-      t_dynamic_expression_value parameters(xmlParser.xmlValue(NULL)); // from xml to Value
-      return parameters;
-    }
-    typedef t_dynamic_expression_value (*fptr) (cComponent *context, t_dynamic_expression_value argv[], int argc);
-    static fptr ghassemzadehNLOSFPtr;
-    //static t_dynamic_expression_value (*ghassemzadehNLOSFPtr) (cComponent *context, t_dynamic_expression_value argv[], int argc);
+        // this function allows to include common xml documents for ned parameters as ned functions
+        static t_dynamic_expression_value ghassemzadehNLOSFunc(cComponent */*context*/,
+                t_dynamic_expression_value argv[] __attribute__((unused)), int /*argc*/)
+        {
+            const char * ghassemzadehnlosxml =
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                            "<root>"
+                            "<AnalogueModels>"
+                            "<AnalogueModel type=\"UWBIRStochasticPathlossModel\"><parameter name=\"PL0\" type=\"double\" value=\"-51\"/>"
+                            "<parameter name=\"mu_gamma\" type=\"double\" value=\"3.5\"/>"
+                            "<parameter name=\"sigma_gamma\" type=\"double\" value=\"0.97\"/>"
+                            "<parameter name=\"mu_sigma\" type=\"double\" value=\"2.7\"/>"
+                            "<parameter name=\"sigma_sigma\" type=\"double\" value=\"0.98\"/>"
+                            "<parameter name=\"isEnabled\" type=\"bool\" value=\"true\"/>"
+                            "<parameter name=\"shadowing\" type=\"bool\" value=\"true\"/>"
+                            "</AnalogueModel>"
+                            "</AnalogueModels>"
+                            "</root>";
+            cXMLParImpl xmlParser;
+            xmlParser.parse(ghassemzadehnlosxml); // from char* to xml
+            t_dynamic_expression_value parameters(xmlParser.xmlValue(NULL)); // from xml to Value
+            return parameters;
+        }
+        typedef t_dynamic_expression_value (*fptr)(cComponent *context, t_dynamic_expression_value argv[], int argc);
+        static fptr ghassemzadehNLOSFPtr;
+        //static t_dynamic_expression_value (*ghassemzadehNLOSFPtr) (cComponent *context, t_dynamic_expression_value argv[], int argc);
 
+    protected:
+        DeciderUWBIRED* uwbdecider;
 
+        virtual AirFrame *encapsMsg(cPacket *msg);
 
-protected:
-    DeciderUWBIRED* uwbdecider;
+        virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
 
-    virtual AirFrame *encapsMsg(cPacket *msg);
+        AnalogueModel* createUWBIRStochasticPathlossModel(ParameterMap & params) const;
+        AnalogueModel* createUWBIRIEEE802154APathlossModel(ParameterMap & params) const;
+        AnalogueModel* createIntensityModel(ParameterMap & params) const;
+        virtual Decider* getDeciderFromName(std::string name, ParameterMap& params);
+        virtual Radio* initializeRadio() const;
 
-    virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
+        RadioUWBIR* uwbradio;
 
-    AnalogueModel* createUWBIRStochasticPathlossModel(ParameterMap & params) const;
-    AnalogueModel* createUWBIRIEEE802154APathlossModel(ParameterMap & params) const;
-    AnalogueModel* createIntensityModel(ParameterMap & params) const;
-    virtual Decider* getDeciderFromName(std::string name, ParameterMap& params);
-    virtual Radio* initializeRadio() const;
+        virtual void switchRadioToRX()
+        {
+            Enter_Method_Silent();
+            uwbradio->startReceivingFrame(simTime());
+            setRadioCurrent(radio->getCurrentState());
+        }
 
-    RadioUWBIR* uwbradio;
+        virtual void switchRadioToSync()
+        {
+            Enter_Method_Silent();
+            uwbradio->finishReceivingFrame(simTime());
+            setRadioCurrent(radio->getCurrentState());
+        }
 
-    virtual void switchRadioToRX() {
-    	Enter_Method_Silent();
-    	uwbradio->startReceivingFrame(simTime());
-    	setRadioCurrent(radio->getCurrentState());
-    }
+        /** @brief Number of power consuming activities (accounts).*/
+        int numActivities;
 
-    virtual void switchRadioToSync() {
-    	Enter_Method_Silent();
-    	uwbradio->finishReceivingFrame(simTime());
-    	setRadioCurrent(radio->getCurrentState());
-    }
+        /** @brief The different currents in mA.*/
+        double sleepCurrent, rxCurrent, decodingCurrentDelta, txCurrent, syncCurrent;
 
-	/** @brief Number of power consuming activities (accounts).*/
-	int numActivities;
+        /** @brief The differnet switching state currents in mA.*/
+        double setupRxCurrent, setupTxCurrent, rxTxCurrent, txRxCurrent;
 
-	/** @brief The different currents in mA.*/
-	double sleepCurrent, rxCurrent, decodingCurrentDelta, txCurrent, syncCurrent;
+        /**
+         * @brief Defines the power consuming activities (accounts) of
+         * the NIC. Should be the same as defined in the decider.
+         */
+        enum Activities
+        {
+            SLEEP_ACCT = 0, RX_ACCT, //1
+            TX_ACCT, //2
+            SWITCHING_ACCT, //3
+            SYNC_ACCT,
+        //4
+        };
 
-	/** @brief The differnet switching state currents in mA.*/
-	double setupRxCurrent, setupTxCurrent, rxTxCurrent, txRxCurrent;
+        enum ProtocolIds
+        {
+            IEEE_802154_UWB = 3200,
+        };
 
-	/**
-	 * @brief Defines the power consuming activities (accounts) of
-	 * the NIC. Should be the same as defined in the decider.
-	 */
-	enum Activities {
-		SLEEP_ACCT=0,
-		RX_ACCT,  		//1
-		TX_ACCT,  		//2
-		SWITCHING_ACCT, //3
-		SYNC_ACCT,		//4
-	};
+        /** @brief Updates the actual current drawn for the passed state.*/
+        virtual void setRadioCurrent(int rs);
 
-	enum ProtocolIds {
-		IEEE_802154_UWB = 3200,
-	};
+        /** @brief Updates the actual current drawn for switching between
+         * the passed states.*/
+        virtual void setSwitchingCurrent(int from, int to);
 
-	/** @brief Updates the actual current drawn for the passed state.*/
-	virtual void setRadioCurrent(int rs);
+        /**
+         * @brief Captures changes in host state.
+         *
+         * Note: Does not yet cancel any ongoing transmissions if the
+         * state changes to off.
+         */
+        virtual void handleHostState(const HostState& state);
 
-	/** @brief Updates the actual current drawn for switching between
-	 * the passed states.*/
-	virtual void setSwitchingCurrent(int from, int to);
+        /**
+         * @brief Captures radio switches to adjust power consumption.
+         */
+        virtual void finishRadioSwitching();
 
-	/**
-	 * @brief Captures changes in host state.
-	 *
-	 * Note: Does not yet cancel any ongoing transmissions if the
-	 * state changes to off.
-	 */
-	virtual void handleHostState(const HostState& state);
+    public:
+        virtual void initialize(int stage);
 
-	/**
-	 * @brief Captures radio switches to adjust power consumption.
-	 */
-	virtual void finishRadioSwitching();
-
-public:
-	virtual void initialize(int stage);
-
-	/**
-	 * @brief Captures radio switches to adjust power consumption.
-	 */
-	virtual simtime_t setRadioState(int rs);
+        /**
+         * @brief Captures radio switches to adjust power consumption.
+         */
+        virtual simtime_t setRadioState(int rs);
 };
 
 #endif

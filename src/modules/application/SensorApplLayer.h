@@ -17,7 +17,6 @@
  * description: Generate periodic traffic addressed to a sink
  **************************************************************************/
 
-
 #ifndef SENSOR_APPL_LAYER_H
 #define SENSOR_APPL_LAYER_H
 
@@ -49,128 +48,106 @@ class BaseWorldUtility;
  * @ingroup applLayer
  * @author Amre El-Hoiydi, Jérôme Rousselot
  **/
-class MIXIM_API SensorApplLayer:public BaseLayer
+class MIXIM_API SensorApplLayer : public BaseLayer
 {
-private:
-	/** @brief Copy constructor is not allowed.
-	 */
-	SensorApplLayer(const SensorApplLayer&);
-	/** @brief Assignment operator is not allowed.
-	 */
-	SensorApplLayer& operator=(const SensorApplLayer&);
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        SensorApplLayer(const SensorApplLayer&);
+        /** @brief Assignment operator is not allowed.
+         */
+        SensorApplLayer& operator=(const SensorApplLayer&);
 
-public:
-  /** @brief Initialization of the module and some variables*/
-  virtual void initialize(int);
-  virtual void finish();
+    public:
+        /** @brief Initialization of the module and some variables*/
+        virtual void initialize(int);
+        virtual void finish();
 
-  virtual ~SensorApplLayer();
-  
-  SensorApplLayer()
-  	  : BaseLayer()
-  	  , delayTimer(NULL)
-  	  , myAppAddr()
-  	  , destAddr()
-  	  , sentPackets(0)
-  	  , initializationTime()
-  	  , firstPacketGeneration()
-  	  , lastPacketReception()
-  	  , trafficType(0)
-  	  , trafficParam(0.0)
-  	  , nbPackets(0)
-  	  , nbPacketsSent(0)
-  	  , nbPacketsReceived(0)
-  	  , stats(false)
-  	  , trace(false)
-  	  , debug(false)
-  	  , broadcastPackets(false)
-  	  , latencies()
-  	  , latency()
-  	  , latenciesRaw()
-  	  , packet(100)
-  	  , headerLength(0)
-  	  , world(NULL)
-  	  , dataOut(0)
-  	  , dataIn(0)
-  	  , ctrlOut(0)
-  	  , ctrlIn(0)
-  {} // we must specify a packet length for Packet.h
+        virtual ~SensorApplLayer();
 
-  enum APPL_MSG_TYPES
-  {
-    SEND_DATA_TIMER,
-    STOP_SIM_TIMER,
-    DATA_MESSAGE
-  };
+        SensorApplLayer() :
+                BaseLayer(), delayTimer(NULL), myAppAddr(), destAddr(), sentPackets(0), initializationTime(), firstPacketGeneration(), lastPacketReception(), trafficType(
+                        0), trafficParam(0.0), nbPackets(0), nbPacketsSent(0), nbPacketsReceived(0), stats(false), trace(
+                        false), debug(false), broadcastPackets(false), latencies(), latency(), latenciesRaw(), packet(
+                        100), headerLength(0), world(NULL), dataOut(0), dataIn(0), ctrlOut(0), ctrlIn(0)
+        {
+        } // we must specify a packet length for Packet.h
 
-  enum TRAFFIC_TYPES
-  {
-    UNKNOWN=0,
-    PERIODIC,
-    UNIFORM,
-    EXPONENTIAL,
-    NB_DISTRIBUTIONS,
-  };
+        enum APPL_MSG_TYPES
+        {
+            SEND_DATA_TIMER, STOP_SIM_TIMER, DATA_MESSAGE
+        };
 
-protected:
-  cMessage * delayTimer;
-  LAddress::L3Type myAppAddr;
-  LAddress::L3Type destAddr;
-  int sentPackets;
-  simtime_t initializationTime;
-  simtime_t firstPacketGeneration;
-  simtime_t lastPacketReception;
-  // parameters:
-  int trafficType;
-  double trafficParam;
-  int nbPackets;
-  long nbPacketsSent;
-  long nbPacketsReceived;
-  bool stats;
-  bool trace;
-  bool debug;
-  bool broadcastPackets;
-  std::map < LAddress::L3Type, cStdDev > latencies;
-  cStdDev latency;
-  cOutVector latenciesRaw;
-  Packet packet; // informs the simulation of the number of packets sent and received by this node.
-  int headerLength;
-  BaseWorldUtility* world;
+        enum TRAFFIC_TYPES
+        {
+            UNKNOWN = 0, PERIODIC, UNIFORM, EXPONENTIAL, NB_DISTRIBUTIONS,
+        };
 
-protected:
-    // gates
-	int dataOut;
-	int dataIn;
-    int ctrlOut;
-    int ctrlIn;
+    protected:
+        cMessage * delayTimer;
+        LAddress::L3Type myAppAddr;
+        LAddress::L3Type destAddr;
+        int sentPackets;
+        simtime_t initializationTime;
+        simtime_t firstPacketGeneration;
+        simtime_t lastPacketReception;
+        // parameters:
+        int trafficType;
+        double trafficParam;
+        int nbPackets;
+        long nbPacketsSent;
+        long nbPacketsReceived;
+        bool stats;
+        bool trace;
+        bool debug;
+        bool broadcastPackets;
+        std::map<LAddress::L3Type, cStdDev> latencies;
+        cStdDev latency;
+        cOutVector latenciesRaw;
+        Packet packet; // informs the simulation of the number of packets sent and received by this node.
+        int headerLength;
+        BaseWorldUtility* world;
 
-  /** @brief Handle self messages such as timer... */
-   virtual void handleSelfMsg(cMessage *);
+    protected:
+        // gates
+        int dataOut;
+        int dataIn;
+        int ctrlOut;
+        int ctrlIn;
 
-  /** @brief Handle messages from lower layer */
-  virtual void handleLowerMsg(cMessage *);
+        /** @brief Handle self messages such as timer... */
+        virtual void handleSelfMsg(cMessage *);
 
-  virtual void handleLowerControl(cMessage * msg);
+        /** @brief Handle messages from lower layer */
+        virtual void handleLowerMsg(cMessage *);
 
-  virtual void handleUpperMsg(cMessage * m) { delete m; }
+        virtual void handleLowerControl(cMessage * msg);
 
-  virtual void handleUpperControl(cMessage * m) { delete m; }
+        virtual void handleUpperMsg(cMessage * m)
+        {
+            delete m;
+        }
 
-  /** @brief send a data packet to the next hop */
-  virtual void sendData();
+        virtual void handleUpperControl(cMessage * m)
+        {
+            delete m;
+        }
 
-  /** @brief Recognize distribution name. Redefine this method to add your own distribution. */
-  virtual void initializeDistribution(const char*);
+        /** @brief send a data packet to the next hop */
+        virtual void sendData();
 
-  /** @brief calculate time to wait before sending next packet, if required. You can redefine this method in a subclass to add your own distribution. */
-  virtual void scheduleNextPacket();
+        /** @brief Recognize distribution name. Redefine this method to add your own distribution. */
+        virtual void initializeDistribution(const char*);
 
-  /**
-   * @brief Returns the latency statistics variable for the passed host address.
-   * @param hostAddress the address of the host to return the statistics for.
-   * @return A reference to the hosts latency statistics.
-   */
-  cStdDev& hostsLatency(const LAddress::L3Type& hostAddress);
+        /** @brief calculate time to wait before sending next packet, if required. You can redefine this method in a subclass to add your own distribution. */
+        virtual void scheduleNextPacket();
+
+        /**
+         * @brief Returns the latency statistics variable for the passed host address.
+         * @param hostAddress the address of the host to return the statistics for.
+         * @return A reference to the hosts latency statistics.
+         */
+        cStdDev& hostsLatency(const LAddress::L3Type& hostAddress);
 };
 
 #endif

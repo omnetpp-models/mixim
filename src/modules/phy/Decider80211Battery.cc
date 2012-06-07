@@ -15,12 +15,16 @@
 
 #include "Decider80211Battery.h"
 
-void Decider80211Battery::setChannelIdleStatus(bool isIdle) {
-	if(isIdle) {
-		phy->drawCurrent(0.0, 0);
-	} else {
-		phy->drawCurrent(decodingCurrentDelta, DECODING_ACCT);
-	}
+void Decider80211Battery::setChannelIdleStatus(bool isIdle)
+{
+    if (isIdle)
+    {
+        phy->drawCurrent(0.0, 0);
+    }
+    else
+    {
+        phy->drawCurrent(decodingCurrentDelta, DECODING_ACCT);
+    }
 
-	Decider80211::setChannelIdleStatus(isIdle);
+    Decider80211::setChannelIdleStatus(isIdle);
 }

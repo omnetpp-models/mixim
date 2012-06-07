@@ -17,18 +17,18 @@
 
 #include <cassert>
 
-const LAddress::L2Type LAddress::L2BROADCAST = 
+const LAddress::L2Type LAddress::L2BROADCAST =
 #ifdef MIXIM_INET
-    MACAddress::BROADCAST_ADDRESS;
+        MACAddress::BROADCAST_ADDRESS;
 #else
-    LAddress::L2Type(-1);
+LAddress::L2Type(-1);
 #endif
-const LAddress::L2Type LAddress::L2NULL      = 
+const LAddress::L2Type LAddress::L2NULL =
 #ifdef MIXIM_INET
-    LAddress::L2Type();
+        LAddress::L2Type();
 #else
-    LAddress::L2Type(0);
+LAddress::L2Type(0);
 #endif
 
 const LAddress::L3Type LAddress::L3BROADCAST = LAddress::L3Type(-1);
-const LAddress::L3Type LAddress::L3NULL      = LAddress::L3Type(0);
+const LAddress::L3Type LAddress::L3NULL = LAddress::L3Type(0);

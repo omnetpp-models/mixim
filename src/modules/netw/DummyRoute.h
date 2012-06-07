@@ -27,42 +27,46 @@ class NetwPkt;
 
 class MIXIM_API DummyRoute : public BaseNetwLayer
 {
-public:
-	DummyRoute()
-		: BaseNetwLayer()
-		, stats(false)
-		, trace(false)
-		, networkID(-1)
-	{}
+    public:
+        DummyRoute() :
+                BaseNetwLayer(), stats(false), trace(false), networkID(-1)
+        {
+        }
 
-    /** @brief Initialization of the module and some variables*/
-    virtual void initialize(int);
-    virtual void finish();
+        /** @brief Initialization of the module and some variables*/
+        virtual void initialize(int);
+        virtual void finish();
 
-protected:
+    protected:
 
-    bool stats, trace;
+        bool stats, trace;
 
-    int networkID;  // the network to which we belong
+        int networkID; // the network to which we belong
 
-    /** @brief Handle messages from upper layer */
-    virtual void handleUpperMsg(cMessage* msg);
+        /** @brief Handle messages from upper layer */
+        virtual void handleUpperMsg(cMessage* msg);
 
-    /** @brief Handle messages from lower layer */
-    virtual void handleLowerMsg(cMessage* msg);
+        /** @brief Handle messages from lower layer */
+        virtual void handleLowerMsg(cMessage* msg);
 
-    /** @brief Handle self messages */
-    virtual void handleSelfMsg(cMessage* /*msg*/) { };
+        /** @brief Handle self messages */
+        virtual void handleSelfMsg(cMessage* /*msg*/)
+        {
+        }
+        ;
 
-    /** @brief Handle control messages from lower layer */
-    virtual void handleLowerControl(cMessage* msg);
+        /** @brief Handle control messages from lower layer */
+        virtual void handleLowerControl(cMessage* msg);
 
-    virtual void handleUpperControl(cMessage* msg) { delete msg; }
+        virtual void handleUpperControl(cMessage* msg)
+        {
+            delete msg;
+        }
 
-    virtual NetwPkt* encapsMsg(cPacket *appPkt);
+        virtual NetwPkt* encapsMsg(cPacket *appPkt);
 
-    /** @brief Decapsulate a message */
-    virtual cPacket* decapsMsg(NetwPkt *msg);
+        /** @brief Decapsulate a message */
+        virtual cPacket* decapsMsg(NetwPkt *msg);
 
 };
 

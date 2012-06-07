@@ -29,35 +29,40 @@
  *
  * @ingroup mapping
  */
-class MIXIM_API SimpleTimeConstMapping: public SimpleConstMapping {
+class MIXIM_API SimpleTimeConstMapping : public SimpleConstMapping
+{
 
-protected:
-	double myValue;
-	simtime_t start, stop;
-public:
-	/** @brief Constructs the mapping with the value _myValue, in the
-	 * time interval [start, stop].
-	 */
-	SimpleTimeConstMapping(double _myValue, simtime_t_cref _start, simtime_t_cref _stop)
-		: SimpleConstMapping(DimensionSet(Dimension::time))
-		, myValue(_myValue)
-		, start(_start)
-		, stop(_stop)
-	{
-		initializeArguments(Argument(_start), Argument(_stop), Argument(1));
-	}
-	virtual ~SimpleTimeConstMapping() {}
+    protected:
+        double myValue;
+        simtime_t start, stop;
+    public:
+        /** @brief Constructs the mapping with the value _myValue, in the
+         * time interval [start, stop].
+         */
+        SimpleTimeConstMapping(double _myValue, simtime_t_cref _start, simtime_t_cref _stop) :
+                SimpleConstMapping(DimensionSet(Dimension::time)), myValue(_myValue), start(_start), stop(_stop)
+        {
+            initializeArguments(Argument(_start), Argument(_stop), Argument(1));
+        }
+        virtual ~SimpleTimeConstMapping()
+        {
+        }
 
-	/**
-	 * @brief Returns a constant.
-	 * */
-	double getValue(const Argument& /*pos*/) const { return myValue; }
+        /**
+         * @brief Returns a constant.
+         * */
+        double getValue(const Argument& /*pos*/) const
+        {
+            return myValue;
+        }
 
-	/**
-	 * @brief creates a clone of this mapping.
-	 */
-	ConstMapping* constClone() const {
-		return new SimpleTimeConstMapping(myValue, start, stop); }
+        /**
+         * @brief creates a clone of this mapping.
+         */
+        ConstMapping* constClone() const
+        {
+            return new SimpleTimeConstMapping(myValue, start, stop);
+        }
 };
 
 #endif

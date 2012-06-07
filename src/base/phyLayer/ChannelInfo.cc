@@ -4,204 +4,207 @@
 #include <assert.h>
 
 const ChannelInfo::const_iterator ChannelInfo::cConstItEnd(NULL, SIMTIME_ZERO, SIMTIME_ZERO);
-const ChannelInfo::iterator       ChannelInfo::cItEnd(NULL, SIMTIME_ZERO, SIMTIME_ZERO);
+const ChannelInfo::iterator ChannelInfo::cItEnd(NULL, SIMTIME_ZERO, SIMTIME_ZERO);
 
 void ChannelInfo::addAirFrame(airframe_ptr_t frame, simtime_t_cref startTime)
 {
-	assert(airFrameStarts.count(frame->getTreeId()) == 0);
+    assert(airFrameStarts.count(frame->getTreeId()) == 0);
 
-	//calculate endTime of AirFrame
-	simtime_t endTime = startTime + frame->getDuration();
+    //calculate endTime of AirFrame
+    simtime_t endTime = startTime + frame->getDuration();
 
-	AirFrameMatrix::iterator pos = activeAirFrames.lower_bound(endTime);
-	if(pos == activeAirFrames.end() || (activeAirFrames.key_comp()(endTime, pos->first))) {
-	    // key does not exists
-		pos = activeAirFrames.insert(pos, std::make_pair(endTime, AirFrameMatrix::mapped_type()));
-	}
-	pos->second.insert(std::make_pair(startTime, frame));
+    AirFrameMatrix::iterator pos = activeAirFrames.lower_bound(endTime);
+    if (pos == activeAirFrames.end() || (activeAirFrames.key_comp()(endTime, pos->first)))
+    {
+        // key does not exists
+        pos = activeAirFrames.insert(pos, std::make_pair(endTime, AirFrameMatrix::mapped_type()));
+    }
+    pos->second.insert(std::make_pair(startTime, frame));
 
-	//add to start time map
-	airFrameStarts[frame->getTreeId()] = startTime;
+    //add to start time map
+    airFrameStarts[frame->getTreeId()] = startTime;
 
-	assert(!isChannelEmpty());
+    assert(!isChannelEmpty());
 }
 
-void ChannelInfo::addToInactives(airframe_ptr_t frame,
-								 simtime_t_cref startTime,
-								 simtime_t_cref endTime)
+void ChannelInfo::addToInactives(airframe_ptr_t frame, simtime_t_cref startTime, simtime_t_cref endTime)
 {
-	// At first, check if some inactive AirFrames can be removed because the
-	// AirFrame to in-activate was the last one they intersected with.
-	checkAndCleanInterval(startTime, endTime);
+    // At first, check if some inactive AirFrames can be removed because the
+    // AirFrame to in-activate was the last one they intersected with.
+    checkAndCleanInterval(startTime, endTime);
 
-	if(!canDiscardInterval(startTime, endTime)) {
-		AirFrameMatrix::iterator pos = inactiveAirFrames.lower_bound(endTime);
-		if(pos == inactiveAirFrames.end() || (inactiveAirFrames.key_comp()(endTime, pos->first))) {
-		    // key does not exists
-			pos = inactiveAirFrames.insert(pos, std::make_pair(endTime, AirFrameMatrix::mapped_type()));
-		}
-		pos->second.insert(std::make_pair(startTime, frame));
-	}
-	else {
-		airFrameStarts.erase(frame->getTreeId());
-		delete frame;
-	}
+    if (!canDiscardInterval(startTime, endTime))
+    {
+        AirFrameMatrix::iterator pos = inactiveAirFrames.lower_bound(endTime);
+        if (pos == inactiveAirFrames.end() || (inactiveAirFrames.key_comp()(endTime, pos->first)))
+        {
+            // key does not exists
+            pos = inactiveAirFrames.insert(pos, std::make_pair(endTime, AirFrameMatrix::mapped_type()));
+        }
+        pos->second.insert(std::make_pair(startTime, frame));
+    }
+    else
+    {
+        airFrameStarts.erase(frame->getTreeId());
+        delete frame;
+    }
 }
 
 simtime_t ChannelInfo::findEarliestInfoPoint(simtime_t_cref returnTimeIfEmpty /*= -1*/) const
 {
-	c_min_start_time_fctr fctrMin;
+    c_min_start_time_fctr fctrMin;
 
-	AirFrameMatrix::const_iterator itActivesMin   = std::min_element(activeAirFrames.begin()  , activeAirFrames.end()  , fctrMin);
-	AirFrameMatrix::const_iterator itInactivesMin = std::min_element(inactiveAirFrames.begin(), inactiveAirFrames.end(), fctrMin);
+    AirFrameMatrix::const_iterator itActivesMin = std::min_element(activeAirFrames.begin(), activeAirFrames.end(),
+            fctrMin);
+    AirFrameMatrix::const_iterator itInactivesMin = std::min_element(inactiveAirFrames.begin(), inactiveAirFrames.end(),
+            fctrMin);
 
-	if (itActivesMin != activeAirFrames.end() && itInactivesMin != inactiveAirFrames.end()) {
-		return std::min(itActivesMin->second.begin()->first, itInactivesMin->second.begin()->first);
-	}
-	if (itActivesMin != activeAirFrames.end())
-		return itActivesMin->second.begin()->first;
-	if (itInactivesMin != inactiveAirFrames.end())
-		return itInactivesMin->second.begin()->first;
+    if (itActivesMin != activeAirFrames.end() && itInactivesMin != inactiveAirFrames.end())
+    {
+        return std::min(itActivesMin->second.begin()->first, itInactivesMin->second.begin()->first);
+    }
+    if (itActivesMin != activeAirFrames.end())
+        return itActivesMin->second.begin()->first;
+    if (itInactivesMin != inactiveAirFrames.end())
+        return itInactivesMin->second.begin()->first;
 
-	return returnTimeIfEmpty;
+    return returnTimeIfEmpty;
 }
 
 simtime_t ChannelInfo::removeAirFrame(airframe_ptr_t frame, simtime_t_cref returnTimeIfEmpty /*= -1*/)
 {
-	assert(airFrameStarts.count(frame->getTreeId()) > 0);
+    assert(airFrameStarts.count(frame->getTreeId()) > 0);
 
-	//get start of AirFrame
-	simtime_t_cref startTime = airFrameStarts[frame->getTreeId()];
+    //get start of AirFrame
+    simtime_t_cref startTime = airFrameStarts[frame->getTreeId()];
 
-	//calculate end time
-	simtime_t      endTime   = startTime + frame->getDuration();
+    //calculate end time
+    simtime_t endTime = startTime + frame->getDuration();
 
-	//remove this AirFrame from active AirFrames
-	deleteAirFrame(activeAirFrames, frame, startTime, endTime);
+    //remove this AirFrame from active AirFrames
+    deleteAirFrame(activeAirFrames, frame, startTime, endTime);
 
-	//add to inactive AirFrames
-	addToInactives(frame, startTime, endTime);
+    //add to inactive AirFrames
+    addToInactives(frame, startTime, endTime);
 
-
-	// Now check, whether the earliest time-point we need to store information
-	// for might have moved on in time, since an AirFrame has been deleted.
-	if(isChannelEmpty()) {
-		return returnTimeIfEmpty;
-	}
-	return findEarliestInfoPoint(returnTimeIfEmpty);
+    // Now check, whether the earliest time-point we need to store information
+    // for might have moved on in time, since an AirFrame has been deleted.
+    if (isChannelEmpty())
+    {
+        return returnTimeIfEmpty;
+    }
+    return findEarliestInfoPoint(returnTimeIfEmpty);
 }
 
-void ChannelInfo::assertNoIntersections() const {
-	for(AirFrameMatrix::const_iterator it1 = inactiveAirFrames.begin();
-		it1 != inactiveAirFrames.end(); ++it1)
-	{
-		simtime_t_cref e0 = it1->first;
-		for(AirFrameMatrix::mapped_type::const_iterator it2 = it1->second.begin();
-			it2 != it1->second.end(); ++it2)
-		{
-			simtime_t_cref s0 = it2->first;
-
-			bool intersects = (recordStartTime > -1 && recordStartTime <= e0);
-
-			for(AirFrameMatrix::const_iterator it3 = activeAirFrames.begin();
-				it3 != activeAirFrames.end() && !intersects; ++it3)
-			{
-				simtime_t_cref e1 = it3->first;
-				for(AirFrameMatrix::mapped_type::const_iterator it4 = it3->second.begin();
-					it4 != it3->second.end() && !intersects; ++it4)
-				{
-					simtime_t_cref s1 = it4->first;
-
-					if(e0 >= s1 && s0 <= e1)
-						intersects = true;
-				}
-			}
-			assert(intersects);
-		}
-	}
-}
-
-void ChannelInfo::deleteAirFrame(AirFrameMatrix& airFrames,
-                                 airframe_ptr_t frame,
-                                 simtime_t_cref startTime, simtime_t_cref endTime)
+void ChannelInfo::assertNoIntersections() const
 {
-	AirFrameMatrix::iterator listIt = airFrames.find(endTime);
+    for (AirFrameMatrix::const_iterator it1 = inactiveAirFrames.begin(); it1 != inactiveAirFrames.end(); ++it1)
+    {
+        simtime_t_cref e0 = it1->first;
+        for (AirFrameMatrix::mapped_type::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2)
+        {
+            simtime_t_cref s0 = it2->first;
 
-	if (listIt != airFrames.end()) {
-		AirFrameMatrix::mapped_type&          startTimeList = listIt->second;
-		AirFrameMatrix::mapped_type::iterator itEnd         = startTimeList.upper_bound(startTime);
+            bool intersects = (recordStartTime > -1 && recordStartTime <= e0);
 
-		for(AirFrameMatrix::mapped_type::iterator it = startTimeList.lower_bound(startTime); it != itEnd; ++it) {
-			if(it->second == frame || it->second->getTreeId() == frame->getTreeId()) {
-				startTimeList.erase(it);
-				if(startTimeList.empty()) {
-					airFrames.erase(listIt);
-				}
-				return;
-			}
-		}
-	}
-	assert(false);
+            for (AirFrameMatrix::const_iterator it3 = activeAirFrames.begin();
+                    it3 != activeAirFrames.end() && !intersects; ++it3)
+            {
+                simtime_t_cref e1 = it3->first;
+                for (AirFrameMatrix::mapped_type::const_iterator it4 = it3->second.begin();
+                        it4 != it3->second.end() && !intersects; ++it4)
+                {
+                    simtime_t_cref s1 = it4->first;
+
+                    if (e0 >= s1 && s0 <= e1)
+                        intersects = true;
+                }
+            }
+            assert(intersects);
+        }
+    }
 }
 
-bool ChannelInfo::canDiscardInterval(simtime_t_cref startTime,
-									 simtime_t_cref endTime)
+void ChannelInfo::deleteAirFrame(AirFrameMatrix& airFrames, airframe_ptr_t frame, simtime_t_cref startTime,
+        simtime_t_cref endTime)
 {
-	assert(recordStartTime >= 0 || recordStartTime == -1);
+    AirFrameMatrix::iterator listIt = airFrames.find(endTime);
 
-	// only if it ends before the point in time we started recording or if
-	// we aren't recording at all and it does not intersect with any active one
-	// anymore this AirFrame can be deleted
-	return (recordStartTime > endTime || recordStartTime == -1)
-		   && !isIntersecting(activeAirFrames, startTime, endTime);
+    if (listIt != airFrames.end())
+    {
+        AirFrameMatrix::mapped_type& startTimeList = listIt->second;
+        AirFrameMatrix::mapped_type::iterator itEnd = startTimeList.upper_bound(startTime);
+
+        for (AirFrameMatrix::mapped_type::iterator it = startTimeList.lower_bound(startTime); it != itEnd; ++it)
+        {
+            if (it->second == frame || it->second->getTreeId() == frame->getTreeId())
+            {
+                startTimeList.erase(it);
+                if (startTimeList.empty())
+                {
+                    airFrames.erase(listIt);
+                }
+                return;
+            }
+        }
+    }
+    assert(false);
 }
 
-void ChannelInfo::checkAndCleanInterval(simtime_t_cref startTime,
-                                        simtime_t_cref endTime)
+bool ChannelInfo::canDiscardInterval(simtime_t_cref startTime, simtime_t_cref endTime)
 {
-	// get through inactive AirFrame which intersected with the passed interval
-	iterator itInactiveFrames(&inactiveAirFrames, startTime, endTime);
-	iterator itEnd = end();
-	for (; itInactiveFrames != itEnd;) {
-		airframe_ptr_t pInactiveFrame = itInactiveFrames->second;
-		simtime_t      currentEnd     = itInactiveFrames->first + pInactiveFrame->getDuration();
+    assert(recordStartTime >= 0 || recordStartTime == -1);
 
-		if(canDiscardInterval(itInactiveFrames->first, currentEnd)) {
-			erase(itInactiveFrames++);
-
-			airFrameStarts.erase(pInactiveFrame->getTreeId());
-			delete pInactiveFrame;
-			continue;
-		}
-		++itInactiveFrames;
-	}
+    // only if it ends before the point in time we started recording or if
+    // we aren't recording at all and it does not intersect with any active one
+    // anymore this AirFrame can be deleted
+    return (recordStartTime > endTime || recordStartTime == -1) && !isIntersecting(activeAirFrames, startTime, endTime);
 }
 
-bool ChannelInfo::isIntersecting(const AirFrameMatrix& airFrames,
-								 simtime_t_cref from, simtime_t_cref to)
+void ChannelInfo::checkAndCleanInterval(simtime_t_cref startTime, simtime_t_cref endTime)
 {
-	const_iterator it(&airFrames, from, to);
-	return (it != cConstItEnd);
+    // get through inactive AirFrame which intersected with the passed interval
+    iterator itInactiveFrames(&inactiveAirFrames, startTime, endTime);
+    iterator itEnd = end();
+    for (; itInactiveFrames != itEnd;)
+    {
+        airframe_ptr_t pInactiveFrame = itInactiveFrames->second;
+        simtime_t currentEnd = itInactiveFrames->first + pInactiveFrame->getDuration();
+
+        if (canDiscardInterval(itInactiveFrames->first, currentEnd))
+        {
+            erase(itInactiveFrames++);
+
+            airFrameStarts.erase(pInactiveFrame->getTreeId());
+            delete pInactiveFrame;
+            continue;
+        }
+        ++itInactiveFrames;
+    }
 }
 
-void ChannelInfo::getIntersections( const AirFrameMatrix& airFrames,
-									simtime_t_cref from, simtime_t_cref to,
-									AirFrameVector& outVector)
+bool ChannelInfo::isIntersecting(const AirFrameMatrix& airFrames, simtime_t_cref from, simtime_t_cref to)
 {
-	const_iterator itEnd = cConstItEnd;
-	for (const_iterator it(&airFrames, from, to); it != itEnd; ++it) {
-		outVector.push_back(it->second);
-	}
+    const_iterator it(&airFrames, from, to);
+    return (it != cConstItEnd);
 }
 
-void ChannelInfo::getAirFrames(simtime_t_cref from, simtime_t_cref to,
-							   AirFrameVector& out) const
+void ChannelInfo::getIntersections(const AirFrameMatrix& airFrames, simtime_t_cref from, simtime_t_cref to,
+        AirFrameVector& outVector)
 {
-	//check for intersecting inactive AirFrames
-	getIntersections(inactiveAirFrames, from, to, out);
-
-	//check for intersecting active AirFrames
-	getIntersections(activeAirFrames, from, to, out);
+    const_iterator itEnd = cConstItEnd;
+    for (const_iterator it(&airFrames, from, to); it != itEnd; ++it)
+    {
+        outVector.push_back(it->second);
+    }
 }
 
+void ChannelInfo::getAirFrames(simtime_t_cref from, simtime_t_cref to, AirFrameVector& out) const
+{
+    //check for intersecting inactive AirFrames
+    getIntersections(inactiveAirFrames, from, to, out);
+
+    //check for intersecting active AirFrames
+    getIntersections(activeAirFrames, from, to, out);
+}
 

@@ -31,22 +31,22 @@
  */
 class MIXIM_API Mac80211MultiChannel : public Mac80211
 {
-protected:
-    virtual void initialize(int stage);
-public:
-    /**
-     * @brief Tells the MAC layer to switch to the passed channel.
-     *
-     * This method can be used by upper layers to change the channel.
-     * @param channel The channel to switch to, must be 1<=channel<=14.
-     */
-    void switchChannel(int channel);
+    protected:
+        virtual void initialize(int stage);
+    public:
+        /**
+         * @brief Tells the MAC layer to switch to the passed channel.
+         *
+         * This method can be used by upper layers to change the channel.
+         * @param channel The channel to switch to, must be 1<=channel<=14.
+         */
+        void switchChannel(int channel);
 
-    /**
-     * @brief Returns the currently used channel.
-     * @return The currently used channel.
-     */
-    int getChannel() const;
+        /**
+         * @brief Returns the currently used channel.
+         * @return The currently used channel.
+         */
+        int getChannel() const;
 };
 
 #endif

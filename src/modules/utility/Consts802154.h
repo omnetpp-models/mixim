@@ -60,8 +60,6 @@
 //    5500000,
 //    11000000
 //};
-
-
 /** @brief duration of the PHY header
  *
  * If the radio was switched to
@@ -79,23 +77,22 @@ const double RED_PHY_HEADER_DURATION = 0.000020;
 //const double BITRATE_HEADER=1E-6;
 /** @brief 3dB filter bandwidth -- channels overlap! */
 //const double BANDWIDTH=20E+6;
-
 const int MAC_GENERATOR = 5;
 
 /** @brief standard frame lengths
-    @{ */
-const double LENGTH_RTS = 160;	// RTS to be removed from 802154
-const double LENGTH_CTS = 112;	// CRS to be removed from 802154
-const double LENGTH_ACK = 88;	// 11 bytes
+ @{ */
+const double LENGTH_RTS = 160; // RTS to be removed from 802154
+const double LENGTH_CTS = 112; // CRS to be removed from 802154
+const double LENGTH_ACK = 88; // 11 bytes
 
 /** @} */
-const int MAC802154_MAC_HEADER_LENGTH = 72;	// 2 bytes Control, 1 byte Seq, 4 bytes addressing, 2 bytes FCS
-const int MAC802154_PHY_HEADER_LENGTH = 48;	// 4 bytes preamble, 1 byte SFD, 1 byte length, 2 bytes CRC
+const int MAC802154_MAC_HEADER_LENGTH = 72; // 2 bytes Control, 1 byte Seq, 4 bytes addressing, 2 bytes FCS
+const int MAC802154_PHY_HEADER_LENGTH = 48; // 4 bytes preamble, 1 byte SFD, 1 byte length, 2 bytes CRC
 
 //time slot ST, short interframe space SIFS, distributed interframe
 //space DIFS, and extended interframe space EIFS
 /** @brief Standard time values
-    @{ */
+ @{ */
 /** @brief Slot time  */
 const double ST = 20E-6;
 
@@ -112,8 +109,7 @@ const double DIFS = 2 * ST + SIFS;
 /** @brief extended interframe space
  *  whenever a corrupted frame is received, defer actions for this time
  */
-const double EIFS =
-  SIFS + DIFS + (MAC802154_PHY_HEADER_LENGTH + LENGTH_ACK) / 250000;
+const double EIFS = SIFS + DIFS + (MAC802154_PHY_HEADER_LENGTH + LENGTH_ACK) / 250000;
 
 /** @brief We have to stop transmitting somewhen.
  *

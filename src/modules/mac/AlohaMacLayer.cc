@@ -31,41 +31,51 @@ using namespace std;
 
 Define_Module(AlohaMacLayer);
 
-void AlohaMacLayer::initialize(int stage) {
-	UWBIRMac::initialize(stage);
-	if(stage == 1 && myMacAddr != LAddress::L2NULL) {
+void AlohaMacLayer::initialize(int stage)
+{
+    UWBIRMac::initialize(stage);
+    if (stage == 1 && myMacAddr != LAddress::L2NULL)
+    {
         phy->setRadioState(Radio::TX);
-    } else if(stage == 1 && myMacAddr == LAddress::L2NULL) {
+    }
+    else if (stage == 1 && myMacAddr == LAddress::L2NULL)
+    {
         phy->setRadioState(Radio::RX);
     }
 }
 
-void AlohaMacLayer::finish() {
-    if(stats) {
+void AlohaMacLayer::finish()
+{
+    if (stats)
+    {
         recordScalar("Erroneous bits", errRxBits);
         recordScalar("Total received bits", totalRxBits);
-        recordScalar("Average BER", errRxBits/totalRxBits);
+        recordScalar("Average BER", errRxBits / totalRxBits);
         recordScalar("nbReceivedPacketsRS", nbReceivedPacketsRS);
         recordScalar("nbReceivedPacketsnoRS", nbReceivedPacketsNoRS);
-        if(rsDecoder) {
-        	recordScalar("nbReceivedPackets", nbReceivedPacketsRS);
-        } else {
-        	recordScalar("nbReceivedPackets", nbReceivedPacketsNoRS);
+        if (rsDecoder)
+        {
+            recordScalar("nbReceivedPackets", nbReceivedPacketsRS);
+        }
+        else
+        {
+            recordScalar("nbReceivedPackets", nbReceivedPacketsNoRS);
         }
 
-       	recordScalar("nbSentPackets", nbSentPackets);
+        recordScalar("nbSentPackets", nbSentPackets);
     }
 }
 
-MacPkt* AlohaMacLayer::encapsMsg(cPacket *msg) {
+MacPkt* AlohaMacLayer::encapsMsg(cPacket *msg)
+{
     UWBIRMacPkt* encaps = new UWBIRMacPkt(msg->getName(), msg->getKind());
     encaps->setByteLength(headerLength);
 
     // copy dest address from the Control Info attached to the network
     // mesage by the network layer
-    cObject *const cInfo = msg->removeControlInfo();
+    cObject * const cInfo = msg->removeControlInfo();
 
-    debugEV <<"CInfo removed, mac addr="<< getUpperDestinationFromControlInfo(cInfo) << endl;
+    debugEV << "CInfo removed, mac addr=" << getUpperDestinationFromControlInfo(cInfo) << endl;
     encaps->setDestAddr(getUpperDestinationFromControlInfo(cInfo));
 
     //delete the control info
@@ -81,34 +91,41 @@ MacPkt* AlohaMacLayer::encapsMsg(cPacket *msg) {
 
     nbSentPackets++;
 
-	return encaps;
+    return encaps;
 }
 
 /*
-void AlohaMacLayer::handleUpperMsg(cMessage *msg) {
-    MacPkt* packet = encapsMsg(msg);
+ void AlohaMacLayer::handleUpperMsg(cMessage *msg) {
+ MacPkt* packet = encapsMsg(msg);
 
-}
-*/
-void AlohaMacLayer::handleLowerMsg(cMessage *msg) {
+ }
+ */
+void AlohaMacLayer::handleLowerMsg(cMessage *msg)
+{
     UWBIRMacPkt *mac = static_cast<UWBIRMacPkt *>(msg);
 
-    if(validatePacket(mac)) {
+    if (validatePacket(mac))
+    {
         const LAddress::L2Type& dest = mac->getDestAddr();
-        const LAddress::L2Type& src  = mac->getSrcAddr();
-        if ((dest == myMacAddr)) {
-        	debugEV << "message with mac addr " << src
-                    << " for me (dest=" << dest
-                    << ") -> forward packet to upper layer" << std::endl;
+        const LAddress::L2Type& src = mac->getSrcAddr();
+        if ((dest == myMacAddr))
+        {
+            debugEV
+                    << "message with mac addr " << src << " for me (dest=" << dest
+                            << ") -> forward packet to upper layer" << std::endl;
             sendUp(decapsMsg(mac));
-        } else {
-        	debugEV << "message with mac addr " << src
-                    << " not for me (dest=" << dest
-                    << ") -> delete (my MAC=" << myMacAddr << ")" << std::endl;
+        }
+        else
+        {
+            debugEV
+                    << "message with mac addr " << src << " not for me (dest=" << dest << ") -> delete (my MAC="
+                            << myMacAddr << ")" << std::endl;
             delete mac;
         }
-    } else {
-    	debugEV << "Errors in message ; dropping mac packet." << std::endl;
+    }
+    else
+    {
+        debugEV << "Errors in message ; dropping mac packet." << std::endl;
         delete mac;
     }
 }

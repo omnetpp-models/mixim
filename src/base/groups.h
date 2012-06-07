@@ -137,7 +137,6 @@
  * @defgroup utils utils  -  utility classes
  */
 
-
 /**
  * @defgroup base base - base MiXiM modules
  *

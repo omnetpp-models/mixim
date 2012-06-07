@@ -28,88 +28,95 @@ Define_Module(TrafficGen);
 
 void TrafficGen::initialize(int stage)
 {
-	BaseApplLayer::initialize(stage);
+    BaseApplLayer::initialize(stage);
 
-	if(stage == 0) {
-		world = FindModule<BaseWorldUtility*>::findGlobalModule();
-		delayTimer = new cMessage("delay-timer", SEND_PACKET_TIMER);
+    if (stage == 0)
+    {
+        world = FindModule<BaseWorldUtility*>::findGlobalModule();
+        delayTimer = new cMessage("delay-timer", SEND_PACKET_TIMER);
 
-		packetTime = par("packetTime");
-		pppt = par("packetsPerPacketTime");
-		burstSize = par("burstSize");
+        packetTime = par("packetTime");
+        pppt = par("packetsPerPacketTime");
+        burstSize = par("burstSize");
 
-		nbPacketDropped = 0;
-	} else if (stage == 1) {
-		if(burstSize > 0) {
-			remainingBurst = burstSize;
-			scheduleAt(dblrand() * packetTime * burstSize / pppt, delayTimer);
-		}
-	} else {
+        nbPacketDropped = 0;
+    }
+    else if (stage == 1)
+    {
+        if (burstSize > 0)
+        {
+            remainingBurst = burstSize;
+            scheduleAt(dblrand() * packetTime * burstSize / pppt, delayTimer);
+        }
+    }
+    else
+    {
 
-	}
+    }
 }
 
-TrafficGen::~TrafficGen() {
-	cancelAndDelete(delayTimer);
+TrafficGen::~TrafficGen()
+{
+    cancelAndDelete(delayTimer);
 }
 
 void TrafficGen::finish()
 {
-	recordScalar("dropped", nbPacketDropped);
+    recordScalar("dropped", nbPacketDropped);
 }
 
 void TrafficGen::handleSelfMsg(cMessage *msg)
 {
-	switch( msg->getKind() )
-	{
-	case SEND_PACKET_TIMER:
-		assert(msg == delayTimer);
+    switch (msg->getKind())
+    {
+        case SEND_PACKET_TIMER:
+            assert(msg == delayTimer);
 
+            sendBroadcast();
 
-		sendBroadcast();
+            remainingBurst--;
 
-		remainingBurst--;
+            if (remainingBurst == 0)
+            {
+                remainingBurst = burstSize;
+                scheduleAt(simTime() + (dblrand() * 1.4 + 0.3) * packetTime * burstSize / pppt, msg);
+            }
+            else
+            {
+                scheduleAt(simTime() + packetTime * 2, msg);
+            }
 
-		if(remainingBurst == 0) {
-			remainingBurst = burstSize;
-			scheduleAt(simTime() + (dblrand()*1.4+0.3)*packetTime * burstSize / pppt, msg);
-		} else {
-			scheduleAt(simTime() + packetTime * 2, msg);
-		}
-
-		break;
-	default:
-		EV << "Unkown selfmessage! -> delete, kind: "<<msg->getKind() <<endl;
-		delete msg;
-		break;
-	}
+            break;
+        default:
+            EV << "Unkown selfmessage! -> delete, kind: " << msg->getKind() << endl;
+            delete msg;
+            break;
+    }
 }
-
 
 void TrafficGen::handleLowerMsg(cMessage *msg)
 {
-	cPacket* pkt = static_cast<cPacket*>(msg);
-	Packet p(pkt->getBitLength(), 1, 0);
-	emit(BaseLayer::catPacketSignal, &p);
+    cPacket* pkt = static_cast<cPacket*>(msg);
+    Packet p(pkt->getBitLength(), 1, 0);
+    emit(BaseLayer::catPacketSignal, &p);
 
-	delete msg;
-	msg = 0;
+    delete msg;
+    msg = 0;
 }
-
 
 void TrafficGen::sendBroadcast()
 {
-	ApplPkt *pkt = new ApplPkt("BROADCAST_MESSAGE", TRAFFIC_GEN_PACKET);
-	pkt->setDestAddr(LAddress::L3BROADCAST);
-	// we use the host modules getIndex() as a appl address
-	pkt->setSrcAddr( myApplAddr() );
-	pkt->setBitLength(headerLength);
+    ApplPkt *pkt = new ApplPkt("BROADCAST_MESSAGE", TRAFFIC_GEN_PACKET);
+    pkt->setDestAddr(LAddress::L3BROADCAST);
+    // we use the host modules getIndex() as a appl address
+    pkt->setSrcAddr(myApplAddr());
+    pkt->setBitLength(headerLength);
 
-	// set the control info to tell the network layer the layer 3
-	// address;
-	NetwControlInfo::setControlInfo(pkt, LAddress::L3BROADCAST);
+    // set the control info to tell the network layer the layer 3
+    // address;
+    NetwControlInfo::setControlInfo(pkt, LAddress::L3BROADCAST);
 
-	debugEV << "Sending broadcast packet!" << endl;
-	sendDown( pkt );
+    debugEV << "Sending broadcast packet!" << endl;
+    sendDown(pkt);
 }
 

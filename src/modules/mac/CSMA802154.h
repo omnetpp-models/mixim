@@ -33,13 +33,13 @@
  */
 class MIXIM_API CSMA802154 : public csma
 {
-protected:
-    virtual void initialize(int stage);
+    protected:
+        virtual void initialize(int stage);
 
-    virtual cPacket *decapsMsg(MacPkt * macPkt);
+        virtual cPacket *decapsMsg(MacPkt * macPkt);
 
-    /** @brief Handle control messages from lower layer */
-    virtual void handleLowerControl(cMessage *msg);
+        /** @brief Handle control messages from lower layer */
+        virtual void handleLowerControl(cMessage *msg);
 };
 
 #endif

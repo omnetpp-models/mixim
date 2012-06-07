@@ -38,81 +38,69 @@
  * @ingroup utils
  * @author Jerome Rousselot
  */
-class MIXIM_API SimTracer: public cSimpleModule, cListener
+class MIXIM_API SimTracer : public cSimpleModule, cListener
 {
-private:
-  /** @brief Copy constructor is not allowed.
-   */
-  SimTracer(const SimTracer&);
-  /** @brief Assignment operator is not allowed.
-   */
-  SimTracer& operator=(const SimTracer&);
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        SimTracer(const SimTracer&);
+        /** @brief Assignment operator is not allowed.
+         */
+        SimTracer& operator=(const SimTracer&);
 
-public:
-  SimTracer()
-  	  : cSimpleModule()
-  	  , cListener()
-  	  , namFile(), radioEnergyFile(), treeFile()
-  	  , packetsColors()
-  	  , goodputVec()
-	  , pSinkVec()
-	  , pSensorVec()
-	  , powerConsumptions()
-	  , packet(100)
-	  , nbApplPacketsSent(0)
-	  , nbApplPacketsReceived(0)
-	  , catEnergy(0)
-	  , powerConsumptions2()
-	  , currPower()
-	  , lastUpdates()
-	  , world(NULL)
-  {}
+    public:
+        SimTracer() :
+                cSimpleModule(), cListener(), namFile(), radioEnergyFile(), treeFile(), packetsColors(), goodputVec(), pSinkVec(), pSensorVec(), powerConsumptions(), packet(
+                        100), nbApplPacketsSent(0), nbApplPacketsReceived(0), catEnergy(0), powerConsumptions2(), currPower(), lastUpdates(), world(
+                        NULL)
+        {
+        }
 
-	/** @brief Initialization of the module and some variables*/
-  virtual void initialize(int);
+        /** @brief Initialization of the module and some variables*/
+        virtual void initialize(int);
 
-    /** @brief Delete all dynamically allocated objects of the module*/
-  virtual void finish();
+        /** @brief Delete all dynamically allocated objects of the module*/
+        virtual void finish();
 
-    /** @brief Called by any module wanting to log a nam event. */
-  void namLog(std::string namString);
+        /** @brief Called by any module wanting to log a nam event. */
+        void namLog(std::string namString);
 
-  void radioEnergyLog(unsigned long mac, int state, simtime_t_cref duration,
-		      double power, double newPower);
+        void radioEnergyLog(unsigned long mac, int state, simtime_t_cref duration, double power, double newPower);
 
-  /** @brief Called by a routing protocol to log a link in a tree topology. */
-  template<typename T>
-  void logLink(T parent, T child) {
-    treeFile << "   " << parent << " -- " << child << " ;" << endl;
-  }
+        /** @brief Called by a routing protocol to log a link in a tree topology. */
+        template<typename T>
+        void logLink(T parent, T child)
+        {
+            treeFile << "   " << parent << " -- " << child << " ;" << endl;
+        }
 
-  /** @brief Called by the MAC or NET layer to log the node position. */
-  void logPosition(int node, double x, double y, double z = 0.0);
+        /** @brief Called by the MAC or NET layer to log the node position. */
+        void logPosition(int node, double x, double y, double z = 0.0);
 
-  /** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
-  virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
+        /** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
+        virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 
-  double getAvgSensorPowerConsumption() const;
+        double getAvgSensorPowerConsumption() const;
 
-  double getSinkPowerConsumption() const;
+        double getSinkPowerConsumption() const;
 
-protected:
-   std::ofstream namFile, radioEnergyFile, treeFile;;
-   std::vector < std::string > packetsColors;
-   cOutVector goodputVec;
-   cOutVector pSinkVec;
-   cOutVector pSensorVec;
-   std::map < unsigned long, double >powerConsumptions;
-   Packet packet;
-   long nbApplPacketsSent;
-   long nbApplPacketsReceived;
-   int catEnergy;
-   std::map < unsigned long, double >powerConsumptions2;
-   std::map < unsigned long, double >currPower;
-   std::map < unsigned long, simtime_t> lastUpdates;
-   BaseWorldUtility* world;
+    protected:
+        std::ofstream namFile, radioEnergyFile, treeFile;
+        ;
+        std::vector<std::string> packetsColors;
+        cOutVector goodputVec;
+        cOutVector pSinkVec;
+        cOutVector pSensorVec;
+        std::map<unsigned long, double> powerConsumptions;
+        Packet packet;
+        long nbApplPacketsSent;
+        long nbApplPacketsReceived;
+        int catEnergy;
+        std::map<unsigned long, double> powerConsumptions2;
+        std::map<unsigned long, double> currPower;
+        std::map<unsigned long, simtime_t> lastUpdates;
+        BaseWorldUtility* world;
 };
-
 
 #endif
 

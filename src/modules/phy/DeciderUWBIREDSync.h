@@ -42,23 +42,22 @@ class Signal;
  *
  * @ingroup ieee802154a
  * @ingroup decider
-*/
-class MIXIM_API DeciderUWBIREDSync: public DeciderUWBIRED {
-public:
-	DeciderUWBIREDSync(DeciderToPhyInterface* iface,
-				PhyLayerUWBIR* _uwbiface,
-				double _syncThreshold, bool _syncAlwaysSucceeds, bool _stats,
-				bool _trace, double _tmin, bool alwaysFailOnDataInterference);
-	~DeciderUWBIREDSync();
+ */
+class MIXIM_API DeciderUWBIREDSync : public DeciderUWBIRED
+{
+    public:
+        DeciderUWBIREDSync(DeciderToPhyInterface* iface, PhyLayerUWBIR* _uwbiface, double _syncThreshold,
+                bool _syncAlwaysSucceeds, bool _stats, bool _trace, double _tmin, bool alwaysFailOnDataInterference);
+        ~DeciderUWBIREDSync();
 
-protected:
-	virtual bool attemptSync(Signal* signal);
-	bool evaluateEnergy(Signal* s);
+    protected:
+        virtual bool attemptSync(Signal* signal);
+        bool evaluateEnergy(Signal* s);
 
-private:
-	simtime_t tmin;
-	AirFrameVector syncVector;
-	Argument argSync;
+    private:
+        simtime_t tmin;
+        AirFrameVector syncVector;
+        Argument argSync;
 };
 
 #endif /* UWBIREDSYNC_H_ */

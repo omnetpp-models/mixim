@@ -18,7 +18,6 @@
  * description: application layer: test class for the application layer
  **************************************************************************/
 
-
 #ifndef TEST_APPL_LAYER_H
 #define TEST_APPL_LAYER_H
 
@@ -39,48 +38,49 @@ class ApplPkt;
  **/
 class MIXIM_API TestApplLayer : public BaseApplLayer
 {
-  public:
-    TestApplLayer();
-    virtual ~TestApplLayer();
+    public:
+        TestApplLayer();
+        virtual ~TestApplLayer();
 
-    /** @brief Initialization of the module and some variables*/
-    virtual void initialize(int);
+        /** @brief Initialization of the module and some variables*/
+        virtual void initialize(int);
 
-    /** @brief Message kinds used by this layer.*/
-    enum TestApplMessageKinds{
-		SEND_BROADCAST_TIMER = LAST_BASE_APPL_MESSAGE_KIND,
-		BROADCAST_MESSAGE,
-		BROADCAST_REPLY_MESSAGE,
-		LAST_TEST_APPL_MESSAGE_KIND
-    };
+        /** @brief Message kinds used by this layer.*/
+        enum TestApplMessageKinds
+        {
+            SEND_BROADCAST_TIMER = LAST_BASE_APPL_MESSAGE_KIND,
+            BROADCAST_MESSAGE,
+            BROADCAST_REPLY_MESSAGE,
+            LAST_TEST_APPL_MESSAGE_KIND
+        };
 
-private:
-    /** @brief Copy constructor is not allowed.
-     */
-    TestApplLayer(const TestApplLayer&);
-    /** @brief Assignment operator is not allowed.
-     */
-    TestApplLayer& operator=(const TestApplLayer&);
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        TestApplLayer(const TestApplLayer&);
+        /** @brief Assignment operator is not allowed.
+         */
+        TestApplLayer& operator=(const TestApplLayer&);
 
-protected:
-    /** @brief Timer message for scheduling next message.*/
-    cMessage *delayTimer;
+    protected:
+        /** @brief Timer message for scheduling next message.*/
+        cMessage *delayTimer;
 
-    /** @brief Enables debugging of this module.*/
-	bool coreDebug;
+        /** @brief Enables debugging of this module.*/
+        bool coreDebug;
 
-protected:
-    /** @brief Handle self messages such as timer... */
-    virtual void handleSelfMsg(cMessage*);
+    protected:
+        /** @brief Handle self messages such as timer... */
+        virtual void handleSelfMsg(cMessage*);
 
-    /** @brief Handle messages from lower layer */
-    virtual void handleLowerMsg(cMessage*);
+        /** @brief Handle messages from lower layer */
+        virtual void handleLowerMsg(cMessage*);
 
-    /** @brief send a broadcast packet to all connected neighbors */
-    void sendBroadcast();
+        /** @brief send a broadcast packet to all connected neighbors */
+        void sendBroadcast();
 
-    /** @brief send a reply to a broadcast message */
-    void sendReply(ApplPkt *msg);
+        /** @brief send a reply to a broadcast message */
+        void sendReply(ApplPkt *msg);
 };
 
 #endif

@@ -14,51 +14,57 @@
  */
 class MIXIM_API ChannelState
 {
-protected:
+    protected:
 
-	/** @brief defines if the channel is currently idle */
-	bool idle;
+        /** @brief defines if the channel is currently idle */
+        bool idle;
 
-	/** @brief the current RSSI value of the channel */
-	double rssi;
-public:
+        /** @brief the current RSSI value of the channel */
+        double rssi;
+    public:
 
-	/**
-	 * @brief Creates and initializes a new ChannelState with the
-	 * passed state.
-	 *
-	 * isIdle - defines if the channel is currently idle
-	 * rssi - the current RSSI value of the channel
-	 */
-	ChannelState(bool isIdle = false, double rssi = 0.0) :
-		idle(isIdle), rssi(rssi) {}
+        /**
+         * @brief Creates and initializes a new ChannelState with the
+         * passed state.
+         *
+         * isIdle - defines if the channel is currently idle
+         * rssi - the current RSSI value of the channel
+         */
+        ChannelState(bool isIdle = false, double rssi = 0.0) :
+                idle(isIdle), rssi(rssi)
+        {
+        }
 
-	/**
-	 * @brief Returns true if the channel is considered idle, meaning
-	 * depends on the used decider.
-	 */
-	bool isIdle() const;
+        /**
+         * @brief Returns true if the channel is considered idle, meaning
+         * depends on the used decider.
+         */
+        bool isIdle() const;
 
-	/**
-	 * @brief Returns the current RSSI value of the channel.
-	 */
-	double getRSSI() const;
+        /**
+         * @brief Returns the current RSSI value of the channel.
+         */
+        double getRSSI() const;
 
-	/**
-	 * @brief Output for this ChannelState.
-	 *
-	 * Of the form "[<idle/busy> with rssi of x]".
-	 */
-	std::string info() const {
-		std::stringstream os;
-		if (idle) {
-			os << "[idle with rssi of ";
-		} else {
-			os << "[busy with rssi of ";
-		}
-		os << rssi << "]";
-		return os.str();
-	}
+        /**
+         * @brief Output for this ChannelState.
+         *
+         * Of the form "[<idle/busy> with rssi of x]".
+         */
+        std::string info() const
+        {
+            std::stringstream os;
+            if (idle)
+            {
+                os << "[idle with rssi of ";
+            }
+            else
+            {
+                os << "[busy with rssi of ";
+            }
+            os << rssi << "]";
+            return os.str();
+        }
 };
 
 #endif /*_CHANNELSTATE_H_*/

@@ -39,70 +39,75 @@ const simsignalwrap_t BatteryStats::catBatteryStateSignal = simsignalwrap_t(MIXI
 
 void BatteryStats::initialize(int stage)
 {
-  BaseModule::initialize(stage);
-  if (stage==0) {
-    doDetail = 0;
-    doDetail = par("detail").boolValue();
-    debugEV << "show details = " << doDetail << endl;
+    BaseModule::initialize(stage);
+    if (stage == 0)
+    {
+        doDetail = 0;
+        doDetail = par("detail").boolValue();
+        debugEV << "show details = " << doDetail << endl;
 
-    doTimeSeries = 0;
-    doTimeSeries = par("timeSeries").boolValue();
-    debugEV << "show timeSeries = " << doTimeSeries << endl;
+        doTimeSeries = 0;
+        doTimeSeries = par("timeSeries").boolValue();
+        debugEV << "show timeSeries = " << doTimeSeries << endl;
 
-    if (doTimeSeries) {
-      findHost()->subscribe(catBatteryStateSignal, this);
+        if (doTimeSeries)
+        {
+            findHost()->subscribe(catBatteryStateSignal, this);
 
-      // suggest enabling only residualVec (omnetpp.ini), unless
-      // others are of interest
+            // suggest enabling only residualVec (omnetpp.ini), unless
+            // others are of interest
 
-      residualVec.setName("capacity");
-      residualVec.setUnit("mW-s");
-      relativeVec.setName("capacity(relative)");
+            residualVec.setName("capacity");
+            residualVec.setUnit("mW-s");
+            relativeVec.setName("capacity(relative)");
 
-      estimateVec.setName("estimate");
-      estimateVec.setUnit("mW-s");
-      estimateRelVec.setName("estimate(relative)");
+            estimateVec.setName("estimate");
+            estimateVec.setUnit("mW-s");
+            estimateRelVec.setName("estimate(relative)");
+        }
     }
-  }
 }
 
 void BatteryStats::handleMessage(cMessage */*msg*/)
 {
-  error("BatteryStats doesn't handle any messages");
+    error("BatteryStats doesn't handle any messages");
 }
 
 // summary() and detail() are invoked by Battery's finish() method
 
 void BatteryStats::summary(double init, double final, simtime_t_cref lifetime)
 {
-  Enter_Method_Silent();
-  recordScalar("nominal", init, "mW-s");
-  recordScalar("total", init - final, "mW-s");
-  recordScalar("lifetime", lifetime, "s");
-  recordScalar("Mean power consumption", (init - final)/SIMTIME_DBL(simTime()), "mW");
+    Enter_Method_Silent();
+    recordScalar("nominal", init, "mW-s");
+    recordScalar("total", init - final, "mW-s");
+    recordScalar("lifetime", lifetime, "s");
+    recordScalar("Mean power consumption", (init - final) / SIMTIME_DBL(simTime()), "mW");
 }
 
 void BatteryStats::detail(const DeviceEntry *devices, int numDevices)
 {
-  Enter_Method_Silent();
-  if (!doDetail)
-    return;
+    Enter_Method_Silent();
+    if (!doDetail)
+        return;
 
-  recordScalar("num devices", numDevices);
+    recordScalar("num devices", numDevices);
 
-  for (int i = 0; i < numDevices; ++i){
-    double total = 0;
-    for (int j = 0; j < devices[i].numAccts; ++j) {
-      total += devices[i].accts[j];
+    for (int i = 0; i < numDevices; ++i)
+    {
+        double total = 0;
+        for (int j = 0; j < devices[i].numAccts; ++j)
+        {
+            total += devices[i].accts[j];
+        }
+        recordScalar(devices[i].name.c_str(), i);
+        recordScalar("device total (mWs)", total);
+        for (int j = 0; j < devices[i].numAccts; ++j)
+        {
+            recordScalar("account", j);
+            recordScalar("energy (mWs)", devices[i].accts[j]);
+            recordScalar("time (s)", devices[i].times[j]);
+        }
     }
-    recordScalar(devices[i].name.c_str(), i);
-    recordScalar("device total (mWs)", total);
-    for (int j = 0; j < devices[i].numAccts; ++j) {
-      recordScalar("account", j);
-      recordScalar("energy (mWs)", devices[i].accts[j]);
-      recordScalar("time (s)", devices[i].times[j]);
-    }
-  }
 }
 
 void BatteryStats::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
@@ -110,32 +115,34 @@ void BatteryStats::receiveSignal(cComponent *source, simsignal_t signalID, cObje
     Enter_Method_Silent();
     BaseModule::receiveSignal(source, signalID, obj);
 
-    if (signalID == catBatteryStateSignal) {
-		double residualCapacity;
-		double relativeCapacity;
+    if (signalID == catBatteryStateSignal)
+    {
+        double residualCapacity;
+        double relativeCapacity;
 
-		// battery time series never publishes capacity < 0, just 0
-		const BatteryState* pBatState = dynamic_cast<const BatteryState*>(obj);
-		if (!pBatState)
-			return;
-		residualCapacity = pBatState->getAbs();
-		residualVec.record(residualCapacity);
-		relativeCapacity = pBatState->getRel();
-		relativeVec.record(relativeCapacity);
+        // battery time series never publishes capacity < 0, just 0
+        const BatteryState* pBatState = dynamic_cast<const BatteryState*>(obj);
+        if (!pBatState)
+            return;
+        residualCapacity = pBatState->getAbs();
+        residualVec.record(residualCapacity);
+        relativeCapacity = pBatState->getRel();
+        relativeVec.record(relativeCapacity);
 
-		BaseBattery *const battery = dynamic_cast<BaseBattery*>(source);
-		if (battery) {
-			// for comparison, also get the estimated residual capacity
-			double estimate = battery->estimateResidualAbs();
-			estimateVec.record(estimate);
+        BaseBattery * const battery = dynamic_cast<BaseBattery*>(source);
+        if (battery)
+        {
+            // for comparison, also get the estimated residual capacity
+            double estimate = battery->estimateResidualAbs();
+            estimateVec.record(estimate);
 
-			double estimateRel = battery->estimateResidualRelative();
-			estimateRelVec.record(estimateRel);
-		}
+            double estimateRel = battery->estimateResidualRelative();
+            estimateRelVec.record(estimateRel);
+        }
     }
 }
 
-void BatteryStats::finish() {
+void BatteryStats::finish()
+{
 }
-
 

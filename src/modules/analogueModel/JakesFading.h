@@ -28,56 +28,55 @@ class JakesFading;
  * @ingroup analogueModels
  * @ingroup mapping
  */
-class MIXIM_API JakesFadingMapping: public SimpleConstMapping {
-private:
-	/** @brief Assignment operator is not allowed.
-	 */
-	JakesFadingMapping& operator=(const JakesFadingMapping&);
+class MIXIM_API JakesFadingMapping : public SimpleConstMapping
+{
+    private:
+        /** @brief Assignment operator is not allowed.
+         */
+        JakesFadingMapping& operator=(const JakesFadingMapping&);
 
-protected:
-	static DimensionSet dimensions;
+    protected:
+        static DimensionSet dimensions;
 
-	/** @brief Pointer to the model.*/
-	JakesFading* model;
+        /** @brief Pointer to the model.*/
+        JakesFading* model;
 
-	/** @brief The relative speed between the two hosts for this attenuation.*/
-	double relSpeed;
+        /** @brief The relative speed between the two hosts for this attenuation.*/
+        double relSpeed;
 
-public:
-	/**
-	 * @brief Takes the model, the relative speed between two hosts and
-	 * the interval in which to create key entries.
-	 */
-	JakesFadingMapping(JakesFading* model, double relSpeed,
-					   const Argument& start,
-					   const Argument& interval,
-					   const Argument& end)
-		: SimpleConstMapping(dimensions, start, end, interval)
-		, model(model)
-		, relSpeed(relSpeed)
-	{}
+    public:
+        /**
+         * @brief Takes the model, the relative speed between two hosts and
+         * the interval in which to create key entries.
+         */
+        JakesFadingMapping(JakesFading* model, double relSpeed, const Argument& start, const Argument& interval,
+                const Argument& end) :
+                SimpleConstMapping(dimensions, start, end, interval), model(model), relSpeed(relSpeed)
+        {
+        }
 
-	JakesFadingMapping(const JakesFadingMapping& o)
-		: SimpleConstMapping(o)
-		, model(o.model)
-		, relSpeed(o.relSpeed)
-	{}
+        JakesFadingMapping(const JakesFadingMapping& o) :
+                SimpleConstMapping(o), model(o.model), relSpeed(o.relSpeed)
+        {
+        }
 
-	virtual ~JakesFadingMapping() {}
+        virtual ~JakesFadingMapping()
+        {
+        }
 
-	virtual double getValue(const Argument& pos) const;
+        virtual double getValue(const Argument& pos) const;
 
-	/**
-	 * @brief creates a clone of this mapping.
-	 *
-	 * This method has to be implemented by every subclass.
-	 * But most time the implementation will look like the
-	 * implementation of this method (except of the class name).
-	 */
-	ConstMapping* constClone() const
-	{
-		return new JakesFadingMapping(*this);
-	}
+        /**
+         * @brief creates a clone of this mapping.
+         *
+         * This method has to be implemented by every subclass.
+         * But most time the implementation will look like the
+         * implementation of this method (except of the class name).
+         */
+        ConstMapping* constClone() const
+        {
+            return new JakesFadingMapping(*this);
+        }
 };
 
 /**
@@ -85,67 +84,67 @@ public:
  *
  * An example config.xml for this AnalogueModel can be the following:
  * @verbatim
-	<AnalogueModel type="JakesFading">
-		<!-- Carrier frequency of the signal in Hz
-			 If ommited the carrier frequency from the
-			 connection manager is taken if available
-			 otherwise set to default frequency of 2.412e+9-->
-		<parameter name="carrierFrequency" type="double" value="2.412e+9"/>
+ <AnalogueModel type="JakesFading">
+ <!-- Carrier frequency of the signal in Hz
+ If ommited the carrier frequency from the
+ connection manager is taken if available
+ otherwise set to default frequency of 2.412e+9-->
+ <parameter name="carrierFrequency" type="double" value="2.412e+9"/>
 
-		<!-- Number of fading paths per host -->
-		<parameter name="fadingPaths" type="long" value="3"/>
+ <!-- Number of fading paths per host -->
+ <parameter name="fadingPaths" type="long" value="3"/>
 
-		<!-- f-selectivity: mean delay spread in seconds -->
-		<parameter name="delayRMS" type="double" value="0.0001"/>
+ <!-- f-selectivity: mean delay spread in seconds -->
+ <parameter name="delayRMS" type="double" value="0.0001"/>
 
-		<!-- Interval in which to define attenuation for in seconds -->
-		<parameter name="interval" type="double" value="0.001"/>
-	</AnalogueModel>
-   @endverbatim
+ <!-- Interval in which to define attenuation for in seconds -->
+ <parameter name="interval" type="double" value="0.001"/>
+ </AnalogueModel>
+ @endverbatim
  *
  * @ingroup analogueModels
  * @author Hermann S. Lichte, Karl Wessel (port for MiXiM)
  */
-class MIXIM_API JakesFading: public AnalogueModel {
-private:
-	/** @brief Copy constructor is not allowed.
-	 */
-	JakesFading(const JakesFading&);
-	/** @brief Assignment operator is not allowed.
-	 */
-	JakesFading& operator=(const JakesFading&);
+class MIXIM_API JakesFading : public AnalogueModel
+{
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        JakesFading(const JakesFading&);
+        /** @brief Assignment operator is not allowed.
+         */
+        JakesFading& operator=(const JakesFading&);
 
-protected:
-	friend class JakesFadingMapping;
+    protected:
+        friend class JakesFadingMapping;
 
-	/** @brief Number of fading paths used. */
-	int fadingPaths;
+        /** @brief Number of fading paths used. */
+        int fadingPaths;
 
-	/**
-	 * @brief Angle of arrival on a fading path used for Doppler shift calculation.
-	 **/
-	double* angleOfArrival;
+        /**
+         * @brief Angle of arrival on a fading path used for Doppler shift calculation.
+         **/
+        double* angleOfArrival;
 
-	/** @brief Delay on a fading path. */
-	simtime_t* delay;
+        /** @brief Delay on a fading path. */
+        simtime_t* delay;
 
-	/** @brief Carrier frequency to be used. */
-	double carrierFrequency;
+        /** @brief Carrier frequency to be used. */
+        double carrierFrequency;
 
-	/** @brief The interval to set attenuation entries in. */
-	Argument interval;
+        /** @brief The interval to set attenuation entries in. */
+        Argument interval;
 
-public:
-	/**
-	 * @brief Takes the number of fading paths, the maximum delay
-	 * on a path, the hosts move, the carrier frequency used and the
-	 * interval in which to defien attenuation entries in.	 *
-	 */
-	JakesFading(int fadingPaths, simtime_t_cref delayRMS,
-				double carrierFrequency, simtime_t_cref interval);
-	virtual ~JakesFading();
+    public:
+        /**
+         * @brief Takes the number of fading paths, the maximum delay
+         * on a path, the hosts move, the carrier frequency used and the
+         * interval in which to defien attenuation entries in.	 *
+         */
+        JakesFading(int fadingPaths, simtime_t_cref delayRMS, double carrierFrequency, simtime_t_cref interval);
+        virtual ~JakesFading();
 
-	virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
+        virtual void filterSignal(AirFrame *, const Coord&, const Coord&);
 };
 
 #endif /* JAKESFADING_H_ */

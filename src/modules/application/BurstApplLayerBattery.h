@@ -19,7 +19,6 @@
  *               messages
  **************************************************************************/
 
-
 #ifndef BURST_APPL_LAYER_BATTERY_H
 #define BURST_APPL_LAYER_BATTERY_H
 
@@ -41,33 +40,33 @@
  **/
 class MIXIM_API BurstApplLayerBattery : public BurstApplLayer
 {
- public:
-  BurstApplLayerBattery()
-  	  : BurstApplLayer()
-  	  , bcastOut(0)
-  	  , replyOut(0)
-  	  , replyIn(0)
-  {}
-  virtual ~BurstApplLayerBattery() {}
+    public:
+        BurstApplLayerBattery() :
+                BurstApplLayer(), bcastOut(0), replyOut(0), replyIn(0)
+        {
+        }
+        virtual ~BurstApplLayerBattery()
+        {
+        }
 
-  /** @brief Initialite module parameters*/
-  virtual void initialize(int);
+        /** @brief Initialite module parameters*/
+        virtual void initialize(int);
 
-  virtual void finish() ;
+        virtual void finish();
 
- protected:
-  virtual void handleHostState(const HostState& state);
-  virtual void handleLowerMsg( cMessage* );
-  virtual void handleSelfMsg(cMessage *);
+    protected:
+        virtual void handleHostState(const HostState& state);
+        virtual void handleLowerMsg(cMessage*);
+        virtual void handleSelfMsg(cMessage *);
 
- private:
+    private:
 
-  /** @brief The number of broadcasts queued so far.*/
-  int bcastOut;
-  /** @brief The number of replies sent so far.*/
-  int replyOut;
-  /** @brief The number of replies received so far.*/
-  int replyIn;
+        /** @brief The number of broadcasts queued so far.*/
+        int bcastOut;
+        /** @brief The number of replies sent so far.*/
+        int replyOut;
+        /** @brief The number of replies received so far.*/
+        int replyIn;
 
 };
 

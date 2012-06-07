@@ -19,7 +19,6 @@
  *               messages
  **************************************************************************/
 
-
 #include "BurstApplLayer.h"
 
 #include "ApplPkt_m.h"
@@ -33,31 +32,32 @@ void BurstApplLayer::initialize(int stage)
 {
     TestApplLayer::initialize(stage);
 
-    if(stage==0){
-        if(hasPar("burstSize"))
+    if (stage == 0)
+    {
+        if (hasPar("burstSize"))
             burstSize = par("burstSize");
         else
             burstSize = 3;
-        if(hasPar("burstReply"))
-        	bSendReply = par("burstReply");
+        if (hasPar("burstReply"))
+            bSendReply = par("burstReply");
         else
-        	bSendReply = true;
+            bSendReply = true;
     }
 }
 
-
 void BurstApplLayer::handleSelfMsg(cMessage *msg)
 {
-    switch(msg->getKind())
+    switch (msg->getKind())
     {
-    case SEND_BROADCAST_TIMER:
-        for(int i=0; i<burstSize; i++) {
-            sendBroadcast();
-        }
-        break;
-    default:
-        EV <<" Unkown selfmessage! -> delete, kind: "<<msg->getKind()<<endl;
-        break;
+        case SEND_BROADCAST_TIMER:
+            for (int i = 0; i < burstSize; i++)
+            {
+                sendBroadcast();
+            }
+            break;
+        default:
+            EV << " Unkown selfmessage! -> delete, kind: " << msg->getKind() << endl;
+            break;
     }
 }
 
@@ -68,14 +68,17 @@ void BurstApplLayer::handleSelfMsg(cMessage *msg)
  * BROADCAST_REPLY_MESSAGE) is a reply to a broadcast packet that we
  * have send and just causes some output before it is deleted
  */
-void BurstApplLayer::handleLowerMsg( cMessage* msg )
+void BurstApplLayer::handleLowerMsg(cMessage* msg)
 {
-	if ( !bSendReply && msg->getKind() == BROADCAST_MESSAGE) {
-		ApplPkt *m  = static_cast<ApplPkt *>(msg);
-		coreEV << "Received a broadcast packet from host["<<m->getSrcAddr()<<"] -> delete message, no reply" << endl;
-		delete msg;
-		return;
-	}
-	TestApplLayer::handleLowerMsg(msg);
+    if (!bSendReply && msg->getKind() == BROADCAST_MESSAGE)
+    {
+        ApplPkt *m = static_cast<ApplPkt *>(msg);
+        coreEV
+                << "Received a broadcast packet from host[" << m->getSrcAddr() << "] -> delete message, no reply"
+                        << endl;
+        delete msg;
+        return;
+    }
+    TestApplLayer::handleLowerMsg(msg);
 }
 

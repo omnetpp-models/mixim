@@ -20,22 +20,25 @@ class AirFrame;
  *
  * @ingroup analogueModels
  */
-class MIXIM_API AnalogueModel {
+class MIXIM_API AnalogueModel
+{
 
-public:
-	virtual ~AnalogueModel() {}
+    public:
+        virtual ~AnalogueModel()
+        {
+        }
 
-	/**
-	 * @brief Has to be overriden by every implementation.
-	 *
-	 * Filters a specified AirFrame's Signal by adding an attenuation
-	 * over time to the Signal.
-	 *
-	 * @param frame			The incomming frame.
-	 * @param sendersPos	The position of the frame sender.
-	 * @param receiverPos	The position of frame receiver.
-	 */
-	virtual void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos) = 0;
+        /**
+         * @brief Has to be overriden by every implementation.
+         *
+         * Filters a specified AirFrame's Signal by adding an attenuation
+         * over time to the Signal.
+         *
+         * @param frame			The incomming frame.
+         * @param sendersPos	The position of the frame sender.
+         * @param receiverPos	The position of frame receiver.
+         */
+        virtual void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos) = 0;
 };
 
 #endif /*ANALOGUEMODEL_*/

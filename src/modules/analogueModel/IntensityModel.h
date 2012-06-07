@@ -33,23 +33,29 @@
  *
  * @ingroup analogueModels
  */
-class MIXIM_API IntensityModel : public AnalogueModel {
+class MIXIM_API IntensityModel : public AnalogueModel
+{
 
-public:
-	IntensityModel() { }
-	virtual ~IntensityModel() { }
-	void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos) {
-		Signal&              s          = frame->getSignal();
-		TimeMapping<Linear>* attMapping = new TimeMapping<Linear> ();
+    public:
+        IntensityModel()
+        {
+        }
+        virtual ~IntensityModel()
+        {
+        }
+        void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
+        {
+            Signal& s = frame->getSignal();
+            TimeMapping<Linear>* attMapping = new TimeMapping<Linear>();
 
-		// Determine distance between sender and receiver
-		assert(s.getReceptionStart() == simTime());
-		double distance    = sendersPos.distance(receiverPos);
+            // Determine distance between sender and receiver
+            assert(s.getReceptionStart() == simTime());
+            double distance = sendersPos.distance(receiverPos);
 
-		Argument arg;
-		attMapping->setValue(arg, 4*M_PI*pow(distance, 2));
-		s.addAttenuation(attMapping);
-	}
+            Argument arg;
+            attMapping->setValue(arg, 4 * M_PI * pow(distance, 2));
+            s.addAttenuation(attMapping);
+        }
 };
 
 #endif /* INTENSITYMODEL_H_ */

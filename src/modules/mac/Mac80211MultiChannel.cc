@@ -18,28 +18,31 @@
 
 Define_Module(Mac80211MultiChannel);
 
-
-
 void Mac80211MultiChannel::initialize(int stage)
 {
     Mac80211::initialize(stage);
 
-    if(stage == 0) {
+    if (stage == 0)
+    {
     }
-    else if(stage == 1) {
+    else if (stage == 1)
+    {
     }
 }
 
-void Mac80211MultiChannel::switchChannel(int channel) {
-	if(!(1 <= channel && channel <= 14)) {
-		opp_error("Invalid channel %d. Mac tried to switch to a channel not"
-				  " supported by this protocoll.", channel);
-	}
-	phy->setCurrentRadioChannel(channel);
+void Mac80211MultiChannel::switchChannel(int channel)
+{
+    if (!(1 <= channel && channel <= 14))
+    {
+        opp_error("Invalid channel %d. Mac tried to switch to a channel not"
+                " supported by this protocoll.", channel);
+    }
+    phy->setCurrentRadioChannel(channel);
 
-	centerFreq = CENTER_FREQUENCIES[channel];
+    centerFreq = CENTER_FREQUENCIES[channel];
 }
 
-int Mac80211MultiChannel::getChannel() const {
-	return phy->getCurrentRadioChannel();
+int Mac80211MultiChannel::getChannel() const
+{
+    return phy->getCurrentRadioChannel();
 }

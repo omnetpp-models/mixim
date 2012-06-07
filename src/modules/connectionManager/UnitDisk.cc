@@ -8,11 +8,11 @@ Define_Module(UnitDisk);
 
 void UnitDisk::initialize(int stage)
 {
-	ConnectionManager::initialize(stage);
-	if (stage == 0)
-	{
-		radioRange = par("radioRange").doubleValue();
-		udEV << "UnitDisk initialised with range "<<radioRange<<endl;
-	}
+    ConnectionManager::initialize(stage);
+    if (stage == 0)
+    {
+        radioRange = par("radioRange").doubleValue();
+        udEV << "UnitDisk initialised with range " << radioRange << endl;
+    }
 }
 

@@ -19,7 +19,6 @@
  *              subclass to create your own network layer
  **************************************************************************/
 
-
 #ifndef SIMPLE_NETW_LAYER_H
 #define SIMPLE_NETW_LAYER_H
 
@@ -39,132 +38,132 @@ class NetwPkt;
  **/
 class MIXIM_API BaseNetwLayer : public BaseLayer
 {
-private:
-	/** @brief Copy constructor is not allowed.
-	 */
-	BaseNetwLayer(const BaseNetwLayer&);
-	/** @brief Assignment operator is not allowed.
-	 */
-	BaseNetwLayer& operator=(const BaseNetwLayer&);
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        BaseNetwLayer(const BaseNetwLayer&);
+        /** @brief Assignment operator is not allowed.
+         */
+        BaseNetwLayer& operator=(const BaseNetwLayer&);
 
-public:
-	/** @brief Message kinds used by this layer.*/
-	enum BaseNetwMessageKinds {
-		/** @brief Stores the id on which classes extending BaseNetw should
-		 * continue their own message kinds.*/
-		LAST_BASE_NETW_MESSAGE_KIND = 24000,
-	};
-	/** @brief Control message kinds used by this layer.*/
-	enum BaseNetwControlKinds {
-		/** @brief Stores the id on which classes extending BaseNetw should
-		 * continue their own control kinds.*/
-		LAST_BASE_NETW_CONTROL_KIND = 24500,
-	};
+    public:
+        /** @brief Message kinds used by this layer.*/
+        enum BaseNetwMessageKinds
+        {
+            /** @brief Stores the id on which classes extending BaseNetw should
+             * continue their own message kinds.*/
+            LAST_BASE_NETW_MESSAGE_KIND = 24000,
+        };
+        /** @brief Control message kinds used by this layer.*/
+        enum BaseNetwControlKinds
+        {
+            /** @brief Stores the id on which classes extending BaseNetw should
+             * continue their own control kinds.*/
+            LAST_BASE_NETW_CONTROL_KIND = 24500,
+        };
 
-protected:
-    /**
-     * @brief Length of the NetwPkt header
-     * Read from omnetpp.ini
-     **/
-    int headerLength;
+    protected:
+        /**
+         * @brief Length of the NetwPkt header
+         * Read from omnetpp.ini
+         **/
+        int headerLength;
 
-    /** @brief Pointer to the arp module*/
-    ArpInterface* arp;
+        /** @brief Pointer to the arp module*/
+        ArpInterface* arp;
 
-    /** @brief cached variable of my networ address */
-    LAddress::L3Type myNetwAddr;
+        /** @brief cached variable of my networ address */
+        LAddress::L3Type myNetwAddr;
 
-    /** @brief Enables debugging of this module.*/
-    bool coreDebug;
+        /** @brief Enables debugging of this module.*/
+        bool coreDebug;
 
-public:
-    //Module_Class_Members(BaseNetwLayer,BaseLayer,0);
-    BaseNetwLayer() 
-      : BaseLayer()
-      , headerLength(0)
-      , arp(NULL)
-      , myNetwAddr()
-      , coreDebug(false)
-    {}
+    public:
+        //Module_Class_Members(BaseNetwLayer,BaseLayer,0);
+        BaseNetwLayer() :
+                BaseLayer(), headerLength(0), arp(NULL), myNetwAddr(), coreDebug(false)
+        {
+        }
 
-    BaseNetwLayer(unsigned stacksize) 
-      : BaseLayer(stacksize)
-      , headerLength(0)
-      , arp(NULL)
-      , myNetwAddr()
-      , coreDebug(false)
-    {}
+        BaseNetwLayer(unsigned stacksize) :
+                BaseLayer(stacksize), headerLength(0), arp(NULL), myNetwAddr(), coreDebug(false)
+        {
+        }
 
-    /** @brief Initialization of the module and some variables*/
-    virtual void initialize(int);
+        /** @brief Initialization of the module and some variables*/
+        virtual void initialize(int);
 
-  protected:
-    /**
-     * @name Handle Messages
-     * @brief Functions to redefine by the programmer
-     *
-     * These are the functions provided to add own functionality to your
-     * modules. These functions are called whenever a self message or a
-     * data message from the upper or lower layer arrives respectively.
-     *
-     **/
-    /*@{*/
+    protected:
+        /**
+         * @name Handle Messages
+         * @brief Functions to redefine by the programmer
+         *
+         * These are the functions provided to add own functionality to your
+         * modules. These functions are called whenever a self message or a
+         * data message from the upper or lower layer arrives respectively.
+         *
+         **/
+        /*@{*/
 
-    /** @brief Handle messages from upper layer */
-    virtual void handleUpperMsg(cMessage* msg);
+        /** @brief Handle messages from upper layer */
+        virtual void handleUpperMsg(cMessage* msg);
 
-    /** @brief Handle messages from lower layer */
-    virtual void handleLowerMsg(cMessage* msg);
+        /** @brief Handle messages from lower layer */
+        virtual void handleLowerMsg(cMessage* msg);
 
-    /** @brief Handle self messages */
-    virtual void handleSelfMsg(cMessage* /*msg*/){
-	error("BaseNetwLayer does not handle self messages");
-    };
+        /** @brief Handle self messages */
+        virtual void handleSelfMsg(cMessage* /*msg*/)
+        {
+            error("BaseNetwLayer does not handle self messages");
+        }
+        ;
 
-    /** @brief Handle control messages from lower layer */
-    virtual void handleLowerControl(cMessage* msg);
+        /** @brief Handle control messages from lower layer */
+        virtual void handleLowerControl(cMessage* msg);
 
-    /** @brief Handle control messages from lower layer */
-    virtual void handleUpperControl(cMessage* /*msg*/){
-        error("BaseNetwLayer does not handle control messages");
-    };
+        /** @brief Handle control messages from lower layer */
+        virtual void handleUpperControl(cMessage* /*msg*/)
+        {
+            error("BaseNetwLayer does not handle control messages");
+        }
+        ;
 
-    /*@}*/
+        /*@}*/
 
-    /** @brief decapsulate higher layer message from NetwPkt */
-    virtual cMessage* decapsMsg(NetwPkt*);
+        /** @brief decapsulate higher layer message from NetwPkt */
+        virtual cMessage* decapsMsg(NetwPkt*);
 
-    /** @brief Encapsulate higher layer packet into an NetwPkt*/
-    virtual NetwPkt* encapsMsg(cPacket*);
+        /** @brief Encapsulate higher layer packet into an NetwPkt*/
+        virtual NetwPkt* encapsMsg(cPacket*);
 
-    /**
-     * @brief Attaches a "control info" (NetwToMac) structure (object) to the message pMsg.
-     *
-     * This is most useful when passing packets between protocol layers
-     * of a protocol stack, the control info will contain the destination MAC address.
-     *
-     * The "control info" object will be deleted when the message is deleted.
-     * Only one "control info" structure can be attached (the second
-     * setL3ToL2ControlInfo() call throws an error).
-     *
-     * @param pMsg		The message where the "control info" shall be attached.
-     * @param pDestAddr	The MAC address of the message receiver.
-     */
-    virtual cObject* setDownControlInfo(cMessage *const pMsg, const LAddress::L2Type& pDestAddr);
-    /**
-     * @brief Attaches a "control info" (NetwToUpper) structure (object) to the message pMsg.
-     *
-     * This is most useful when passing packets between protocol layers
-     * of a protocol stack, the control info will contain the destination MAC address.
-     *
-     * The "control info" object will be deleted when the message is deleted.
-     * Only one "control info" structure can be attached (the second
-     * setL3ToL2ControlInfo() call throws an error).
-     *
-     * @param pMsg		The message where the "control info" shall be attached.
-     * @param pSrcAddr	The MAC address of the message receiver.
-     */
-    virtual cObject* setUpControlInfo(cMessage *const pMsg, const LAddress::L3Type& pSrcAddr);
+        /**
+         * @brief Attaches a "control info" (NetwToMac) structure (object) to the message pMsg.
+         *
+         * This is most useful when passing packets between protocol layers
+         * of a protocol stack, the control info will contain the destination MAC address.
+         *
+         * The "control info" object will be deleted when the message is deleted.
+         * Only one "control info" structure can be attached (the second
+         * setL3ToL2ControlInfo() call throws an error).
+         *
+         * @param pMsg		The message where the "control info" shall be attached.
+         * @param pDestAddr	The MAC address of the message receiver.
+         */
+        virtual cObject* setDownControlInfo(cMessage * const pMsg, const LAddress::L2Type& pDestAddr);
+        /**
+         * @brief Attaches a "control info" (NetwToUpper) structure (object) to the message pMsg.
+         *
+         * This is most useful when passing packets between protocol layers
+         * of a protocol stack, the control info will contain the destination MAC address.
+         *
+         * The "control info" object will be deleted when the message is deleted.
+         * Only one "control info" structure can be attached (the second
+         * setL3ToL2ControlInfo() call throws an error).
+         *
+         * @param pMsg		The message where the "control info" shall be attached.
+         * @param pSrcAddr	The MAC address of the message receiver.
+         */
+        virtual cObject* setUpControlInfo(cMessage * const pMsg, const LAddress::L3Type& pSrcAddr);
 };
 
 #endif

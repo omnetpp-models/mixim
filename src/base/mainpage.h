@@ -24,25 +24,23 @@
  ***************************************************************************/
 
 /**
-\mainpage MiXiM API Reference
+ \mainpage MiXiM API Reference
 
-The MiXiM API Classes Reference can be browsed in several ways (see links at top
-of this page):
+ The MiXiM API Classes Reference can be browsed in several ways (see links at top
+ of this page):
 
-	- <b>Modules</b> -- The most important classes, grouped by functionality.
-	- <b>Classes</b>
-		- <b>Alphabetical List</b> -- Alphabetical list of all classes.
-		- <b>Class List</b> -- List of all classes with brief descriptions.
-		- <b>Class Hierarchy</b> -- Inheritance tree of all classes.
-		- <b>Class Members</b> -- All documented class members in alphabetical order.
-	- <b>Files</b>
-		- <b>File List</b> -- List of all C++ files.
-	- <b>Directories</b> -- Directory tree
-
-
-The best place to get started with is <b>Modules</b> --> @ref base.
-
-*/
+ - <b>Modules</b> -- The most important classes, grouped by functionality.
+ - <b>Classes</b>
+ - <b>Alphabetical List</b> -- Alphabetical list of all classes.
+ - <b>Class List</b> -- List of all classes with brief descriptions.
+ - <b>Class Hierarchy</b> -- Inheritance tree of all classes.
+ - <b>Class Members</b> -- All documented class members in alphabetical order.
+ - <b>Files</b>
+ - <b>File List</b> -- List of all C++ files.
+ - <b>Directories</b> -- Directory tree
 
 
+ The best place to get started with is <b>Modules</b> --> @ref base.
+
+ */
 

@@ -16,19 +16,19 @@
  */
 class MIXIM_API ConnectionManager : public BaseConnectionManager
 {
-protected:
+    protected:
 
-	/**
-	 * @brief Calculate interference distance
-	 *
-	 * Calculation of the interference distance based on the transmitter
-	 * power, wavelength, pathloss coefficient and a threshold for the
-	 * minimal receive Power
-	 *
-	 * You may want to overwrite this function in order to do your own
-	 * interference calculation
-	 */
-	virtual double calcInterfDist();
+        /**
+         * @brief Calculate interference distance
+         *
+         * Calculation of the interference distance based on the transmitter
+         * power, wavelength, pathloss coefficient and a threshold for the
+         * minimal receive Power
+         *
+         * You may want to overwrite this function in order to do your own
+         * interference calculation
+         */
+        virtual double calcInterfDist();
 };
 
 #endif /*CONNECTIONMANAGER_H_*/

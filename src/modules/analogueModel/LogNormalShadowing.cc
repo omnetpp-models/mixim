@@ -18,29 +18,34 @@
 #include "Mapping.h"
 #include "AirFrame_m.h"
 
-LogNormalShadowing::LogNormalShadowing(double mean, double stdDev, simtime_t_cref interval):
-	mean(mean), stdDev(stdDev), interval(interval)
-{ }
-
-LogNormalShadowing::~LogNormalShadowing() {}
-
-double LogNormalShadowing::randomLogNormalGain() const {
-	return FWMath::dBm2mW(-1.0 * normal(mean, stdDev));
+LogNormalShadowing::LogNormalShadowing(double mean, double stdDev, simtime_t_cref interval) :
+        mean(mean), stdDev(stdDev), interval(interval)
+{
 }
 
-void LogNormalShadowing::filterSignal(AirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/) {
-	Signal&   signal = frame->getSignal();
-	simtime_t start  = signal.getReceptionStart();
-	simtime_t end    = signal.getReceptionEnd();
-	Mapping*  att    = MappingUtils::createMapping(DimensionSet::timeDomain, Mapping::LINEAR);
+LogNormalShadowing::~LogNormalShadowing()
+{
+}
 
-	Argument pos;
+double LogNormalShadowing::randomLogNormalGain() const
+{
+    return FWMath::dBm2mW(-1.0 * normal(mean, stdDev));
+}
 
-	for(simtime_t t = start; t <= end; t += interval)
-	{
-		pos.setTime(t);
-		att->appendValue(pos, randomLogNormalGain());
-	}
+void LogNormalShadowing::filterSignal(AirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
+{
+    Signal& signal = frame->getSignal();
+    simtime_t start = signal.getReceptionStart();
+    simtime_t end = signal.getReceptionEnd();
+    Mapping* att = MappingUtils::createMapping(DimensionSet::timeDomain, Mapping::LINEAR);
 
-	signal.addAttenuation(att);
+    Argument pos;
+
+    for (simtime_t t = start; t <= end; t += interval)
+    {
+        pos.setTime(t);
+        att->appendValue(pos, randomLogNormalGain());
+    }
+
+    signal.addAttenuation(att);
 }

@@ -13,7 +13,6 @@
 #ifndef BATTERYSTATS_H
 #define BATTERYSTATS_H
 
-
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
@@ -39,55 +38,50 @@ class DeviceEntry;
  */
 class MIXIM_API BatteryStats : public BaseModule
 {
-private:
-	/** @brief Copy constructor is not allowed.
-	 */
-	BatteryStats(const BatteryStats&);
-	/** @brief Assignment operator is not allowed.
-	 */
-	BatteryStats& operator=(const BatteryStats&);
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        BatteryStats(const BatteryStats&);
+        /** @brief Assignment operator is not allowed.
+         */
+        BatteryStats& operator=(const BatteryStats&);
 
-public:
-	BatteryStats()
-		: BaseModule()
-		, doDetail(0)
-		, doTimeSeries(0)
-		, residualVec()
-		, relativeVec()
-		, estimateVec()
-		, estimateRelVec()
-	{}
+    public:
+        BatteryStats() :
+                BaseModule(), doDetail(0), doTimeSeries(0), residualVec(), relativeVec(), estimateVec(), estimateRelVec()
+        {
+        }
 
-	/** @brief Signal for the BatteryStats.*/
-	const static simsignalwrap_t catBatteryStateSignal;
+        /** @brief Signal for the BatteryStats.*/
+        const static simsignalwrap_t catBatteryStateSignal;
 
-	virtual void initialize( int );
-	virtual void handleMessage( cMessage* );
-	virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
-	virtual void finish();
+        virtual void initialize(int);
+        virtual void handleMessage(cMessage*);
+        virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
+        virtual void finish();
 
-	/** @brief invoked by the Battery Module's finish()
-	 *
-	 * (should not rely on BatteryStats::finish() to clean up resources
-	 */
-	virtual void summary( double, double, simtime_t_cref );
-	/** @brief invoked by the Battery Module's at finish()
-	 *
-	 * (should not rely on BatteryStats::finish() to clean up resources
-	 */
-	virtual void detail( const DeviceEntry *, int );
+        /** @brief invoked by the Battery Module's finish()
+         *
+         * (should not rely on BatteryStats::finish() to clean up resources
+         */
+        virtual void summary(double, double, simtime_t_cref);
+        /** @brief invoked by the Battery Module's at finish()
+         *
+         * (should not rely on BatteryStats::finish() to clean up resources
+         */
+        virtual void detail(const DeviceEntry *, int);
 
-protected:
-	int doDetail;
-	/** @brief Enable tracking of output vectors?*/
-	int doTimeSeries;
+    protected:
+        int doDetail;
+        /** @brief Enable tracking of output vectors?*/
+        int doTimeSeries;
 
-	/** @name Tracked statistic values.*/
-	/*@{*/
-	cOutVector residualVec;
-	cOutVector relativeVec;
-	cOutVector estimateVec;
-	cOutVector estimateRelVec;
-	/*@}*/
+        /** @name Tracked statistic values.*/
+        /*@{*/
+        cOutVector residualVec;
+        cOutVector relativeVec;
+        cOutVector estimateVec;
+        cOutVector estimateRelVec;
+        /*@}*/
 };
 #endif

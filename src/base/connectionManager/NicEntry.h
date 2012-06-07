@@ -30,7 +30,6 @@
 
 class ChannelAccess;
 
-
 /**
  * @brief NicEntry is used by ConnectionManager to store the necessary
  * information for each nic
@@ -41,131 +40,128 @@ class ChannelAccess;
  */
 class MIXIM_API NicEntry : public cObject
 {
-  public:
-	/** @brief Type for NIC identifier. */
-	typedef int     t_nicid;
-	typedef t_nicid t_nicid_cref;
+    public:
+        /** @brief Type for NIC identifier. */
+        typedef int t_nicid;
+        typedef t_nicid t_nicid_cref;
 
-	/** @brief Comparator class for %NicEntry for usage in STL containers. */
-	class NicEntryComparator {
-	  public:
-		bool operator() (const NicEntry* nic1, const NicEntry* nic2) const {
-			return nic1->nicId < nic2->nicId;
-		}
-	};
-  public:
-	/** @brief Type for map from NicEntry pointer to a gate.*/
-    typedef std::map<const NicEntry*, cGate*, NicEntryComparator> GateList;
+        /** @brief Comparator class for %NicEntry for usage in STL containers. */
+        class NicEntryComparator
+        {
+            public:
+                bool operator()(const NicEntry* nic1, const NicEntry* nic2) const
+                {
+                    return nic1->nicId < nic2->nicId;
+                }
+        };
+    public:
+        /** @brief Type for map from NicEntry pointer to a gate.*/
+        typedef std::map<const NicEntry*, cGate*, NicEntryComparator> GateList;
 
-    /** @brief module id of the nic for which information is stored*/
-    t_nicid nicId;
+        /** @brief module id of the nic for which information is stored*/
+        t_nicid nicId;
 
-    /** @brief Pointer to the NIC module */
-    cModule *nicPtr;
+        /** @brief Pointer to the NIC module */
+        cModule *nicPtr;
 
-    /** @brief Module id of the host module this nic belongs to*/
-    int hostId;
+        /** @brief Module id of the host module this nic belongs to*/
+        int hostId;
 
-    /** @brief Geographic location of the nic*/
-    Coord pos;
+        /** @brief Geographic location of the nic*/
+        Coord pos;
 
-    /** @brief Points to this nics ChannelAccess module */
-    ChannelAccess* chAccess;
+        /** @brief Points to this nics ChannelAccess module */
+        ChannelAccess* chAccess;
 
-  protected:
-    /** @brief Debug output switch*/
-    bool coreDebug;
+    protected:
+        /** @brief Debug output switch*/
+        bool coreDebug;
 
-    /** @brief Outgoing connections of this nic
-     *
-     * This map stores all connection for this nic to other nics
-     *
-     * The first entry is the module id of the nic the connection is
-     * going to and the second the gate to send the msg to
-     **/
-    GateList outConns;
+        /** @brief Outgoing connections of this nic
+         *
+         * This map stores all connection for this nic to other nics
+         *
+         * The first entry is the module id of the nic the connection is
+         * going to and the second the gate to send the msg to
+         **/
+        GateList outConns;
 
-  public:
-    /**
-     * @brief Constructor, initializes all members
-     */
-    NicEntry(bool debug)
-      : cObject()
-      , nicId(0)
-      , nicPtr(NULL)
-      , hostId(0)
-      , pos()
-      , chAccess(NULL)
-      , coreDebug(debug)
-      , outConns()
-    { }
+    public:
+        /**
+         * @brief Constructor, initializes all members
+         */
+        NicEntry(bool debug) :
+                cObject(), nicId(0), nicPtr(NULL), hostId(0), pos(), chAccess(NULL), coreDebug(debug), outConns()
+        {
+        }
 
-    NicEntry(const NicEntry& o)
-      : cObject(o)
-      , nicId(o.nicId)
-      , nicPtr(o.nicPtr)
-      , hostId(o.hostId)
-      , pos(o.pos)
-      , chAccess(o.chAccess)
-      , coreDebug(o.coreDebug)
-      , outConns(o.outConns)
-    { }
+        NicEntry(const NicEntry& o) :
+                cObject(o), nicId(o.nicId), nicPtr(o.nicPtr), hostId(o.hostId), pos(o.pos), chAccess(o.chAccess), coreDebug(
+                        o.coreDebug), outConns(o.outConns)
+        {
+        }
 
-    void swap(NicEntry& s)
-    {
-    	std::swap(nicId, s.nicId);
-    	std::swap(nicPtr, s.nicPtr);
-    	std::swap(hostId, s.hostId);
-    	std::swap(pos, s.pos);
-    	std::swap(chAccess, s.chAccess);
-    	std::swap(coreDebug, s.coreDebug);
-    	std::swap(outConns, s.outConns);
-    }
+        void swap(NicEntry& s)
+        {
+            std::swap(nicId, s.nicId);
+            std::swap(nicPtr, s.nicPtr);
+            std::swap(hostId, s.hostId);
+            std::swap(pos, s.pos);
+            std::swap(chAccess, s.chAccess);
+            std::swap(coreDebug, s.coreDebug);
+            std::swap(outConns, s.outConns);
+        }
 
-    NicEntry& operator=(const NicEntry& o)
-    {
-    	nicId     = o.nicId;
-    	nicPtr    = o.nicPtr;
-    	hostId    = o.hostId;
-    	pos       = o.pos;
-    	chAccess  = o.chAccess;
-    	coreDebug = o.coreDebug;
-    	outConns  = o.outConns;
-    	return *this;
-    }
-    /**
-     * @brief Destructor -- needs to be there...
-     */
-    virtual ~NicEntry() {}
+        NicEntry& operator=(const NicEntry& o)
+        {
+            nicId = o.nicId;
+            nicPtr = o.nicPtr;
+            hostId = o.hostId;
+            pos = o.pos;
+            chAccess = o.chAccess;
+            coreDebug = o.coreDebug;
+            outConns = o.outConns;
+            return *this;
+        }
+        /**
+         * @brief Destructor -- needs to be there...
+         */
+        virtual ~NicEntry()
+        {
+        }
 
-    /** @brief Connect two nics */
-    virtual void connectTo(NicEntry*) = 0;
+        /** @brief Connect two nics */
+        virtual void connectTo(NicEntry*) = 0;
 
-    /** @brief Disconnect two nics */
-    virtual void disconnectFrom(NicEntry*) = 0;
+        /** @brief Disconnect two nics */
+        virtual void disconnectFrom(NicEntry*) = 0;
 
-    /** @brief return the actual gateList*/
-    const GateList& getGateList() const {
-    	return outConns;
-    }
+        /** @brief return the actual gateList*/
+        const GateList& getGateList() const
+        {
+            return outConns;
+        }
 
-    /** @brief Checks if this nic is connected to the "other" nic*/
-    bool isConnected(const NicEntry* other) {
-        return (outConns.find(other) != outConns.end());
-    };
+        /** @brief Checks if this nic is connected to the "other" nic*/
+        bool isConnected(const NicEntry* other)
+        {
+            return (outConns.find(other) != outConns.end());
+        }
+        ;
 
-    /**
-     * Called by P2PPhyLayer. Needed to send a packet directly to a
-     * certain nic without other nodes 'hearing' it. This is only useful
-     * for physical layers that work with bit error probability like
-     * P2PPhyLayer.
-     *
-     * @param to pointer to the NicEntry to which the packet is about to be sent
-     */
-    const cGate* getOutGateTo(const NicEntry* to) const
-    {
-    	return outConns.at(to);
-    };
+        /**
+         * Called by P2PPhyLayer. Needed to send a packet directly to a
+         * certain nic without other nodes 'hearing' it. This is only useful
+         * for physical layers that work with bit error probability like
+         * P2PPhyLayer.
+         *
+         * @param to pointer to the NicEntry to which the packet is about to be sent
+         */
+        const cGate* getOutGateTo(const NicEntry* to) const
+        {
+            return outConns.at(to);
+        }
+        ;
 
 };
 

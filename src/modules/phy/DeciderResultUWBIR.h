@@ -1,5 +1,3 @@
-
-
 #ifndef UWBIRDECIDERRESULT_H
 #define UWBIRDECIDERRESULT_H
 
@@ -17,31 +15,40 @@
  * @ingroup ieee802154a
  * @ingroup decider
  */
-class MIXIM_API DeciderResultUWBIR : public DeciderResult {
-public:
-	DeciderResultUWBIR(bool isCorrect, std::vector<bool>* _decodedBits, double snr): DeciderResult(isCorrect), decodedBits(_decodedBits), snr(snr) { }
+class MIXIM_API DeciderResultUWBIR : public DeciderResult
+{
+    public:
+        DeciderResultUWBIR(bool isCorrect, std::vector<bool>* _decodedBits, double snr) :
+                DeciderResult(isCorrect), decodedBits(_decodedBits), snr(snr)
+        {
+        }
 
-	~DeciderResultUWBIR() {
-		decodedBits->clear();
-		delete decodedBits;
-	}
+        ~DeciderResultUWBIR()
+        {
+            decodedBits->clear();
+            delete decodedBits;
+        }
 
-    // CSEM Jerome Rousselot
-    const std::vector<bool>* getDecodedBits() const
-        { return decodedBits; }
+        // CSEM Jerome Rousselot
+        const std::vector<bool>* getDecodedBits() const
+        {
+            return decodedBits;
+        }
 
+        double getSNR() const
+        {
+            return snr;
+        }
 
-    double getSNR() const { return snr; }
-
-private:
-	std::vector<bool>* decodedBits;
-	double snr;
-	/** @brief Copy constructor is not allowed.
-	 */
-	DeciderResultUWBIR(const DeciderResultUWBIR&);
-	/** @brief Assignment operator is not allowed.
-	 */
-	DeciderResultUWBIR& operator=(const DeciderResultUWBIR&);
+    private:
+        std::vector<bool>* decodedBits;
+        double snr;
+        /** @brief Copy constructor is not allowed.
+         */
+        DeciderResultUWBIR(const DeciderResultUWBIR&);
+        /** @brief Assignment operator is not allowed.
+         */
+        DeciderResultUWBIR& operator=(const DeciderResultUWBIR&);
 
 };
 #endif

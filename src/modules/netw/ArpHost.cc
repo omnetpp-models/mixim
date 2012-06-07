@@ -23,11 +23,13 @@
 
 Define_Module(ArpHost);
 
-void ArpHost::initialize(int stage) {
-	BaseModule::initialize(stage);
-    if(stage==0) {
+void ArpHost::initialize(int stage)
+{
+    BaseModule::initialize(stage);
+    if (stage == 0)
+    {
         offset = par("offset");
-	}
+    }
 }
 
 LAddress::L2Type ArpHost::getMacAddr(const LAddress::L3Type& netwAddr) const
@@ -65,15 +67,15 @@ LAddress::L3Type ArpHost::myNetwAddr(const cModule* netw) const
     // modification by Jerome Rousselot, CSEM
     // assumes that addresses are equal to host index.
     // and that mac addresses == net addresses
-	return LAddress::L3Type(FindModule<>::findHost(netw)->getIndex()+offset);
+    return LAddress::L3Type(FindModule<>::findHost(netw)->getIndex() + offset);
 //    return netw->getId();
 }
 
 LAddress::L2Type ArpHost::myMacAddr(const cModule *mac) const
 {
     // modification by Jerome Rousselot, CSEM
-	// assumes that addresses are equal to host index.
+    // assumes that addresses are equal to host index.
     // and that mac addresses == net addresses
-	return LAddress::L2Type(FindModule<>::findHost(mac)->getIndex()+offset);
+    return LAddress::L2Type(FindModule<>::findHost(mac)->getIndex() + offset);
 //    return (mac->getParentModule())->getId();
 }

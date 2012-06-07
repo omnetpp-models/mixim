@@ -47,30 +47,30 @@ class PhyLayerUWBIR;
  *
  * @ingroup ieee802154a
  * @ingroup decider
-*/
+ */
 
-class MIXIM_API DeciderUWBIREDSyncOnAddress: public DeciderUWBIRED {
-private:
-	/** @brief Copy constructor is not allowed.
-	 */
-	DeciderUWBIREDSyncOnAddress(const DeciderUWBIREDSyncOnAddress&);
-	/** @brief Assignment operator is not allowed.
-	 */
-	DeciderUWBIREDSyncOnAddress& operator=(const DeciderUWBIREDSyncOnAddress&);
+class MIXIM_API DeciderUWBIREDSyncOnAddress : public DeciderUWBIRED
+{
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        DeciderUWBIREDSyncOnAddress(const DeciderUWBIREDSyncOnAddress&);
+        /** @brief Assignment operator is not allowed.
+         */
+        DeciderUWBIREDSyncOnAddress& operator=(const DeciderUWBIREDSyncOnAddress&);
 
-public:
-	DeciderUWBIREDSyncOnAddress(DeciderToPhyInterface* iface,
-				PhyLayerUWBIR* _uwbiface,
-				double _syncThreshold, bool _syncAlwaysSucceeds, bool _stats,
-				bool _trace, const LAddress::L2Type& _addr, bool alwaysFailOnDataInterference);
+    public:
+        DeciderUWBIREDSyncOnAddress(DeciderToPhyInterface* iface, PhyLayerUWBIR* _uwbiface, double _syncThreshold,
+                bool _syncAlwaysSucceeds, bool _stats, bool _trace, const LAddress::L2Type& _addr,
+                bool alwaysFailOnDataInterference);
 
-	virtual bool attemptSync(Signal* signal);
+        virtual bool attemptSync(Signal* signal);
 
-	virtual simtime_t processSignal(AirFrame* frame);
+        virtual simtime_t processSignal(AirFrame* frame);
 
-protected:
-	AirFrame*        currFrame;
-	LAddress::L2Type syncAddress;
+    protected:
+        AirFrame* currFrame;
+        LAddress::L2Type syncAddress;
 };
 
 #endif /* UWBIREDSYNCONADDRESS_H_ */

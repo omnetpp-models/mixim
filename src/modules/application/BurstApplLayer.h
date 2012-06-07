@@ -19,13 +19,11 @@
  *               messages
  **************************************************************************/
 
-
 #ifndef BURST_APPL_LAYER_H
 #define BURST_APPL_LAYER_H
 
 #include "MiXiMDefs.h"
 #include <TestApplLayer.h>
-
 
 /**
  * @brief Application layer to test lower layer implementations
@@ -41,30 +39,31 @@
  **/
 class MIXIM_API BurstApplLayer : public TestApplLayer
 {
- public:
-  BurstApplLayer()
-  	  : TestApplLayer()
-  	  , burstSize(0)
-  	  , bSendReply(true)
-  {}
+    public:
+        BurstApplLayer() :
+                TestApplLayer(), burstSize(0), bSendReply(true)
+        {
+        }
 
-  virtual ~BurstApplLayer() {}
+        virtual ~BurstApplLayer()
+        {
+        }
 
-  /** @brief Initialize module parameters*/
-  virtual void initialize(int);
+        /** @brief Initialize module parameters*/
+        virtual void initialize(int);
 
- protected:
-  /** @brief Handle self messages such as timer... */
-  virtual void handleSelfMsg(cMessage*);
+    protected:
+        /** @brief Handle self messages such as timer... */
+        virtual void handleSelfMsg(cMessage*);
 
-  /** @brief Handle messages from lower layer */
-  virtual void handleLowerMsg(cMessage*);
+        /** @brief Handle messages from lower layer */
+        virtual void handleLowerMsg(cMessage*);
 
-  /** @brief Number of messages to send in a burst*/
-  int burstSize;
-  /** @brief If true, send a unicast BROADCAST_REPLY message to each
-   * received BROADCAST message. */
-  bool bSendReply;
+        /** @brief Number of messages to send in a burst*/
+        int burstSize;
+        /** @brief If true, send a unicast BROADCAST_REPLY message to each
+         * received BROADCAST message. */
+        bool bSendReply;
 };
 
 #endif

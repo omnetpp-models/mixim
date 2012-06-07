@@ -23,29 +23,36 @@ using std::endl;
 
 Define_Module(DummyRoute);
 
-void DummyRoute::initialize(int stage) {
-	BaseNetwLayer::initialize(stage);
-	if (stage == 0) {
-		trace = par("trace");
-		networkID = par("networkID");
-	}
+void DummyRoute::initialize(int stage)
+{
+    BaseNetwLayer::initialize(stage);
+    if (stage == 0)
+    {
+        trace = par("trace");
+        networkID = par("networkID");
+    }
 }
 
-
-void DummyRoute::handleLowerMsg(cMessage* msg) {
-	DummyRoutePkt* pkt = check_and_cast<DummyRoutePkt*>(msg);
-	if(pkt->getNetworkID()==networkID) {
-		sendUp(decapsMsg(pkt));
-	} else {
-		delete pkt;
-	}
+void DummyRoute::handleLowerMsg(cMessage* msg)
+{
+    DummyRoutePkt* pkt = check_and_cast<DummyRoutePkt*>(msg);
+    if (pkt->getNetworkID() == networkID)
+    {
+        sendUp(decapsMsg(pkt));
+    }
+    else
+    {
+        delete pkt;
+    }
 }
 
-void DummyRoute::handleLowerControl(cMessage *msg) {
-	sendControlUp(msg);
+void DummyRoute::handleLowerControl(cMessage *msg)
+{
+    sendControlUp(msg);
 }
 
-void DummyRoute::handleUpperMsg(cMessage* msg) {
+void DummyRoute::handleUpperMsg(cMessage* msg)
+{
 //	NetwControlInfo* cInfo =
 //			dynamic_cast<NetwControlInfo*> (msg->removeControlInfo());
 //	LAddress::L2Type nextHopMacAddr;
@@ -57,44 +64,49 @@ void DummyRoute::handleUpperMsg(cMessage* msg) {
 //		nextHopMacAddr = arp->getMacAddr(cInfo->getNetwAddr());
 //	}
 //	LAddress::setL3ToL2ControlInfo(msg, myNetwAddr, nextHopMacAddr);
-	sendDown(encapsMsg(check_and_cast<cPacket*>(msg)));
+    sendDown(encapsMsg(check_and_cast<cPacket*>(msg)));}
+
+void DummyRoute::finish()
+{
 }
 
-void DummyRoute::finish() {
-}
-
-NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt) {
+NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt)
+{
     LAddress::L2Type macAddr;
     LAddress::L3Type netwAddr;
 
-    debugEV <<"in encaps...\n";
+    debugEV << "in encaps...\n";
 
     DummyRoutePkt *pkt = new DummyRoutePkt(appPkt->getName(), appPkt->getKind());
     pkt->setBitLength(headerLength);
 
     cObject* cInfo = appPkt->removeControlInfo();
 
-    if(cInfo == NULL){
-	  EV << "warning: Application layer did not specifiy a destination L3 address\n"
-	   << "\tusing broadcast address instead\n";
-	  netwAddr = LAddress::L3BROADCAST;
-    } else {
-	  debugEV <<"CInfo removed, netw addr="<< NetwControlInfo::getAddressFromControlInfo( cInfo ) << endl;
-	  netwAddr = NetwControlInfo::getAddressFromControlInfo( cInfo );
-	  delete cInfo;
+    if (cInfo == NULL)
+    {
+        EV << "warning: Application layer did not specifiy a destination L3 address\n"
+                << "\tusing broadcast address instead\n";
+        netwAddr = LAddress::L3BROADCAST;
+    }
+    else
+    {
+        debugEV << "CInfo removed, netw addr=" << NetwControlInfo::getAddressFromControlInfo(cInfo) << endl;
+        netwAddr = NetwControlInfo::getAddressFromControlInfo(cInfo);
+        delete cInfo;
     }
 
     pkt->setNetworkID(networkID);
     pkt->setSrcAddr(myNetwAddr);
     pkt->setDestAddr(netwAddr);
-    debugEV << " netw "<< myNetwAddr << " sending packet" <<endl;
-    if(LAddress::isL3Broadcast(netwAddr)) {
-        debugEV << "sendDown: nHop=L3BROADCAST -> message has to be broadcasted"
-           << " -> set destMac=L2BROADCAST\n";
+    debugEV << " netw " << myNetwAddr << " sending packet" << endl;
+    if (LAddress::isL3Broadcast(netwAddr))
+    {
+        debugEV << "sendDown: nHop=L3BROADCAST -> message has to be broadcasted" << " -> set destMac=L2BROADCAST\n";
         macAddr = LAddress::L2BROADCAST;
     }
-    else{
-        debugEV <<"sendDown: get the MAC address\n";
+    else
+    {
+        debugEV << "sendDown: get the MAC address\n";
         macAddr = arp->getMacAddr(netwAddr);
     }
 
@@ -102,14 +114,15 @@ NetwPkt* DummyRoute::encapsMsg(cPacket *appPkt) {
 
     //encapsulate the application packet
     pkt->encapsulate(appPkt);
-    debugEV <<" pkt encapsulated\n";
+    debugEV << " pkt encapsulated\n";
     return pkt;
 }
 
-cPacket* DummyRoute::decapsMsg(NetwPkt *msg) {
-	cPacket *m = msg->decapsulate();
-	setUpControlInfo(m, msg->getSrcAddr());
-		// delete the netw packet
-	delete msg;
-	return m;
+cPacket* DummyRoute::decapsMsg(NetwPkt *msg)
+{
+    cPacket *m = msg->decapsulate();
+    setUpControlInfo(m, msg->getSrcAddr());
+    // delete the netw packet
+    delete msg;
+    return m;
 }

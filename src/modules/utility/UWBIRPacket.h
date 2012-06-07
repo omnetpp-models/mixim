@@ -30,50 +30,60 @@
  *
  * @author Andreas Koepke
  */
-class MIXIM_API  UWBIRPacket : public cObject
+class MIXIM_API UWBIRPacket : public cObject
 {
-protected:
-    /** @brief number of packets generated. */
-    long nbSyncAttempts;
-    long nbSyncSuccesses;
-    long nbPacketsReceived;
+    protected:
+        /** @brief number of packets generated. */
+        long nbSyncAttempts;
+        long nbSyncSuccesses;
+        long nbPacketsReceived;
 
-public:
+    public:
 
-    /** @brief Constructor*/
-    UWBIRPacket() : cObject(), nbSyncAttempts(0), nbSyncSuccesses(0), nbPacketsReceived(0) { };
+        /** @brief Constructor*/
+        UWBIRPacket() :
+                cObject(), nbSyncAttempts(0), nbSyncSuccesses(0), nbPacketsReceived(0)
+        {
+        }
+        ;
 
-    long getNbPacketsReceived() const  {
-        return nbPacketsReceived;
-    }
+        long getNbPacketsReceived() const
+        {
+            return nbPacketsReceived;
+        }
 
-    void setNbPacketsReceived(int n)  {
-        nbPacketsReceived = n;
-    }
+        void setNbPacketsReceived(int n)
+        {
+            nbPacketsReceived = n;
+        }
 
-    long getNbSyncAttempts() const  {
+        long getNbSyncAttempts() const
+        {
             return nbSyncAttempts;
-	}
+        }
 
-    void setNbSyncAttempts(long n)  {
+        void setNbSyncAttempts(long n)
+        {
             nbSyncAttempts = n;
-	}
+        }
 
-    long getNbSyncSuccesses() const {
-    	return nbSyncSuccesses;
-    }
+        long getNbSyncSuccesses() const
+        {
+            return nbSyncSuccesses;
+        }
 
-    void setNbSyncSuccesses(long n) {
-    	nbSyncSuccesses = n;
-    }
+        void setNbSyncSuccesses(long n)
+        {
+            nbSyncSuccesses = n;
+        }
 
-    /** @brief Enables inspection */
-    std::string info() const {
-        std::ostringstream ost;
-        ost << " Number of packets generated is "<< 0;
-        return ost.str();
-    }
+        /** @brief Enables inspection */
+        std::string info() const
+        {
+            std::ostringstream ost;
+            ost << " Number of packets generated is " << 0;
+            return ost.str();
+        }
 };
-
 
 #endif

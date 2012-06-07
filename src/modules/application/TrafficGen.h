@@ -28,80 +28,76 @@ class BaseWorldUtility;
  */
 class MIXIM_API TrafficGen : public BaseApplLayer
 {
-public:
+    public:
 
-	/** @brief The message kinds used by this layer.*/
-	enum TrafficGenMessageKinds {
-		/** @brief Schedules sending of a new message.*/
-		SEND_PACKET_TIMER = LAST_BASE_APPL_MESSAGE_KIND,
-		/** @brief The kind for a packet send by this layer.*/
-		TRAFFIC_GEN_PACKET,
-		/** @brief Sub classing layers shoudl begin their own kinds at this value.*/
-		LAST_TRAFFIC_GEN_MESSAGE_KIND
-	};
+        /** @brief The message kinds used by this layer.*/
+        enum TrafficGenMessageKinds
+        {
+            /** @brief Schedules sending of a new message.*/
+            SEND_PACKET_TIMER = LAST_BASE_APPL_MESSAGE_KIND,
+            /** @brief The kind for a packet send by this layer.*/
+            TRAFFIC_GEN_PACKET,
+            /** @brief Sub classing layers shoudl begin their own kinds at this value.*/
+            LAST_TRAFFIC_GEN_MESSAGE_KIND
+        };
 
-protected:
+    protected:
 
-	/** @brief The time it takes to transmit a packet.
-	 * Bit length divided by bitrate.*/
-	simtime_t packetTime;
+        /** @brief The time it takes to transmit a packet.
+         * Bit length divided by bitrate.*/
+        simtime_t packetTime;
 
-	/** @brief Packets per packet time. More or less the load
-	 * this layer should generate.*/
-	double pppt;
+        /** @brief Packets per packet time. More or less the load
+         * this layer should generate.*/
+        double pppt;
 
-	/** @brief The number of packets to send at once.*/
-	int burstSize;
+        /** @brief The number of packets to send at once.*/
+        int burstSize;
 
-	/** @brief The remainign apckets to send for the current burst.*/
-	int remainingBurst;
+        /** @brief The remainign apckets to send for the current burst.*/
+        int remainingBurst;
 
-	/** @brief Tracks the number of packets dropped so far.*/
-	long nbPacketDropped;
+        /** @brief Tracks the number of packets dropped so far.*/
+        long nbPacketDropped;
 
-	/** @brief Timer message to schedule next packet send.*/
-	cMessage *delayTimer;
+        /** @brief Timer message to schedule next packet send.*/
+        cMessage *delayTimer;
 
-	/** @brief Pointer to world utility module.*/
-	BaseWorldUtility* world;
+        /** @brief Pointer to world utility module.*/
+        BaseWorldUtility* world;
 
-private:
-  	/** @brief Copy constructor is not allowed.
-  	 */
-	TrafficGen(const TrafficGen&);
-  	/** @brief Assignment operator is not allowed.
-  	 */
-	TrafficGen& operator=(const TrafficGen&);
+    private:
+        /** @brief Copy constructor is not allowed.
+         */
+        TrafficGen(const TrafficGen&);
+        /** @brief Assignment operator is not allowed.
+         */
+        TrafficGen& operator=(const TrafficGen&);
 
-public:
-	TrafficGen()
-		: BaseApplLayer()
-		, packetTime()
-		, pppt(0.0)
-		, burstSize(0)
-		, remainingBurst(0)
-		, nbPacketDropped(0)
-		, delayTimer(NULL)
-		, world(NULL)
-	{}
+    public:
+        TrafficGen() :
+                BaseApplLayer(), packetTime(), pppt(0.0), burstSize(0), remainingBurst(0), nbPacketDropped(0), delayTimer(
+                        NULL), world(NULL)
+        {
+        }
 
-	virtual ~TrafficGen();
-	/** @brief Omnet++ Initialisation.*/
-	virtual void initialize(int stage);
+        virtual ~TrafficGen();
+        /** @brief Omnet++ Initialisation.*/
+        virtual void initialize(int stage);
 
-	/** @brief Called at the end of the simulation to record statistics.*/
-	virtual void finish();
+        /** @brief Called at the end of the simulation to record statistics.*/
+        virtual void finish();
 
-protected:
+    protected:
 
-	/** @brief Handle self messages such as timer... */
-	virtual void handleSelfMsg(cMessage *msg);
+        /** @brief Handle self messages such as timer... */
+        virtual void handleSelfMsg(cMessage *msg);
 
-	/** @brief Handle messages from lower layer */
-	virtual void handleLowerMsg(cMessage *msg);
+        /** @brief Handle messages from lower layer */
+        virtual void handleLowerMsg(cMessage *msg);
 
-	/** @brief Send a broadcast message to lower layer. */
-	virtual void sendBroadcast();
+        /** @brief Send a broadcast message to lower layer. */
+        virtual void sendBroadcast();
 };
 
 #endif

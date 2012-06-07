@@ -30,14 +30,17 @@
  *
  * @author Karl Wessel
  */
-class MIXIM_API AddressingInterface {
-public:
-    virtual ~AddressingInterface() {}
-    /** @brief Returns the L2 address for the passed mac.*/
-    virtual LAddress::L2Type myMacAddr(const cModule* mac) const = 0;
+class MIXIM_API AddressingInterface
+{
+    public:
+        virtual ~AddressingInterface()
+        {
+        }
+        /** @brief Returns the L2 address for the passed mac.*/
+        virtual LAddress::L2Type myMacAddr(const cModule* mac) const = 0;
 
-    /** @brief Returns the L3 address for the passed net.*/
-    virtual LAddress::L3Type myNetwAddr(const cModule* netw) const = 0;
+        /** @brief Returns the L3 address for the passed net.*/
+        virtual LAddress::L3Type myNetwAddr(const cModule* netw) const = 0;
 };
 
 #endif /* ADDRESSINGINTERFACE_H_ */
