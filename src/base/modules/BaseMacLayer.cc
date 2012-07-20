@@ -95,7 +95,7 @@ void BaseMacLayer::registerInterface()
     if (ift)
     {
         cModule* nic = getParentModule();
-        InterfaceEntry *e = new InterfaceEntry();
+        InterfaceEntry *e = new InterfaceEntry(this);
 
         // interface name: NIC module's name without special
         // characters ([])
@@ -124,7 +124,7 @@ void BaseMacLayer::registerInterface()
         e->setPointToPoint(false);
 
         // add
-        ift->addInterface(e, this);
+        ift->addInterface(e);
     }
 #endif
 }
