@@ -1,8 +1,12 @@
 all: checkmakefiles
 	cd src && $(MAKE) -f Makefile.vc
+	cd examples && $(MAKE) -f Makefile.vc
+	cd tests && $(MAKE) -f Makefile.vc
 
 clean: checkmakefiles
 	cd src && $(MAKE) -f Makefile.vc clean
+	cd examples && $(MAKE) -f Makefile.vc clean
+	cd tests && $(MAKE) -f Makefile.vc clean
 
 cleanall: checkmakefiles
 	cd src && $(MAKE) -f Makefile.vc MODE=release clean
@@ -10,6 +14,8 @@ cleanall: checkmakefiles
 
 makefiles:
 	cd src && call opp_nmakemake -f --deep
+	cd examples && call opp_nmakemake -f --deep
+	cd tests && call opp_nmakemake -f --deep
 
 checkmakefiles:
 	@if not exist src\Makefile.vc ( \
