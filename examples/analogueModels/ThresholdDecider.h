@@ -64,7 +64,7 @@ protected:
 	/**
 	 * @brief handles the signal when passed at the end of the signal.
 	 */
-	simtime_t handleSignalOver(std::map<Signal*, int>::iterator& it, AirFrame* frame){
+	simtime_t handleSignalOver(std::map<Signal*, int>::iterator& it, MiximAirFrame* frame){
 		log("Last receive of signal from Phy - Deciding if the packet could be received correctly...");
 
 		//get the receiving power from the signal (calculated at each call of
@@ -202,7 +202,7 @@ public:
 	 * @brief this method is called by the BasePhylayer whenever it gets
 	 * a AirFrame (from another phy or self scheduled).
 	 */
-	virtual simtime_t processSignal(AirFrame* frame) {
+	virtual simtime_t processSignal(MiximAirFrame* frame) {
 		Signal* s = &frame->getSignal();
 
 		//Check if we already know this signal...

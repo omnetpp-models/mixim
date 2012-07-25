@@ -18,7 +18,7 @@ protected:
 	simtime_t senseStart;
 
 protected:
-	void assertMessage(std::string msg, int state, AirFrame* frame, simtime_t_cref arrival, std::string dest = "") {
+	void assertMessage(std::string msg, int state, MiximAirFrame* frame, simtime_t_cref arrival, std::string dest = "") {
 		TestModule::assertMessage(new AssertAirFrame(msg, state, arrival, frame), dest);
 	}
 
@@ -64,7 +64,7 @@ public:
 	void testRun7(int stage, cMessage* msg)
 	{
 
-		AirFrame* frame = dynamic_cast<AirFrame*>(msg);
+		MiximAirFrame* frame = dynamic_cast<MiximAirFrame*>(msg);
 		assertTrue("Passed message is an AirFrame.", frame != NULL, true);
 
 		const Signal& s = frame->getSignal();
@@ -91,7 +91,7 @@ public:
 		}
 	}
 
-	simtime_t processSignal(AirFrame* frame) {
+	simtime_t processSignal(MiximAirFrame* frame) {
 		announceMessage(frame);
 
 		const Signal& s = frame->getSignal();

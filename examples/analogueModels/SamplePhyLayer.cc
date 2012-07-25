@@ -21,7 +21,7 @@ void SamplePhyLayer::initialize(int stage) {
 
 void SamplePhyLayer::handleMessage(cMessage* msg) {
 	if(msg->getKind() == AIR_FRAME) {
-		AirFrame* frame = static_cast<AirFrame*>(msg);
+		MiximAirFrame* frame = static_cast<MiximAirFrame*>(msg);
 
 		//normally a subclassed phylayer doesn't has to care about these
 		//events, we only catch them to display some messages telling the

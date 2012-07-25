@@ -2,7 +2,7 @@
 #define TESTGLOBALS_H_
 
 #include <TestModule.h>
-#include <AirFrame_m.h>
+#include <MiximAirFrame_m.h>
 
 enum {
 	TEST_MACPKT = 12121
@@ -18,13 +18,13 @@ private:
 	AssertAirFrame& operator=(const AssertAirFrame&);
 
 protected:	
-	AirFrame* pointer;
+	MiximAirFrame* pointer;
 	simtime_t arrival;
 	int state;
 public:
 	AssertAirFrame(	std::string msg, int state,
 					simtime_t arrival,
-					AirFrame* frame = 0,
+					MiximAirFrame* frame = 0,
 					bool continuesTests = false)
 		: AssertMessage(msg, false, continuesTests)
 		, pointer(frame)
@@ -40,7 +40,7 @@ public:
 	 * Has to be implemented by every subclass.
 	 */
 	virtual bool isMessage(cMessage* msg) {
-		AirFrame* frame = dynamic_cast<AirFrame*>(msg);
+		MiximAirFrame* frame = dynamic_cast<MiximAirFrame*>(msg);
 		return frame != 0 && (frame == pointer || pointer == 0) && arrival == msg->getArrivalTime() &&frame->getState() == state;
 	}
 };
