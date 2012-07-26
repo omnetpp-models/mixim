@@ -33,7 +33,7 @@ typedef IMobility* ChannelMobilityPtrType;
 #endif
 
 #include "MiXiMDefs.h"
-#include "BatteryAccess.h"
+#include "../modules/BatteryAccess.h"
 
 #ifndef MIXIM_INET
 #include "FindModule.h"

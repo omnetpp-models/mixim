@@ -23,7 +23,7 @@
 #define BASE_LAYER_H
 
 #include "MiXiMDefs.h"
-#include "BatteryAccess.h"
+#include "../modules/BatteryAccess.h"
 #include "PassedMessage.h"
 
 /**

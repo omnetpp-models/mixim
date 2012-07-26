@@ -1,2 +1,3 @@
 # Partial Tkenv config file -- see $HOME/.tkenvrc as well
+inspector "Adhoc" "Adhoc" "2" "652x512+62+532:normal"
 

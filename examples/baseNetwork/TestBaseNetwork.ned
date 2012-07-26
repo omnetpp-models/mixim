@@ -1,6 +1,8 @@
 package org.mixim.examples.baseNetwork;
 
+import org.mixim.base.modules.BaseNetwork;
 import org.mixim.modules.node.WirelessNode;
+
 
 //
 //This example shows the basic structure of an network using MiXiM.
@@ -13,7 +15,7 @@ import org.mixim.modules.node.WirelessNode;
 //
 //You can use this network as an template for you own simulation.
 //
-network BaseNetwork extends org.mixim.base.modules.BaseNetwork
+network TestBaseNetwork extends BaseNetwork
 {
     parameters:
         int numNodes; // total number of hosts in the network
@@ -22,7 +24,7 @@ network BaseNetwork extends org.mixim.base.modules.BaseNetwork
         node[numNodes]: WirelessNode {
             parameters:
                 @display("p=170,50;i=device/wifilaptop");
-        		nicType = default("NicCSMA");
+                nicType = default("NicCSMA");
         }
 }
 
