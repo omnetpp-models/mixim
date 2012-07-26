@@ -4,14 +4,12 @@ MiXiM.
 
 Requirements
 ============
-- OMNeT++, at least version 4.1, 
-  downloadable at www.omnetpp.org
+- OMNeT++, at least version 4.2, downloadable at www.omnetpp.org
   OMNeT++ must be compiled with 
-  	- dynamic NED loading (WITH_NETBUILDER=yes setting)
-  	- and XML support enabled 
-- make (for Linux)
-- C++ compiler (for Linux)
-- at least Mac OS X 10.5 (for Mac users)
+    - dynamic NED loading (WITH_NETBUILDER=yes setting)
+    - and XML support enabled 
+- at least INET 1.99.5 or later (successfully installed and compiled)
+  downloadable at inet.omnetpp.org
 
 
 Installation 
@@ -19,12 +17,6 @@ Installation
 
 From the Omnet++ IDE
 --------------------
-The MiXiM archive contains two projects: MiXiM and Mixnet. 
-Mixnet is only important if you want to use MiXiM together with the INET
-framework. If you already know that you'll need Mixnet you can import it
-together with MiXiM during the following steps. If you are not sure just ignore
-it, you can always install it later separately. For more details on Mixnet take
-a look at its README file in MiXiM's "inet" folder.
 
 The following steps should be the same for every operating system.
 
@@ -35,46 +27,38 @@ and proceed with "Next".
 
 3. Choose "Select archive file" and select the MiXiM archive file.
 
-4. "MiXiM" and "Mixnet" should appear in the "Projects" list below. Remove the
-check before "Mixnet" if you are not sure whether you need it. You can always
-install it later separately. 
-At last click "Finish". 
+4. "MiXiM" should appear in the "Projects" list below. click "Finish". 
 
 5. To build MiXiM right-click on the project and choose "Build Project".
+   Before building MiXiM make sure that 'inet' (version 1.99.5+) is available
+   and open in your workspace.
 
 6. Run an example:
-	1. Choose an example from the examples directory.
-	2. Right click its executeable and choose 
-		"Run as" -> "Run configurations...".
-	3. Double click on "Omnet++ Simulation" in the left list to create a new
-	   Omnet++ run configuration for this example (each example needs its own
-	   Run configuration). The "Working directory" should be the examples
-	   directory.
-	   Also make sure the correct executable is choosen under 
-	   	"Executable: ... Other:" 
-	   (should be the one inside the examples directory).
-	4. Click "Run"
-	
+    1. Choose an example from the examples directory.
+    2. Right click its omnetpp.ini file and choose
+        "Run as" -> "Run Simulation...".
+    4. Click "Run"
+
 7. To see how to get started with MiXiM please read the section "How to start"
    in the README-file.
 
 From the commandline under Linux
 --------------------------------
-Unpack the archive (you have probably already done so)
- tar xzf mixim<VERSION>.tgz
+Unpack the archive (you have probably already done so) in the directory where 'inet' is 
+also installed. (by default it must have the directory name 'inet'. If it is somewhere else
+please adjust the INET directory veriable in 'mixim/Makefile' accordingly.
 
-1. run the following command in the MiXiM root dir
-    make -f makemakefiles CONFIGNAME=gcc-debug
-   (you can alternatively also use the gcc-release configuration)
+ $ tar xzf mixim<VERSION>.tgz
 
-2. type "make all" to make the mixim library and binary 
+1. run the following command in the MiXiM root dir (after possibly setting the INET_PRJOJECT_DIR
+   variable in the Makefile)
+ $ make makemakefiles
+
+2. type "make" to build the mixim library and the example and test binaries 
    and to build the test networks
    
-3. Try to run one of the examples from the examples folder.
+3. Try to run one of the examples from the examples folder. Use the provided 'run' scripts.
 
 4. To see how to get started with MiXiM please read the section "How to start"
    in the README-file.
-
- 
-
 
