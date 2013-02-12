@@ -64,7 +64,7 @@ protected:
 	/**
 	 * @brief handles the signal when passed at the end of the signal.
 	 */
-	simtime_t handleSignalOver(std::map<Signal*, int>::iterator& it, MiximAirFrame* frame){
+	simtime_t handleSignalOver(std::map<Signal*, int>::iterator& it, airframe_ptr_t frame) {
 		log("Last receive of signal from Phy - Deciding if the packet could be received correctly...");
 
 		//get the receiving power from the signal (calculated at each call of
@@ -158,7 +158,7 @@ protected:
 		}
 
 		currentSignals.erase(it);
-		return -1;
+		return Decider::notAgain;
 	}
 
 
@@ -195,14 +195,35 @@ protected:
 	}
 
 public:
-	ThresholdDecider(DeciderToPhyInterface* phy, int myIndex, double threshold):
-		Decider(phy), myIndex(myIndex), threshold(threshold), currentSignals() {}
+	ThresholdDecider(DeciderToPhyInterface* phy, double sensitivity, int myIndex, bool bDebug):
+		Decider(phy), myIndex(myIndex), threshold(0), currentSignals() {}
+
+	/** @brief Initialize the decider from XML map data.
+	 *
+	 * This method should be defined for generic decider initialization.
+	 *
+	 * @param params The parameter map which was filled by XML reader.
+	 *
+	 * @return true if the initialization was successfully.
+	 */
+	virtual bool initFromMap(const ParameterMap& params) {
+		bool                         bInitSuccess = true;
+		ParameterMap::const_iterator it           = params.find("threshold");
+		if(it != params.end()) {
+			threshold = ParameterMap::mapped_type(it->second).doubleValue();
+		}
+		else {
+			opp_warning("ERROR: No threshold parameter defined for ThresholdDecider!");
+  			bInitSuccess = false;
+		}
+		return Decider::initFromMap(params) && bInitSuccess;
+	}
 
 	/**
 	 * @brief this method is called by the BasePhylayer whenever it gets
 	 * a AirFrame (from another phy or self scheduled).
 	 */
-	virtual simtime_t processSignal(MiximAirFrame* frame) {
+	virtual simtime_t processSignal(airframe_ptr_t frame) {
 		Signal* s = &frame->getSignal();
 
 		//Check if we already know this signal...
@@ -235,7 +256,7 @@ public:
 		return ChannelState(false, 0);
 	}
 	virtual simtime_t handleChannelSenseRequest(ChannelSenseRequest*) {
-		return -1;
+		return Decider::notAgain;
 	}
 };
 

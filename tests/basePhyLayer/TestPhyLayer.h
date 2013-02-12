@@ -22,10 +22,35 @@ private:
 	public:
 		double att;
 
-		TestAnalogueModel(double attenuation):
-			att(attenuation) {}
+		TestAnalogueModel() : att(0) {}
 
-		void filterSignal(MiximAirFrame*, const Coord&, const Coord&) {
+		/** @brief Initialize the analog model from XML map data.
+		 *
+		 * This method should be defined for generic analog model initialization.
+		 *
+		 * @param params The parameter map which was filled by XML reader.
+		 *
+		 * @return true if the initialization was successfully.
+		 */
+		virtual bool initFromMap(const ParameterMap& params) {
+			ParameterMap::const_iterator it;
+			bool                         bInitSuccess = true;
+
+			if ((it = params.find("seed")) != params.end()) {
+				srand( ParameterMap::mapped_type(it->second).longValue() );
+			}
+			if ((it = params.find("attenuation")) != params.end()) {
+				att = ParameterMap::mapped_type(it->second).doubleValue();
+			}
+			else {
+				bInitSuccess = false;
+				opp_warning("No attenuation defined in config.xml for TestAnalogueModel!");
+			}
+
+			return AnalogueModel::initFromMap(params) && bInitSuccess;
+		}
+
+		void filterSignal(airframe_ptr_t, const Coord&, const Coord&) {
 			return;
 		}
 	};
@@ -37,9 +62,23 @@ protected:
 	// prepared RSSI mapping for testing purposes
 	Mapping* testRSSIMap;
 
-	virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params) const;
+	/**
+	 * @brief Creates and returns an instance of the AnalogueModel with the
+	 *        specified name.
+	 *
+	 * Is able to initialize the following AnalogueModels:
+	 * - TestAnalogueModel
+	 */
+	virtual AnalogueModel* getAnalogueModelFromName(const std::string& name, ParameterMap& params) const;
 
-	virtual Decider* getDeciderFromName(std::string name, ParameterMap& params);
+	/**
+	 * @brief Creates and returns an instance of the decider with the specified
+	 *        name.
+	 *
+	 * Is able to initialize directly the following decider:
+	 * - TestDecider
+	 */
+	virtual Decider* getDeciderFromName(const std::string& name, ParameterMap& params);
 
 	virtual bool isKnownProtocolId(int id) const;
 	virtual int myProtocolId() const;

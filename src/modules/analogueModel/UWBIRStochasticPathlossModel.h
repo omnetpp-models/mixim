@@ -50,67 +50,85 @@
  * @ingroup ieee802154a
  * @ingroup analogueModels
  */
-class MIXIM_API UWBIRStochasticPathlossModel : public AnalogueModel
-{
+class MIXIM_API UWBIRStochasticPathlossModel : public AnalogueModel {
 
-    public:
-        virtual ~UWBIRStochasticPathlossModel()
-        {
-        }
+public:
+    virtual ~UWBIRStochasticPathlossModel() {}
 
-        static const double Gtx;
-        static const double Grx;
-        static const double ntx;
-        static const double nrx;
-        double PL0; // 0.000008913; // -50.5 dB   0.000019953
-        static const double fc; // mandatory band 3, center frequency, MHz
-        static const double d0;
-        double mu_gamma, sigma_gamma; //1.7, 0.3
-        double mu_sigma, sigma_sigma;
-        double gamma, S, sigma;
-        double n1, n2, n3;
-        static double n1_limit;
-        static double n2_limit;
+    static const double Gtx;
+    static const double Grx;
+    static const double ntx;
+    static const double nrx;
+    double PL0; // 0.000008913; // -50.5 dB   0.000019953
+    static const double fc; // mandatory band 3, center frequency, MHz
+    static const double d0;
+    double mu_gamma, sigma_gamma; //1.7, 0.3
+    double mu_sigma, sigma_sigma;
+    double gamma, S, sigma;
+    double n1, n2, n3;
+    static double n1_limit;
+    static double n2_limit;
 
-        static const double s_mu;
-        static const double s_sigma;
-        static const double kappa;
+    static const double s_mu;
+    static const double s_sigma;
+    static const double kappa;
 
-        bool isEnabled, shadowing;
+    bool isEnabled, shadowing;
 
-        cOutVector distances;
-        cOutVector srcPosX, srcPosY, dstPosX, dstPosY;
+    cOutVector distances;
+    cOutVector srcPosX, srcPosY, dstPosX, dstPosY;
 
-        int myIndex;
-        std::string myName;
+    int myIndex;
+    std::string myName;
 
-        UWBIRStochasticPathlossModel(double _PL0, double _mu_gamma, double _sigma_gamma, double _mu_sigma,
-                double _sigma_sigma, bool _enabled, bool _shadowing = true) :
-                AnalogueModel(), PL0(_PL0), mu_gamma(_mu_gamma), sigma_gamma(_sigma_gamma), mu_sigma(_mu_sigma), sigma_sigma(
-                        _sigma_sigma), gamma(0.0), S(0.0), sigma(0.0), n1(0.0), n2(0.0), n3(0.0), isEnabled(_enabled), shadowing(
-                        _shadowing), distances(), srcPosX(), srcPosY(), dstPosX(), dstPosY(), myIndex(-1), myName(), pathloss_exponent(
-                        0.0), fading(0.0), frequency("frequency"), pathlosses()
-        {
-            distances.setName("distances");
-            srcPosX.setName("srcPosX");
-            srcPosY.setName("srcPosY");
-            dstPosX.setName("dstPosX");
-            dstPosY.setName("dstPosY");
-            pathlosses.setName("pathloss");
-        }
+    UWBIRStochasticPathlossModel()
+    	: AnalogueModel()
+    	, PL0(0)
+    	, mu_gamma(0), sigma_gamma(0)
+    	, mu_sigma(0), sigma_sigma(0)
+    	, gamma(0.0), S(0.0), sigma(0.0)
+    	, n1(0.0), n2(0.0), n3(0.0)
+    	, isEnabled(false)
+    	, shadowing(true)
+    	, distances()
+    	, srcPosX(), srcPosY(), dstPosX(), dstPosY()
+    	, myIndex(-1)
+    	, myName()
+    	, pathloss_exponent(0.0)
+    	, fading(0.0)
+    	, frequency("frequency")
+    	, pathlosses()
+    {
+    	distances.setName("distances");
+    	srcPosX.setName("srcPosX");
+    	srcPosY.setName("srcPosY");
+    	dstPosX.setName("dstPosX");
+    	dstPosY.setName("dstPosY");
+    	pathlosses.setName("pathloss");
+    }
 
-        void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
+    /** @brief Initialize the analog model from XML map data.
+     *
+     * This method should be defined for generic analog model initialization.
+     *
+     * @param params The parameter map which was filled by XML reader.
+     *
+     * @return true if the initialization was successfully.
+     */
+    virtual bool initFromMap(const ParameterMap&);
 
-    protected:
-        double pathloss_exponent;
-        double fading;
-        Dimension frequency;
-        cOutVector pathlosses; // outputs computed pathlosses. Allows to compute Eb = Epulse*pathloss for Eb/N0 computations. (N0 is the noise sampled by the receiver)
+    void filterSignal(airframe_ptr_t, const Coord&, const Coord&);
 
-        static double getNarrowBandFreeSpacePathloss(double fc, double distance);
-        double getGhassemzadehPathloss(double distance) const;
-        double getFDPathloss(double freq, double distance) const;
-        static double simtruncnormal(double mean, double stddev, double a, int rng);
+protected:
+    double pathloss_exponent;
+    double fading;
+    Dimension frequency;
+    cOutVector pathlosses;  // outputs computed pathlosses. Allows to compute Eb = Epulse*pathloss for Eb/N0 computations. (N0 is the noise sampled by the receiver)
+
+    static double getNarrowBandFreeSpacePathloss(double fc, double distance);
+    double getGhassemzadehPathloss(double distance) const;
+    double getFDPathloss(double freq, double distance) const;
+    static double simtruncnormal(double mean, double stddev, double a, int rng);
 
 };
 

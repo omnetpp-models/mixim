@@ -4,7 +4,7 @@
 
 
 cplusplus {{
-#include "MacPkt_m.h"
+#include "MiXiMMacPkt.h"
 }}
 
 class MacPkt;

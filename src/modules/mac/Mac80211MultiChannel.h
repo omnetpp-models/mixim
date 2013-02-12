@@ -19,7 +19,7 @@
 #include <omnetpp.h>
 
 #include "MiXiMDefs.h"
-#include "Mac80211.h"
+#include "./Mac80211.h"
 
 /**
  * @brief Adds multi channel support to Mac80211.

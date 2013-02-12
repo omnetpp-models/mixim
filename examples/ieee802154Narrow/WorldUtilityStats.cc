@@ -31,7 +31,7 @@ void WorldUtilityStats::initialize(int stage)
 		bitsReceived = 0;
 
 		//register for global stats to collect
-		FindModule<>::findNetwork(this)->subscribe(BaseLayer::catPacketSignal, this);
+		FindModule<>::findNetwork(this)->subscribe(BaseLayer::catPacketSignal.initialize(), this);
 
 		sent.setName("Bits generated");
 		rcvd.setName("Bits received");
@@ -73,6 +73,12 @@ void WorldUtilityStats::finish()
 		hosts = 2;
 	if (bitrate && hosts > 1) {
 		recordScalar("Usage", bitsReceived / bitrate / simTime() / (hosts-1));
+	}
+	else if (bitrate) {
+		recordScalar("Usage", bitsReceived / bitrate / simTime());
+	}
+	else if (hosts > 1) {
+		recordScalar("Usage", bitsReceived / simTime() / (hosts-1));
 	}
 	else {
 		recordScalar("Usage", bitsReceived / simTime());

@@ -42,6 +42,9 @@
  * @ingroup exampleCSMA
  */
 class SimpleNetwLayer : public BaseModule{
+public:
+	typedef NetwPkt    netwpkt_t;
+	typedef netwpkt_t* netwpkt_ptr_t;
 //--------members----------
 private:
 	/** @brief Copy constructor is not allowed.
@@ -90,7 +93,7 @@ protected:
 	void broadcastHelloWorld() {
 		assert(!ev.isDisabled());
 		ev << "Broadcasting hello world.\n";
-		NetwPkt* helloWorld = new NetwPkt("helloWorld", HELLO_WORLD);
+		netwpkt_ptr_t helloWorld = new netwpkt_t("helloWorld", HELLO_WORLD);
 
 		helloWorld->setDestAddr(LAddress::L3BROADCAST);
 		helloWorld->setSrcAddr(ip);
@@ -108,8 +111,8 @@ protected:
 		send(pkt, dataOut);
 	}
 
-	void forwardPacket(NetwPkt* pkt, const LAddress::L2Type& nextHop){
-		NetwPkt* fwd = new NetwPkt(pkt->getName(), pkt->getKind());
+	void forwardPacket(netwpkt_ptr_t pkt, const LAddress::L2Type& nextHop){
+		netwpkt_ptr_t fwd = new netwpkt_t(pkt->getName(), pkt->getKind());
 
 		fwd->setDestAddr(pkt->getDestAddr());
 		fwd->setSrcAddr(pkt->getSrcAddr());
@@ -121,7 +124,7 @@ protected:
 		sendDown(fwd);
 	}
 
-	void handleHelloWorld(NetwPkt* pkt){
+	void handleHelloWorld(netwpkt_ptr_t pkt){
 
 		//who said hello?
 		const LAddress::L3Type& srcIP = pkt->getSrcAddr();
@@ -178,7 +181,7 @@ protected:
 
 		ev << "Jabbering - Routingtablesize:" << routingTable.size() << "  target:" << target << "  dest:" << it->first << endl;
 
-		NetwPkt* jabber = new NetwPkt("jabber", JABBER);
+		netwpkt_ptr_t jabber = new netwpkt_t("jabber", JABBER);
 
 		jabber->setDestAddr(it->first);
 		jabber->setSrcAddr(ip);
@@ -196,7 +199,7 @@ protected:
 		scheduleJabbering();
 	}
 
-	void handleIncomingJabber(NetwPkt* pkt){
+	void handleIncomingJabber(netwpkt_ptr_t pkt){
 		if(isSwitch) {
 			if(pkt->getDestAddr() != ip){
 				assert(pkt->getTtl() > 0);
@@ -269,13 +272,13 @@ public:
 
 		switch(msg->getKind()){
 		case HELLO_WORLD:
-			handleHelloWorld(static_cast<NetwPkt*>(msg));
+			handleHelloWorld(static_cast<netwpkt_ptr_t>(msg));
 			break;
 		case START_TO_JABBER:
 			jabberToSomeone();
 			break;
 		case JABBER:
-			handleIncomingJabber(static_cast<NetwPkt*>(msg));
+			handleIncomingJabber(static_cast<netwpkt_ptr_t>(msg));
 			break;
 
 		case BaseMacLayer::PACKET_DROPPED:

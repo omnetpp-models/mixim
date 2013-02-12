@@ -50,82 +50,84 @@
  **/
 class MIXIM_API Flood : public BaseNetwLayer
 {
-    protected:
-        /** @brief Network layer sequence number*/
-        unsigned long seqNum;
+protected:
+    /** @brief Network layer sequence number*/
+    unsigned long seqNum;
 
-        /** @brief Default time-to-live (ttl) used for this module*/
-        int defaultTtl;
+    /** @brief Default time-to-live (ttl) used for this module*/
+    int defaultTtl;
 
-        /** @brief Defines whether to use plain flooding or not*/
-        bool plainFlooding;
+    /** @brief Defines whether to use plain flooding or not*/
+    bool plainFlooding;
 
-        class Bcast
-        {
-            public:
-                unsigned long seqNum;
-                LAddress::L3Type srcAddr;
-                simtime_t delTime;
-            public:
-                Bcast(unsigned long n = 0, const LAddress::L3Type& s = LAddress::L3NULL,
-                        simtime_t_cref d = SIMTIME_ZERO) :
-                        seqNum(n), srcAddr(s), delTime(d)
-                {
-                }
-        };
-
-        typedef std::list<Bcast> cBroadcastList;
-
-        /** @brief List of already broadcasted messages*/
-        cBroadcastList bcMsgs;
-
-        /**
-         * @brief Max number of entries in the list of already broadcasted
-         * messages
-         **/
-        unsigned int bcMaxEntries;
-
-        /** 
-         * @brief Time after which an entry for an already broadcasted msg
-         * can be deleted
-         **/
-        simtime_t bcDelTime;
-
+    class Bcast {
     public:
-        Flood() :
-                BaseNetwLayer(), seqNum(0), defaultTtl(0), plainFlooding(false), bcMsgs(), bcMaxEntries(0), bcDelTime(), nbDataPacketsReceived(
-                        0), nbDataPacketsSent(0), nbDataPacketsForwarded(0), nbHops(0)
-        {
+        unsigned long    seqNum;
+        LAddress::L3Type srcAddr;
+        simtime_t        delTime;
+    public:
+        Bcast(unsigned long n=0, const LAddress::L3Type& s = LAddress::L3NULL,  simtime_t_cref d=SIMTIME_ZERO) :
+            seqNum(n), srcAddr(s), delTime(d) {
         }
+    };
 
-        /** @brief Initialization of omnetpp.ini parameters*/
-        virtual void initialize(int);
-        virtual void finish();
+    typedef std::list<Bcast> cBroadcastList;
 
-    protected:
+    /** @brief List of already broadcasted messages*/
+    cBroadcastList bcMsgs;
 
-        long nbDataPacketsReceived;
-        long nbDataPacketsSent;
-        long nbDataPacketsForwarded;
-        long nbHops;
+    /**
+     * @brief Max number of entries in the list of already broadcasted
+     * messages
+     **/
+    unsigned int bcMaxEntries;
 
-        /** @brief Handle messages from upper layer */
-        virtual void handleUpperMsg(cMessage *);
+    /** 
+     * @brief Time after which an entry for an already broadcasted msg
+     * can be deleted
+     **/
+    simtime_t bcDelTime;
 
-        /** @brief Handle messages from lower layer */
-        virtual void handleLowerMsg(cMessage *);
+public:
+    Flood()
+    	: BaseNetwLayer()
+    	, seqNum(0)
+    	, defaultTtl(0)
+    	, plainFlooding(false)
+    	, bcMsgs()
+    	, bcMaxEntries(0)
+    	, bcDelTime()
+    	, nbDataPacketsReceived(0)
+    	, nbDataPacketsSent(0)
+    	, nbDataPacketsForwarded(0)
+    	, nbHops(0)
+    {}
 
-        /** @brief we have no self messages */
-        virtual void handleSelfMsg(cMessage* /*msg*/)
-        {
-        }
-        ;
+    /** @brief Initialization of omnetpp.ini parameters*/
+    virtual void initialize(int);
+    virtual void finish();    
 
-        /** @brief Checks whether a message was already broadcasted*/
-        bool notBroadcasted(NetwPkt*);
+protected:
 
-        //overloading encaps method
-        virtual NetwPkt* encapsMsg(cPacket*);
+    long nbDataPacketsReceived;
+    long nbDataPacketsSent;
+    long nbDataPacketsForwarded;
+    long nbHops;
+
+    /** @brief Handle messages from upper layer */
+    virtual void handleUpperMsg(cMessage *);
+
+    /** @brief Handle messages from lower layer */
+    virtual void handleLowerMsg(cMessage *);
+
+    /** @brief we have no self messages */
+    virtual void handleSelfMsg(cMessage* /*msg*/) {};
+    
+    /** @brief Checks whether a message was already broadcasted*/
+    bool notBroadcasted( netwpkt_ptr_t );
+
+    //overloading encaps method
+    virtual netwpkt_ptr_t encapsMsg(cPacket*);
 };
 
 #endif

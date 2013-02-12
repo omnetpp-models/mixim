@@ -24,37 +24,32 @@ Define_Module(phyPER);
 
 void phyPER::initialize(int stage)
 {
-    BaseModule::initialize(stage);
-    if (stage == 0)
-    {
-        findHost()->subscribe(BaseLayer::catPacketSignal, this);
-        findHost()->subscribe(DeciderUWBIRED::catUWBIRPacketSignal, this);
-        maiPER.setName("maiPER");
-        maiPERnoRS.setName("maiPERnoRS");
-        nbSyncAttempts = 0;
-        nbSyncSuccesses = 0;
-        nbRx = 0;
-        nbRxnoRS = 0;
-    }
+	BaseModule::initialize(stage);
+	if(stage == 0) {
+		findHost()->subscribe(BaseLayer::catPacketSignal.initialize(), this);
+		findHost()->subscribe(DeciderUWBIRED::catUWBIRPacketSignal.initialize(), this);
+		maiPER.setName("maiPER");
+		maiPERnoRS.setName("maiPERnoRS");
+		nbSyncAttempts = 0;
+		nbSyncSuccesses = 0;
+		nbRx = 0;
+		nbRxnoRS = 0;
+	}
 }
 
-void phyPER::receiveSignal(cComponent */*source*/, simsignal_t signalID, cObject *obj)
-{
-    if (signalID == BaseLayer::catPacketSignal)
-    {
-        packet = *(static_cast<const Packet*>(obj));
-        nbRx = static_cast<long>(packet.getNbPacketsReceived());
-        nbRxnoRS = static_cast<long>(packet.getNbPacketsReceivedNoRS());
+
+void phyPER::receiveSignal(cComponent */*source*/, simsignal_t signalID, cObject *obj) {
+    if(signalID == BaseLayer::catPacketSignal) {
+    	packet = *(static_cast<const Packet*>(obj));
+    	nbRx = static_cast<long>(packet.getNbPacketsReceived());
+    	nbRxnoRS = static_cast<long>(packet.getNbPacketsReceivedNoRS());
+    } else if(signalID == DeciderUWBIRED::catUWBIRPacketSignal) {
+    	uwbirpacket = *(static_cast<const UWBIRPacket*>(obj));
+    	nbSyncAttempts = uwbirpacket.getNbSyncAttempts();
+    	nbSyncSuccesses = uwbirpacket.getNbSyncSuccesses();
     }
-    else if (signalID == DeciderUWBIRED::catUWBIRPacketSignal)
-    {
-        uwbirpacket = *(static_cast<const UWBIRPacket*>(obj));
-        nbSyncAttempts = uwbirpacket.getNbSyncAttempts();
-        nbSyncSuccesses = uwbirpacket.getNbSyncSuccesses();
-    }
-    if (nbSyncAttempts > 0)
-    {
-        maiPER.record(static_cast<double>(nbRx) / nbSyncAttempts);
-        maiPERnoRS.record(static_cast<double>(nbRxnoRS) / nbSyncAttempts);
+    if(nbSyncAttempts > 0) {
+      maiPER.record( static_cast<double>(nbRx) / nbSyncAttempts );
+      maiPERnoRS.record( static_cast<double>(nbRxnoRS) / nbSyncAttempts );
     }
 }

@@ -16,85 +16,128 @@
 #include "JakesFading.h"
 
 #include "BaseWorldUtility.h"
-#include "MiximAirFrame_m.h"
+#include "MiXiMAirFrame.h"
 #include "connectionManager/ChannelAccess.h"
 
 DimensionSet JakesFadingMapping::dimensions(Dimension::time);
 
-double JakesFadingMapping::getValue(const Argument& pos) const
+double JakesFadingMapping::getValue(const Argument& pos) const {
+	double    f    = model->carrierFrequency;
+	double    v    = relSpeed;
+	simtime_t t    = pos.getTime();
+	double    re_h = 0;
+	double    im_h = 0;
+
+	// Compute Doppler shift.
+	double doppler_shift = v * f / BaseWorldUtility::speedOfLight;
+
+	for (int i = 0; i < model->fadingPaths; i++) {
+		// Some math for complex numbers:
+		//
+		// Cartesian form: z = a + ib
+		// Polar form:     z = p * e^i(phi)
+		//
+		// a = p * cos(phi)
+		// b = p * sin(phi)
+		// z1 * z2 = p1 * p2 * e^i(phi1 + phi2)
+
+		// Phase shift due to Doppler => t-selectivity.
+		double phi_d = model->angleOfArrival[i] * doppler_shift;
+		// Phase shift due to delay spread => f-selectivity.
+		double phi_i = SIMTIME_DBL(model->delay[i]) * f;
+		// Calculate resulting phase due to t-selective and f-selective fading.
+		double phi   = 2.00 * M_PI * (phi_d * SIMTIME_DBL(t) - phi_i);
+
+		// One ring model/Clarke's model plus f-selectivity according to Cavers:
+		// Due to isotropic antenna gain pattern on all paths only a^2 can be received on all paths.
+		// Since we are interested in attenuation a:=1, attenuation per path is then:
+		double attenuation = (1.00 / sqrt(static_cast<double>(model->fadingPaths)));
+
+		// Convert to cartesian form and aggregate {Re, Im} over all fading paths.
+		re_h = re_h + attenuation * cos(phi);
+		im_h = im_h - attenuation * sin(phi);
+	}
+
+	// Output: |H_f|^2 = absolute channel impulse response due to fading.
+	// Note that this may be >1 due to constructive interference.
+	return re_h * re_h + im_h * im_h;
+}
+
+
+JakesFading::JakesFading()
+	: AnalogueModel()
+	, fadingPaths(0)
+	, angleOfArrival(NULL)
+	, delay(NULL)
+	, carrierFrequency(0)
+	, interval()
 {
-    double f = model->carrierFrequency;
-    double v = relSpeed;
-    simtime_t t = pos.getTime();
-    double re_h = 0;
-    double im_h = 0;
+}
 
-    // Compute Doppler shift.
-    double doppler_shift = v * f / BaseWorldUtility::speedOfLight;
+bool JakesFading::initFromMap(const ParameterMap& params) {
+    ParameterMap::const_iterator it;
+    bool                         bInitSuccess = true;
+    double                       delayRMS     = 0.0;
 
-    for (int i = 0; i < model->fadingPaths; i++)
-    {
-        // Some math for complex numbers:
-        //
-        // Cartesian form: z = a + ib
-        // Polar form:     z = p * e^i(phi)
-        //
-        // a = p * cos(phi)
-        // b = p * sin(phi)
-        // z1 * z2 = p1 * p2 * e^i(phi1 + phi2)
-
-        // Phase shift due to Doppler => t-selectivity.
-        double phi_d = model->angleOfArrival[i] * doppler_shift;
-        // Phase shift due to delay spread => f-selectivity.
-        double phi_i = SIMTIME_DBL(model->delay[i]) * f;
-        // Calculate resulting phase due to t-selective and f-selective fading.
-        double phi = 2.00 * M_PI * (phi_d * SIMTIME_DBL(t) - phi_i);
-
-        // One ring model/Clarke's model plus f-selectivity according to Cavers:
-        // Due to isotropic antenna gain pattern on all paths only a^2 can be received on all paths.
-        // Since we are interested in attenuation a:=1, attenuation per path is then:
-        double attenuation = (1.00 / sqrt(static_cast<double>(model->fadingPaths)));
-
-        // Convert to cartesian form and aggregate {Re, Im} over all fading paths.
-        re_h = re_h + attenuation * cos(phi);
-        im_h = im_h - attenuation * sin(phi);
+    if ((it = params.find("seed")) != params.end()) {
+        srand( ParameterMap::mapped_type(it->second).longValue() );
     }
-
-    // Output: |H_f|^2 = absolute channel impulse response due to fading.
-    // Note that this may be >1 due to constructive interference.
-    return re_h * re_h + im_h * im_h;
-}
-
-JakesFading::JakesFading(int fadingPaths, simtime_t_cref delayRMS, double carrierFrequency, simtime_t_cref interval) :
-        AnalogueModel(), fadingPaths(fadingPaths), angleOfArrival(NULL), delay(NULL), carrierFrequency(
-                carrierFrequency), interval(interval)
-{
-    angleOfArrival = new double[fadingPaths];
-    delay = new simtime_t[fadingPaths];
-
-    for (int i = 0; i < fadingPaths; ++i)
-    {
-        angleOfArrival[i] = cos(uniform(0, M_PI));
-        delay[i] = exponential(delayRMS);
+    if ((it = params.find("fadingPaths")) != params.end()) {
+        fadingPaths = ParameterMap::mapped_type(it->second).longValue();
     }
+    else {
+        bInitSuccess = false;
+        opp_warning("No fadingPaths defined in config.xml for JakesFading!");
+    }
+    if ((it = params.find("delayRMS")) != params.end()) {
+        delayRMS = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No delayRMS defined in config.xml for JakesFading!");
+    }
+    if ((it = params.find("interval")) != params.end()) {
+        interval = Argument(ParameterMap::mapped_type(it->second).doubleValue());
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No interval defined in config.xml for JakesFading!");
+    }
+    if ((it = params.find("carrierFrequency")) != params.end()) {
+        carrierFrequency = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No carrierFrequency defined in config.xml for JakesFading!");
+    }
+    if (bInitSuccess) {
+	angleOfArrival = new double[fadingPaths];
+	delay = new simtime_t[fadingPaths];
+
+	for (int i = 0; i < fadingPaths; ++i) {
+		angleOfArrival[i] = cos(uniform(0, M_PI));
+		delay[i] = exponential(delayRMS);
+	}
+    }
+    return AnalogueModel::initFromMap(params) && bInitSuccess;
 }
 
-JakesFading::~JakesFading()
-{
-    delete[] delay;
-    delete[] angleOfArrival;
+JakesFading::~JakesFading() {
+    if (delay != NULL)
+	delete[] delay;
+    if (angleOfArrival != NULL)
+	delete[] angleOfArrival;
 }
 
-void JakesFading::filterSignal(MiximAirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
+void JakesFading::filterSignal(airframe_ptr_t frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
 {
-    Signal& signal = frame->getSignal();
-    ChannelMobilityPtrType senderMobility =
-            dynamic_cast<ChannelAccess *>(frame->getSenderModule())->getMobilityModule();
-    ChannelMobilityPtrType receiverMobility =
-            dynamic_cast<ChannelAccess *>(frame->getArrivalModule())->getMobilityModule();
-    const double relSpeed = (senderMobility->getCurrentSpeed() - receiverMobility->getCurrentSpeed()).length();
+	Signal&                signal           = frame->getSignal();
+	ChannelMobilityPtrType senderMobility   = dynamic_cast<ChannelAccess *>(frame->getSenderModule())->getMobilityModule();
+	ChannelMobilityPtrType receiverMobility = dynamic_cast<ChannelAccess *>(frame->getArrivalModule())->getMobilityModule();
+	const double           relSpeed         = (senderMobility->getCurrentSpeed() - receiverMobility->getCurrentSpeed()).length();
 
-    signal.addAttenuation(
-            new JakesFadingMapping(this, relSpeed, Argument(signal.getReceptionStart()), interval,
-                    Argument(signal.getReceptionEnd())));
+	signal.addAttenuation(new JakesFadingMapping(this, relSpeed,
+	                                             Argument(signal.getReceptionStart()),
+	                                             interval,
+	                                             Argument(signal.getReceptionEnd())));
 }

@@ -71,13 +71,32 @@ class MIXIM_API LMacLayer : public BaseMacLayer
         LMacLayer& operator=(const LMacLayer&);
 
     public:
-        LMacLayer() :
-                BaseMacLayer(), SETUP_PHASE(true), slotChange(), macState(), radioState(), slotDuration(0), controlDuration(
-                        0), mySlot(0), numSlots(0), currSlot(), reservedMobileSlots(0), macQueue(), queueLength(0), wakeup(
-                        NULL), timeout(NULL), sendData(NULL), initChecker(NULL), checkChannel(NULL), start_lmac(NULL), send_control(
-                        NULL), bitrate(0), droppedPacket(), nicId(-1), txPower(0)
-        {
-        }
+	LMacLayer()
+		: BaseMacLayer()
+		, SETUP_PHASE(true)
+		, slotChange()
+		, macState()
+		, radioState()
+		, slotDuration(0)
+		, controlDuration(0)
+		, mySlot(0)
+		, numSlots(0)
+		, currSlot()
+		, reservedMobileSlots(0)
+		, macQueue()
+		, queueLength(0)
+		, wakeup(NULL)
+		, timeout(NULL)
+		, sendData(NULL)
+		, initChecker(NULL)
+		, checkChannel(NULL)
+		, start_lmac(NULL)
+		, send_control(NULL)
+		, bitrate(0)
+		, droppedPacket()
+		, nicId(-1)
+		, txPower(0)
+	{}
         /** @brief Clean up messges.*/
         virtual ~LMacLayer();
 
@@ -100,7 +119,7 @@ class MIXIM_API LMacLayer : public BaseMacLayer
         virtual void handleLowerControl(cMessage *msg);
 
         /** @brief Encapsulate the NetwPkt into an MacPkt */
-        virtual MacPkt* encapsMsg(cPacket*);
+        virtual macpkt_ptr_t encapsMsg(cPacket*);
 
     protected:
         typedef std::list<LMacPkt*> MacQueue;
@@ -197,7 +216,7 @@ class MIXIM_API LMacLayer : public BaseMacLayer
         int nicId;
 
         /** @brief Internal function to attach a signal to the packet */
-        void attachSignal(MacPkt *macPkt);
+        void attachSignal(macpkt_ptr_t macPkt);
 
         /** @brief Transmission power of the node */
         double txPower;

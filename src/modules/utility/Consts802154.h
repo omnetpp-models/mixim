@@ -60,6 +60,8 @@
 //    5500000,
 //    11000000
 //};
+
+
 /** @brief duration of the PHY header
  *
  * If the radio was switched to
@@ -77,6 +79,7 @@ const double RED_PHY_HEADER_DURATION = 0.000020;
 //const double BITRATE_HEADER=1E-6;
 /** @brief 3dB filter bandwidth -- channels overlap! */
 //const double BANDWIDTH=20E+6;
+
 const int MAC_GENERATOR = 5;
 
 /** @brief standard frame lengths
@@ -109,7 +112,8 @@ const double DIFS = 2 * ST + SIFS;
 /** @brief extended interframe space
  *  whenever a corrupted frame is received, defer actions for this time
  */
-const double EIFS = SIFS + DIFS + (MAC802154_PHY_HEADER_LENGTH + LENGTH_ACK) / 250000;
+const double EIFS =
+  SIFS + DIFS + (MAC802154_PHY_HEADER_LENGTH + LENGTH_ACK) / 250000;
 
 /** @brief We have to stop transmitting somewhen.
  *

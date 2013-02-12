@@ -54,150 +54,167 @@
  * @ingroup analogueModels
  * @ingroup ieee802154a
  */
-class MIXIM_API UWBIRIEEE802154APathlossModel : public AnalogueModel
-{
-    private:
-        /** @brief Copy constructor is not allowed.
-         */
-        UWBIRIEEE802154APathlossModel(const UWBIRIEEE802154APathlossModel&);
-        /** @brief Assignment operator is not allowed.
-         */
-        UWBIRIEEE802154APathlossModel& operator=(const UWBIRIEEE802154APathlossModel&);
+class MIXIM_API UWBIRIEEE802154APathlossModel : public AnalogueModel {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	UWBIRIEEE802154APathlossModel(const UWBIRIEEE802154APathlossModel&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	UWBIRIEEE802154APathlossModel& operator=(const UWBIRIEEE802154APathlossModel&);
 
-    public:
+public:
 
-        /*
-         * @brief Default constructor.
-         */
-        UWBIRIEEE802154APathlossModel(int _channelModel, double _threshold, bool shadowing = true) :
-                AnalogueModel(), channelModel(_channelModel), cfg(), tapThreshold(_threshold), doShadowing(shadowing), doSmallScaleShadowing(
-                        false), newTxPower(NULL), txPower(NULL), arg(), pulsesIter(NULL), L(0), S(0), clusterStart(), gamma_l(), Mcluster(
-                        0), Omega_l(0), distance(0), averagePower(0), nbCalls(0), averagePowers(), pathlosses()
-        {
-            // Check that this model is supported
-            assert(implemented_CMs[channelModel]);
-            // load the model parameters
-            cfg = CMconfigs[channelModel];
-            averagePowers.setName("averagePower");
-            pathlosses.setName("pathloss");
-        }
-        virtual ~UWBIRIEEE802154APathlossModel()
-        {
-        }
+	/*
+	 * @brief Default constructor.
+	 */
+	UWBIRIEEE802154APathlossModel()
+		: AnalogueModel()
+		, channelModel(0)
+		, cfg()
+		, tapThreshold(0)
+		, doShadowing(false)
+ 		, doSmallScaleShadowing(false)
+		, newTxPower(NULL)
+		, txPower(NULL)
+		, arg()
+		, pulsesIter(NULL)
+		, L(0)
+		, S(0)
+		, clusterStart()
+		, gamma_l()
+		, Mcluster(0)
+		, Omega_l(0)
+		, averagePower(0)
+		, nbCalls(0)
+		, averagePowers()
+		, pathlosses()
+    {
+    	averagePowers.setName("averagePower");
+    	pathlosses.setName("pathloss");
+    }
 
-        /*
-         * @brief Applies the model to an incoming AirFrame's Signal.
-         */
-        void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
+    /** @brief Initialize the analog model from XML map data.
+     *
+     * This method should be defined for generic analog model initialization.
+     *
+     * @param params The parameter map which was filled by XML reader.
+     *
+     * @return true if the initialization was successfully.
+     */
+    virtual bool initFromMap(const ParameterMap&);
 
-        /*@brief Utility function to use a Rayleigh random variable
-         *
-         */
-        double Rayleigh(double param);
+    virtual ~UWBIRIEEE802154APathlossModel() {}
 
-        /* @brief Lists implemented channel models.
-         * */
-        static const bool implemented_CMs[];
+    /*
+     * @brief Applies the model to an incoming AirFrame's Signal.
+     */
+    void filterSignal(airframe_ptr_t, const Coord&, const Coord&);
 
-        struct CMconfig
-        {
-                double PL0; // pathloss at 1 m distance (*not* in dB)
-                double n; // pathloss exponent
-                double sigma_s; // shadowing standard deviation (unused)
-                double Aant; // antenna loss (always 3 dB)
-                double kappa; // frequency dependence of the pathloss
-                double Lmean; // mean number of clusters
-                double Lambda; // inter-cluster arrival rate (clusters *per second*)
-                // ray arrival rates (mixed Poisson model parameters, in seconds)
-                double lambda_1, lambda_2, Beta;
-                double Gamma; // inter-cluster decay constant
-                double k_gamma, gamma_0; // intra-cluster decay time constant parameters
-                double sigma_cluster; // cluster shadowing variance (*not* in dB)
-                double m_0, k_m; // Nakagami m factor mean
-                double var_m_0, var_k_m; // Nakagami m factor variance
-                double strong_m_0; // Nakagami m factor for strong components
-                // parameters for alternative PDP shape
-                double gamma_rise;
-                double gamma_1;
-                double xi;
-        };
+    /*@brief Utility function to use a Rayleigh random variable
+     *
+     */
+    double Rayleigh(double param);
 
-        /* @brief Known models configuration
-         **/
-        static const CMconfig CMconfigs[];
+    /* @brief Lists implemented channel models.
+     * */
+    static const bool implemented_CMs[];
 
-    protected:
+    struct CMconfig {
+    	double PL0; 				// pathloss at 1 m distance (*not* in dB)
+    	double n;					// pathloss exponent
+    	double sigma_s;				// shadowing standard deviation (unused)
+    	double Aant;				// antenna loss (always 3 dB)
+    	double kappa;				// frequency dependence of the pathloss
+		double Lmean;				// mean number of clusters
+    	double Lambda;					// inter-cluster arrival rate (clusters *per second*)
+		// ray arrival rates (mixed Poisson model parameters, in seconds)
+    	double lambda_1, lambda_2, Beta;
+    	double Gamma;				// inter-cluster decay constant
+    	double k_gamma, gamma_0; 	// intra-cluster decay time constant parameters
+    	double sigma_cluster;		// cluster shadowing variance (*not* in dB)
+    	double m_0, k_m;			// Nakagami m factor mean
+    	double var_m_0, var_k_m;	// Nakagami m factor variance
+    	double strong_m_0;			// Nakagami m factor for strong components
+    	// parameters for alternative PDP shape
+    	double gamma_rise; double gamma_1; double xi;
+    };
 
-        /** @brief selected channel model
-         **/
-        int channelModel;
+    /* @brief Known models configuration
+     **/
+    static const CMconfig CMconfigs[];
 
-        /* @brief Selected configuration
-         **/
-        CMconfig cfg;
 
-        // configure cluster threshold
-        double tapThreshold; // Only generates taps with at most 10 dB attenuation
+protected:
 
-        double doShadowing; //activates block shadowing
-        double doSmallScaleShadowing; // activates small-scale shadowing
+	/** @brief selected channel model
+	 **/
+	int channelModel;
 
-        // channel statistical characterization parameters
-        // (should be xml-ized)
-        // First environment: Residential LOS
-        static const double PL0; // -43.9 dB
-        static const double pathloss_exponent;
-        static const double meanL;
-        static const double Lambda;
-        static const double lambda1;
-        static const double lambda2;
-        static const double Beta;
-        static const double Gamma;
-        static const double k_gamma;
-        static const double gamma_0;
-        static const double sigma_cluster; // 2.75 dB
+	/* @brief Selected configuration
+	     **/
+	    CMconfig cfg;
 
-        static const double fc; // mandatory band 3, center frequency, Hz
-        static const double BW; //  mandatory band 3, bandwidth, Hz
-        static const double fcMHz; // mandatory band 3, center frequency, MHz
+    // configure cluster threshold
+    double tapThreshold; // Only generates taps with at most 10 dB attenuation
 
-        static const double d0;
+    double doShadowing; //activates block shadowing
+    double doSmallScaleShadowing; // activates small-scale shadowing
 
-        // antenna parameters
-        static const double ntx;
-        static const double nrx;
+    // channel statistical characterization parameters
+    // (should be xml-ized)
+    // First environment: Residential LOS
+    static const double PL0; // -43.9 dB
+    static const double pathloss_exponent;
+    static const double meanL;
+    static const double Lambda;
+    static const double lambda1;
+    static const double lambda2;
+    static const double Beta;
+    static const double Gamma;
+    static const double k_gamma;
+    static const double gamma_0;
+    static const double sigma_cluster; // 2.75 dB
 
-        TimeMapping<Linear>* newTxPower;
-        ConstMapping* txPower;
-        Argument arg;
-        MappingIterator* pulsesIter;
-        // number of clusters
-        double L;
-        // block shadowing
-        double S;
-        // start time of cluster number "cluster"
-        simtime_t clusterStart;
-        simtime_t gamma_l;
-        double Mcluster;
-        // cluster integrated energy
-        double Omega_l;
-        // distance between source and receiver
-        double distance;
+    static const double fc; // mandatory band 3, center frequency, Hz
+    static const double BW;  //  mandatory band 3, bandwidth, Hz
+    static const double fcMHz; // mandatory band 3, center frequency, MHz
 
-        double averagePower; // statistics counter (useful for model validation, should converges towards 1)
-        long nbCalls;
-        cOutVector averagePowers;
-        cOutVector pathlosses; // outputs computed pathlosses. Allows to compute Eb = Epulse*pathloss for Eb/N0 computations. (N0 is the noise sampled by the receiver)
+    static const double d0;
 
-        /*
-         * Generates taps for the considered pulse, with the current channel parameters
-         */
-        void addEchoes(simtime_t_cref pulseStart);
+    // antenna parameters
+    static const double ntx;
+    static const double nrx;
 
-        /*
-         * @brief Computes the pathloss as a function of center frequency and bandwidth given in MHz
-         */
-        double getPathloss(double fc, double BW) const;
+    TimeMapping<Linear>* newTxPower;
+    ConstMapping* txPower;
+    Argument arg;
+    MappingIterator* pulsesIter;
+    // number of clusters
+    double L;
+    // block shadowing
+    double S;
+    // start time of cluster number "cluster"
+    simtime_t clusterStart;
+    simtime_t gamma_l;
+    double Mcluster;
+    // cluster integrated energy
+    double Omega_l;
+
+    double averagePower; // statistics counter (useful for model validation, should converges towards 1)
+    long nbCalls;
+    cOutVector averagePowers;
+    cOutVector pathlosses;  // outputs computed pathlosses. Allows to compute Eb = Epulse*pathloss for Eb/N0 computations. (N0 is the noise sampled by the receiver)
+
+    /*
+     * Generates taps for the considered pulse, with the current channel parameters
+     */
+    void addEchoes(simtime_t_cref pulseStart);
+
+    /*
+     * @brief Computes the pathloss as a function of center frequency and bandwidth given in MHz
+     */
+    double getPathloss(double fc, double BW, double distance) const;
 
 };
 

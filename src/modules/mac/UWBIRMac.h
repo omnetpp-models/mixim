@@ -50,68 +50,87 @@ class UWBIRMacPkt;
  * @ingroup ieee802154a
  * @ingroup macLayer
  */
-class MIXIM_API UWBIRMac : public BaseMacLayer
-{
-    private:
-        /** @brief Copy constructor is not allowed.
-         */
-        UWBIRMac(const UWBIRMac&);
-        /** @brief Assignment operator is not allowed.
-         */
-        UWBIRMac& operator=(const UWBIRMac&);
+class MIXIM_API UWBIRMac : public BaseMacLayer {
+private:
+    /** @brief Copy constructor is not allowed.
+     */
+    UWBIRMac(const UWBIRMac&);
+    /** @brief Assignment operator is not allowed.
+     */
+    UWBIRMac& operator=(const UWBIRMac&);
 
-    public:
+public:
 
-        virtual void initialize(int stage);
+    virtual void initialize(int stage);
 
-        virtual void finish();
+    virtual void finish();
 
-        UWBIRMac() :
-                BaseMacLayer(), debug(false), stats(false), trace(false), rsDecoder(false), packetsAlwaysValid(false), totalRxBits(
-                        0), errRxBits(0), phy(NULL), packet(100), prf(0), packetsBER(), dataLengths(), erroneousSymbols(), sentPulses(), receivedPulses(), meanPacketBER(), packetSuccessRate(), packetSuccessRateNoRS(), ber(), meanBER(), RSErrorRate(), success(), successNoRS(), nbReceivedPacketsNoRS(
-                        0), nbReceivedPacketsRS(0), nbSentPackets(0), nbSymbolErrors(0), nbSymbolsReceived(0), nbHandledRxPackets(
-                        0), nbFramesDropped(0)
-        {
-        }
+    UWBIRMac()
+    	: BaseMacLayer()
+    	, debug(false)
+    	, stats(false)
+    	, trace(false)
+    	, rsDecoder(false)
+    	, packetsAlwaysValid(false)
+    	, totalRxBits(0), errRxBits(0)
+    	, phy(NULL)
+    	, packet(100)
+    	, prf(0)
+    	, packetsBER()
+    	, dataLengths()
+    	, erroneousSymbols()
+    	, sentPulses()
+    	, receivedPulses()
+    	, meanPacketBER()
+    	, packetSuccessRate()
+    	, packetSuccessRateNoRS()
+    	, ber()
+    	, meanBER()
+    	, RSErrorRate()
+    	, success(), successNoRS()
+    	, nbReceivedPacketsNoRS(0), nbReceivedPacketsRS(0), nbSentPackets(0), nbSymbolErrors(0)
+    	, nbSymbolsReceived(0), nbHandledRxPackets(0), nbFramesDropped(0)
+    { }
 
-    protected:
-        bool debug;
-        bool stats;
-        bool trace;
-        bool rsDecoder;
-        bool packetsAlwaysValid;
-        double totalRxBits, errRxBits; // double and not long as we divide one by the other to get the BER
-        MacToPhyInterface* phy;
-        Packet packet;
-        int prf; // pulse repetition frequency
-        cOutVector packetsBER;
-        cOutVector dataLengths;
-        cOutVector erroneousSymbols;
-        cOutVector sentPulses;
-        cOutVector receivedPulses;
-        cOutVector meanPacketBER;
-        cOutVector packetSuccessRate;
-        cOutVector packetSuccessRateNoRS;
-        cOutVector ber;
-        cStdDev meanBER;
-        cOutVector RSErrorRate;
-        cOutVector success, successNoRS;
+protected:
+    bool debug;
+    bool stats;
+    bool trace;
+    bool rsDecoder;
+    bool packetsAlwaysValid;
+    double totalRxBits, errRxBits; // double and not long as we divide one by the other to get the BER
+    MacToPhyInterface* phy;
+    Packet packet;
+    int prf; // pulse repetition frequency
+    cOutVector packetsBER;
+    cOutVector dataLengths;
+    cOutVector erroneousSymbols;
+    cOutVector sentPulses;
+    cOutVector receivedPulses;
+    cOutVector meanPacketBER;
+    cOutVector packetSuccessRate;
+    cOutVector packetSuccessRateNoRS;
+    cOutVector ber;
+    cStdDev meanBER;
+    cOutVector RSErrorRate;
+    cOutVector success, successNoRS;
 
-        long nbReceivedPacketsNoRS, nbReceivedPacketsRS;
-        long nbSentPackets;
-        long nbSymbolErrors, nbSymbolsReceived;
-        long nbHandledRxPackets;
-        long nbFramesDropped;
+    long nbReceivedPacketsNoRS, nbReceivedPacketsRS;
+    long nbSentPackets;
+    long nbSymbolErrors, nbSymbolsReceived;
+    long nbHandledRxPackets;
+    long nbFramesDropped;
 
-        // warning: cfg value is currently ignored
-        void prepareData(UWBIRMacPkt* packet, IEEE802154A::config cfg = IEEE802154A::cfg_mandatory_4M);
+    // warning: cfg value is currently ignored
+    void prepareData(UWBIRMacPkt* packet, IEEE802154A::config cfg = IEEE802154A::cfg_mandatory_4M);
 
-        void handleLowerMsg(cPacket *msg);
+    void handleLowerMsg(cPacket *msg);
 
-        bool validatePacket(UWBIRMacPkt * mac);
+    bool validatePacket(UWBIRMacPkt * mac);
 
-        void initCounters();
+    void initCounters();
 
 };
 
 #endif // UWBIRMAC_H
+

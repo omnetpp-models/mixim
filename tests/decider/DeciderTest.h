@@ -7,7 +7,7 @@
 
 #include <list>
 #include <Decider.h>
-
+#include <ChannelSenseRequest_m.h>
 
 class DeciderTest : public DeciderToPhyInterface, public SimpleTest {
 private:
@@ -37,7 +37,7 @@ protected:
 	 */
 	typedef std::map<std::string, cMsgPar> ParameterMap;
 
-	typedef std::list<MiximAirFrame*> AirFrameList;
+	typedef std::list<airframe_ptr_t> AirFrameList;
 
 	/** @brief Defines the all AirFrames for one test scenario which
 	 * can appear on the channel.*/
@@ -267,7 +267,7 @@ protected:
 	void fillAirFramesOnChannel();
 
 	// create a test AirFrame identified by an index
-	MiximAirFrame* createTestAirFrame(int i);
+	airframe_ptr_t createTestAirFrame(int i);
 
 	// pass AirFrames currently on the (virtual) channel to currently tested decider
 	void passAirFramesOnChannel(AirFrameVector& out) const;
@@ -358,14 +358,14 @@ protected:
 	simtime_t testTime;
 
 	// some test AirFrames
-	MiximAirFrame* TestAF1;
-	MiximAirFrame* TestAF2;
-	MiximAirFrame* TestAF3;
-	MiximAirFrame* TestAF4;
+	airframe_ptr_t TestAF1;
+	airframe_ptr_t TestAF2;
+	airframe_ptr_t TestAF3;
+	airframe_ptr_t TestAF4;
 
 	// AirFrames for SNR-threshold tests
-	MiximAirFrame* TestAF5;
-	MiximAirFrame* TestAF6;
+	airframe_ptr_t TestAF5;
+	airframe_ptr_t TestAF6;
 
 
 	// Used for ChannelSenseRequest tests to define the expected result of a Test sense
@@ -386,7 +386,7 @@ protected:
 	ChannelSenseRequest*  testChannelSense;
 
 	// pointer to the AirFrame that is currently processed by decider
-	const MiximAirFrame* processedAF;
+	airframe_ptr_t processedAF;
 
 	// value for no attenuation (in attenuation-mappings)
 	double noAttenuation;
@@ -461,17 +461,17 @@ protected:
 		fillAirFramesOnChannel();
 	}
 
-	ChannelSenseRequest* createCSR(simtime_t_cref duration, int mode) {
+	ChannelSenseRequest* createCSR(simtime_t_cref duration, SenseMode mode) {
 		ChannelSenseRequest* tmp = new ChannelSenseRequest();
 		tmp->setSenseMode(mode);
 		tmp->setSenseTimeout(duration);
 		return tmp;
 	}
 
-	MiximAirFrame* addAirFrameToPool(simtime_t_cref start, simtime_t_cref end, double power);
-	MiximAirFrame* addAirFrameToPool(simtime_t_cref start, simtime_t_cref payloadStart, simtime_t_cref end,
+	airframe_ptr_t addAirFrameToPool(simtime_t_cref start, simtime_t_cref end, double power);
+	airframe_ptr_t addAirFrameToPool(simtime_t_cref start, simtime_t_cref payloadStart, simtime_t_cref end,
 								double headerPower, double payloadPower);
-	void removeAirFrameFromPool(MiximAirFrame* af);
+	void removeAirFrameFromPool(airframe_ptr_t af);
 
 	void freeAirFramePool();
 
@@ -516,7 +516,7 @@ public:
 	 * the corresponding DeciderResult up to MACLayer
 	 *
 	 */
-	virtual void sendUp(MiximAirFrame* packet, DeciderResult* result);
+	virtual void sendUp(airframe_ptr_t packet, DeciderResult* result);
 
 	/**
 	 * @brief Returns a special test-time
@@ -585,7 +585,19 @@ public:
 
 	virtual int getCurrentRadioChannel() const { return -1; }
 
+	virtual int getNbRadioChannels()     const { return 1;  }
+	/**
+	 * @brief Returns the current state the radio is in.
+	 *
+	 * See RadioState for possible values.
+	 *
+	 * This method is mainly used by the mac layer.
+	 */
+	virtual bool isRadioInRX() const {
+		return true;
+	}
 
+	virtual long getPhyHeaderLength() const { return 1; }
 	//---------SimpleTest implementation-----------
 
 	virtual void runTests();

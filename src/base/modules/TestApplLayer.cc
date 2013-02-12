@@ -26,10 +26,11 @@
 
 using std::endl;
 
-TestApplLayer::TestApplLayer() :
-        BaseApplLayer(), delayTimer(NULL), coreDebug(false)
-{
-}
+TestApplLayer::TestApplLayer()
+	: BaseApplLayer()
+	, delayTimer(NULL)
+	, coreDebug(false)
+{}
 
 /**
  * First we have to initialize the module from which we derived ours,
@@ -42,13 +43,11 @@ TestApplLayer::TestApplLayer() :
 void TestApplLayer::initialize(int stage)
 {
     BaseApplLayer::initialize(stage);
-    if (stage == 0)
-    {
-        hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
-        delayTimer = new cMessage("delay-timer", SEND_BROADCAST_TIMER);
+    if(stage == 0) {
+    	hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
+        delayTimer = new cMessage( "delay-timer", SEND_BROADCAST_TIMER );
     }
-    else if (stage == 1)
-    {
+    else if(stage==1) {
         scheduleAt(simTime() + dblrand() * 10, delayTimer);
     }
 }
@@ -60,25 +59,24 @@ void TestApplLayer::initialize(int stage)
  * BROADCAST_REPLY_MESSAGE) is a reply to a broadcast packet that we
  * have send and just causes some output before it is deleted
  **/
-void TestApplLayer::handleLowerMsg(cMessage* msg)
+void TestApplLayer::handleLowerMsg( cMessage* msg )
 {
     ApplPkt *m;
-    switch (msg->getKind())
-    {
-        case BROADCAST_MESSAGE:
-            m = static_cast<ApplPkt *>(msg);
-            coreEV << "Received a broadcast packet from host[" << m->getSrcAddr() << "] -> sending reply" << endl;
-            sendReply(m);
-            break;
-        case BROADCAST_REPLY_MESSAGE:
-            m = static_cast<ApplPkt *>(msg);
-            coreEV << "Received reply from host[" << m->getSrcAddr() << "]; delete msg" << endl;
-            delete msg;
-            break;
-        default:
-            EV << "Error! got packet with unknown kind: " << msg->getKind() << endl;
-            delete msg;
-            break;
+    switch( msg->getKind() ) {
+    case BROADCAST_MESSAGE:
+        m = static_cast<ApplPkt *>(msg);
+        coreEV << "Received a broadcast packet from host["<<m->getSrcAddr()<<"] -> sending reply" << endl;
+        sendReply(m);
+        break;
+    case BROADCAST_REPLY_MESSAGE:
+        m = static_cast<ApplPkt *>(msg);
+        coreEV << "Received reply from host["<<m->getSrcAddr()<<"]; delete msg" << endl;
+        delete msg;
+	break;
+    default:
+    	EV <<"Error! got packet with unknown kind: " << msg->getKind()<<endl;
+        delete msg;
+        break;
     }
 }
 
@@ -90,19 +88,17 @@ void TestApplLayer::handleLowerMsg(cMessage* msg)
  *
  * @sa sendBroadcast
  **/
-void TestApplLayer::handleSelfMsg(cMessage *msg)
-{
-    switch (msg->getKind())
-    {
-        case SEND_BROADCAST_TIMER:
-            sendBroadcast();
-            delete msg;
-            delayTimer = NULL;
-            break;
-        default:
-            EV << "Unknown selfmessage! -> delete, kind: " << msg->getKind() << endl;
-            delete msg;
-            break;
+void TestApplLayer::handleSelfMsg(cMessage *msg) {
+    switch( msg->getKind() ) {
+    case SEND_BROADCAST_TIMER:
+        sendBroadcast();
+		delete msg;
+		delayTimer = NULL;
+	break;
+    default:
+    	EV << "Unknown selfmessage! -> delete, kind: "<<msg->getKind() <<endl;
+    	delete msg;
+    	break;
     }
 }
 
@@ -115,15 +111,15 @@ void TestApplLayer::sendBroadcast()
     ApplPkt *pkt = new ApplPkt("BROADCAST_MESSAGE", BROADCAST_MESSAGE);
     pkt->setDestAddr(LAddress::L3BROADCAST);
     // we use the host modules getIndex() as a appl address
-    pkt->setSrcAddr(myApplAddr());
+    pkt->setSrcAddr( myApplAddr() );
     pkt->setBitLength(headerLength);
 
     // set the control info to tell the network layer the layer 3
     // address;
-    NetwControlInfo::setControlInfo(pkt, LAddress::L3BROADCAST);
+    NetwControlInfo::setControlInfo(pkt, LAddress::L3BROADCAST );
 
     coreEV << "Sending broadcast packet!" << endl;
-    sendDown(pkt);
+    sendDown( pkt );
 }
 
 void TestApplLayer::sendReply(ApplPkt *msg)
@@ -133,7 +129,7 @@ void TestApplLayer::sendReply(ApplPkt *msg)
     delay = uniform(0, 0.01);
 
     msg->setDestAddr(msg->getSrcAddr());
-    msg->setSrcAddr(myApplAddr());
+    msg->setSrcAddr (myApplAddr() );
     msg->setKind(BROADCAST_REPLY_MESSAGE);
     msg->setName("BROADCAST_REPLY_MESSAGE");
     sendDelayedDown(msg, delay);
@@ -146,5 +142,5 @@ void TestApplLayer::sendReply(ApplPkt *msg)
 
 TestApplLayer::~TestApplLayer()
 {
-    cancelAndDelete(delayTimer);
+	cancelAndDelete(delayTimer);
 }

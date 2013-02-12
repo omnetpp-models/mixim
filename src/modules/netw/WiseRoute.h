@@ -52,147 +52,175 @@ class WiseRoutePkt;
  **/
 class MIXIM_API WiseRoute : public BaseNetwLayer
 {
-    private:
-        /** @brief Copy constructor is not allowed.
-         */
-        WiseRoute(const WiseRoute&);
-        /** @brief Assignment operator is not allowed.
-         */
-        WiseRoute& operator=(const WiseRoute&);
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	WiseRoute(const WiseRoute&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	WiseRoute& operator=(const WiseRoute&);
 
-    public:
-        WiseRoute() :
-                BaseNetwLayer(), routeTable(), floodTable(), headerLength(0), macaddress(), sinkAddress(), useSimTracer(
-                        false), rssiThreshold(0), routeFloodsInterval(0), floodSeqNumber(0), tracer(NULL), routeFloodTimer(
-                        NULL), nbDataPacketsForwarded(0), nbDataPacketsReceived(0), nbDataPacketsSent(0), nbDuplicatedFloodsReceived(
-                        0), nbFloodsSent(0), nbPureUnicastSent(0), nbRouteFloodsSent(0), nbRouteFloodsReceived(0), nbUnicastFloodForwarded(
-                        0), nbPureUnicastForwarded(0), nbGetRouteFailures(0), nbRoutesRecorded(0), nbHops(0), receivedRSSI(), routeRSSI(), allReceivedRSSI(), allReceivedBER(), routeBER(), receivedBER(), nextHopSelectionForSink(), trace(
-                        false), stats(false), debug(false)
-        {
-        }
-        /** @brief Initialization of the module and some variables*/
-        virtual void initialize(int);
-        virtual void finish();
+public:
+	WiseRoute()
+		: BaseNetwLayer()
+		, routeTable()
+		, floodTable()
+		, headerLength(0)
+		, macaddress()
+		, sinkAddress()
+		, useSimTracer(false)
+		, rssiThreshold(0)
+		, routeFloodsInterval(0)
+		, floodSeqNumber(0)
+		, tracer(NULL)
+		, routeFloodTimer(NULL)
+		, nbDataPacketsForwarded(0)
+		, nbDataPacketsReceived(0)
+		, nbDataPacketsSent(0)
+		, nbDuplicatedFloodsReceived(0)
+		, nbFloodsSent(0)
+		, nbPureUnicastSent(0)
+		, nbRouteFloodsSent(0)
+		, nbRouteFloodsReceived(0)
+		, nbUnicastFloodForwarded(0)
+		, nbPureUnicastForwarded(0)
+		, nbGetRouteFailures(0)
+		, nbRoutesRecorded(0)
+		, nbHops(0)
+		, receivedRSSI()
+		, routeRSSI()
+		, allReceivedRSSI()
+		, allReceivedBER()
+		, routeBER()
+		, receivedBER()
+		, nextHopSelectionForSink()
+		, trace(false), stats(false), debug(false)
+	{}
+    /** @brief Initialization of the module and some variables*/
+    virtual void initialize(int);
+    virtual void finish();
 
-        virtual ~WiseRoute();
+    virtual ~WiseRoute();
 
-    protected:
-        enum messagesTypes
-        {
-            UNKNOWN = 0, DATA, ROUTE_FLOOD, SEND_ROUTE_FLOOD_TIMER
-        };
+protected:
+	enum messagesTypes {
+	    UNKNOWN=0,
+	    DATA,
+	    ROUTE_FLOOD,
+	    SEND_ROUTE_FLOOD_TIMER
+	};
 
-        typedef enum floodTypes
-        {
-            NOTAFLOOD, FORWARD, FORME, DUPLICATE
-        } floodTypes;
+	typedef enum floodTypes {
+		NOTAFLOOD,
+		FORWARD,
+		FORME,
+		DUPLICATE
+	} floodTypes;
 
-        typedef struct tRouteTableEntry
-        {
-                LAddress::L3Type nextHop;
-                double rssi;
-        } tRouteTableEntry;
 
-        typedef std::map<LAddress::L3Type, tRouteTableEntry> tRouteTable;
-        typedef std::multimap<tRouteTable::key_type, unsigned long> tFloodTable;
+	typedef struct tRouteTableEntry {
+		LAddress::L3Type nextHop;
+		double           rssi;
+	} tRouteTableEntry;
 
-        tRouteTable routeTable;
-        tFloodTable floodTable;
+	typedef std::map<LAddress::L3Type, tRouteTableEntry>        tRouteTable;
+	typedef std::multimap<tRouteTable::key_type, unsigned long> tFloodTable;
 
-        /**
-         * @brief Length of the NetwPkt header
-         * Read from omnetpp.ini
-         **/
-        int headerLength;
+	tRouteTable routeTable;
+	tFloodTable floodTable;
 
-        /** @brief cached variable of my network address */
+    /**
+     * @brief Length of the NetwPkt header
+     * Read from omnetpp.ini
+     **/
+    int headerLength;
+
+    /** @brief cached variable of my network address */
 //    int myNetwAddr;
-        LAddress::L2Type macaddress;
+    LAddress::L2Type macaddress;
 
-        LAddress::L3Type sinkAddress;
+    LAddress::L3Type sinkAddress;
 
-        bool useSimTracer;
+    bool useSimTracer;
 
-        /** @brief Minimal received RSSI necessary for adding source to routing table. */
-        double rssiThreshold;
+    /** @brief Minimal received RSSI necessary for adding source to routing table. */
+    double rssiThreshold;
 
-        /** @brief Interval [seconds] between two route floods. A route flood is a simple flood from
-         *         which other nodes can extract routing (next hop) information.
-         */
-        double routeFloodsInterval;
+    /** @brief Interval [seconds] between two route floods. A route flood is a simple flood from
+     *         which other nodes can extract routing (next hop) information.
+     */
+    double routeFloodsInterval;
 
-        /** @brief Flood sequence number */
-        unsigned long floodSeqNumber;
+    /** @brief Flood sequence number */
+    unsigned long floodSeqNumber;
 
-        SimTracer *tracer;
-        cMessage* routeFloodTimer;
+    SimTracer *tracer;
+    cMessage* routeFloodTimer;
 
-        long nbDataPacketsForwarded;
-        long nbDataPacketsReceived;
-        long nbDataPacketsSent;
-        long nbDuplicatedFloodsReceived;
-        long nbFloodsSent;
-        long nbPureUnicastSent;
-        long nbRouteFloodsSent;
-        long nbRouteFloodsReceived;
-        long nbUnicastFloodForwarded;
-        long nbPureUnicastForwarded;
-        long nbGetRouteFailures;
-        long nbRoutesRecorded;
-        long nbHops;
+    long nbDataPacketsForwarded;
+    long nbDataPacketsReceived;
+    long nbDataPacketsSent;
+    long nbDuplicatedFloodsReceived;
+    long nbFloodsSent;
+    long nbPureUnicastSent;
+    long nbRouteFloodsSent;
+    long nbRouteFloodsReceived;
+    long nbUnicastFloodForwarded;
+    long nbPureUnicastForwarded;
+    long nbGetRouteFailures;
+    long nbRoutesRecorded;
+    long nbHops;
 
-        cOutVector receivedRSSI;
-        cOutVector routeRSSI;
-        cOutVector allReceivedRSSI;
-        cOutVector allReceivedBER;
-        cOutVector routeBER;
-        cOutVector receivedBER;
-        cOutVector nextHopSelectionForSink;
+    cOutVector receivedRSSI;
+    cOutVector routeRSSI;
+    cOutVector allReceivedRSSI;
+    cOutVector allReceivedBER;
+    cOutVector routeBER;
+    cOutVector receivedBER;
+    cOutVector nextHopSelectionForSink;
 
-        bool trace, stats, debug;
+    bool trace, stats, debug;
 
-        /**
-         * @name Handle Messages
-         * @brief Functions to redefine by the programmer
-         *
-         * These are the functions provided to add own functionality to your
-         * modules. These functions are called whenever a self message or a
-         * data message from the upper or lower layer arrives respectively.
-         *
-         **/
-        /*@{*/
+    /**
+     * @name Handle Messages
+     * @brief Functions to redefine by the programmer
+     *
+     * These are the functions provided to add own functionality to your
+     * modules. These functions are called whenever a self message or a
+     * data message from the upper or lower layer arrives respectively.
+     *
+     **/
+    /*@{*/
 
-        /** @brief Handle messages from upper layer */
-        virtual void handleUpperMsg(cMessage* msg);
+    /** @brief Handle messages from upper layer */
+    virtual void handleUpperMsg(cMessage* msg);
 
-        /** @brief Handle messages from lower layer */
-        virtual void handleLowerMsg(cMessage* msg);
+    /** @brief Handle messages from lower layer */
+    virtual void handleLowerMsg(cMessage* msg);
 
-        /** @brief Handle self messages */
-        virtual void handleSelfMsg(cMessage* msg);
+    /** @brief Handle self messages */
+    virtual void handleSelfMsg(cMessage* msg);
 
-        /** @brief Handle control messages from lower layer */
-        virtual void handleLowerControl(cMessage* msg);
+    /** @brief Handle control messages from lower layer */
+    virtual void handleLowerControl(cMessage* msg);
 
-        /** @brief Update routing table.
-         *
-         * The tuple provided in argument gives the next hop address to the origin.
-         * The table is updated only if the RSSI value is above the threshold.
-         */
-        virtual void updateRouteTable(const tRouteTable::key_type& origin, const LAddress::L3Type& lastHop, double rssi,
-                double ber);
+    /** @brief Update routing table.
+     *
+     * The tuple provided in argument gives the next hop address to the origin.
+     * The table is updated only if the RSSI value is above the threshold.
+     */
+    virtual void updateRouteTable(const tRouteTable::key_type& origin, const LAddress::L3Type& lastHop, double rssi, double ber);
 
-        /** @brief Decapsulate a message */
-        cMessage* decapsMsg(WiseRoutePkt *msg);
+    /** @brief Decapsulate a message */
+    cMessage* decapsMsg(WiseRoutePkt *msg);
 
-        /** @brief update flood table. returns detected flood type (general or unicast flood to forward,
-         *         duplicate flood to delete, unicast flood to me
-         */
-        floodTypes updateFloodTable(bool isFlood, const tFloodTable::key_type& srcAddr,
-                const tFloodTable::key_type& destAddr, unsigned long seqNum);
+    /** @brief update flood table. returns detected flood type (general or unicast flood to forward,
+     *         duplicate flood to delete, unicast flood to me
+     */
+    floodTypes updateFloodTable(bool isFlood, const tFloodTable::key_type& srcAddr, const tFloodTable::key_type& destAddr, unsigned long seqNum);
 
-        /** @brief find a route to destination address. */
-        tFloodTable::key_type getRoute(const tFloodTable::key_type& destAddr, bool iAmOrigin = false) const;
+    /** @brief find a route to destination address. */
+    tFloodTable::key_type getRoute(const tFloodTable::key_type& destAddr, bool iAmOrigin = false) const;
 };
 
 #endif

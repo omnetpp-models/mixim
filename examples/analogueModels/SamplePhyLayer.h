@@ -18,33 +18,30 @@
  */
 class SamplePhyLayer:public PhyLayer{
 protected:
-	int myIndex;
 
 	/**
-	 * @brief This method is called by the PhyLayer to initialize
-	 * the AnalogueModels read from the config.xml.
+	 * @brief Creates and returns an instance of the AnalogueModel with the
+	 *        specified name.
 	 *
-	 * Every AnalogueModel which should be used by a Simulation using this
-	 * class has to be known (and initialized) by either this method or
-	 * one of the base methods (which means this method should call the
-	 * base method to make them able to load the AnalogueModels known
-	 * by them).
+	 * Is able to initialize the following AnalogueModels:
+	 * - RandomFreqTimeModel
+	 * - RandomFrequencyOnlyModel
 	 */
-	virtual AnalogueModel* getAnalogueModelFromName(std::string name,
-													ParameterMap& params) const;
-
-	AnalogueModel* createRandomFreqTimeModel(ParameterMap & params) const;
-	AnalogueModel* createRandomFrequencyOnlyModel(ParameterMap & params) const;
+	virtual AnalogueModel* getAnalogueModelFromName( const std::string& name
+	                                               , ParameterMap&      params) const;
 
 	/**
 	 * @brief This method is called by the PhyLayer to initialize
-	 * the Decider read from the config.xml.
+	 *        the decider read from the config.xml.
 	 *
-	 * Every Decider which should be usable by a Simulation using this
+	 * Every decider which should be usable by a Simulation using this
 	 * class has to be known by either this method or (one of) the
-	 * base mthods.
+	 * base methods.
+	 *
+	 * Is able to initialize directly the following decider:
+	 * - ThresholdDecider
 	 */
-	virtual Decider* getDeciderFromName(std::string name, ParameterMap& params);
+	virtual Decider* getDeciderFromName(const std::string& name, ParameterMap& params);
 
 	void log(std::string msg) const;
 
@@ -64,7 +61,6 @@ protected:
 public:
 	SamplePhyLayer()
 		: PhyLayer()
-		, myIndex(-1)
 	{}
 	virtual void initialize(int stage);
 

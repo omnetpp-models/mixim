@@ -11,74 +11,71 @@
  * @ingroup phyLayer
  * @ingroup macLayer
  */
-class MIXIM_API MacToPhyControlInfo : public cObject
+class MIXIM_API MacToPhyControlInfo: public cObject
 {
-    protected:
-        /** @brief A pointer to the signal representing the transmission.*/
-        Signal* signal;
+protected:
+	/** @brief A pointer to the signal representing the transmission.*/
+	Signal* signal;
 
-        MacToPhyControlInfo(const MacToPhyControlInfo& o) :
-                cObject(), signal(o.signal ? new Signal(*o.signal) : o.signal)
-        {
-        }
-        MacToPhyControlInfo& operator=(const MacToPhyControlInfo& o)
-        {
-            signal = o.signal ? new Signal(*o.signal) : o.signal;
-            return *this;
-        }
+	MacToPhyControlInfo(const MacToPhyControlInfo& o)
+		: cObject()
+		, signal(o.signal ? new Signal(*o.signal) : o.signal)
+	{}
+	MacToPhyControlInfo& operator=(const MacToPhyControlInfo& o)
+	{
+		signal = o.signal ? new Signal(*o.signal) : o.signal;
+		return *this;
+	}
 
-    public:
-        /**
-         * @brief Initialize the MacToPhyControlInfo with the passed
-         * signal or null if signal is ommited.
-         *
-         * NOTE: Once a signal is passed to the MacToPhyControlInfo,
-         * 		 MacToPhyControlInfo takes the ownership of the Signal.
-         */
-        MacToPhyControlInfo(Signal* signal = NULL) :
-                cObject(), signal(signal)
-        {
-        }
+public:
+	/**
+	 * @brief Initialize the MacToPhyControlInfo with the passed
+	 * signal or null if signal is ommited.
+	 *
+	 * NOTE: Once a signal is passed to the MacToPhyControlInfo,
+	 * 		 MacToPhyControlInfo takes the ownership of the Signal.
+	 */
+	MacToPhyControlInfo(Signal* signal = NULL)
+		: cObject()
+		, signal(signal)
+	{}
 
-        /**
-         * @brief Delete the signal if it is still in our ownership.
-         */
-        virtual ~MacToPhyControlInfo()
-        {
-            if (signal)
-                delete signal;
-        }
+	/**
+	 * @brief Delete the signal if it is still in our ownership.
+	 */
+	virtual ~MacToPhyControlInfo() {
+		if(signal)
+			delete signal;
+	}
 
-        /**
-         * @brief Sets the signal of this MacToPhyControlInfo.
-         *
-         * NOTE: Once a signal is passed to the MacToPhyControlInfo,
-         * 		 MacToPhyControlInfo takes the ownership of the Signal.
-         */
-        void setSignal(Signal* s)
-        {
-            if (signal)
-                delete signal;
+	/**
+	 * @brief Sets the signal of this MacToPhyControlInfo.
+	 *
+	 * NOTE: Once a signal is passed to the MacToPhyControlInfo,
+	 * 		 MacToPhyControlInfo takes the ownership of the Signal.
+	 */
+	void setSignal(Signal* s) {
+		if(signal)
+			delete signal;
 
-            signal = s;
-        }
+		signal = s;
+	}
 
-        /**
-         * @brief Returns a pointer to the Signal of this ControlInfo.
-         *
-         * NOTE: The ownership of the Signal is passed together with
-         * 		 the Signal itself. This means the caller of this
-         * 		 method is responsible for deletion of the Signal.
-         * 		 MacToPhyControlInfo also loses its pointer to the
-         * 		 Signal when this Method is called so following
-         * 		 calls of this method will return null!
-         */
-        Signal* retrieveSignal()
-        {
-            Signal* tmp = signal;
-            signal = NULL;
-            return tmp;
-        }
+	/**
+	 * @brief Returns a pointer to the Signal of this ControlInfo.
+	 *
+	 * NOTE: The ownership of the Signal is passed together with
+	 * 		 the Signal itself. This means the caller of this
+	 * 		 method is responsible for deletion of the Signal.
+	 * 		 MacToPhyControlInfo also loses its pointer to the
+	 * 		 Signal when this Method is called so following
+	 * 		 calls of this method will return null!
+	 */
+	Signal* retrieveSignal() {
+		Signal* tmp = signal;
+		signal = NULL;
+		return tmp;
+	}
 
         /**
          * @brief Attaches a "control info" structure (object) to the message pMsg.

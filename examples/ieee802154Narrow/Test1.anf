@@ -5,13 +5,11 @@
   </inputs>
   <datasets>
     <datasets name="da">
-      <items xsi:type="scave:Add" filterPattern="name(Traffic)"/>
-      <items xsi:type="scave:Add" filterPattern="name(Usage)"/>
+      <items xsi:type="scave:Add" filterPattern="Traffic"/>
+      <items xsi:type="scave:Add" filterPattern="Usage"/>
       <items xsi:type="scave:ScatterChart" name="Channelusage" xDataPattern="module(ieee802154Narrow.world) AND name(Traffic)">
         <properties name="X.Axis.Title" value="Generated Traffic/channel bitrate/simulation time"/>
         <properties name="Y.Axis.Title" value="transmitted traffic/channel bitrate/simulation time"/>
-        <properties name="Y.Axis.Min" value="0.1"/>
-        <properties name="Y.Axis.Max" value="1.0"/>
         <properties name="Legend.Display" value="true"/>
         <properties name="Legend.Position" value="Inside"/>
         <properties name="Legend.Anchoring" value="NorthWest"/>

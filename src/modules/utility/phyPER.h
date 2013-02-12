@@ -27,35 +27,39 @@
 
 /**
  */
-class MIXIM_API phyPER : public BaseModule
+class MIXIM_API phyPER : public  BaseModule
 {
-    protected:
-        virtual void initialize(int stage);
-        virtual void handleMessage(cMessage */*msg*/)
-        {
-        }
-        ;
+  protected:
+    virtual void initialize(int stage);
+    virtual void handleMessage(cMessage */*msg*/) { }
 
-        long nbSyncAttempts;
-        long nbSyncSuccesses;
-        long nbRx;
-        long nbRxnoRS;
+    long        nbSyncAttempts;
+    long        nbSyncSuccesses;
+    long        nbRx;
+    long        nbRxnoRS;
 
-        Packet packet;
-        UWBIRPacket uwbirpacket;
+    Packet      packet;
+    UWBIRPacket uwbirpacket;
 
-        cOutVector maiPER;
-        cOutVector maiPERnoRS;
+    cOutVector  maiPER;
+    cOutVector  maiPERnoRS;
 
-    public:
+  public:
 
-        phyPER() :
-                BaseModule(), nbSyncAttempts(0), nbSyncSuccesses(0), nbRx(0), nbRxnoRS(0), packet(100), uwbirpacket(), maiPER(), maiPERnoRS()
-        {
-        }
+    phyPER()
+    	: BaseModule()
+    	, nbSyncAttempts(0)
+    	, nbSyncSuccesses(0)
+	, nbRx(0)
+	, nbRxnoRS(0)
+	, packet(100)
+	, uwbirpacket()
+	, maiPER()
+	, maiPERnoRS()
+    {}
 
-        /** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
-        virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
+	/** @brief Called by the signaling mechanism whenever a change occurs we're interested in */
+    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 };
 
 #endif

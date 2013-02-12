@@ -21,7 +21,7 @@
 #include "NetwPkt_m.h"
 #include "SimpleAddress.h"
 #include "BaseLayer.h"
-#include "BaseArp.h"
+#include "ArpInterface.h"
 #include "BaseWorldUtility.h"
 
 /**
@@ -31,6 +31,9 @@
  */
 class NetworkStackTrafficGen : public BaseLayer
 {
+public:
+	typedef NetwPkt    netwpkt_t;
+	typedef netwpkt_t* netwpkt_ptr_t;
 private:
 	/** @brief Copy constructor is not allowed.
 	 */
@@ -41,8 +44,9 @@ private:
 
 public:
 	enum TrafficGenMessageKinds{
-		SEND_BROADCAST_TIMER = 1,
-		BROADCAST_MESSAGE
+		TRAFFIC_TIMER = 1,
+		BROADCAST_MESSAGE,
+		TARGET_MESSAGE
 	};
 
 protected:
@@ -57,7 +61,7 @@ protected:
 	long nbPacketDropped;
 
 
-	BaseArp* arp;
+	ArpInterface* arp;
 	LAddress::L3Type myNetwAddr;
 
 	cMessage *delayTimer;

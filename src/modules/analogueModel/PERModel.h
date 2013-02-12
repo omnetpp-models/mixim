@@ -15,19 +15,24 @@
  *
  * @author Jérôme Rousselot <jerome.rousselot@csem.ch>
  */
-class MIXIM_API PERModel : public AnalogueModel
-{
-    protected:
-        double packetErrorRate;
-    public:
-        /** @brief The PERModel constructor takes as argument the packet error rate to apply (must be between 0 and 1). */
-        PERModel(double per) :
-                packetErrorRate(per)
-        {
-            assert(per <= 1 && per >= 0);
-        }
+class MIXIM_API PERModel : public AnalogueModel {
+protected:
+	double packetErrorRate;
+public:
+	/** @brief The PERModel constructor takes as argument the packet error rate to apply (must be between 0 and 1). */
+	PERModel() : packetErrorRate(0) { }
 
-        virtual void filterSignal(MiximAirFrame *, const Coord&, const Coord&);
+	/** @brief Initialize the analog model from XML map data.
+	 *
+	 * This method should be defined for generic analog model initialization.
+	 *
+	 * @param params The parameter map which was filled by XML reader.
+	 *
+	 * @return true if the initialization was successfully.
+	 */
+	virtual bool initFromMap(const ParameterMap&);
+
+	virtual void filterSignal(airframe_ptr_t, const Coord&, const Coord&);
 
 };
 

@@ -46,8 +46,6 @@ import org.mixim.base.modules.BaseNetwLayer;
 simple Flood extends BaseNetwLayer
 {
     parameters:
-//        bool debug = default(false); // debug switch
-//        double headerLength; // length of the network header
         bool plainFlooding = default(true); // flag whether to use plain flooding
         // Max number of entries in the list of already broadcasted messages
         double bcMaxEntries = default(100);

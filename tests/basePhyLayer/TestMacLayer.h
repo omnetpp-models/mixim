@@ -11,6 +11,8 @@ class MacPkt;
 
 class TestMacLayer:public BaseModule, public TestModule
 {
+public:
+	typedef MacPkt* macpkt_ptr_t;
 private:
 	/** @brief Copy constructor is not allowed.
 	 */
@@ -122,10 +124,10 @@ public:
 	void continueIn(simtime_t_cref time);
 
 	void waitForTX();
-	void sendDown(MacPkt* pkt);
+	void sendDown(macpkt_ptr_t pkt);
 	void testForChannelSenseRequest(std::string test,
 								    ChannelSenseRequest* req);
-	MacPkt* createMacPkt(simtime_t_cref length);
+	macpkt_ptr_t createMacPkt(simtime_t_cref length);
 };
 
 #endif /*TESTMACLAYER_H_*/

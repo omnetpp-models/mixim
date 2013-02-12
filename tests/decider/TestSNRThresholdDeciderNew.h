@@ -32,13 +32,11 @@ protected:
 
 public:
 
-	TestSNRThresholdDeciderNew(DeciderToPhyInterface* phy,
-					double snrThreshold,
-					double sensitivity,
-					double busyThreshold,
-					int myIndex,
-					bool debug)
-		: SNRThresholdDecider(phy, snrThreshold, sensitivity, busyThreshold, myIndex, debug)
+	TestSNRThresholdDeciderNew( DeciderToPhyInterface* phy
+	                          , double                 sensitivity
+	                          , int                    myIndex
+	                          , bool                   debug )
+		: SNRThresholdDecider(phy, sensitivity, myIndex, debug)
 	{
 
 		// commented out, because TestBaseLayer no longer subclasses TestModule
@@ -49,8 +47,24 @@ public:
 		assertEqual(log("Member 'myIndex' has been initialized properly by passed value."),
 				this->myIndex, myIndex);
 
-		// check if everything else has been set properly
-		checkInitMembers(phy, snrThreshold, sensitivity);
+		// pointer to DeciderToPhyInterface has been set properly
+		assertEqual(log("pointer to DeciderToPhyInterface has been set properly"), this->phy, phy);
+	}
+
+	/** @brief Initialize the decider from XML map data.
+	 *
+	 * This method should be defined for generic decider initialization.
+	 *
+	 * @param params The parameter map which was filled by XML reader.
+	 *
+	 * @return true if the initialization was successfully.
+	 */
+	virtual bool initFromMap(const ParameterMap& params) {
+		bool bInitSuccess = SNRThresholdDecider::initFromMap(params);
+
+		assertEqual(log("Decider initialization from map was done successfully"), true, bInitSuccess);
+
+		return bInitSuccess;
 	}
 };
 

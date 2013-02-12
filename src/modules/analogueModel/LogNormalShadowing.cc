@@ -16,36 +16,65 @@
 #include "LogNormalShadowing.h"
 
 #include "Mapping.h"
-#include "MiximAirFrame_m.h"
+#include "MiXiMAirFrame.h"
 
-LogNormalShadowing::LogNormalShadowing(double mean, double stdDev, simtime_t_cref interval) :
-        mean(mean), stdDev(stdDev), interval(interval)
-{
-}
+LogNormalShadowing::LogNormalShadowing()
+    : mean(0)
+    , stdDev(0)
+    , interval()
+{ }
 
-LogNormalShadowing::~LogNormalShadowing()
-{
-}
+bool LogNormalShadowing::initFromMap(const ParameterMap& params) {
+    ParameterMap::const_iterator it;
+    bool                         bInitSuccess = true;
 
-double LogNormalShadowing::randomLogNormalGain() const
-{
-    return FWMath::dBm2mW(-1.0 * normal(mean, stdDev));
-}
-
-void LogNormalShadowing::filterSignal(MiximAirFrame *frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/)
-{
-    Signal& signal = frame->getSignal();
-    simtime_t start = signal.getReceptionStart();
-    simtime_t end = signal.getReceptionEnd();
-    Mapping* att = MappingUtils::createMapping(DimensionSet::timeDomain, Mapping::LINEAR);
-
-    Argument pos;
-
-    for (simtime_t t = start; t <= end; t += interval)
-    {
-        pos.setTime(t);
-        att->appendValue(pos, randomLogNormalGain());
+    if ((it = params.find("seed")) != params.end()) {
+        srand( ParameterMap::mapped_type(it->second).longValue() );
+    }
+    if ((it = params.find("mean")) != params.end()) {
+        mean = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No mean defined in config.xml for LogNormalShadowing!");
+    }
+    if ((it = params.find("stdDev")) != params.end()) {
+        stdDev = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No stdDev defined in config.xml for LogNormalShadowing!");
+    }
+    if ((it = params.find("interval")) != params.end()) {
+        interval = simtime_t(ParameterMap::mapped_type(it->second).doubleValue());
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No interval defined in config.xml for LogNormalShadowing!");
     }
 
-    signal.addAttenuation(att);
+    return AnalogueModel::initFromMap(params) && bInitSuccess;
+}
+
+LogNormalShadowing::~LogNormalShadowing() {}
+
+double LogNormalShadowing::randomLogNormalGain() const {
+	return FWMath::dBm2mW(-1.0 * normal(mean, stdDev));
+}
+
+void LogNormalShadowing::filterSignal(airframe_ptr_t frame, const Coord& /*sendersPos*/, const Coord& /*receiverPos*/) {
+	Signal&   signal = frame->getSignal();
+	simtime_t start  = signal.getReceptionStart();
+	simtime_t end    = signal.getReceptionEnd();
+	Mapping*  att    = MappingUtils::createMapping(DimensionSet::timeDomain, Mapping::LINEAR);
+
+	Argument pos;
+
+	for(simtime_t t = start; t <= end; t += interval)
+	{
+		pos.setTime(t);
+		att->appendValue(pos, randomLogNormalGain());
+	}
+
+	signal.addAttenuation(att);
 }

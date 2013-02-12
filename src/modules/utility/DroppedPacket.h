@@ -36,65 +36,60 @@
  * @ingroup utils
  * @author Andreas Koepke
  */
-class MIXIM_API DroppedPacket : public cObject
+class MIXIM_API  DroppedPacket : public cObject
 {
-    public:
-        /** @brief Possible Reasons */
-        enum Reasons
-        {
-            NONE = 746216, QUEUE, CHANNEL, RETRIES
-        };
+ public:
+    /** @brief Possible Reasons */
+    enum Reasons
+    {
+        NONE = 746216,
+        QUEUE,
+        CHANNEL,
+        RETRIES
+    };
 
-    protected:
-        /** @brief Hold Reason why this packet was dropped */
-        Reasons reason;
+protected:
+    /** @brief Hold Reason why this packet was dropped */
+    Reasons reason;
 
-    public:
+public:
 
-        /** @brief Get Reason */
-        Reasons getReason() const
-        {
-            return reason;
+    /** @brief Get Reason */
+    Reasons getReason() const {
+        return reason;
+    }
+
+    /** @brief set the state of the radio*/
+    void setReason(Reasons r) {
+        reason=r;
+    }
+
+    /** @brief Constructor*/
+    DroppedPacket(Reasons r=NONE) : cObject(), reason(r) {
+    };
+
+    /** @brief Enables inspection */
+    std::string info() const {
+        std::ostringstream ost;
+        ost << " Packet was dropped, because ";
+        switch(reason) {
+        case NONE:
+            ost<<"no reason as yet";
+            break;
+        case QUEUE:
+            ost<<"the queue was full";
+            break;
+        case CHANNEL:
+            ost<<"the transmission channel could not be acquired";
+            break;
+        case RETRIES:
+            ost<<"the numbe of retries was exceeded "
+               <<"(the receiver did not respond with an ACK?)";
+            break;
+        default: ost << "???"; break;
         }
-
-        /** @brief set the state of the radio*/
-        void setReason(Reasons r)
-        {
-            reason = r;
-        }
-
-        /** @brief Constructor*/
-        DroppedPacket(Reasons r = NONE) :
-                cObject(), reason(r)
-        {
-        }
-        ;
-
-        /** @brief Enables inspection */
-        std::string info() const
-        {
-            std::ostringstream ost;
-            ost << " Packet was dropped, because ";
-            switch (reason)
-            {
-                case NONE:
-                    ost << "no reason as yet";
-                    break;
-                case QUEUE:
-                    ost << "the queue was full";
-                    break;
-                case CHANNEL:
-                    ost << "the transmission channel could not be acquired";
-                    break;
-                case RETRIES:
-                    ost << "the numbe of retries was exceeded " << "(the receiver did not respond with an ACK?)";
-                    break;
-                default:
-                    ost << "???";
-                    break;
-            }
-            return ost.str();
-        }
+        return ost.str();
+    }
 };
 
 #endif

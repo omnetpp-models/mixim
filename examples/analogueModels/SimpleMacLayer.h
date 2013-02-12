@@ -20,6 +20,8 @@ class MacToPhyInterface;
  * @ingroup exampleAM
  */
 class SimpleMacLayer:public BaseModule {
+public:
+	typedef MacPkt* macpkt_ptr_t;
 private:
 	/** @brief Copy constructor is not allowed.
 	 */
@@ -57,7 +59,7 @@ protected:
 	 * */
 	Mapping* createMapping(simtime_t_cref time, simtime_t_cref length, double freqFrom, double freqTo, double value);
 
-	void handleMacPkt(MacPkt* pkt);
+	void handleMacPkt(macpkt_ptr_t pkt);
 	void handleTXOver();
 
 	/**
@@ -65,12 +67,12 @@ protected:
 	 */
 	void broadCastPacket();
 
-	void sendDown(MacPkt* pkt);
+	void sendDown(macpkt_ptr_t pkt);
 
 	/**
 	 * @brief Creates the answer packet.
 	 */
-	MacPkt* createMacPkt(simtime_t_cref length);
+	macpkt_ptr_t createMacPkt(simtime_t_cref length);
 
 	void log(std::string msg);
 

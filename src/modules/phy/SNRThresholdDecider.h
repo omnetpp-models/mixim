@@ -35,107 +35,103 @@
  */
 class MIXIM_API SNRThresholdDecider : public BaseDecider
 {
-    protected:
-        /** @brief Threshold value for checking a SNR-map (SNR-threshold).*/
-        double snrThreshold;
+protected:
+	/** @brief Threshold value for checking a SNR-map (SNR-threshold).*/
+	double snrThreshold;
 
-        /** @brief The threshold rssi level above which the channel is considered busy.*/
-        double busyThreshold;
+	/** @brief The threshold rssi level above which the channel is considered busy.*/
+	double busyThreshold;
 
-    protected:
+protected:
 
-        /**
-         * @brief Checks a mapping against a specific threshold (element-wise).
-         *
-         * @return	true	, if every entry of the mapping is above threshold
-         * 			false	, otherwise
-         *
-         *
-         */
-        virtual bool checkIfAboveThreshold(Mapping* map, simtime_t_cref start, simtime_t_cref end) const;
+	/**
+	 * @brief Checks a mapping against a specific threshold (element-wise).
+	 *
+	 * @return	true	, if every entry of the mapping is above threshold
+	 * 			false	, otherwise
+	 *
+	 *
+	 */
+	virtual bool checkIfAboveThreshold(Mapping* map, simtime_t_cref start, simtime_t_cref end) const;
 
-        /**
-         * @brief Processes a new Signal. Returns the time it wants to
-         * handle the signal again.
-         *
-         * Checks if the signals receiving power is above the sensitivity of
-         * the radio and we are not already trying to receive another AirFrame.
-         * If thats the case it waits for the end of the signal.
-         *
-         * Also checks if the new AirFrame changed the power level in the way
-         * that we can answer an ongoing channel sense request.
-         */
-        virtual simtime_t processNewSignal(MiximAirFrame* frame);
+	/**
+	 * @brief Processes a received AirFrame.
+	 *
+	 * The SNR-mapping for the Signal is created and checked against the Deciders
+	 * SNR-threshold. Depending on that the received AirFrame is either sent up
+	 * to the MAC-Layer or dropped.
+	 *
+	 * @return	usually return a value for: 'do not pass it again'
+	 */
+	virtual DeciderResult* createResult(const airframe_ptr_t frame) const;
 
-        /**
-         * @brief Processes a received AirFrame.
-         *
-         * The SNR-mapping for the Signal is created and checked against the Deciders
-         * SNR-threshold. Depending on that the received AirFrame is either sent up
-         * to the MAC-Layer or dropped.
-         *
-         * @return	usually return a value for: 'do not pass it again'
-         */
-        virtual simtime_t processSignalEnd(MiximAirFrame* frame);
+	/**
+	 * @brief Returns point in time when the ChannelSenseRequest of the passed CSRInfo can be answered
+	 * (e.g. because channel state changed or timeout is reached).
+	 */
+	virtual simtime_t canAnswerCSR(const CSRInfo& requestInfo) const;
 
-        /**
-         * @brief Returns point in time when the ChannelSenseRequest of the passed CSRInfo can be answered
-         * (e.g. because channel state changed or timeout is reached).
-         */
-        virtual simtime_t canAnswerCSR(const CSRInfo& requestInfo);
+	/**
+	 * @brief Answers the ChannelSenseRequest (CSR) from the passed CSRInfo.
+	 *
+	 * Calculates the rssi value and the channel idle state and sends the CSR
+	 * together with the result back to the mac layer.
+	 */
+	virtual void answerCSR(CSRInfo& requestInfo);
 
-        /**
-         * @brief Answers the ChannelSenseRequest (CSR) from the passed CSRInfo.
-         *
-         * Calculates the rssi value and the channel idle state and sends the CSR
-         * together with the result back to the mac layer.
-         */
-        virtual void answerCSR(CSRInfo& requestInfo);
+	/**
+	 * @brief Returns whether the passed rssi value indicates a idle channel.
+	 * @param rssi the channels rssi value to evaluate
+	 * @return true if the channel should be considered idle
+	 */
+	bool isIdleRSSI(double rssi) const {
+		return rssi <= busyThreshold;
+	}
 
-        /**
-         * @brief Returns whether the passed rssi value indicates a idle channel.
-         * @param rssi the channels rssi value to evaluate
-         * @return true if the channel should be considered idle
-         */
-        bool isIdleRSSI(double rssi) const
-        {
-            return rssi <= busyThreshold;
-        }
+public:
 
-    public:
+	/**
+	 * @brief Initializes a new SNRThresholdDecider
+	 *
+	 * @param phy 			- pointer to the deciders phy layer
+	 * @param snrThreshold 	- the threshold (as fraction) above which
+	 * 						  a signal is received correctly
+	 * @param sensitivity 	- the sensitivity (in mW) of the physical layer
+	 * @param busyThreshold - the rssi threshold (in mW) above which the
+	 * 						  channel is considered idle
+	 * @param myIndex 		- the index of the host of this deciders phy
+	 * 						  (for debugging output)
+	 * @param debug 		- should debug messages be displayed?
+	 */
+	SNRThresholdDecider( DeciderToPhyInterface* phy
+	                   , double                 sensitivity
+	                   , int                    myIndex = -1
+	                   , bool                   debug   = false)
+		: BaseDecider(phy, sensitivity, myIndex, debug)
+		, snrThreshold(0)
+		, busyThreshold(sensitivity)
+	{}
 
-        /**
-         * @brief Initializes a new SNRThresholdDecider
-         *
-         * @param phy 			- pointer to the deciders phy layer
-         * @param snrThreshold 	- the threshold (as fraction) above which
-         * 						  a signal is received correctly
-         * @param sensitivity 	- the sensitivity (in mW) of the physical layer
-         * @param busyThreshold - the rssi threshold (in mW) above which the
-         * 						  channel is considered idle
-         * @param myIndex 		- the index of the host of this deciders phy
-         * 						  (for debugging output)
-         * @param debug 		- should debug messages be displayed?
-         */
-        SNRThresholdDecider(DeciderToPhyInterface* phy, double snrThreshold, double sensitivity, double busyThreshold,
-                int myIndex = -1, bool debug = false) :
-                BaseDecider(phy, sensitivity, myIndex, debug), snrThreshold(snrThreshold), busyThreshold(busyThreshold)
-        {
-        }
+	/** @brief Initialize the decider from XML map data.
+	 *
+	 * This method should be defined for generic decider initialization.
+	 *
+	 * @param params The parameter map which was filled by XML reader.
+	 *
+	 * @return true if the initialization was successfully.
+	 */
+	virtual bool initFromMap(const ParameterMap& params);
 
-        virtual ~SNRThresholdDecider()
-        {
-        }
-        ;
+	virtual ~SNRThresholdDecider() {};
 
-        /**
-         * @brief A function that returns information about the channel state
-         *
-         * It is an alternative for the MACLayer in order to obtain information
-         * immediately (in contrast to sending a ChannelSenseRequest,
-         * i.e. sending a cMessage over the OMNeT-control-channel)
-         */
-        virtual ChannelState getChannelState() const;
+	/**
+	 * @brief A function that returns information about the channel state
+	 *
+	 * It is an alternative for the MACLayer in order to obtain information
+	 * immediately (in contrast to sending a ChannelSenseRequest,
+	 * i.e. sending a cMessage over the OMNeT-control-channel)
+	 */
+	virtual ChannelState getChannelState() const;
 };
 
 #endif /* SNRTHRESHOLDDECIDER_H_ */

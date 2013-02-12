@@ -21,6 +21,7 @@
 #include "BaseMacLayer.h"
 #include "FindModule.h"
 #include "NetwToMacControlInfo.h"
+#include "AddressingInterface.h"
 
 Define_Module(NetworkStackTrafficGen);
 
@@ -30,10 +31,9 @@ void NetworkStackTrafficGen::initialize(int stage)
 
 	if(stage == 0) {
 		world = FindModule<BaseWorldUtility*>::findGlobalModule();
-		delayTimer = new cMessage("delay-timer", SEND_BROADCAST_TIMER);
+		delayTimer   = new cMessage("delay-timer", TRAFFIC_TIMER);
 
-		arp = FindModule<BaseArp*>::findSubModule(findHost());
-		myNetwAddr = arp->myNetwAddr(this);
+		arp          = FindModule<ArpInterface*>::findSubModule(findHost());
 
 		packetLength = par("packetLength");
 		packetTime = par("packetTime");
@@ -42,7 +42,16 @@ void NetworkStackTrafficGen::initialize(int stage)
 		destination = LAddress::L3Type(par("destination").longValue());
 
 		nbPacketDropped = 0;
-	} else if (stage == 1) {
+		BaseMacLayer::catPacketSignal.initialize();
+	}
+	else if (stage == 1) {
+		AddressingInterface* addrScheme = FindModule<AddressingInterface*>
+                                                    ::findSubModule(findHost());
+		if(addrScheme) {
+			myNetwAddr = addrScheme->myNetwAddr(this);
+		} else {
+			myNetwAddr = LAddress::L3Type( getId() );
+		}
 		if(burstSize > 0) {
 			remainingBurst = burstSize;
 			scheduleAt(dblrand() * packetTime * burstSize / pppt, delayTimer);
@@ -66,7 +75,7 @@ void NetworkStackTrafficGen::handleSelfMsg(cMessage *msg)
 {
 	switch( msg->getKind() )
 	{
-	case SEND_BROADCAST_TIMER:
+	case TRAFFIC_TIMER:
 		assert(msg == delayTimer);
 
 
@@ -96,7 +105,7 @@ void NetworkStackTrafficGen::handleLowerMsg(cMessage *msg)
 	emit(BaseMacLayer::catPacketSignal, &p);
 
 	delete msg;
-	msg = 0;
+	msg = NULL;
 }
 
 
@@ -106,21 +115,31 @@ void NetworkStackTrafficGen::handleLowerControl(cMessage *msg)
 		nbPacketDropped++;
 	}
 	delete msg;
-	msg = 0;
+	msg = NULL;
 }
 
 void NetworkStackTrafficGen::sendBroadcast()
 {
-	NetwPkt *pkt = new NetwPkt("BROADCAST_MESSAGE", BROADCAST_MESSAGE);
+	LAddress::L2Type macAddr;
+	LAddress::L3Type netwAddr = destination;
+
+	netwpkt_ptr_t pkt = new netwpkt_t(LAddress::isL3Broadcast( netwAddr ) ? "TRAFFIC->ALL" : "TRAFFIC->TO", LAddress::isL3Broadcast( netwAddr ) ? BROADCAST_MESSAGE : TARGET_MESSAGE);
 	pkt->setBitLength(packetLength);
 
+	Packet appPkt(packetLength, 0, 1);
+	emit(BaseMacLayer::catPacketSignal, &appPkt);
+
 	pkt->setSrcAddr(myNetwAddr);
-	pkt->setDestAddr(destination);
+	pkt->setDestAddr(netwAddr);
 
-	NetwToMacControlInfo::setControlInfo(pkt, LAddress::L2BROADCAST);
+	if(LAddress::isL3Broadcast( netwAddr )) {
+		macAddr = LAddress::L2BROADCAST;
+	}
+	else{
+		macAddr = arp->getMacAddr(netwAddr);
+	}
 
-	Packet p(packetLength, 0, 1);
-	emit(BaseMacLayer::catPacketSignal, &p);
+	NetwToMacControlInfo::setControlInfo(pkt, macAddr);
 
 	sendDown(pkt);
 }

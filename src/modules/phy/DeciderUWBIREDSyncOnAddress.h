@@ -13,7 +13,6 @@
 #include "SimpleAddress.h"
 #include "DeciderUWBIRED.h"
 
-class MiximAirFrame;
 class Signal;
 class PhyLayerUWBIR;
 
@@ -47,30 +46,40 @@ class PhyLayerUWBIR;
  *
  * @ingroup ieee802154a
  * @ingroup decider
- */
+*/
 
-class MIXIM_API DeciderUWBIREDSyncOnAddress : public DeciderUWBIRED
-{
-    private:
-        /** @brief Copy constructor is not allowed.
-         */
-        DeciderUWBIREDSyncOnAddress(const DeciderUWBIREDSyncOnAddress&);
-        /** @brief Assignment operator is not allowed.
-         */
-        DeciderUWBIREDSyncOnAddress& operator=(const DeciderUWBIREDSyncOnAddress&);
+class MIXIM_API DeciderUWBIREDSyncOnAddress: public DeciderUWBIRED {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	DeciderUWBIREDSyncOnAddress(const DeciderUWBIREDSyncOnAddress&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	DeciderUWBIREDSyncOnAddress& operator=(const DeciderUWBIREDSyncOnAddress&);
 
-    public:
-        DeciderUWBIREDSyncOnAddress(DeciderToPhyInterface* iface, PhyLayerUWBIR* _uwbiface, double _syncThreshold,
-                bool _syncAlwaysSucceeds, bool _stats, bool _trace, const LAddress::L2Type& _addr,
-                bool alwaysFailOnDataInterference);
+public:
+	DeciderUWBIREDSyncOnAddress( DeciderToPhyInterface* phy
+	                           , double                 sensitivity
+	                           , int                    myIndex
+	                           , bool                   debug )
+		: DeciderUWBIRED(phy, sensitivity, myIndex, debug)
+		, syncAddress()
+	{}
 
-        virtual bool attemptSync(Signal* signal);
+	/** @brief Initialize the decider from XML map data.
+	 *
+	 * This method should be defined for generic decider initialization.
+	 *
+	 * @param params The parameter map which was filled by XML reader.
+	 *
+	 * @return true if the initialization was successfully.
+	 */
+	virtual bool initFromMap(const ParameterMap& params);
 
-        virtual simtime_t processSignal(MiximAirFrame* frame);
+	virtual bool attemptSync(const airframe_ptr_t frame);
 
-    protected:
-        MiximAirFrame* currFrame;
-        LAddress::L2Type syncAddress;
+protected:
+	LAddress::L2Type syncAddress;
 };
 
 #endif /* UWBIREDSYNCONADDRESS_H_ */

@@ -22,14 +22,17 @@
 #define TEST_PHY_LAYER_H
 
 #include "connectionManager/ChannelAccess.h"
-#include <MacPkt_m.h>
+#include <MiXiMMacPkt.h>
 #include <iostream>
 
+class MacPkt;
 /**
  * @brief
  */
 class CMPhyLayer : public ChannelAccess
 {
+public:
+	typedef MacPkt* macpkt_ptr_t;
 
 protected:
 
@@ -38,7 +41,7 @@ protected:
 	};
 
 	void sendDown(const LAddress::L2Type& destAddr) {
-		MacPkt* m = new MacPkt;
+		macpkt_ptr_t m = new MacPkt;
 		m->setDestAddr(destAddr);
 		m->setSrcAddr(myAddr());
 		sendToChannel(m);

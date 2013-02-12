@@ -8,68 +8,30 @@
 #include "Decider80211MultiChannel.h"
 
 #include "DeciderResult80211.h"
-#include "Consts80211.h"
-#include "MiximAirFrame_m.h"
-
-Decider80211MultiChannel::Decider80211MultiChannel(DeciderToPhyInterface* phy, double threshold, double sensitivity,
-        double decodingCurrentDelta, int currentChannel, int myIndex, bool debug) :
-        Decider80211Battery(phy, threshold, sensitivity, currentChannel, decodingCurrentDelta, myIndex, debug), currentChannel(
-                currentChannel)
-{
-}
+#include "utility/Consts80211.h"
+#include "MiXiMAirFrame.h"
 
 Decider80211MultiChannel::~Decider80211MultiChannel()
 {
 }
 
-void Decider80211MultiChannel::getChannelInfo(simtime_t_cref start, simtime_t_cref end, AirFrameVector& out) const
-{
-    Decider80211Battery::getChannelInfo(start, end, out);
+DeciderResult* Decider80211MultiChannel::createResult(const airframe_ptr_t frame) const {
+    DeciderResult80211* result = static_cast<DeciderResult80211*>(Decider80211Battery::createResult(frame));
 
-    for (AirFrameVector::iterator it = out.begin(); it != out.end();)
-    {
-        if ((*it)->getChannel() != currentChannel)
-        {
-            it = out.erase(it);
-        }
-        else
-            ++it;
-    }
+	if(result->isSignalCorrect() && frame->getChannel() != phy->getCurrentRadioChannel()) {
+		deciderEV << "Channel changed during reception. packet is lost!\n";
+		DeciderResult80211* oldResult = result;
+
+		result = new DeciderResult80211(false, oldResult->getBitrate(), oldResult->getSnr());
+		delete oldResult;
+	}
+
+	return result;
 }
 
-simtime_t Decider80211MultiChannel::processNewSignal(MiximAirFrame* frame)
-{
-    if (frame->getChannel() != currentChannel)
-        return notAgain;
+void Decider80211MultiChannel::channelChanged(int newChannel) {
+	assert(1 <= newChannel && newChannel <= 14);
+	centerFrequency = CENTER_FREQUENCIES[newChannel];
 
-    return Decider80211Battery::processNewSignal(frame);
-}
-
-DeciderResult* Decider80211MultiChannel::checkIfSignalOk(MiximAirFrame* frame)
-{
-    DeciderResult* result = 0;
-
-    if (frame->getChannel() != currentChannel)
-    {
-        ConstMappingIterator* bitrateIt = frame->getSignal().getBitrate()->createConstIterator();
-        bitrateIt->next(); //iterate to payload bitrate indicator
-        double payloadBitrate = bitrateIt->getValue();
-        delete bitrateIt;
-        deciderEV << "Channel changed during reception. packet is lost!\n";
-        result = new DeciderResult80211(false, payloadBitrate, 0);
-    }
-    else
-    {
-        result = Decider80211Battery::checkIfSignalOk(frame);
-    }
-
-    return result;
-}
-
-void Decider80211MultiChannel::channelChanged(int newChannel)
-{
-    assert(1 <= currentChannel && currentChannel <= 14);
-    currentChannel = newChannel;
-    centerFrequency = CENTER_FREQUENCIES[currentChannel];
-    channelStateChanged();
+	Decider80211Battery::channelChanged(newChannel);
 }

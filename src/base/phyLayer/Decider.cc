@@ -1,29 +1,24 @@
 #include "Decider.h"
 
-bool DeciderResult::isSignalCorrect() const
-{
-    return isCorrect;
+const_simtime_t Decider::notAgain(-1);
+
+bool DeciderResult::isSignalCorrect() const {
+	return isCorrect;
 }
 
-Decider::Decider(DeciderToPhyInterface* phy) :
-        phy(phy), notAgain(-1)
+Decider::Decider(DeciderToPhyInterface* phy):
+	phy(phy)
+{}
+
+simtime_t Decider::processSignal(airframe_ptr_t /*s*/)
 {
+	return notAgain;
 }
 
-simtime_t Decider::processSignal(MiximAirFrame* /*s*/)
-{
-
-    return -1;
+ChannelState Decider::getChannelState() const {
+	return ChannelState();
 }
 
-ChannelState Decider::getChannelState() const
-{
-
-    return ChannelState();
-}
-
-simtime_t Decider::handleChannelSenseRequest(ChannelSenseRequest* /*request*/)
-{
-
-    return -1;
+simtime_t Decider::handleChannelSenseRequest(ChannelSenseRequest* /*request*/) {
+	return notAgain;
 }

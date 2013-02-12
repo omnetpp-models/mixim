@@ -35,8 +35,7 @@ class ApplPkt;
  * layer and separates packet emissions by a time InterPacketDelay.
  *
  */
-class MIXIM_API Aggregation : public BaseLayer
-{
+class MIXIM_API Aggregation: public BaseLayer {
     private:
         /** @brief Copy constructor is not allowed.
          */

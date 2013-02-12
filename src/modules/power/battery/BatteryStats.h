@@ -47,10 +47,15 @@ class MIXIM_API BatteryStats : public BaseModule
         BatteryStats& operator=(const BatteryStats&);
 
     public:
-        BatteryStats() :
-                BaseModule(), doDetail(0), doTimeSeries(0), residualVec(), relativeVec(), estimateVec(), estimateRelVec()
-        {
-        }
+	BatteryStats()
+		: BaseModule()
+		, doDetail(0)
+		, doTimeSeries(0)
+		, residualVec()
+		, relativeVec()
+		, estimateVec()
+		, estimateRelVec()
+	{}
 
         /** @brief Signal for the BatteryStats.*/
         const static simsignalwrap_t catBatteryStateSignal;

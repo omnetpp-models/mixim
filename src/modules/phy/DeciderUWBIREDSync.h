@@ -42,22 +42,35 @@ class Signal;
  *
  * @ingroup ieee802154a
  * @ingroup decider
- */
-class MIXIM_API DeciderUWBIREDSync : public DeciderUWBIRED
-{
-    public:
-        DeciderUWBIREDSync(DeciderToPhyInterface* iface, PhyLayerUWBIR* _uwbiface, double _syncThreshold,
-                bool _syncAlwaysSucceeds, bool _stats, bool _trace, double _tmin, bool alwaysFailOnDataInterference);
-        ~DeciderUWBIREDSync();
+*/
+class MIXIM_API DeciderUWBIREDSync: public DeciderUWBIRED {
+public:
+	DeciderUWBIREDSync( DeciderToPhyInterface* phy
+	                  , double                 sensitivity
+	                  , int                    myIndex
+	                  , bool                   debug )
+		: DeciderUWBIRED(phy, sensitivity, myIndex, debug)
+		, tmin()
+	{}
 
-    protected:
-        virtual bool attemptSync(Signal* signal);
-        bool evaluateEnergy(Signal* s);
+	/** @brief Initialize the decider from XML map data.
+	 *
+	 * This method should be defined for generic decider initialization.
+	 *
+	 * @param params The parameter map which was filled by XML reader.
+	 *
+	 * @return true if the initialization was successfully.
+	 */
+	virtual bool initFromMap(const ParameterMap& params);
 
-    private:
-        simtime_t tmin;
-        AirFrameVector syncVector;
-        Argument argSync;
+	virtual ~DeciderUWBIREDSync() {};
+
+protected:
+	virtual bool attemptSync(const airframe_ptr_t frame);
+	bool evaluateEnergy(const airframe_ptr_t frame, const AirFrameVector& syncVector) const;
+
+private:
+	simtime_t tmin;
 };
 
 #endif /* UWBIREDSYNC_H_ */

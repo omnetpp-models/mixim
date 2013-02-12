@@ -59,7 +59,7 @@ void SimpleMacLayer::handleMessage(cMessage* msg) {
 
 	//forward MacPackets and TX_OVER to their own handling routine
 	} else if (msg->getKind() == TEST_MACPKT) {
-		handleMacPkt(static_cast<MacPkt*>(msg));
+		handleMacPkt(static_cast<macpkt_ptr_t>(msg));
 	} else if(msg->getKind() == MacToPhyInterface::TX_OVER) {
 		handleTXOver();
 		delete msg;
@@ -75,7 +75,7 @@ void SimpleMacLayer::handleTXOver() {
 	phy->setRadioState(Radio::RX);
 }
 
-void SimpleMacLayer::handleMacPkt(MacPkt* pkt) {
+void SimpleMacLayer::handleMacPkt(macpkt_ptr_t pkt) {
 
 	//if we got a Mac packet check if it was for us or not.
 	if(pkt->getDestAddr() == LAddress::L2Type(myIndex)){
@@ -100,14 +100,14 @@ void SimpleMacLayer::log(std::string msg) {
 
 void SimpleMacLayer::broadCastPacket() {
 	//create the answer packet of length 64kByte / 11kByte/sec
-	MacPkt* pkt = createMacPkt(64.0 / 11000.0);
+    macpkt_ptr_t pkt = createMacPkt(64.0 / 11000.0);
 
 	log("Sending broadcast packet to phy layer.");
 	//pass it to the phy layer
 	sendDown(pkt);
 }
 
-void SimpleMacLayer::sendDown(MacPkt* pkt) {
+void SimpleMacLayer::sendDown(macpkt_ptr_t pkt) {
 	send(pkt, dataOut);
 }
 
@@ -138,7 +138,7 @@ Mapping* SimpleMacLayer::createMapping(simtime_t_cref time, simtime_t_cref lengt
 	return m;
 }
 
-MacPkt* SimpleMacLayer::createMacPkt(simtime_t_cref length) {
+SimpleMacLayer::macpkt_ptr_t SimpleMacLayer::createMacPkt(simtime_t_cref length) {
 	//create signal with start at current simtime and passed length
 	Signal* s = new Signal(simTime(), length);
 
@@ -151,7 +151,7 @@ MacPkt* SimpleMacLayer::createMacPkt(simtime_t_cref length) {
 	s->setBitrate(bitrate);
 
 	//create and initialize control info
-	MacPkt* res = new MacPkt();
+	macpkt_ptr_t res = new MacPkt();
 	MacToPhyControlInfo::setControlInfo(res, s);
 	res->setKind(TEST_MACPKT);
 	res->setDestAddr(LAddress::L2Type(nextReceiver));

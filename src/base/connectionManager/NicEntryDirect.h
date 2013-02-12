@@ -32,52 +32,45 @@
  * @author Daniel Willkomm
  * @sa ConnectionManager, NicEntry
  */
-class NicEntryDirect : public NicEntry
+class NicEntryDirect: public NicEntry
 {
-    public:
-        /** @brief Constructor, initializes all members
-         */
-        NicEntryDirect(bool debug) :
-                NicEntry(debug)
-        {
-        }
-        ;
+  public:
+    /** @brief Constructor, initializes all members
+     */
+    NicEntryDirect(bool debug) : NicEntry(debug) {}
 
-        /**
-         * @brief Destructor -- needs to be there...
-         */
-        virtual ~NicEntryDirect()
-        {
-            while (!outConns.empty())
-            {
-                NicEntry * const other = const_cast<NicEntry*>(outConns.begin()->first);
-                if (other->isConnected(this))
-                {
-                    other->disconnectFrom(this);
-                }
-                disconnectFrom(other);
-            }
-        }
+    /**
+     * @brief Destructor -- needs to be there...
+     */
+    virtual ~NicEntryDirect() {
+    	while (!outConns.empty()) {
+    		NicEntry *const other = const_cast<NicEntry*>(outConns.begin()->first);
+    		if (other->isConnected(this)) {
+    			other->disconnectFrom(this);
+    		}
+    		disconnectFrom(other);
+    	}
+    }
 
-        /** @brief Connect two nics
-         *
-         * Establish unidirectional connection with other nic
-         *
-         * @param other reference to remote nic (other NicEntry)
-         *
-         * This function acquires an in gate at the remote nic and an out
-         * gate at this nic, connects the two and updates the freeInGate,
-         * freeOutGate and outConns data sets.
-         */
-        virtual void connectTo(NicEntry*);
+    /** @brief Connect two nics
+     *
+	 * Establish unidirectional connection with other nic
+	 *
+	 * @param other reference to remote nic (other NicEntry)
+	 *
+	 * This function acquires an in gate at the remote nic and an out
+	 * gate at this nic, connects the two and updates the freeInGate,
+	 * freeOutGate and outConns data sets.
+	 */
+    virtual void connectTo(NicEntry*);
 
-        /** @brief Disconnect two nics
-         *
-         * Release unidirectional connection with other nic
-         *
-         * @param other reference to remote nic (other NicEntry)
-         */
-        virtual void disconnectFrom(NicEntry*);
+    /** @brief Disconnect two nics
+     *
+     * Release unidirectional connection with other nic
+     *
+     * @param other reference to remote nic (other NicEntry)
+     */
+    virtual void disconnectFrom(NicEntry*);
 };
 
 #endif

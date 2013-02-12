@@ -69,104 +69,101 @@
  * @author Steffen Sroka
  * @author Andreas Koepke
  */
-class MIXIM_API BaseModule : public cSimpleModule, public cListener
-{
-    protected:
-        /** @brief Debug switch for all other modules*/
-        bool debug;
+class MIXIM_API BaseModule: public cSimpleModule, public cListener {
+  protected:
+    /** @brief Debug switch for all other modules*/
+    bool debug;
 
-        /** @brief Stores if this module is affected by changes in the
-         * hosts state. If not explicitly set this module has to capture
-         * changes in the host state.*/
-        bool notAffectedByHostState;
+    /** @brief Stores if this module is affected by changes in the
+     * hosts state. If not explicitly set this module has to capture
+     * changes in the host state.*/
+    bool notAffectedByHostState;
 
-        /** @brief Stores the category of the HostState*/
-        const static simsignalwrap_t catHostStateSignal;
-    protected:
+    /** @brief Stores the category of the HostState*/
+    const static simsignalwrap_t catHostStateSignal;
+protected:
 
-        /**
-         * @brief Called whenever the hosts state changes.
-         *
-         * Default implementation of this method throws an error whenever the host
-         * state changes and the "notAffectedbyHostState" variable is not explicitly
-         * set. This is because every module of a host has to make sure to react
-         * well to changes in the host state. Or it has to explicitly set its
-         * parameter "notAffectedbyHostState" to true.
-         */
-        virtual void handleHostState(const HostState& state);
+    /**
+     * @brief Called whenever the hosts state changes.
+     *
+     * Default implementation of this method throws an error whenever the host
+     * state changes and the "notAffectedbyHostState" variable is not explicitly
+     * set. This is because every module of a host has to make sure to react
+     * well to changes in the host state. Or it has to explicitly set its
+     * parameter "notAffectedbyHostState" to true.
+     */
+    virtual void handleHostState(const HostState& state);
 
-        /**
-         * @brief Switches the host to the passed state.
-         *
-         * If the hosts state is switched to anything else than "ACTIVE" every
-         * module of the host has to handle this explicitly (see method
-         * "handleHostState()")!
-         */
-        void switchHostState(HostState::States state);
+    /**
+     * @brief Switches the host to the passed state.
+     *
+     * If the hosts state is switched to anything else than "ACTIVE" every
+     * module of the host has to handle this explicitly (see method
+     * "handleHostState()")!
+     */
+    void switchHostState(HostState::States state);
 
-        /** @brief Function to get a pointer to the host module*/
-        cModule* findHost(void);
-        const cModule* findHost(void) const;
-        /** @brief Function to get the logging name of id*/
-        //std::string getLogName(int);
-    private:
-        /** @brief Copy constructor is not allowed.
-         */
-        BaseModule(const BaseModule&);
-        /** @brief Assignment operator is not allowed.
-         */
-        BaseModule& operator=(const BaseModule&);
+    /** @brief Function to get a pointer to the host module*/
+    cModule* findHost(void);
+    const cModule* findHost(void) const;
+    /** @brief Function to get the logging name of id*/
+    //std::string getLogName(int);
 
-    public:
+private:
+    /** @brief Copy constructor is not allowed.
+     */
+    BaseModule(const BaseModule&);
+    /** @brief Assignment operator is not allowed.
+     */
+    BaseModule& operator=(const BaseModule&);
 
-        BaseModule();
-        BaseModule(unsigned stacksize);
+  public:
 
-        /** @brief Basic initialization for all modules */
-        virtual void initialize(int);
+    BaseModule();
+    BaseModule(unsigned stacksize);
 
-        /**
-         * @brief Divide initialization into two stages
-         *
-         * In the first stage (stage==0), modules subscribe to notification.
-         * The first notifications (e.g. about the initial
-         * values of some variables such as RadioState) should take place earliest
-         * in the second stage (stage==1), when everyone interested in them has
-         * already subscribed.
-         * Further one should try to keep calls to other modules out of stage 0 to
-         * assure that the other module had at least once the chance to initialize
-         * itself in stage 0.
-         */
-        virtual int numInitStages() const
-        {
-            return 2;
-        }
+    /** @brief Basic initialization for all modules */
+    virtual void initialize(int);
 
-        /**
-         * @brief Function to get the logging name of the host
-         *
-         * The logging name is the ned module name of the host (unless the
-         * host ned variable loggingName is specified). It can be used for
-         * logging messages to simplify debugging in TKEnv.
-         */
-        std::string logName(void) const;
+    /**
+     * @brief Divide initialization into two stages
+     *
+     * In the first stage (stage==0), modules subscribe to notification.
+     * The first notifications (e.g. about the initial
+     * values of some variables such as RadioState) should take place earliest
+     * in the second stage (stage==1), when everyone interested in them has
+     * already subscribed.
+     * Further one should try to keep calls to other modules out of stage 0 to
+     * assure that the other module had at least once the chance to initialize
+     * itself in stage 0.
+     */
+    virtual int numInitStages() const {
+    	return 2;
+    }
 
-        /**
-         * @brief Get a reference to the local node module
-         */
-        const cModule* getNode() const
-        {
-            return findHost();
-        }
-        ;
+    /**
+     * @brief Function to get the logging name of the host
+     *
+     * The logging name is the ned module name of the host (unless the
+     * host ned variable loggingName is specified). It can be used for
+     * logging messages to simplify debugging in TKEnv.
+     */
+    std::string logName(void) const ;
 
-        /**
-         * @brief Called by the signaling mechanism whenever a change of a category occurs
-         * to which we have subscribed.
-         * In this base class just handle the host state switching and
-         * some debug notifications
-         */
-        virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
+    /**
+     * @brief Get a reference to the local node module
+     */
+    const cModule* getNode() const {
+    	return findHost();
+    }
+
+    /**
+     * @brief Called by the signaling mechanism whenever a change of a category occurs
+     * to which we have subscribed.
+     * In this base class just handle the host state switching and
+     * some debug notifications
+     */
+    virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj);
 };
 
 #endif

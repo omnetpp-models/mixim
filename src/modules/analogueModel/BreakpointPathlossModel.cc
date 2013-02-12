@@ -1,53 +1,137 @@
 #include "BreakpointPathlossModel.h"
 
-#include "MiximAirFrame_m.h"
+#include "MiXiMAirFrame.h"
 
 #define debugEV (ev.isDisabled()||!debug) ? ev : ev << "PhyLayer(BreakpointPathlossModel): "
 
-void BreakpointPathlossModel::filterSignal(MiximAirFrame *frame, const Coord& sendersPos, const Coord& receiverPos)
-{
-    Signal& signal = frame->getSignal();
+bool BreakpointPathlossModel::initFromMap(const ParameterMap& params) {
+    ParameterMap::const_iterator it;
+    bool                         bInitSuccess = true;
 
-    /** Calculate the distance factor */
-    double distance = useTorus ? receiverPos.sqrTorusDist(sendersPos, playgroundSize) : receiverPos.sqrdist(sendersPos);
-    distance = sqrt(distance);
-    debugEV << "distance is: " << distance << endl;
-
-    if (distance <= 1.0)
-    {
-        //attenuation is negligible
-        return;
+    if ((it = params.find("seed")) != params.end()) {
+        srand( ParameterMap::mapped_type(it->second).longValue() );
+    }
+    if ((it = params.find("alpha1")) != params.end()) {
+        alpha1 = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No alpha1 defined in config.xml for BreakpointPathlossModel!");
+    }
+    if ((it = params.find("alpha2")) != params.end()) {
+        alpha2 = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No alpha1 defined in config.xml for BreakpointPathlossModel!");
+    }
+    if ((it = params.find("L01")) != params.end()) {
+        PL01      = ParameterMap::mapped_type(it->second).doubleValue();
+        PL01_real = pow(10, PL01/10);
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No L01 defined in config.xml for BreakpointPathlossModel!");
+    }
+    if ((it = params.find("L02")) != params.end()) {
+        PL02      = ParameterMap::mapped_type(it->second).doubleValue();
+        PL02_real = pow(10, PL02/10);
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No L02 defined in config.xml for BreakpointPathlossModel!");
+    }
+    if ((it = params.find("breakpointDistance")) != params.end()) {
+        breakpointDistance = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No breakpointDistance defined in config.xml for BreakpointPathlossModel!");
+    }
+    if ((it = params.find("useTorus")) != params.end()) {
+        useTorus = ParameterMap::mapped_type(it->second).boolValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No useTorus defined in config.xml for SimplePathlossModel!");
+    }
+    if ((it = params.find("PgsX")) != params.end()) {
+        playgroundSize.x = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No PgsX defined in config.xml for SimplePathlossModel!");
+    }
+    if ((it = params.find("PgsY")) != params.end()) {
+        playgroundSize.y = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No PgsY defined in config.xml for SimplePathlossModel!");
+    }
+    if ((it = params.find("PgsZ")) != params.end()) {
+        playgroundSize.z = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No PgsZ defined in config.xml for SimplePathlossModel!");
+    }
+    if ((it = params.find("debug")) != params.end()) {
+        debug = ParameterMap::mapped_type(it->second).boolValue();
+    }
+    else {
+        debug = false;
+    }
+    if ((it = params.find("carrierFrequency")) != params.end()) {
+        carrierFrequency = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No carrierFrequency defined in config.xml for SimplePathlossModel!");
     }
 
-    double attenuation = 1;
-    // PL(d) = PL0 + 10 alpha log10 (d/d0)
-    // 10 ^ { PL(d)/10 } = 10 ^{PL0 + 10 alpha log10 (d/d0)}/10
-    // 10 ^ { PL(d)/10 } = 10 ^ PL0/10 * 10 ^ { 10 log10 (d/d0)^alpha }/10
-    // 10 ^ { PL(d)/10 } = 10 ^ PL0/10 * 10 ^ { log10 (d/d0)^alpha }
-    // 10 ^ { PL(d)/10 } = 10 ^ PL0/10 * (d/d0)^alpha
-    if (distance < breakpointDistance)
-    {
-        attenuation = attenuation * PL01_real;
-        attenuation = attenuation * pow(distance, alpha1);
-    }
-    else
-    {
-        attenuation = attenuation * PL02_real;
-        attenuation = attenuation * pow(distance / breakpointDistance, alpha2);
-    }
-    attenuation = 1 / attenuation;
-    debugEV << "attenuation is: " << attenuation << endl;
+    return AnalogueModel::initFromMap(params) && bInitSuccess;
+}
 
-    if (debug)
-    {
-        pathlosses.record(10 * log10(attenuation)); // in dB
-    }
+void BreakpointPathlossModel::filterSignal(airframe_ptr_t frame, const Coord& sendersPos, const Coord& receiverPos) {
+	Signal& signal = frame->getSignal();
 
-    //const DimensionSet& domain = DimensionSet::timeDomain;
-    Argument arg; // default constructor initializes with a single dimension, time, and value 0 (offset from signal start)
-    TimeMapping<Linear>* attMapping = new TimeMapping<Linear>(); // mapping performs a linear interpolation from our single point -> constant
-    attMapping->setValue(arg, attenuation);
+	/** Calculate the distance factor */
+	double distance = useTorus ? receiverPos.sqrTorusDist(sendersPos, playgroundSize)
+								  : receiverPos.sqrdist(sendersPos);
+	distance = sqrt(distance);
+	debugEV << "distance is: " << distance << endl;
 
-    /* at last add the created attenuation mapping to the signal */
-    signal.addAttenuation(attMapping);
+	if(distance <= 1.0) {
+		//attenuation is negligible
+		return;
+	}
+
+	double attenuation = 1;
+	// PL(d) = PL0 + 10 alpha log10 (d/d0)
+	// 10 ^ { PL(d)/10 } = 10 ^{PL0 + 10 alpha log10 (d/d0)}/10
+	// 10 ^ { PL(d)/10 } = 10 ^ PL0/10 * 10 ^ { 10 log10 (d/d0)^alpha }/10
+	// 10 ^ { PL(d)/10 } = 10 ^ PL0/10 * 10 ^ { log10 (d/d0)^alpha }
+	// 10 ^ { PL(d)/10 } = 10 ^ PL0/10 * (d/d0)^alpha
+	if(distance < breakpointDistance) {
+		attenuation = attenuation * PL01_real;
+		attenuation = attenuation * pow(distance, alpha1);
+	} else {
+		attenuation = attenuation * PL02_real;
+		attenuation = attenuation * pow(distance/breakpointDistance, alpha2);
+	}
+	attenuation = 1/attenuation;
+	debugEV << "attenuation is: " << attenuation << endl;
+
+	if(debug) {
+	  pathlosses.record(10*log10(attenuation)); // in dB
+	}
+
+	//const DimensionSet& domain = DimensionSet::timeDomain;
+	Argument arg;	// default constructor initializes with a single dimension, time, and value 0 (offset from signal start)
+	TimeMapping<Linear>* attMapping = new TimeMapping<Linear> ();	// mapping performs a linear interpolation from our single point -> constant
+	attMapping->setValue(arg, attenuation);
+
+	/* at last add the created attenuation mapping to the signal */
+	signal.addAttenuation(attMapping);
 }

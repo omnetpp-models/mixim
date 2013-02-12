@@ -3,9 +3,9 @@
 #include <sstream>
 
 #include "DeciderToPhyInterface.h"
-#include "MacPkt_m.h"
 #include "FindModule.h"
 #include "MacToPhyControlInfo.h"
+#include "MiXiMMacPkt.h"
 
 Define_Module(TestMacLayer);
 
@@ -141,7 +141,7 @@ void TestMacLayer::testRun1(int stage, const cMessage* /*msg*/){
 		int state = phy->getRadioState();
 		assertNotEqual("Radio is not in TX.", Radio::TX, state);
 
-		MacPkt* pkt = createMacPkt(1.0);
+		macpkt_ptr_t pkt = createMacPkt(1.0);
 		sendDown(pkt);
 
 		assertMessage("MacPkt at Phy layer.", TEST_MACPKT, simTime(), "phy0");
@@ -165,7 +165,7 @@ void TestMacLayer::testRun2(int stage, const cMessage* /*msg*/){
 		int state = phy->getRadioState();
 		assertEqual("Radio is in TX.", Radio::TX, state);
 
-		MacPkt* pkt = createMacPkt(1.0);
+		macpkt_ptr_t pkt = createMacPkt(1.0);
 		sendDown(pkt);
 
 		assertMessage("MacPkt at Phy layer.", TEST_MACPKT, simTime(), "phy0");
@@ -175,7 +175,7 @@ void TestMacLayer::testRun2(int stage, const cMessage* /*msg*/){
 		break;
 	}
 	case 2: {
-		MacPkt* pkt = createMacPkt(1.0);
+		macpkt_ptr_t pkt = createMacPkt(1.0);
 		sendDown(pkt);
 
 		assertMessage("MacPkt at Phy layer.", TEST_MACPKT, simTime(), "phy0");
@@ -275,7 +275,7 @@ void TestMacLayer::testRun6(int stage, const cMessage* msg)
 // planTest("1.", "Host1 sends AirFrame A to Host2");
 		waitForTX();
 	} else if(stage == 1) {
-		MacPkt* pkt = createMacPkt(1.0);
+		macpkt_ptr_t pkt = createMacPkt(1.0);
 		sendDown(pkt);
 		testForMessage("1.", TEST_MACPKT, simTime(), "phy0");
 
@@ -364,7 +364,7 @@ void TestMacLayer::testRun7(int stage, const cMessage* /*msg*/)
 //planTest("1.2", "Host A1 sends packet 1.");
 		waitForTX();
 	} else if(stage == 1) {
-		MacPkt* pkt = createMacPkt(5.0);
+		macpkt_ptr_t pkt = createMacPkt(5.0);
 		sendDown(pkt);
 
 		assertMessage("Transmission over message at phy",
@@ -398,7 +398,7 @@ void TestMacLayer::testRun7(int stage, const cMessage* /*msg*/)
 //planTest("1.5.2", "Host B1 sends packet 2.");
 		waitForTX();
 	} else if(stage == 3) {
-		MacPkt* pkt = createMacPkt(5.0);
+		macpkt_ptr_t pkt = createMacPkt(5.0);
 		sendDown(pkt);
 
 		assertMessage("Transmission over message at phy",
@@ -472,7 +472,7 @@ void TestMacLayer::testSending1(int stage, const cMessage* /*lastMsg*/) {
 		break;
 	}
 	case 1:{
-		MacPkt* pkt = createMacPkt(1.0);
+		macpkt_ptr_t pkt = createMacPkt(1.0);
 
 		sendDown(pkt);
 
@@ -545,12 +545,12 @@ void TestMacLayer::waitForTX() {
 					simTime() + switchTime);
 }
 
-void TestMacLayer::sendDown(MacPkt* pkt) {
+void TestMacLayer::sendDown(macpkt_ptr_t pkt) {
 	send(pkt, dataOut);
 }
 
-MacPkt* TestMacLayer::createMacPkt(simtime_t_cref length) {
-	MacPkt* res = new MacPkt();
+TestMacLayer::macpkt_ptr_t TestMacLayer::createMacPkt(simtime_t_cref length) {
+	macpkt_ptr_t res = new MacPkt();
 	res->setKind(TEST_MACPKT);
 	MacToPhyControlInfo::setControlInfo(res, new Signal(simTime(), length));
 	return res;

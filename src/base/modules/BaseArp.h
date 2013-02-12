@@ -48,39 +48,40 @@
  *
  * @author Daniel Willkomm
  **/
-class MIXIM_API BaseArp : public ArpInterface, public AddressingInterface, public BaseModule
+class MIXIM_API BaseArp : public ArpInterface,
+                          public AddressingInterface,
+                          public BaseModule
 {
-        /** @brief Is core debugging enabled?*/
-        bool coreDebug;
+    /** @brief Is core debugging enabled?*/
+    bool coreDebug;
 
-    public:
-        BaseArp() :
-                ArpInterface(), AddressingInterface(), BaseModule(), coreDebug(false)
-        {
-        }
-        virtual ~BaseArp()
-        {
-        }
+public:
+    BaseArp()
+    	: ArpInterface()
+    	, AddressingInterface()
+    	, BaseModule()
+    	, coreDebug(false)
+    {}
+    virtual ~BaseArp() {}
 
-        virtual void initialize(int stage);
+    virtual void initialize(int stage);
 
-        /** @brief should not be called,
-         *  instead direct calls to the radio methods should be used.
-         */
-        virtual void handleMessage(cMessage*)
-        {
-            error("ARP module cannot receive messages!");
-        }
-        ;
+    /** @brief should not be called,
+     *  instead direct calls to the radio methods should be used.
+     */
+    virtual void handleMessage( cMessage* ){
+        error("ARP module cannot receive messages!");
+    }
 
-        /** @brief returns a L2 address to a given L3 address.*/
-        virtual LAddress::L2Type getMacAddr(const LAddress::L3Type& netwAddr) const;
+    /** @brief returns a L2 address to a given L3 address.*/
+    virtual LAddress::L2Type getMacAddr(const LAddress::L3Type& netwAddr) const;
 
-        /** @brief Returns the L2 address for the passed mac.*/
-        virtual LAddress::L2Type myMacAddr(const cModule* mac) const;
+    /** @brief Returns the L2 address for the passed mac.*/
+    virtual LAddress::L2Type myMacAddr(const cModule* mac) const;
 
-        /** @brief Returns the L3 address for the passed net.*/
-        virtual LAddress::L3Type myNetwAddr(const cModule* netw) const;
+    /** @brief Returns the L3 address for the passed net.*/
+    virtual LAddress::L3Type myNetwAddr(const cModule* netw) const;
 };
+
 
 #endif

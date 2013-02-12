@@ -32,105 +32,89 @@
  * @author Andreas Koepke, Karl Wessel
  */
 
-class MIXIM_API Packet : public cObject
+class MIXIM_API  Packet : public cObject
 {
-    protected:
-        /** @brief number of packets generated. */
-        long nbPacketsReceived;
-        long nbPacketsReceivedNoRS;
-        long nbPacketsSent;
-        /** @brief The size of each of the received and sent packet.*/
-        long packetBitLength;
-        bool sent;
-        LAddress::L3Type host;
+protected:
+    /** @brief number of packets generated. */
+    long             nbPacketsReceived;
+    long             nbPacketsReceivedNoRS;
+    long             nbPacketsSent;
+    /** @brief The size of each of the received and sent packet.*/
+    long             packetBitLength;
+    bool             sent;
+    LAddress::L3Type host;
 
-    public:
+public:
 
-        /** @brief Constructor*/
-        Packet(long bitLength, long rcvd = 0, long sent = 0) :
-                cObject(), nbPacketsReceived(rcvd), nbPacketsReceivedNoRS(rcvd), nbPacketsSent(sent), packetBitLength(
-                        bitLength), sent(true), host(0)
-        {
-        }
-        ;
+    /** @brief Constructor*/
+    Packet(long bitLength, long rcvd=0, long sent=0) :
+	 cObject(), nbPacketsReceived(rcvd), nbPacketsReceivedNoRS(rcvd),
+	 nbPacketsSent(sent), packetBitLength(bitLength), sent(true), host(0) {
+    };
 
-        double getNbPacketsReceived() const
-        {
-            return nbPacketsReceived;
-        }
+    double getNbPacketsReceived() const  {
+        return nbPacketsReceived;
+    }
 
-        double getNbBitsReceived() const
-        {
-            return nbPacketsReceived * packetBitLength;
-        }
+    double getNbBitsReceived() const {
+		return nbPacketsReceived * packetBitLength;
+	}
 
-        double getNbPacketsReceivedNoRS() const
-        {
-            return nbPacketsReceived;
-        }
+    double getNbPacketsReceivedNoRS() const  {
+        return nbPacketsReceived;
+    }
 
-        double getNbPacketsSent() const
-        {
+    double getNbPacketsSent() const  {
             return nbPacketsSent;
-        }
+	}
 
-        double getNbBitsSent() const
-        {
-            return nbPacketsSent * packetBitLength;
-        }
+    double getNbBitsSent() const {
+    	return nbPacketsSent * packetBitLength;
+    }
 
-        void setNbPacketsReceived(int n)
-        {
-            nbPacketsReceived = n;
-        }
+    void setNbPacketsReceived(int n)  {
+        nbPacketsReceived = n;
+    }
 
-        void setNbPacketsReceivedNoRS(int n)
-        {
-            nbPacketsReceivedNoRS = n;
-        }
+    void setNbPacketsReceivedNoRS(int n)  {
+        nbPacketsReceivedNoRS = n;
+    }
 
-        void setNbPacketsSent(int n)
-        {
+    void setNbPacketsSent(int n)  {
             nbPacketsSent = n;
-        }
+	}
 
-        void setBitLength(long bitLength)
-        {
-            packetBitLength = bitLength;
-        }
+    void setBitLength(long bitLength) {
+    	packetBitLength = bitLength;
+    }
 
-        long getBitLength() const
-        {
-            return packetBitLength;
-        }
+    long getBitLength() const {
+    	return packetBitLength;
+    }
 
-        void setHost(const LAddress::L3Type& h)
-        {
-            host = h;
-        }
+    void setHost(const LAddress::L3Type& h) {
+    	host = h;
+    }
 
-        const LAddress::L3Type& getHost() const
-        {
-            return host;
-        }
+    const LAddress::L3Type& getHost() const {
+    	return host;
+    }
 
-        bool isSent() const
-        {
-            return sent;
-        }
+    bool isSent() const {
+    	return sent;
+    }
 
-        void setPacketSent(bool isSent)
-        {
-            sent = isSent;
-        }
+    void setPacketSent(bool isSent) {
+    	sent = isSent;
+    }
 
-        /** @brief Enables inspection */
-        std::string info() const
-        {
-            std::ostringstream ost;
-            ost << " Number of packets generated is " << 0;
-            return ost.str();
-        }
+    /** @brief Enables inspection */
+    std::string info() const {
+        std::ostringstream ost;
+        ost << " Number of packets generated is "<< 0;
+        return ost.str();
+    }
 };
+
 
 #endif

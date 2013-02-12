@@ -9,346 +9,538 @@
 
 #include <cassert>
 
-#include "MiximAirFrame_m.h"
+#include "MiXiMAirFrame.h"
+#include "PhyToMacControlInfo.h"
+#include "FWMath.h"
 
-simtime_t BaseDecider::processSignal(MiximAirFrame* frame)
-{
+/** @brief Flag for channel sense (channel idle) handling.
+ *
+ * In the past we checked for IDLE channel state if we do not process a signal (frame).
+ * If bUseNewSense is <tt>true</tt> then the channel IDLE state will be done by looking
+ * for existing frames on the channel and checking the signal reception time (if it is on air).
+ * The new tests uses the RSSI calculation for the check, so that it contains a little bit more
+ * calculation time.
+ * Maybe this should be done only in RX mode!?
+ */
+static const bool bUseNewSense = true;
 
-    assert(frame);
-    deciderEV << "Processing AirFrame..." << endl;
-
-    switch (getSignalState(frame))
-    {
-        case NEW:
-            return processNewSignal(frame);
-        case EXPECT_HEADER:
-            return processSignalHeader(frame);
-        case EXPECT_END:
-            return processSignalEnd(frame);
-        default:
-            return processUnknownSignal(frame);
+std::size_t BaseDecider::tProcessingSignal::interferenceWith(const first_type& frame) {
+    if (frame->getSignal().getReceptionEnd() > busyUntilTime) {
+        busyUntilTime = frame->getSignal().getReceptionEnd();
+    }
+    if (first != frame)
+        ++iInterferenceCnt;
+    return iInterferenceCnt;
+}
+void BaseDecider::tProcessingSignal::startProcessing(first_type frame, second_type state) {
+    first  = frame;
+    second = state;
+    if (first != NULL) {
+        busyUntilTime    = first->getSignal().getReceptionEnd();
+        iInterferenceCnt = 0u;
     }
 }
 
-simtime_t BaseDecider::processNewSignal(MiximAirFrame* frame)
-{
-    if (currentSignal.first != 0)
-    {
-        deciderEV << "Already receiving another AirFrame!" << endl;
+simtime_t BaseDecider::processSignal(airframe_ptr_t frame) {
+	deciderEV << "Processing AirFrame with ID " << frame->getId() << "..." << endl;
+
+	simtime_t HandleAgain = notAgain;
+
+    if(phy->getNbRadioChannels() > 1 && frame->getChannel() != phy->getCurrentRadioChannel()) {
+        // we cannot synchronize on a frame on another channel.
         return notAgain;
     }
 
-    // get the receiving power of the Signal at start-time
-    Signal& signal = frame->getSignal();
-    double recvPower = signal.getReceivingPower()->getValue(Argument(signal.getReceptionStart()));
+    bool bInteruptedProcessing = currentSignal.isProcessing();
+    bool bFinishProcessing     = false;
 
-    // check whether signal is strong enough to receive
-    if (recvPower < sensitivity)
-    {
-        deciderEV << "Signal is to weak (" << recvPower << " < " << sensitivity << ") -> do not receive." << endl;
-        // Signal too weak, we can't receive it, tell PhyLayer that we don't want it again
-        return notAgain;
+	switch(getSignalState(frame)) {
+        case NEW: {
+            deciderEV << "... AirFrame processing as NewSignal..." << endl;
+            HandleAgain           = processNewSignal(frame);
+            bInteruptedProcessing = bInteruptedProcessing && !currentSignal.isProcessing();
+        } break;
+        case EXPECT_HEADER: {
+            deciderEV << "... AirFrame processing as SignalHeader..." << endl;
+            HandleAgain           = processSignalHeader(frame);
+            bInteruptedProcessing = bInteruptedProcessing && !currentSignal.isProcessing();
+        } break;
+        case EXPECT_END: {
+            deciderEV << "... AirFrame processing as SignalEnd..." << endl;
+            bFinishProcessing     = frame == currentSignal.first;
+            HandleAgain           = processSignalEnd(frame);
+            bFinishProcessing     = bFinishProcessing && bInteruptedProcessing && (HandleAgain < SIMTIME_ZERO);
+            bInteruptedProcessing = false;
+        } break;
+        default: {
+            deciderEV << "... AirFrame processing as UnknownSignal..." << endl;
+            bFinishProcessing     = frame == currentSignal.first;
+            HandleAgain           = processUnknownSignal(frame);
+            bFinishProcessing     = bFinishProcessing && bInteruptedProcessing && (HandleAgain < SIMTIME_ZERO);
+            bInteruptedProcessing = false;
+        } break;
+	}
+
+	if (bFinishProcessing || bInteruptedProcessing) {
+	    if (!bFinishProcessing && bInteruptedProcessing) {
+	        if (currentSignal.getInterferenceCnt() > 0) {
+	            ++nbFramesWithInterferencePartial;
+	        }
+	        else {
+	            ++nbFramesWithoutInterferencePartial;
+	        }
+	    }
+	    else if (bFinishProcessing) {
+	        if (currentSignal.isProcessing())
+	            currentSignal.finishProcessing();
+	    }
+	}
+
+	// following call is important for channel sense request
+	// handling, in the past this call was done in the process...
+	// methods, but it shall be called always on processSignal
+	// messages
+	channelStateChanged();
+
+	return HandleAgain;
+}
+
+double BaseDecider::getFrameReceivingPower(airframe_ptr_t frame) const {
+	// get the receiving power of the Signal at start-time
+	//Note: We assume the transmission power is represented by a rectangular function
+	//which discontinuities (at start and end of the signal) are represented
+	//by two key entries with different values very close to each other (see
+	//MappingUtils "addDiscontinuity" method for details). This means
+	//the transmission- and therefore also the receiving-power-mapping is still zero
+	//at the exact start of the signal and not till one time step after the start its
+	//at its actual transmission(/receiving) power.
+	//Therefore we use MappingUtils "post"-method to ask for the receiving power
+	//at the correct position.
+	Signal&   signal         = frame->getSignal();
+	simtime_t receivingStart = MappingUtils::post(signal.getReceptionStart());
+
+	return signal.getReceivingPower()->getValue(Argument(receivingStart));
+}
+
+simtime_t BaseDecider::processNewSignal(airframe_ptr_t frame) {
+
+	if(currentSignal.isProcessing()) {
+		deciderEV << "Already receiving another AirFrame!" << endl;
+		currentSignal.interferenceWith(frame);
+		return notAgain;
+	}
+
+	const bool   bCheckSensitivity = sensitivity > 0.;
+	const double recvPower         = bCheckSensitivity ? getFrameReceivingPower(frame) : 0.;
+
+	// check whether signal is strong enough to receive
+	if ( bCheckSensitivity && recvPower < sensitivity ) {
+		deciderEV << "Signal is to weak (" << recvPower << " < " << sensitivity
+				<< ") -> do not receive." << endl;
+		// Signal too weak, we can't receive it, tell PhyLayer that we don't want it again
+		return notAgain;
+	}
+	else if (bCheckSensitivity && recvPower != 0) {
+		// Signal is strong enough, receive this Signal and schedule it
+		deciderEV << "Signal is strong enough (" << recvPower << " > " << sensitivity
+				<< ") -> Trying to receive AirFrame." << endl;
+	}
+
+	if (!phy->isRadioInRX()) {
+        frame->setBitError(true);
+        deciderEV << "AirFrame with ID " << frame->getId() << " (" << recvPower << ") received, while not receiving. Setting BitErrors to true." << endl;
+	}
+
+	currentSignal.startProcessing(frame, getNextSignalState(NEW));
+
+	return getNextSignalHandleTime(frame);
+}
+
+simtime_t BaseDecider::processSignalEnd(airframe_ptr_t frame) {
+    if (frame != currentSignal.first)
+        return notAgain; // it is not the frame which we are processing
+
+	DeciderResult* pResult = createResult(frame);
+
+	if (pResult != NULL && pResult->isSignalCorrect() && !frame->hasBitError()) {
+        deciderEV << "AirFrame was received correctly, it is now handed to upper layer..." << endl;
+        // go on with processing this AirFrame, send it to the Mac-Layer
+        if (currentSignal.getInterferenceCnt() > 0) {
+            ++nbFramesWithInterference;
+        }
+        else {
+            ++nbFramesWithoutInterference;
+        }
+        phy->sendUp(frame, pResult);
     }
+	else {
+        deciderEV << "AirFrame was not received correctly, sending it as control message to upper layer" << endl;
+        cPacket* pMacPacket = frame->decapsulate();
+        if (currentSignal.getInterferenceCnt() > 0) {
+            ++nbFramesWithInterferenceDropped;
+        }
+        else {
+            ++nbFramesWithoutInterferenceDropped;
+        }
+        if (pMacPacket) {
+            pMacPacket->setName("ERROR");
+            pMacPacket->setKind(PACKET_DROPPED);
+            if (pResult) {
+                PhyToMacControlInfo::setControlInfo(pMacPacket, pResult);
+            }
+            phy->sendControlMsgToMac(pMacPacket);
+        }
+    }
+    currentSignal.finishProcessing();
 
-    // Signal is strong enough, receive this Signal and schedule it
-    deciderEV
-            << "Signal is strong enough (" << recvPower << " > " << sensitivity << ") -> Trying to receive AirFrame."
-                    << endl;
-
-    currentSignal.first = frame;
-    currentSignal.second = EXPECT_END;
-
-    //channel turned busy
-    setChannelIdleStatus(false);
-
-    return signal.getReceptionEnd();
+	return getNextSignalHandleTime(frame);
 }
 
-simtime_t BaseDecider::processSignalEnd(MiximAirFrame* frame)
+DeciderResult* BaseDecider::createResult(const airframe_ptr_t frame) const
 {
-    deciderEV << "packet was received correctly, it is now handed to upper layer...\n";
-    phy->sendUp(frame, new DeciderResult(true));
-
-    // we have processed this AirFrame and we prepare to receive the next one
-    currentSignal.first = 0;
-
-    //channel is idle now
-    setChannelIdleStatus(true);
-
-    return notAgain;
+    return new DeciderResult(!frame->hasBitError());
 }
 
-simtime_t BaseDecider::processUnknownSignal(MiximAirFrame* frame)
+simtime_t BaseDecider::processUnknownSignal(airframe_ptr_t frame)
 {
-    opp_error("Unknown state for the AirFrame with ID %d", frame->getId());
-    return notAgain;
+	opp_error("Unknown state for the AirFrame with ID %d", frame->getId());
+	return notAgain;
 }
 
-ChannelState BaseDecider::getChannelState() const
-{
+ChannelState BaseDecider::getChannelState() const {
 
-    simtime_t now = phy->getSimTime();
-    double rssiValue = calcChannelSenseRSSI(now, now);
+	simtime_t            now            = phy->getSimTime();
+	channel_sense_rssi_t pairRssiMaxEnd = calcChannelSenseRSSI(now, now);
 
-    return ChannelState(isChannelIdle, rssiValue);
+	return ChannelState(!currentSignal.isProcessing() && (!bUseNewSense || pairRssiMaxEnd.second <= now), pairRssiMaxEnd.first);
 }
 
 simtime_t BaseDecider::handleChannelSenseRequest(ChannelSenseRequest* request)
 {
 
-    assert(request);
+	assert(request);
 
-    if (currentChannelSenseRequest.first == 0)
-    {
-        return handleNewSenseRequest(request);
-    }
+	if (currentChannelSenseRequest.getRequest() == NULL) {
+		return handleNewSenseRequest(request);
+	}
 
-    if (currentChannelSenseRequest.first != request)
-    {
-        opp_error("Got a new ChannelSenseRequest while already handling another one!");
-        return notAgain;
-    }
+	if (currentChannelSenseRequest.getRequest() != request) {
+		opp_error("Got a new ChannelSenseRequest while already handling another one!");
+		return notAgain;
+	}
+	simtime_t now = phy->getSimTime();
 
-    handleSenseRequestEnd(currentChannelSenseRequest);
+	if(now >= currentChannelSenseRequest.getAnswerTime()) {
+	    simtime_t canAnswerAt = canAnswerCSR(currentChannelSenseRequest);
 
-    // say that we don't want to have it again
-    return notAgain;
+	    if (canAnswerAt > now) {
+	        currentChannelSenseRequest.setAnswerTime( canAnswerAt );
+	        return currentChannelSenseRequest.getAnswerTime();
+	    }
+	}
+	handleSenseRequestEnd(currentChannelSenseRequest);
+	// say that we don't want to have it again
+	return notAgain;
 }
 
 simtime_t BaseDecider::handleNewSenseRequest(ChannelSenseRequest* request)
 {
-    // no request handled at the moment, handling the new one
-    simtime_t now = phy->getSimTime();
+	// no request handled at the moment, handling the new one
+	simtime_t now = phy->getSimTime();
 
-    // saving the pointer to the request and its start-time (now)
-    currentChannelSenseRequest.setRequest(request);
-    currentChannelSenseRequest.setSenseStart(now);
+	// saving the pointer to the request and its start-time (now)
+	currentChannelSenseRequest.setRequest(request);
+	currentChannelSenseRequest.setSenseStart(now);
 
-    //get point in time when we can answer the request (as far as we
-    //know at this point in time)
-    currentChannelSenseRequest.canAnswerAt = canAnswerCSR(currentChannelSenseRequest);
+	//get point in time when we can answer the request (as far as we
+	//know at this point in time)
+	currentChannelSenseRequest.setAnswerTime( canAnswerCSR(currentChannelSenseRequest) );
 
-    //check if we can already answer the request
-    if (now == currentChannelSenseRequest.canAnswerAt)
-    {
-        answerCSR(currentChannelSenseRequest);
-        return notAgain;
-    }
+	//check if we can already answer the request
+	if(now >= currentChannelSenseRequest.getAnswerTime()) {
+		answerCSR(currentChannelSenseRequest);
+		return notAgain;
+	}
 
-    return currentChannelSenseRequest.canAnswerAt;
+	return currentChannelSenseRequest.getAnswerTime();
 }
 
-void BaseDecider::handleSenseRequestEnd(CSRInfo& requestInfo)
-{
-    assert(canAnswerCSR(requestInfo) == phy->getSimTime());
-    answerCSR(requestInfo);
-}
+void BaseDecider::channelChanged(int newChannel) {
+    currentSignal.clear();
 
-int BaseDecider::getSignalState(MiximAirFrame* frame) const
-{
-    if (frame == currentSignal.first)
-        return currentSignal.second;
+    simtime_t            now            = phy->getSimTime();
+    channel_sense_rssi_t pairRssiMaxEnd = calcChannelSenseRSSI(now, now);
 
-    return NEW;
-}
-
-void BaseDecider::channelStateChanged()
-{
-    if (!currentChannelSenseRequest.getRequest())
-        return;
-
-    //check if the point in time when we can answer the request has changed
-    simtime_t canAnswerAt = canAnswerCSR(currentChannelSenseRequest);
-
-    //check if answer time has changed
-    if (canAnswerAt != currentChannelSenseRequest.canAnswerAt)
-    {
-        //can we answer it now?
-        if (canAnswerAt == phy->getSimTime())
-        {
-            phy->cancelScheduledMessage(currentChannelSenseRequest.getRequest());
-            answerCSR(currentChannelSenseRequest);
-        }
-        else
-        {
-            phy->rescheduleMessage(currentChannelSenseRequest.getRequest(), canAnswerAt);
-            currentChannelSenseRequest.canAnswerAt = canAnswerAt;
-        }
-    }
-}
-
-void BaseDecider::setChannelIdleStatus(bool isIdle)
-{
-    isChannelIdle = isIdle;
+    currentSignal.busyUntilTime = pairRssiMaxEnd.second;
 
     channelStateChanged();
 }
 
-simtime_t BaseDecider::canAnswerCSR(const CSRInfo& requestInfo)
-{
-    assert(requestInfo.first);
-
-    bool modeFulfilled = false;
-
-    switch (requestInfo.first->getSenseMode())
-    {
-        case UNTIL_IDLE:
-            modeFulfilled = isChannelIdle;
-            break;
-        case UNTIL_BUSY:
-            modeFulfilled = !isChannelIdle;
-            break;
-    }
-
-    if (modeFulfilled)
-    {
-        return phy->getSimTime();
-    }
-
-    //return point in time when time out is reached
-    return requestInfo.second + requestInfo.first->getSenseTimeout();
+void BaseDecider::handleSenseRequestEnd(CSRInfo& requestInfo) {
+	//assert(canAnswerCSR(requestInfo) <= phy->getSimTime());
+	answerCSR(requestInfo);
 }
 
-double BaseDecider::calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref end) const
+BaseDecider::eSignalState BaseDecider::getSignalState(const airframe_ptr_t frame) const {
+	if (frame == currentSignal.first)
+		return currentSignal.second;
+
+	return NEW;
+}
+
+BaseDecider::eSignalState BaseDecider::setSignalState(const airframe_ptr_t frame, BaseDecider::eSignalState newState) {
+    if (frame == currentSignal.first) {
+        currentSignal.second = newState;
+        return currentSignal.second;
+    }
+
+    return NEW;
+}
+
+simtime_t BaseDecider::getNextSignalHandleTime(const airframe_ptr_t frame) const {
+    if (frame != currentSignal.first)
+        return notAgain;
+    switch(getSignalState(frame)) {
+        case NEW:           return notAgain; break;
+        case EXPECT_HEADER: {
+            // we expect the header first, so we must return the time after header is arrived
+            const Signal& FrameSignal = frame->getSignal();
+            double        dBitrate    = FrameSignal.getBitrate()->getValue(Argument(FrameSignal.getReceptionStart()));
+
+            assert(dBitrate != 0.0);
+
+            // frame->getBitLength() should store the phy-header-length (@see BasePhyLayer::encapsMsg).
+            //simtime_t    tHandleTime  = FrameSignal.getReceptionStart() + (static_cast<double>(frame->getBitLength()) / dBitrate);
+            simtime_t    tHandleTime  = FrameSignal.getReceptionStart() + (static_cast<double>(phy->getPhyHeaderLength()) / dBitrate);
+            if (tHandleTime < frame->getSignal().getReceptionEnd())
+                return tHandleTime;
+            return MappingUtils::pre(frame->getSignal().getReceptionEnd());
+        } break;
+        default: break;
+    }
+    return frame->getSignal().getReceptionEnd();
+}
+
+void BaseDecider::channelStateChanged()
 {
-    Mapping* rssiMap = calculateRSSIMapping(start, end);
+	if(!currentChannelSenseRequest.getRequest())
+		return;
 
-    // the sensed RSSI-value is the maximum value between (and including) the interval-borders
-    Mapping::argument_value_t rssi = MappingUtils::findMax(*rssiMap, Argument(start), Argument(end),
-            Argument::MappedZero /* the value if no maximum will be found */);
+	//check if the point in time when we can answer the request has changed
+	simtime_t canAnswerAt = canAnswerCSR(currentChannelSenseRequest);
 
-    delete rssiMap;
-    return rssi;
+	//check if answer time has changed
+	if(canAnswerAt != currentChannelSenseRequest.getAnswerTime()) {
+		//can we answer it now?
+		if(canAnswerAt <= phy->getSimTime()) {
+			phy->cancelScheduledMessage(currentChannelSenseRequest.getRequest());
+			answerCSR(currentChannelSenseRequest);
+		} else {
+            currentChannelSenseRequest.setAnswerTime( canAnswerAt );
+			phy->rescheduleMessage( currentChannelSenseRequest.getRequest()
+			                      , currentChannelSenseRequest.getAnswerTime());
+		}
+	}
+}
+
+simtime_t BaseDecider::canAnswerCSR(const CSRInfo& requestInfo) const
+{
+	assert(requestInfo.getRequest());
+
+	bool      modeFulfilled = false;
+	simtime_t now           = phy->getSimTime();
+	simtime_t canAnswerAt   = requestInfo.getSenseStart() + requestInfo.getRequest()->getSenseTimeout();
+
+	switch(requestInfo.getRequest()->getSenseMode())
+	{
+		case UNTIL_IDLE: {
+			modeFulfilled = !currentSignal.isProcessing();
+			if (bUseNewSense && modeFulfilled) {
+			    modeFulfilled = currentSignal.getBusyEndTime() <= now;
+			    if (!modeFulfilled && currentSignal.getBusyEndTime() < canAnswerAt) {
+			        canAnswerAt = currentSignal.getBusyEndTime();
+			    }
+			    deciderEV << "canAnswerCSR(UNTIL_IDLE): busy end time = " << SIMTIME_STR(currentSignal.getBusyEndTime()) << ", now = " << SIMTIME_STR(now) << " isIdle = " << (modeFulfilled ? "true" : "false") << ", canAnswerAt: " << SIMTIME_STR(canAnswerAt) << std::endl;
+			}
+		} break;
+		case UNTIL_BUSY: {
+			modeFulfilled = currentSignal.isProcessing();
+            if (bUseNewSense && !modeFulfilled) {
+                modeFulfilled = currentSignal.getBusyEndTime() > now;
+                deciderEV << "canAnswerCSR(UNTIL_BUSY): busy end time = " << SIMTIME_STR(currentSignal.getBusyEndTime()) << ", " << SIMTIME_STR(now) << " isBusy = " << (modeFulfilled ? "true" : "false") << ", canAnswerAt: " << SIMTIME_STR(canAnswerAt) << std::endl;
+            }
+		} break;
+		default: break;
+	}
+
+	if(modeFulfilled) {
+		return now;
+	}
+
+	return canAnswerAt;
+}
+
+BaseDecider::channel_sense_rssi_t BaseDecider::calcChannelSenseRSSI(simtime_t_cref start, simtime_t_cref end) const {
+    rssi_mapping_t pairMapMaxEnd = calculateRSSIMapping(start, end);
+
+	// the sensed RSSI-value is the maximum value between (and including) the interval-borders
+	Mapping::argument_value_t rssi = MappingUtils::findMax(*pairMapMaxEnd.first, Argument(start), Argument(end), Argument::MappedZero /* the value if no maximum will be found */);
+
+	delete pairMapMaxEnd.first;
+	return std::make_pair(rssi, pairMapMaxEnd.second);
 }
 
 void BaseDecider::answerCSR(CSRInfo& requestInfo)
 {
+    simtime_t            now            = phy->getSimTime(); // maybe better requestInfo.getAnswerTime()
+    channel_sense_rssi_t pairRssiMaxEnd = calcChannelSenseRSSI(requestInfo.getSenseStart(), now);
 
-    double rssiValue = calcChannelSenseRSSI(requestInfo.second, phy->getSimTime());
+	// put the sensing-result to the request and
+	// send it to the Mac-Layer as Control-message (via Interface)
+	requestInfo.getRequest()->setResult( ChannelState(!currentSignal.isProcessing() && (!bUseNewSense || pairRssiMaxEnd.second <= now), pairRssiMaxEnd.first) );
 
-    // put the sensing-result to the request and
-    // send it to the Mac-Layer as Control-message (via Interface)
-    requestInfo.first->setResult(ChannelState(isChannelIdle, rssiValue));
-    phy->sendControlMsgToMac(requestInfo.first);
+    deciderEV << "answerCSR: channel_sense_rssi_t(" << pairRssiMaxEnd.first << ", " << pairRssiMaxEnd.second << ")@[" << SIMTIME_STR(requestInfo.getSenseStart()) << ", " << SIMTIME_STR(now) << "] ChannelState(" << requestInfo.getRequest()->getResult().isIdle() << ", " << requestInfo.getRequest()->getResult().getRSSI() << ")" << std::endl;
 
-    requestInfo.first = 0;
-    requestInfo.second = -1;
-    requestInfo.canAnswerAt = -1;
+	phy->sendControlMsgToMac(requestInfo.getRequest());
+	requestInfo.clear();
 }
 
-Mapping* BaseDecider::calculateSnrMapping(MiximAirFrame* frame)
+Mapping* BaseDecider::calculateSnrMapping(const airframe_ptr_t frame) const
 {
-    /* calculate Noise-Strength-Mapping */
-    Signal& signal = frame->getSignal();
+	/* calculate Noise-Strength-Mapping */
+	const Signal& signal = frame->getSignal();
 
-    simtime_t start = signal.getReceptionStart();
-    simtime_t end = signal.getReceptionEnd();
+	simtime_t     start = signal.getReceptionStart();
+	simtime_t     end   = signal.getReceptionEnd();
 
-    Mapping* noiseMap = calculateRSSIMapping(start, end, frame);
+	Mapping*                  noiseMap     = calculateRSSIMapping(start, end, frame).first;
+	const ConstMapping *const recvPowerMap = signal.getReceivingPower();
     assert(noiseMap);
-    ConstMapping* recvPowerMap = signal.getReceivingPower();
-    assert(recvPowerMap);
+	assert(recvPowerMap);
 
-    //TODO: handle noise of zero (must not devide with zero!)
-    Mapping* snrMap = MappingUtils::divide(*recvPowerMap, *noiseMap, Argument::MappedZero);
+	//TODO: handle noise of zero (must not devide with zero!)
+	Mapping* snrMap = MappingUtils::divide( *recvPowerMap, *noiseMap, Argument::MappedZero );
 
-    delete noiseMap;
-    noiseMap = 0;
+	delete noiseMap;
+	noiseMap = NULL;
 
-    return snrMap;
+	return snrMap;
 }
 
-void BaseDecider::getChannelInfo(simtime_t_cref start, simtime_t_cref end, AirFrameVector& out) const
+void BaseDecider::getChannelInfo( simtime_t_cref  start
+                                , simtime_t_cref  end
+                                , AirFrameVector& out) const
 {
-    phy->getChannelInfo(start, end, out);
+	phy->getChannelInfo(start, end, out);
 }
 
-Mapping* BaseDecider::calculateRSSIMapping(simtime_t_cref start, simtime_t_cref end, MiximAirFrame* exclude) const
+BaseDecider::rssi_mapping_t
+BaseDecider::calculateRSSIMapping( simtime_t_cref       start,
+                                   simtime_t_cref       end,
+                                   const airframe_ptr_t exclude ) const
 {
-    if (exclude)
-        deciderEV << "Creating RSSI map excluding AirFrame with id " << exclude->getId() << endl;
-    else
-        deciderEV << "Creating RSSI map." << endl;
+	if(exclude) {
+		deciderEV << "Creating RSSI map for range [" << SIMTIME_STR(start) << "," << SIMTIME_STR(end) << "] excluding AirFrame with id " << exclude->getId() << endl;
+	}
+	else {
+		deciderEV << "Creating RSSI map for range [" << SIMTIME_STR(start) << "," << SIMTIME_STR(end) << "]" << endl;
+	}
 
-    AirFrameVector airFrames;
+	AirFrameVector airFrames;
+	simtime_t      MaxReceptionEnd = notAgain;
 
-    // collect all AirFrames that intersect with [start, end]
-    getChannelInfo(start, end, airFrames);
+	// collect all AirFrames that intersect with [start, end]
+	getChannelInfo(start, end, airFrames);
 
-    //TODO: create a "MappingUtils:createMappingFrom()"-method and use it here instead
-    //of abusing the add method
-    // create an empty mapping
-    Mapping* resultMap = MappingUtils::createMapping(Argument::MappedZero, DimensionSet::timeDomain);
+	// create an empty mapping
+	Mapping* resultMap = MappingUtils::createMapping(Argument::MappedZero, DimensionSet::timeDomain);
 
-    //add thermal noise
-    ConstMapping* thermalNoise = phy->getThermalNoise(start, end);
-    if (thermalNoise)
-    {
-        Mapping* tmp = resultMap;
-        resultMap = MappingUtils::add(*resultMap, *thermalNoise);
-        delete tmp;
-    }
+	//add thermal noise
+	ConstMapping* thermalNoise = phy->getThermalNoise(start, end);
+	if(thermalNoise) {
+		Mapping* tmp = resultMap;
+		resultMap = MappingUtils::add(*resultMap, *thermalNoise);
+		delete tmp;
+	}
 
-    // otherwise, iterate over all AirFrames (except exclude)
-    // and sum up their receiving-power-mappings
-    for (AirFrameVector::const_iterator it = airFrames.begin(); it != airFrames.end(); ++it)
-    {
-        // the vector should not contain pointers to 0
-        assert(*it != 0);
+	// otherwise, iterate over all AirFrames (except exclude)
+	// and sum up their receiving-power-mappings
+	for (AirFrameVector::const_iterator it = airFrames.begin(); it != airFrames.end(); ++it) {
+		// the vector should not contain pointers to 0
+		assert (*it != 0);
 
-        // if iterator points to exclude (that includes the default-case 'exclude == 0')
-        // then skip this AirFrame
-        if (*it == exclude)
-        {
-            if (thermalNoise && exclude)
-            {
-                // suggested by David Eckhoff:
-                // Instead of ignoring the want-to-receive AirFrame when
-                // building up the NoiseMap i add the thermalNoise for the time and
-                // frequencies of this airframe. There's probably a better way to do it but
-                // i did it like this:
-                const ConstMapping * const recvPowerMap = (*it)->getSignal().getReceivingPower();
-
-                if (recvPowerMap)
-                {
-                    Mapping* rcvPowerPlusThermalNoise = MappingUtils::add(*recvPowerMap, *thermalNoise);
-                    Mapping* resultMapNew = MappingUtils::subtract(*rcvPowerPlusThermalNoise, *recvPowerMap);
-
-                    delete rcvPowerPlusThermalNoise;
-                    delete resultMap;
-                    resultMap = resultMapNew;
-                }
-            }
-            continue;
+        simtime_t ReceptionEnd = (*it)->getSignal().getReceptionEnd();
+        if (ReceptionEnd > MaxReceptionEnd) {
+            MaxReceptionEnd = ReceptionEnd;
         }
+		// if iterator points to exclude (that includes the default-case 'exclude == 0')
+		// then skip this AirFrame
+		if ( *it == exclude ) {
+			if (thermalNoise && exclude) {
+				// suggested by David Eckhoff:
+				// Instead of ignoring the want-to-receive AirFrame when
+				// building up the NoiseMap i add the thermalNoise for the time and
+				// frequencies of this airframe. There's probably a better way to do it but
+				// i did it like this:
+				const ConstMapping *const recvPowerMap = (*it)->getSignal().getReceivingPower();
 
-        // otherwise get the Signal and its receiving-power-mapping
-        Signal& signal = (*it)->getSignal();
+				if (recvPowerMap) {
+                    deciderEV << "Adding mapping of Airframe with ID " << (*it)->getId()
+                              << ". Starts at "  << SIMTIME_STR((*it)->getSignal().getReceptionStart())
+                              << " and ends at " << SIMTIME_STR((*it)->getSignal().getReceptionEnd()) << endl;
 
-        // backup pointer to result map
-        // Mapping* resultMapOld = resultMap;
+					Mapping* rcvPowerPlusThermalNoise = MappingUtils::add(      *recvPowerMap,             *thermalNoise );
+					Mapping* resultMapTmp             = MappingUtils::subtract( *rcvPowerPlusThermalNoise, *recvPowerMap );
+					Mapping* resultMapNew             = MappingUtils::add(      *resultMap,                *resultMapTmp );
 
-        // TODO1.1: for testing purposes, for now we don't specify an interval
-        // and add the Signal's receiving-power-mapping to resultMap in [start, end],
-        // the operation Mapping::add returns a pointer to a new Mapping
+					delete rcvPowerPlusThermalNoise;
+					delete resultMapTmp;
 
-        const ConstMapping * const recvPowerMap = signal.getReceivingPower();
-        assert(recvPowerMap);
+					delete resultMap;
+					resultMap    = resultMapNew;
+					resultMapNew = NULL;
+				}
+			}
+			continue;
+		}
 
-        // Mapping* resultMapNew = Mapping::add( *(signal.getReceivingPower()), *resultMap, start, end );
+		// otherwise get the Signal and its receiving-power-mapping
+		Signal& signal = (*it)->getSignal();
 
-        deciderEV
-                << "Adding mapping of Airframe with ID " << (*it)->getId() << ". Starts at "
-                        << signal.getReceptionStart() << " and ends at " << signal.getReceptionEnd() << endl;
+		// backup pointer to result map
+		// Mapping* resultMapOld = resultMap;
 
-        Mapping* resultMapNew = MappingUtils::add(*recvPowerMap, *resultMap, Argument::MappedZero);
+		// add the Signal's receiving-power-mapping to resultMap in [start, end],
+		// the operation Mapping::add returns a pointer to a new Mapping
 
-        // discard old mapping
-        delete resultMap;
-        resultMap = resultMapNew;
-        resultMapNew = 0;
-    }
+		const ConstMapping *const recvPowerMap = signal.getReceivingPower();
+		assert(recvPowerMap);
 
-    return resultMap;
+		deciderEV << "Adding mapping of Airframe with ID " << (*it)->getId()
+		          << ". Starts at "  << SIMTIME_STR(signal.getReceptionStart())
+		          << " and ends at " << SIMTIME_STR(signal.getReceptionEnd()) << endl;
+
+		Mapping* resultMapNew = MappingUtils::add( *recvPowerMap, *resultMap, Argument::MappedZero );
+
+		// discard old mapping
+		delete resultMap;
+		resultMap    = resultMapNew;
+		resultMapNew = NULL;
+	}
+
+	return std::make_pair(resultMap, MaxReceptionEnd);
 }
 
+void BaseDecider::finish()
+{
+    if (phy) {
+        // record scalars through the interface to the PHY-Layer
+        phy->recordScalar("nbFramesWithInterference"          , nbFramesWithInterference);
+        phy->recordScalar("nbFramesWithoutInterference"       , nbFramesWithoutInterference);
+        phy->recordScalar("nbFramesWithInterferencePartial"   , nbFramesWithInterferencePartial);
+        phy->recordScalar("nbFramesWithoutInterferencePartial", nbFramesWithoutInterferencePartial);
+        phy->recordScalar("nbFramesWithInterferenceDropped"   , nbFramesWithInterferenceDropped);
+        phy->recordScalar("nbFramesWithoutInterferenceDropped", nbFramesWithoutInterferenceDropped);
+    }
+    Decider::finish();
+}

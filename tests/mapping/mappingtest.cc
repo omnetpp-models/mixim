@@ -6,7 +6,7 @@
 #include "../testUtils/asserts.h"
 #include "../testUtils/OmnetTestBase.h"
 #include "FWMath.h"
-
+#include "Decider802154Narrow.h"
 
 void assertEqualSilent(std::string msg, double target, simtime_t_cref actual) {
 
@@ -525,6 +525,40 @@ protected:
 		DimensionSet dimSet(Dimension::time);
 		dimSet.addDimension(freq);
 
+		for (int k=2; k<=16; k += 2) {
+			std::cerr << "sum += n_choose_k(16, " << k << ") * exp(snr * (20.0 / " << k << " - 1.0)) = " << Decider802154Narrow::n_choose_k(16, k) << " * exp(snr * " << (20.0 / k - 1.0) << ")" << std::endl;
+		}
+		for (int k=3; k<=16; k += 2) {
+			std::cerr << "sum -= n_choose_k(16, " << k << ") * exp(snr * (20.0 / " << k << " - 1.0)) = " << Decider802154Narrow::n_choose_k(16, k) << " * exp(snr * " << (20.0 / k - 1.0) << ")" << std::endl;
+		}
+		double snr = 1.0, sum_k = 0.0;
+		double dSNRFct = snr * 20.0;
+		register int k = 2;
+		sum_k = 0.0; for (k=2; k <= 16; ++k) {
+			sum_k += pow(-1.0, k) * Decider802154Narrow::n_choose_k(16, k) * exp(20.0 * snr * (1.0 / k - 1.0));
+		}
+		std::cerr << "BER(org) = " << ((8.0 / 15) * (1.0 / 16) * sum_k) << std::endl;
+		sum_k = 0.0; for (k=2; k <= 16; k += 2) {
+			sum_k += Decider802154Narrow::n_choose_k(16, k) * exp(dSNRFct * (1.0 / k - 1.0));
+		}
+		for (k=3; k <= 16; k += 2) {
+			sum_k -= Decider802154Narrow::n_choose_k(16, k) * exp(dSNRFct * (1.0 / k - 1.0));
+		}
+		std::cerr << "BER(std) = " << ((8.0 / 15) * (1.0 / 16) * sum_k) << std::endl;
+		sum_k = 0.0; for (k=2; k < 8; k += 2) {
+			// k will be 2, 4, 6 (symmetric values: 14, 12, 10)
+			sum_k += Decider802154Narrow::n_choose_k(16, k) * (exp(dSNRFct * (1.0 / k - 1.0)) + exp(dSNRFct * (1.0 / (16 - k) - 1.0)));
+		}
+		// for k = 8
+		k = 8; sum_k += Decider802154Narrow::n_choose_k(16, k) * exp(dSNRFct * (1.0 / k - 1.0));
+		k =16; sum_k += exp(dSNRFct * (1.0 / k - 1.0));
+		for (k = 3; k < 8; k += 2) {
+			// k will be 3, 5, 7 (symmetric values: 13, 11, 9)
+			sum_k -= Decider802154Narrow::n_choose_k(16, k) * (exp(dSNRFct * (1.0 / k - 1.0)) + exp(dSNRFct * (1.0 / (16 - k) - 1.0)));
+		}
+		// for k = 15
+		k = 15; sum_k -= Decider802154Narrow::n_choose_k(16, k) * exp(dSNRFct * (1.0 / k - 1.0));
+		std::cerr << "BER(opt) = " << ((8.0 / 15) * (1.0 / 16) * sum_k) << std::endl;
 		//ConstantSimpleConstMapping*	thermalNoiseS = new ConstantSimpleConstMapping(DimensionSet::timeDomain, FWMath::dBm2mW(-110.0));
 		MultiDimMapping<Linear>     NoiseMap(dimSet);
 		MultiDimMapping<Linear>     RecvPowerMap(dimSet);
@@ -1637,7 +1671,7 @@ protected:
 
 	void checkTestItFromTo(std::string msg, ConstMappingIterator* it,
 						   ConstMapping* f, Argument from, Argument to, Argument step,
-						   std::map<double, std::map<simtime_t, Argument> >& a){
+						   std::map<double, std::map<simtime_t, Argument> >& /*a*/){
 
 		for(double i = from.getArgValue(Dimension("frequency"));
 			i <= to.getArgValue(Dimension("frequency"));

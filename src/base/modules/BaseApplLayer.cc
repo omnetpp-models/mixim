@@ -32,8 +32,7 @@
 void BaseApplLayer::initialize(int stage)
 {
     BaseLayer::initialize(stage);
-    if (stage == 0)
-    {
+    if(stage==0){
         headerLength = par("headerLength");
     }
 }

@@ -18,106 +18,108 @@
  * @ingroup ieee802154
  * @author Jerome Rousselot, Amre El-Hoiydi, Marc Loebbers, Karl Wessel (port for MiXiM)
  */
-class MIXIM_API Decider802154Narrow : public BaseDecider
-{
-    public:
-        enum Decider802154NarrowControlKinds
-        {
-            RECEPTION_STARTED = LAST_BASE_DECIDER_CONTROL_KIND, LAST_DECIDER802154NARROW_CONTROL_KIND
-        };
-    protected:
-        /** @brief Start Frame Delimiter length in bits. */
-        int sfdLength;
+class MIXIM_API Decider802154Narrow: public BaseDecider {
+public:
+	enum Decider802154NarrowControlKinds {
+		RECEPTION_STARTED=LAST_BASE_DECIDER_CONTROL_KIND,
+		LAST_DECIDER802154NARROW_CONTROL_KIND
+	};
+protected:
+	/** @brief Start Frame Delimiter length in bits. */
+	int sfdLength;
 
-        /** @brief Minimum bit error rate. If SNIR is high, computed ber could be
-         higher than maximum radio performance. This value is an upper bound to
-         the performance. */
-        double BER_LOWER_BOUND;
+	/** @brief Minimum bit error rate. If SNIR is high, computed ber could be
+		higher than maximum radio performance. This value is an upper bound to
+		the performance. */
+	double BER_LOWER_BOUND;
 
-        /** @brief modulation type */
-        std::string modulation;
+	/** @brief modulation type */
+	std::string modulation;
 
-        /** @brief PHY header length in bits */
-        int phyHeaderLength;
+	/** log minimum snir values of dropped packets */
+	cOutVector snirDropped;
 
-        /** @name Tracked statistic values.*/
-        /*@{*/
-        unsigned long nbFramesWithInterference;
-        unsigned long nbFramesWithoutInterference;
+	/** log minimum snir values of received packets */
+	mutable cOutVector snirReceived;
 
-        unsigned long nbFramesWithInterferenceDropped;
-        unsigned long nbFramesWithoutInterferenceDropped;
-        /*@}*/
-        /** log minimum snir values of dropped packets */
-        cOutVector snirDropped;
 
-        /** log minimum snir values of received packets */
-        cOutVector snirReceived;
+	/** log snr value each time we enter getBERFromSNR */
+	mutable cOutVector snrlog;
 
-        /** log snr value each time we enter getBERFromSNR */
-        cOutVector snrlog;
+	/** log ber value each time we enter getBERFromSNR */
+	mutable cOutVector berlog;
 
-        /** log ber value each time we enter getBERFromSNR */
-        cOutVector berlog;
+protected:
+	/**
+	 * @brief Returns the next signal state (END, HEADER, NEW).
+	 *
+	 * @param CurState The current signal state.
+	 * @return The next signal state.
+	 */
+	virtual eSignalState getNextSignalState(eSignalState CurState) const {
+		switch(CurState) {
+			case NEW:           return EXPECT_HEADER;                             break;
+			default:            return BaseDecider::getNextSignalState(CurState); break;
+		}
+		return BaseDecider::getNextSignalState(CurState);
+	}
 
-    protected:
-        /** @brief Process a new signal the first time.*/
-        virtual simtime_t processNewSignal(MiximAirFrame* frame);
+	virtual simtime_t processSignalHeader(airframe_ptr_t frame);
 
-        virtual simtime_t processSignalHeader(MiximAirFrame* frame);
 
-        /**
-         * @brief Process the end of a signal.
-         *
-         * Checks if signal was received correct and sends it
-         * up to the MAC layer.
-         */
-        virtual simtime_t processSignalEnd(MiximAirFrame* frame);
+	/** @brief Creates the DeciderResult from frame.
+	 *
+	 * @param frame The processed frame.
+	 * @return The result for frame.
+	 */
+	virtual DeciderResult* createResult(const airframe_ptr_t frame) const;
 
-        double getBERFromSNR(double snr);
+	double getBERFromSNR(double snr) const;
 
-        bool syncOnSFD(MiximAirFrame* frame);
+	bool   syncOnSFD(airframe_ptr_t frame) const;
 
-        double evalBER(MiximAirFrame* frame);
+	double evalBER(airframe_ptr_t frame) const;
 
-        bool recordStats;
+	bool recordStats;
 
-    public:
+public:
 
-        /** @brief Helper function to compute BER from SNR using analytical formulas */
-        static double n_choose_k(int n, int k);
+	/** @brief Helper function to compute BER from SNR using analytical formulas */
+	static double n_choose_k(int n, int k);
 
-        /**
-         * @brief Initializes the Decider with a pointer to its PhyLayer and
-         * specific values for threshold and sensitivity
-         */
-        Decider802154Narrow(DeciderToPhyInterface* phy, int myIndex, bool debug, int sfdLength, double BER_LOWER_BOUND,
-                const std::string& modulation, int phyHeaderLength, bool recordStats) :
-                BaseDecider(phy, 0, myIndex, debug), sfdLength(sfdLength), BER_LOWER_BOUND(BER_LOWER_BOUND), modulation(
-                        modulation), phyHeaderLength(phyHeaderLength), nbFramesWithInterference(0), nbFramesWithoutInterference(
-                        0), nbFramesWithInterferenceDropped(0), nbFramesWithoutInterferenceDropped(0), snirDropped(), snirReceived(), snrlog(), berlog(), recordStats(
-                        recordStats)
-        {
-            //TODO: publish initial rssi/channel state
-            //TODO: trace noise level, snr and rssi to vectors
-            snirDropped.setName("snirDropped");
-            snirReceived.setName("snirReceived");
-            berlog.setName("berlog");
-            snrlog.setName("snrlog");
-        }
+	/** @brief Standard Decider constructor.
+	 */
+	Decider802154Narrow( DeciderToPhyInterface* phy
+	                   , double                 sensitivity
+	                   , int                    myIndex
+	                   , bool                   debug )
+	    : BaseDecider(phy, sensitivity, myIndex, debug)
+	    , sfdLength(0)
+	    , BER_LOWER_BOUND(0)
+	    , modulation("")
+	    , snirDropped()
+	    , snirReceived()
+	    , snrlog()
+	    , berlog()
+	    , recordStats(false)
+	{
+		snirDropped.setName("snirDropped");
+		snirReceived.setName("snirReceived");
+		berlog.setName("berlog");
+		snrlog.setName("snrlog");
+	}
 
-        virtual ~Decider802154Narrow()
-        {
-        }
-        ;
+	/** @brief Initialize the decider from XML map data.
+	 *
+	 * This method should be defined for generic decider initialization.
+	 *
+	 * @param params The parameter map which was filled by XML reader.
+	 *
+	 * @return true if the initialization was successfully.
+	 */
+	virtual bool initFromMap(const ParameterMap& params);
 
-        virtual void channelChanged(int newChannel);
-
-        /**
-         * @brief Method to be called by an OMNeT-module during its own finish(),
-         * to enable a decider to do some things.
-         */
-        virtual void finish();
+	virtual ~Decider802154Narrow() {};
 };
 
 #endif /* DECIDER80211_H_ */

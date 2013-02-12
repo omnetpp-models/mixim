@@ -2,10 +2,16 @@
 #define CONSTANTS_802_11
 
 /** @brief Bit rates for 802.11b */
-const double BITRATES_80211[] = { 1000000, 2000000, 5500000, 11000000 };
+const double BITRATES_80211[] = {
+    1000000,
+    2000000,
+    5500000,
+    11000000
+};
 
 /** @brief Center frequencies for 802.11b */
-const double CENTER_FREQUENCIES[] = { -1, //channel 0 does not exist
+const double CENTER_FREQUENCIES[] = {
+	-1, 		//channel 0 does not exist
         2.412e9, // 1
         2.417e9, // 2
         2.422e9, // 3

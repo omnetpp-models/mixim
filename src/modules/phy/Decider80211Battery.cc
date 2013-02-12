@@ -15,16 +15,28 @@
 
 #include "Decider80211Battery.h"
 
-void Decider80211Battery::setChannelIdleStatus(bool isIdle)
-{
-    if (isIdle)
-    {
-        phy->drawCurrent(0.0, 0);
-    }
-    else
-    {
-        phy->drawCurrent(decodingCurrentDelta, DECODING_ACCT);
-    }
+#include "PhyUtils.h"
 
-    Decider80211::setChannelIdleStatus(isIdle);
+void Decider80211Battery::channelStateChanged() {
+	if (phy->isRadioInRX()) {
+		if (!currentSignal.isProcessing()) {
+			phy->drawCurrent(0.0, 0);
+		} else {
+			phy->drawCurrent(decodingCurrentDelta, DECODING_ACCT);
+		}
+	}
+	Decider80211::channelStateChanged();
+}
+
+bool Decider80211Battery::initFromMap(const ParameterMap& params) {
+    ParameterMap::const_iterator it           = params.find("decodingCurrentDelta");
+    bool                         bInitSuccess = true;
+    if(it != params.end()) {
+        decodingCurrentDelta = ParameterMap::mapped_type(it->second).doubleValue();
+    }
+    else {
+        bInitSuccess = false;
+        opp_warning("No decodingCurrentDelta defined in config.xml for Decider80211!");
+    }
+    return Decider80211::initFromMap(params) && bInitSuccess;
 }

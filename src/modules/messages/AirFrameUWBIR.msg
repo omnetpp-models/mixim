@@ -15,7 +15,7 @@
 
 cplusplus {{
 #include "IEEE802154A.h"
-#include "MiximAirFrame_m.h"
+#include "MiXiMAirFrame.h"
 }}
 
 class noncobject IEEE802154A::config;

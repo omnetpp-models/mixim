@@ -108,7 +108,7 @@ void TestPhyLayer::testInitialisation() {
 	for(; it != analogueModels.end(); it++) {
 
 		TestAnalogueModel* model = dynamic_cast<TestAnalogueModel*>(*it);
-		assertTrue("Analogue model is of type TestAnalogueModel.", model != 0);
+		assertTrue("Analogue model is of type TestAnalogueModel.", model != NULL);
 		if(att1 < 0.0)
 			att1 = model->att;
 		else
@@ -130,11 +130,11 @@ void TestPhyLayer::testInitialisation() {
 }
 
 
-AnalogueModel* TestPhyLayer::getAnalogueModelFromName(std::string name, ParameterMap& params) const {
+AnalogueModel* TestPhyLayer::getAnalogueModelFromName(const std::string& name, ParameterMap& params) const {
 
 	AnalogueModel* model = BasePhyLayer::getAnalogueModelFromName(name, params);
 
-	if (model != 0)
+	if (model != NULL)
 	{
 		assertEqual("Check AnalogueModel name.", std::string("RadioStateAnalogueModel"), name);
 		assertEqual("Check for correct RSAM-pointer.", radio->getAnalogueModel(), model);
@@ -148,20 +148,20 @@ AnalogueModel* TestPhyLayer::getAnalogueModelFromName(std::string name, Paramete
 	assertEqual("Check AnalogueModel parameter count.", (unsigned int)1, params.size());
 
 	assertEqual("Check for parameter \"attenuation\".", (unsigned int)1, params.count("attenuation"));
-	cMsgPar par = params["attenuation"];
+	ParameterMap::mapped_type par = params["attenuation"];
 	assertEqual("Check type of parameter \"attenuation\".", 'D', par.getType());
 
-	return new TestAnalogueModel(par.doubleValue());
+	return createAnalogueModel<TestAnalogueModel>(params);
 }
 
-Decider* TestPhyLayer::getDeciderFromName(std::string name, ParameterMap& params) {
+Decider* TestPhyLayer::getDeciderFromName(const std::string& name, ParameterMap& params) {
 
 	assertEqual("Check Decider name.", std::string("TestDecider"), name);
 
 	assertEqual("Check Decider parameter count.", (unsigned int)8, params.size());
 
 	assertEqual("Check for parameter \"aString\".", (unsigned int)1, params.count("aString"));
-	cMsgPar par = params["aString"];
+	ParameterMap::mapped_type par = params["aString"];
 	assertEqual("Check type of parameter \"aString\".", 'S', par.getType());
 	assertEqual("Check value of parameter \"aString\".", std::string("teststring"), std::string(par.stringValue()));
 
@@ -202,5 +202,10 @@ Decider* TestPhyLayer::getDeciderFromName(std::string name, ParameterMap& params
 
 	int runNumber = simulation.getSystemModule()->par("run");
 
-	return new TestDecider(this, myIndex, runNumber, RECEIVING);
+	std::string sParamName = "recvState";
+	params[sParamName.c_str()] = ParameterMap::mapped_type(sParamName.c_str()).setLongValue(RECEIVING);
+	sParamName = "runNumber";
+	params[sParamName.c_str()] = ParameterMap::mapped_type(sParamName.c_str()).setLongValue(runNumber);
+
+	return createDecider<TestDecider>(params);
 }

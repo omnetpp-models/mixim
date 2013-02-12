@@ -30,7 +30,7 @@ export NEDPATH
 export LD_LIBRARY_PATH
 
 lCombined='miximexamples'
-lSingle='ieee802154Narrow'
+lSingle='ieee802154a'
 if [ ! -e ${lSingle} -a ! -e ${lSingle}.exe ]; then
     if [ -e ../${lCombined}.exe ]; then
         ln -s ../${lCombined}.exe ${lSingle}.exe

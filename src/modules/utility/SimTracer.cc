@@ -34,80 +34,70 @@ Define_Module(SimTracer);
  */
 void SimTracer::initialize(int stage)
 {
-    cSimpleModule::initialize(stage);
-    if (stage == 0)
-    {
-        char treeName[250];
-        /*int n;
-         n =*/
-        sprintf(treeName, "results/tree-%d.txt",
-                cSimulation::getActiveSimulation()->getEnvir()->getConfigEx()->getActiveRunNumber());
-        treeFile.open(treeName);
-        if (!treeFile)
-        {
-            EV << "Error opening output stream for routing tree statistics." << endl;
-        }
-        else
-        {
-            treeFile << "graph aRoutingTree " << endl << "{" << endl;
-        }
-        goodputVec.setName("goodput");
-        pSinkVec.setName("sinkPowerConsumption");
-        pSensorVec.setName("sensorPowerConsumption");
-        nbApplPacketsSent = 0;
-        nbApplPacketsReceived = 0;
+  cSimpleModule::initialize(stage);
+  if (stage == 0) {
+	char treeName[250];
+	/*int n;
+	n =*/ sprintf(treeName, "results/tree-%d.txt",
+	cSimulation::getActiveSimulation()->getEnvir()->getConfigEx()->getActiveRunNumber());
+    treeFile.open(treeName);
+    if (!treeFile) {
+      EV << "Error opening output stream for routing tree statistics."
+          << endl;
+    } else {
+      treeFile << "graph aRoutingTree " << endl << "{" << endl;
+    }
+    goodputVec.setName("goodput");
+    pSinkVec.setName("sinkPowerConsumption");
+    pSensorVec.setName("sensorPowerConsumption");
+    nbApplPacketsSent = 0;
+    nbApplPacketsReceived = 0;
 
-        // retrieve pointer to BaseWorldUtility module
-        world = FindModule<BaseWorldUtility*>::findGlobalModule();
-        //world = check_and_cast<BaseWorldUtility*>(cSimulation::getActiveSimulation()->getModuleByPath("sim.world"));
-        if (world)
-        {
-            world->subscribe(BaseLayer::catPacketSignal, this);
-        }
-        else
-        {
-            error("No BaseWorldUtility module found, please check your ned configuration.");
-        }
+    // retrieve pointer to BaseWorldUtility module
+    world = FindModule<BaseWorldUtility*>::findGlobalModule();
+    //world = check_and_cast<BaseWorldUtility*>(cSimulation::getActiveSimulation()->getModuleByPath("sim.world"));
+    if (world) {
+        world->subscribe(BaseLayer::catPacketSignal.initialize(), this);
+    }
+    else {
+      error("No BaseWorldUtility module found, please check your ned configuration.");
+    }
 
 //  } else if(stage == 1) {  // it seems that we are initialized only once. Why ?
-    }
+  }
 }
 
 // compute current average sensor power consumption
-double SimTracer::getAvgSensorPowerConsumption() const
-{
-    double sensorAvgP = 0;
-    int nbSensors = 0;
+double SimTracer::getAvgSensorPowerConsumption() const {
+	double sensorAvgP = 0;
+	int    nbSensors  = 0;
 
-    map<unsigned long, double>::const_iterator iter = powerConsumptions.begin(); // address, powerConsumption
-    for (; iter != powerConsumptions.end(); ++iter)
-    { // iterate over all nodes power consumptions
-        if (iter->first == 0)
-            continue;
+	map < unsigned long, double >::const_iterator iter = powerConsumptions.begin(); // address, powerConsumption
+	for (; iter != powerConsumptions.end(); ++iter) {	// iterate over all nodes power consumptions
+		if(iter->first == 0)
+			continue;
 
-        double eval = iter->second;
-        eval = eval + SIMTIME_DBL(simTime() - lastUpdates.at(iter->first)) * currPower.at(iter->first);
-        eval = eval * 1000 / SIMTIME_DBL(simTime());
+		double eval = iter->second;
+		eval = eval +  SIMTIME_DBL(simTime() - lastUpdates.at(iter->first)) * currPower.at(iter->first);
+		eval = eval * 1000 / SIMTIME_DBL(simTime());
 
-        ++nbSensors;
-        sensorAvgP += eval;
-    }
-    if (nbSensors)
-    {
-        sensorAvgP = sensorAvgP / nbSensors;
-    }
-    return sensorAvgP;
+		++nbSensors;
+		sensorAvgP += eval;
+	}
+	if (nbSensors) {
+		sensorAvgP = sensorAvgP / nbSensors;
+	}
+	return sensorAvgP;
 }
 
-double SimTracer::getSinkPowerConsumption() const
-{
-    map<unsigned long, double>::const_iterator iter = powerConsumptions.find(0);
-    if (iter == powerConsumptions.end())
-        return 0.0;
-    double sinkP = iter->second;
-    sinkP = sinkP + SIMTIME_DBL(simTime() - lastUpdates.at(iter->first)) * currPower.at(iter->first);
-    sinkP = sinkP * 1000 / SIMTIME_DBL(simTime());
-    return sinkP;
+double SimTracer::getSinkPowerConsumption() const {
+	map < unsigned long, double >::const_iterator iter = powerConsumptions.find(0);
+	if (iter == powerConsumptions.end())
+		return 0.0;
+	double  sinkP = iter->second;
+	sinkP = sinkP + SIMTIME_DBL(simTime() - lastUpdates.at(iter->first)) * currPower.at(iter->first);
+	sinkP = sinkP * 1000 / SIMTIME_DBL(simTime());
+	return sinkP;
 }
 
 /*
@@ -115,25 +105,21 @@ double SimTracer::getSinkPowerConsumption() const
  */
 void SimTracer::finish()
 {
-    double goodput = 0;
-    if (nbApplPacketsSent > 0)
-    {
-        goodput = ((double) nbApplPacketsReceived) / nbApplPacketsSent;
-    }
-    else
-    {
-        goodput = 0;
-    }
-    recordScalar("Application Packet Success Rate", goodput);
-    recordScalar("Application packets received", nbApplPacketsReceived);
-    recordScalar("Application packets sent", nbApplPacketsSent);
-    recordScalar("Sink power consumption", getSinkPowerConsumption());
-    recordScalar("Sensor average power consumption", getAvgSensorPowerConsumption());
-    if (treeFile)
-    {
-        treeFile << "}" << endl;
-        treeFile.close();
-    }
+  double goodput = 0;
+  if(nbApplPacketsSent > 0) {
+	  goodput = ((double) nbApplPacketsReceived)/nbApplPacketsSent;
+  } else {
+	  goodput = 0;
+  }
+  recordScalar("Application Packet Success Rate", goodput);
+  recordScalar("Application packets received", nbApplPacketsReceived);
+  recordScalar("Application packets sent", nbApplPacketsSent);
+  recordScalar("Sink power consumption", getSinkPowerConsumption());
+  recordScalar("Sensor average power consumption", getAvgSensorPowerConsumption());
+  if (treeFile) {
+    treeFile << "}" << endl;
+    treeFile.close();
+  }
 
 }
 
@@ -142,55 +128,48 @@ void SimTracer::finish()
  */
 void SimTracer::namLog(string /*namString*/)
 {
-    //Enter_Method_Silent();
-    //namFile << namString << endl;
+  //Enter_Method_Silent();
+  //namFile << namString << endl;
 }
 
-void SimTracer::radioEnergyLog(unsigned long mac, int /*state*/, simtime_t_cref duration, double power, double newPower)
+void SimTracer::radioEnergyLog(unsigned long mac, int /*state*/,
+			       simtime_t_cref duration, double power, double newPower)
 {
-    Enter_Method_Silent();
-    /*
-     radioEnergyFile << mac << "\t" << state << "\t" << duration << "\t" << power
-     << endl;
-     */
-    if (powerConsumptions.count(mac) == 0)
-    {
-        powerConsumptions[mac] = 0;
-    }
-    powerConsumptions[mac] = powerConsumptions[mac] + power * SIMTIME_DBL(duration);
-    currPower[mac] = newPower;
-    lastUpdates[mac] = simTime();
-    if (mac != 0)
-    {
-        pSensorVec.record(getAvgSensorPowerConsumption());
-    }
-    else
-    {
-        pSinkVec.record(getSinkPowerConsumption());
-    }
+  Enter_Method_Silent();
+  /*
+  radioEnergyFile << mac << "\t" << state << "\t" << duration << "\t" << power
+    << endl;
+    */
+  if (powerConsumptions.count(mac) == 0) {
+    powerConsumptions[mac] = 0;
+  }
+  powerConsumptions[mac] = powerConsumptions[mac] + power * SIMTIME_DBL(duration);
+  currPower[mac] = newPower;
+  lastUpdates[mac] = simTime();
+  if(mac != 0) {
+	  pSensorVec.record(getAvgSensorPowerConsumption());
+  } else {
+	  pSinkVec.record(getSinkPowerConsumption());
+  }
 }
 
 void SimTracer::logPosition(int node, double x, double y, double /*z*/)
 {
-    treeFile << node << "[pos=\"" << x << ", " << y << "!\"];" << endl;
+	treeFile << node << "[pos=\""<< x << ", " << y << "!\"];" << endl;
 }
 
 void SimTracer::receiveSignal(cComponent */*source*/, simsignal_t signalID, cObject *obj)
 {
-    if (signalID == BaseLayer::catPacketSignal)
-    {
-        packet = *(static_cast<const Packet*>(obj));
-        //	nbApplPacketsSent = nbApplPacketsSent + packet.getNbPacketsSent();
-        //	nbApplPacketsReceived = nbApplPacketsReceived + packet.getNbPacketsReceived();
-        if (packet.isSent())
-        {
-            nbApplPacketsSent = nbApplPacketsSent + 1;
-        }
-        else
-        {
-            nbApplPacketsReceived = nbApplPacketsReceived + 1;
-        }
-        goodputVec.record(((double) nbApplPacketsReceived) / nbApplPacketsSent);
-    }
+	if (signalID == BaseLayer::catPacketSignal) {
+		packet = *(static_cast<const Packet*>(obj));
+	//	nbApplPacketsSent = nbApplPacketsSent + packet.getNbPacketsSent();
+	//	nbApplPacketsReceived = nbApplPacketsReceived + packet.getNbPacketsReceived();
+		if(packet.isSent()) {
+			nbApplPacketsSent = nbApplPacketsSent + 1;
+		} else {
+			nbApplPacketsReceived = nbApplPacketsReceived + 1;
+		}
+		goodputVec.record(((double) nbApplPacketsReceived)/nbApplPacketsSent);
+	}
 }
 

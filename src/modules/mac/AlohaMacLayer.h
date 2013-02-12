@@ -34,39 +34,41 @@
  * @ingroup ieee802154a
  * @ingroup macLayer
  */
-class MIXIM_API AlohaMacLayer : public UWBIRMac
-{
-    private:
-        /** @brief Copy constructor is not allowed.
-         */
-        AlohaMacLayer(const AlohaMacLayer&);
-        /** @brief Assignment operator is not allowed.
-         */
-        AlohaMacLayer& operator=(const AlohaMacLayer&);
+class MIXIM_API AlohaMacLayer : public UWBIRMac {
+private:
+	/** @brief Copy constructor is not allowed.
+	 */
+	AlohaMacLayer(const AlohaMacLayer&);
+	/** @brief Assignment operator is not allowed.
+	 */
+	AlohaMacLayer& operator=(const AlohaMacLayer&);
 
-    public:
-        AlohaMacLayer() :
-                UWBIRMac(), minBE(0), maxBE(0)
-        {
-        }
+  public:
+	AlohaMacLayer()
+		: UWBIRMac()
+		, minBE(0)
+		, maxBE(0)
+	{}
 
-    public:
+public:
 
-        virtual void initialize(int stage);
+    virtual void initialize(int stage);
 
-        virtual void finish();
+    virtual void finish();
 
-        int minBE;
-        int maxBE;
+    int minBE;
+    int maxBE;
 
-    protected:
+protected:
 
-        virtual MacPkt* encapsMsg(cPacket *msg);
+    virtual macpkt_ptr_t encapsMsg(cPacket *msg);
 
-        virtual void handleLowerMsg(cMessage *msg);
 
-        //virtual void handleUpperMsg(cMessage * msg);
+    virtual void handleLowerMsg(cMessage *msg);
+
+    //virtual void handleUpperMsg(cMessage * msg);
 
 };
 
 #endif // ALOHA_MAC_LAYER_H
+

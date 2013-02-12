@@ -31,7 +31,7 @@ void testIntersections() {
 	ChannelInfo testChannel;
 
 	//test with one AirFrame
-	MiximAirFrame* frame1 = new MiximAirFrame();
+	ChannelInfo::airframe_ptr_t frame1 = new ChannelInfo::airframe_t();
 	frame1->setDuration(2.0);
 	
 	testChannel.addAirFrame(frame1, 1.0);
@@ -76,7 +76,7 @@ void testIntersections() {
 	
 	
 	//add another AirFrame
-	MiximAirFrame* frame2 = new MiximAirFrame();
+	ChannelInfo::airframe_ptr_t frame2 = new ChannelInfo::airframe_t();
 	frame2->setDuration(1.0);
 	testChannel.addAirFrame(frame2, 2.5);
 	
@@ -111,7 +111,7 @@ void testIntersections() {
 	
 	//add another AirFrame which intersects with second but not with first
 	
-	MiximAirFrame* frame3 = new MiximAirFrame();
+	ChannelInfo::airframe_ptr_t frame3 = new ChannelInfo::airframe_t();
 	frame3->setDuration(1.5);
 	testChannel.addAirFrame(frame3, 3.5);
 	
@@ -143,9 +143,9 @@ void testIntersections() {
 	
 	
 	//add two airframes with same start and end
-	MiximAirFrame* frame4 = new MiximAirFrame();
+	ChannelInfo::airframe_ptr_t frame4 = new ChannelInfo::airframe_t();
 	frame4->setDuration(1.0);
-	MiximAirFrame* frame4b = new MiximAirFrame();
+	ChannelInfo::airframe_ptr_t frame4b = new ChannelInfo::airframe_t();
 	frame4b->setDuration(1.0);
 	testChannel.addAirFrame(frame4b, 15.0);	
 	testChannel.addAirFrame(frame4, 15.0);
@@ -169,7 +169,7 @@ void testIntersections() {
 	assertTrue("Check for simultaneous airframes after remove of one.", bothReturned);
 	
 	//add another airframe which starts at the end of the previous ones.
-	MiximAirFrame* frame5 = new MiximAirFrame();
+	ChannelInfo::airframe_ptr_t frame5 = new ChannelInfo::airframe_t();
 	frame5->setDuration(2.0);	
 	testChannel.addAirFrame(frame5, 16.0);
 	
@@ -190,7 +190,7 @@ void testIntersections() {
 	assertEqual("Interval after simultaneous should return only third AirFrame.", frame5, v.front());
 	
 	//create another AirFrame with same start as previous but later end
-	MiximAirFrame* frame6 = new MiximAirFrame();
+	ChannelInfo::airframe_ptr_t frame6 = new ChannelInfo::airframe_t();
 	frame6->setDuration(3.0);
 	testChannel.addAirFrame(frame6, 16.0);
 	
@@ -222,7 +222,7 @@ void testIntersections() {
 	assertEqual("Nothing should have changed after deletion of shorter AirFrame.", frame6, v.front());
 	
 	//add another one with same end as previous but later start
-	MiximAirFrame* frame7 = new MiximAirFrame();
+	ChannelInfo::airframe_ptr_t frame7 = new ChannelInfo::airframe_t();
 	frame7->setDuration(0.5);
 	testChannel.addAirFrame(frame7, 18.5);
 	
@@ -330,7 +330,7 @@ protected:
 		testForTrue("6.2", testChannel.isRecording());
 
 		//planTest("1.3", "Start recording before AirFrame starts");
-		MiximAirFrame* frame1 = new MiximAirFrame();
+		ChannelInfo::airframe_ptr_t frame1 = new ChannelInfo::airframe_t();
 		frame1->setDuration(2.0);
 		testChannel.addAirFrame(frame1, 1.0);
 		testForFalse("1.3", testChannel.isChannelEmpty());
@@ -363,7 +363,7 @@ protected:
 		testForFalse("6.3", testChannel.isRecording());
 
 		//planTest("1.2", "Start recording after AirFrame starts");
-		frame1 = new MiximAirFrame();
+		frame1 = new ChannelInfo::airframe_t();
 		frame1->setDuration(2.0);
 		testChannel.addAirFrame(frame1, 1.0);
 		testChannel.startRecording(3.0);
@@ -380,10 +380,10 @@ protected:
 
 		//planTest("4.2", "Remove AirFrame before recording with interfering "
 		//				  "active AirFrame.");
-		frame1 = new MiximAirFrame();
+		frame1 = new ChannelInfo::airframe_t();
 		frame1->setDuration(1.0);
 		testChannel.addAirFrame(frame1, 1.0);
-		MiximAirFrame* frame2 = new MiximAirFrame();
+		ChannelInfo::airframe_ptr_t frame2 = new ChannelInfo::airframe_t();
 		frame2->setDuration(1.0);
 		testChannel.addAirFrame(frame2, 2.0);
 		testChannel.removeAirFrame(frame1);

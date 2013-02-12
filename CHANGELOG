@@ -1,4 +1,13 @@
 v2.2.1
++ .cproject is now OMNeT++ 4.2 conform
++ renamed mobility coordinates from (x, y, z) into (initialX, initialY, initialZ) and
+  added meter-unit for it (as in INET)
++ constraintAreaMin[XYZ] and constraintAreaMax[XYZ] for mobility modules to specify
+  a specific random generation area for nodes (will be adjusted to playground area)
++ adjusted the example scripts and .anf files for WSNRouting, ieee80215a, and 
+  ieee80215Narrow
++ fixed MoBAN emit/subscribe scope for position updates
++ small fix for SimpleBattery empty battery test
 + getAnalogueModelFromName() is now a const method
 + fixed typename-error for GCC<4.5
 + fixed gcc-release compile crash

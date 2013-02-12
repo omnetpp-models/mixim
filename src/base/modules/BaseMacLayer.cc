@@ -53,8 +53,7 @@ void BaseMacLayer::initialize(int stage)
     if (stage == 0)
     {
         // get handle to phy layer
-        if ((phy = FindModule<MacToPhyInterface*>::findSubModule(getNic())) == NULL)
-        {
+        if ((phy = FindModule<MacToPhyInterface*>::findSubModule(getNic())) == NULL) {
             error("Could not find a PHY module.");
         }
         headerLength = par("headerLength");
@@ -62,17 +61,13 @@ void BaseMacLayer::initialize(int stage)
 
         hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
     }
-    if (myMacAddr == LAddress::L2NULL)
-    {
+    if (myMacAddr == LAddress::L2NULL) {
         // see if there is an addressing module available
         // otherwise use NIC modules id as MAC address
         AddressingInterface* addrScheme = FindModule<AddressingInterface*>::findSubModule(findHost());
-        if (addrScheme)
-        {
+        if(addrScheme) {
             myMacAddr = addrScheme->myMacAddr(this);
-        }
-        else
-        {
+        } else {
             const std::string addressString = par("address").stringValue();
             if (addressString.empty() || addressString == "auto")
                 myMacAddr = LAddress::L2Type(getNic()->getId());
@@ -80,8 +75,7 @@ void BaseMacLayer::initialize(int stage)
                 myMacAddr = LAddress::L2Type(addressString.c_str());
             // use streaming operator for string conversion, this makes it more
             // independent from the myMacAddr type
-            std::ostringstream oSS;
-            oSS << myMacAddr;
+            std::ostringstream oSS; oSS << myMacAddr;
             par("address").setStringValue(oSS.str());
         }
         registerInterface();
@@ -92,8 +86,7 @@ void BaseMacLayer::registerInterface()
 {
 #ifdef MIXIM_INET
     IInterfaceTable *ift = InterfaceTableAccess().getIfExists();
-    if (ift)
-    {
+    if (ift) {
         cModule* nic = getParentModule();
         InterfaceEntry *e = new InterfaceEntry(this);
 
@@ -132,7 +125,7 @@ void BaseMacLayer::registerInterface()
 /**
  * Decapsulates the network packet from the received MacPkt
  **/
-cPacket* BaseMacLayer::decapsMsg(MacPkt* msg)
+cPacket* BaseMacLayer::decapsMsg(macpkt_ptr_t msg)
 {
     cPacket *m = msg->decapsulate();
     setUpControlInfo(m, msg->getSrcAddr());
@@ -146,9 +139,9 @@ cPacket* BaseMacLayer::decapsMsg(MacPkt* msg)
  * Encapsulates the received NetwPkt into a MacPkt and set all needed
  * header fields.
  **/
-MacPkt* BaseMacLayer::encapsMsg(cPacket *netwPkt)
+BaseMacLayer::macpkt_ptr_t BaseMacLayer::encapsMsg(cPacket *netwPkt)
 {
-    MacPkt *pkt = new MacPkt(netwPkt->getName(), netwPkt->getKind());
+    macpkt_ptr_t pkt = new MacPkt(netwPkt->getName(), netwPkt->getKind());
     pkt->setBitLength(headerLength);
 
     // copy dest address from the Control Info attached to the network
@@ -194,22 +187,22 @@ void BaseMacLayer::handleUpperMsg(cMessage *mac)
 
 void BaseMacLayer::handleLowerMsg(cMessage *msg)
 {
-    MacPkt* mac = static_cast<MacPkt *>(msg);
+    macpkt_ptr_t     mac  = static_cast<macpkt_ptr_t>(msg);
     LAddress::L2Type dest = mac->getDestAddr();
-    LAddress::L2Type src = mac->getSrcAddr();
+    LAddress::L2Type src  = mac->getSrcAddr();
 
     //only foward to upper layer if message is for me or broadcast
-    if ((dest == myMacAddr) || LAddress::isL2Broadcast(dest))
-    {
-        coreEV << "message with mac addr " << src << " for me (dest=" << dest << ") -> forward packet to upper layer\n";
-        sendUp(decapsMsg(mac));
+    if((dest == myMacAddr) || LAddress::isL2Broadcast(dest)) {
+		coreEV << "message with mac addr " << src
+			   << " for me (dest=" << dest
+			   << ") -> forward packet to upper layer\n";
+		sendUp(decapsMsg(mac));
     }
-    else
-    {
-        coreEV
-                << "message with mac addr " << src << " not for me (dest=" << dest << ") -> delete (my MAC="
-                        << myMacAddr << ")\n";
-        delete mac;
+    else{
+		coreEV << "message with mac addr " << src
+			   << " not for me (dest=" << dest
+			   << ") -> delete (my MAC="<<myMacAddr<<")\n";
+		delete mac;
     }
 }
 
@@ -265,8 +258,7 @@ Mapping* BaseMacLayer::createConstantMapping(simtime_t_cref start, simtime_t_cre
     return m;
 }
 
-Mapping* BaseMacLayer::createRectangleMapping(simtime_t_cref start, simtime_t_cref end,
-        Argument::mapped_type_cref value)
+Mapping* BaseMacLayer::createRectangleMapping(simtime_t_cref start, simtime_t_cref end, Argument::mapped_type_cref value)
 {
     //create mapping over time
     Mapping* m = MappingUtils::createMapping(DimensionSet::timeDomain, Mapping::LINEAR);
@@ -284,9 +276,11 @@ Mapping* BaseMacLayer::createRectangleMapping(simtime_t_cref start, simtime_t_cr
     return m;
 }
 
-ConstMapping* BaseMacLayer::createSingleFrequencyMapping(simtime_t_cref start, simtime_t_cref end,
-        Argument::mapped_type_cref centerFreq, Argument::mapped_type_cref halfBandwidth,
-        Argument::mapped_type_cref value)
+ConstMapping* BaseMacLayer::createSingleFrequencyMapping(simtime_t_cref             start,
+                                                         simtime_t_cref             end,
+                                                         Argument::mapped_type_cref centerFreq,
+                                                         Argument::mapped_type_cref halfBandwidth,
+                                                         Argument::mapped_type_cref value)
 {
     Mapping* res = MappingUtils::createMapping(Argument::MappedZero, DimensionSet::timeFreqDomain, Mapping::LINEAR);
 
