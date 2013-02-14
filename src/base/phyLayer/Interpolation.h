@@ -301,11 +301,11 @@ class NextSmaller : public InterpolatorBase<_ContainerType>
             }
             if (upperBound == first)
             {
-                return asInterpolated(upperBound->second, true);
+                return this->asInterpolated(upperBound->second, true);
             }
 
             upperBound--;
-            return asInterpolated(upperBound->second, false, !(upperBound->first == pos));
+            return this->asInterpolated(upperBound->second, false, !(upperBound->first == pos));
         }
 
         /** @brief Represents the interpolator a stepping function. */
@@ -382,23 +382,23 @@ class Nearest : public InterpolatorBase<_ContainerType>
             }
             if (upperBound == first)
             {
-                return asInterpolated(upperBound->second, true);
+                return this->asInterpolated(upperBound->second, true);
             }
 
             const_iterator left = upperBound;
             --left;
 
             if (left->first == pos)
-                return asInterpolated(left->second, false, false);
+                return this->asInterpolated(left->second, false, false);
 
             const_iterator right = upperBound;
 
             if (right == last)
             {
-                return asInterpolated(left->second, true);
+                return this->asInterpolated(left->second, true);
             }
 
-            return asInterpolated(((pos - left->first < right->first - pos) ? left : right)->second, false);
+            return this->asInterpolated(((pos - left->first < right->first - pos) ? left : right)->second, false);
         }
 };
 
@@ -484,18 +484,18 @@ class Linear : public InterpolatorBase<_ContainerType>
             }
             if (upperBound == first)
             {
-                return asInterpolated(upperBound->second, true);
+                return this->asInterpolated(upperBound->second, true);
             }
 
             const_iterator right = upperBound;
             const_iterator left = --upperBound;
 
             if (left->first == pos)
-                return asInterpolated(left->second, false, false);
+                return this->asInterpolated(left->second, false, false);
 
             if (right == last)
             {
-                return asInterpolated(left->second, true);
+                return this->asInterpolated(left->second, true);
             }
 
             return interpolated(linearInterpolation(pos, left->first, right->first, left->second, right->second));
