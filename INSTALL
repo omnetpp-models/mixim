@@ -5,10 +5,7 @@ MiXiM.
 Requirements
 ============
 - OMNeT++, at least version 4.2, downloadable at www.omnetpp.org
-  OMNeT++ must be compiled with 
-    - dynamic NED loading (WITH_NETBUILDER=yes setting)
-    - and XML support enabled 
-- at least INET 1.99.5 or later (successfully installed and compiled)
+- at least INET 2.1 or later (successfully installed and compiled)
   downloadable at inet.omnetpp.org
 
 
@@ -30,7 +27,7 @@ and proceed with "Next".
 4. "MiXiM" should appear in the "Projects" list below. click "Finish". 
 
 5. To build MiXiM right-click on the project and choose "Build Project".
-   Before building MiXiM make sure that 'inet' (version 1.99.5+) is available
+   Before building MiXiM make sure that 'inet' (version 2.1+) is available
    and open in your workspace.
 
 6. Run an example:

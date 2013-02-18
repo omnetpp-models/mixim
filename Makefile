@@ -4,6 +4,8 @@ INET_PROJECT_DIR=../../inet
 all: checkmakefiles
 	cd src && $(MAKE)
 	cd examples && $(MAKE)
+
+tests: all
 	cd tests && $(MAKE)
 
 clean: checkmakefiles
