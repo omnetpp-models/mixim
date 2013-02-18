@@ -52,7 +52,7 @@ void CSMAMacLayer::initialize(int stage)
             opp_error("TranmitterPower can't be bigger than pMax in ConnectionManager! "
                     "Please adjust your omnetpp.ini file accordingly.");
 
-        if (phy->getRadioState() != Radio::RX)
+        if (phy->getRadioState() != MiximRadio::RX)
         {
             opp_error("Initial radio state isn't RX but CSMAMacLayer"
                     " assumes that the NIC starts in RX state.");
@@ -156,7 +156,7 @@ void CSMAMacLayer::handleSelfMsg(cMessage *msg)
             {
                 macState = CCA;
 
-                if (phy->getRadioState() == Radio::RX)
+                if (phy->getRadioState() == MiximRadio::RX)
                 {
 
                     if (phy->getChannelState().isIdle())
@@ -185,14 +185,14 @@ void CSMAMacLayer::handleSelfMsg(cMessage *msg)
         debugEV << " minorMsg ";
 
         //TODO: replace with channel sense request
-        if ((macState == CCA) && (phy->getRadioState() == Radio::RX))
+        if ((macState == CCA) && (phy->getRadioState() == MiximRadio::RX))
         {
 
             if (phy->getChannelState().isIdle())
             {
                 debugEV << " idle -> to send ";
                 macState = TX;
-                phy->setRadioState(Radio::TX);
+                phy->setRadioState(MiximRadio::TX);
             }
             else
             {
@@ -241,14 +241,14 @@ void CSMAMacLayer::handleLowerControl(cMessage *msg)
     {
         debugEV << " transmission over" << endl;
         macState = RX;
-        phy->setRadioState(Radio::RX);
+        phy->setRadioState(MiximRadio::RX);
         txAttempts = 0;
         if (!backoffTimer->isScheduled())
             scheduleBackoff();
     }
     else if (msg->getKind() == MacToPhyInterface::RADIO_SWITCHING_OVER)
     {
-        if ((macState == TX) && (phy->getRadioState() == Radio::TX))
+        if ((macState == TX) && (phy->getRadioState() == MiximRadio::TX))
         {
             debugEV << " radio switched to tx, sendDown packet" << endl;
             nbTxFrames++;

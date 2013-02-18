@@ -150,7 +150,7 @@ class MIXIM_API LMacLayer : public BaseMacLayer
         States macState;
 
         /** @brief Current state of active channel (radio), set using radio, updated via BB */
-        Radio::RadioState radioState;
+        MiximRadio::RadioState radioState;
 
         /** @brief Duration of a slot */
         double slotDuration;

@@ -28,7 +28,7 @@ Define_Module(DeviceDuty)
 ;
 
 void DeviceDuty::initialize(int stage) {
-	BatteryAccess::initialize(stage);
+	MiximBatteryAccess::initialize(stage);
 
 	if (stage == 0) {
 

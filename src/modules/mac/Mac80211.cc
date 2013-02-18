@@ -238,7 +238,7 @@ void Mac80211::handleLowerMsg(cMessage *msg)
 {
     Mac80211Pkt *af = static_cast<Mac80211Pkt *>(msg);
     int radioState = phy->getRadioState();
-    if (radioState == Radio::RX)
+    if (radioState == MiximRadio::RX)
     {
         // end of the reception
         debugEV
@@ -293,7 +293,7 @@ void Mac80211::handleLowerControl(cMessage *msg)
         case Decider80211::COLLISION:
         case Decider80211::BITERROR: {
             int radioState = phy->getRadioState();
-            if (radioState == Radio::RX)
+            if (radioState == MiximRadio::RX)
             {
                 if (contention->isScheduled())
                 {
@@ -311,7 +311,7 @@ void Mac80211::handleLowerControl(cMessage *msg)
         }
         case MacToPhyInterface::TX_OVER:
             debugEV << "PHY indicated transmission over" << endl;
-            phy->setRadioState(Radio::RX);
+            phy->setRadioState(MiximRadio::RX);
             handleEndTransmission();
             delete msg;
             break;
@@ -690,7 +690,7 @@ void Mac80211::handleEndContentionTimer()
         // will be new calculated in the next contention period
         remainingBackoff = 0;
         // unicast packet
-        phy->setRadioState(Radio::TX);
+        phy->setRadioState(MiximRadio::TX);
         if (!nextIsBroadcast)
         {
             if (rtsCts(fromUpperLayer.front()))
@@ -804,7 +804,7 @@ void Mac80211::handleEndSifsTimer()
     }
 
     Mac80211Pkt *frame = static_cast<Mac80211Pkt *>(endSifs->getContextPointer());
-    phy->setRadioState(Radio::TX);
+    phy->setRadioState(MiximRadio::TX);
     switch (frame->getKind())
     {
         case RTS:

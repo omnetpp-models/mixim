@@ -210,7 +210,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                 if (mySlot == currSlot)
                 {
                     debugEV << "Waking up in my slot. Switch to RECV first to check the channel.\n";
-                    phy->setRadioState(Radio::RX);
+                    phy->setRadioState(MiximRadio::RX);
                     macState = CCA;
                     debugEV << "Old state: SLEEP, New state: CCA" << endl;
 
@@ -221,7 +221,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                 else
                 {
                     debugEV << "Waking up in a foreign slot. Ready to receive control packet.\n";
-                    phy->setRadioState(Radio::RX);
+                    phy->setRadioState(MiximRadio::RX);
                     macState = WAIT_CONTROL;
                     debugEV << "Old state: SLEEP, New state: WAIT_CONTROL" << endl;
                     if (!SETUP_PHASE) //in setup phase do not sleep
@@ -260,7 +260,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                 // if the channel is clear, get ready for sending the control packet
                 coreEV << "Channel is free, so let's prepare for sending.\n";
 
-                phy->setRadioState(Radio::TX);
+                phy->setRadioState(MiximRadio::TX);
                 macState = SEND_CONTROL;
                 debugEV << "Old state: CCA, New state: SEND_CONTROL" << endl;
 
@@ -327,7 +327,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                     debugEV << "Incoming data packet not for me. Going back to sleep.\n";
                     macState = SLEEP;
                     debugEV << "Old state: CCA, New state: SLEEP" << endl;
-                    phy->setRadioState(Radio::SLEEP);
+                    phy->setRadioState(MiximRadio::SLEEP);
                     if (timeout->isScheduled())
                         cancelEvent(timeout);
                 }
@@ -359,7 +359,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                 // in any case, go back to sleep
                 macState = SLEEP;
                 debugEV << "Old state: CCA, New state: SLEEP" << endl;
-                phy->setRadioState(Radio::SLEEP);
+                phy->setRadioState(MiximRadio::SLEEP);
             }
             else if (msg->getKind() == LMAC_SETUP_PHASE_END)
             {
@@ -384,7 +384,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                 debugEV << "Control timeout. Go back to sleep.\n";
                 macState = SLEEP;
                 debugEV << "Old state: WAIT_CONTROL, New state: SLEEP" << endl;
-                phy->setRadioState(Radio::SLEEP);
+                phy->setRadioState(MiximRadio::SLEEP);
             }
             else if (msg->getKind() == LMAC_CONTROL)
             {
@@ -447,7 +447,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                     debugEV << "Incoming data packet not for me. Going back to sleep.\n";
                     macState = SLEEP;
                     debugEV << "Old state: WAIT_CONTROL, New state: SLEEP" << endl;
-                    phy->setRadioState(Radio::SLEEP);
+                    phy->setRadioState(MiximRadio::SLEEP);
                     if (timeout->isScheduled())
                         cancelEvent(timeout);
                 }
@@ -514,7 +514,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                 if (currSlot != mySlot)
                 {
                     debugEV << "ERROR: Send data message received, but we are not in our slot!!! Repair.\n";
-                    phy->setRadioState(Radio::SLEEP);
+                    phy->setRadioState(MiximRadio::SLEEP);
                     if (timeout->isScheduled())
                         cancelEvent(timeout);
                     return;
@@ -583,7 +583,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
                 // in any case, go back to sleep
                 macState = SLEEP;
                 debugEV << "Old state: WAIT_DATA, New state: SLEEP" << endl;
-                phy->setRadioState(Radio::SLEEP);
+                phy->setRadioState(MiximRadio::SLEEP);
                 if (timeout->isScheduled())
                     cancelEvent(timeout);
             }
@@ -633,7 +633,7 @@ void LMacLayer::handleLowerControl(cMessage *msg)
             debugEV << " transmission over. nothing else is scheduled, get back to sleep." << endl;
             macState = SLEEP;
             debugEV << "Old state: ?, New state: SLEEP" << endl;
-            phy->setRadioState(Radio::SLEEP);
+            phy->setRadioState(MiximRadio::SLEEP);
             if (timeout->isScheduled())
                 cancelEvent(timeout);
         }
@@ -642,7 +642,7 @@ void LMacLayer::handleLowerControl(cMessage *msg)
     else if (msg->getKind() == MacToPhyInterface::RADIO_SWITCHING_OVER)
     {
         // we just switched to TX after CCA, so simply send the first sendPremable self message
-        if ((macState == SEND_CONTROL) && (phy->getRadioState() == Radio::TX))
+        if ((macState == SEND_CONTROL) && (phy->getRadioState() == MiximRadio::TX))
         {
             scheduleAt(simTime(), send_control);
         }

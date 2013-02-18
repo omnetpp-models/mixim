@@ -49,7 +49,7 @@ void PhyLayerUWBIR::initialize(int stage)
 
 }
 
-Radio* PhyLayerUWBIR::initializeRadio() const
+MiximRadio* PhyLayerUWBIR::initializeRadio() const
 {
     int initialRadioState = par("initialRadioState"); //readPar("initalRadioState", (int) RadioUWBIR::SYNC);
     double radioMinAtt = readPar("radioMinAtt", 1.0);
@@ -263,12 +263,12 @@ Decider* PhyLayerUWBIR::getDeciderFromName(std::string name, ParameterMap& param
 
 void PhyLayerUWBIR::handleHostState(const HostState& state)
 {
-    if (state.get() != HostState::ACTIVE && radio->getCurrentState() != Radio::SLEEP)
+    if (state.get() != HostState::ACTIVE && radio->getCurrentState() != MiximRadio::SLEEP)
     {
         coreEV
                 << "host is no longer in active state (maybe FAILED, SLEEP, OFF or BROKEN), force into sleep state!"
                         << endl;
-        setRadioState(Radio::SLEEP);
+        setRadioState(MiximRadio::SLEEP);
         // it would be good to create a radioState OFF, as well
     }
 }
@@ -288,13 +288,13 @@ void PhyLayerUWBIR::setSwitchingCurrent(int from, int to)
     switch (from)
     {
         case RadioUWBIR::SYNC:
-        case Radio::RX:
+        case MiximRadio::RX:
             switch (to)
             {
-                case Radio::SLEEP:
+                case MiximRadio::SLEEP:
                     current = rxCurrent;
                     break;
-                case Radio::TX:
+                case MiximRadio::TX:
                     current = rxTxCurrent;
                     break;
                     // ! transitions between rx and sync should be immediate
@@ -304,13 +304,13 @@ void PhyLayerUWBIR::setSwitchingCurrent(int from, int to)
             }
             break;
 
-        case Radio::TX:
+        case MiximRadio::TX:
             switch (to)
             {
-                case Radio::SLEEP:
+                case MiximRadio::SLEEP:
                     current = txCurrent;
                     break;
-                case Radio::RX:
+                case MiximRadio::RX:
                     current = txRxCurrent;
                     break;
                 default:
@@ -319,13 +319,13 @@ void PhyLayerUWBIR::setSwitchingCurrent(int from, int to)
             }
             break;
 
-        case Radio::SLEEP:
+        case MiximRadio::SLEEP:
             switch (to)
             {
-                case Radio::TX:
+                case MiximRadio::TX:
                     current = setupTxCurrent;
                     break;
-                case Radio::RX:
+                case MiximRadio::RX:
                     current = setupRxCurrent;
                     break;
                 default:
@@ -339,7 +339,7 @@ void PhyLayerUWBIR::setSwitchingCurrent(int from, int to)
             break;
     }
 
-    BatteryAccess::drawCurrent(current, act);
+    MiximBatteryAccess::drawCurrent(current, act);
 }
 
 void PhyLayerUWBIR::setRadioCurrent(int rs)
@@ -347,16 +347,16 @@ void PhyLayerUWBIR::setRadioCurrent(int rs)
     switch (rs)
     {
         case RadioUWBIR::RX:
-            BatteryAccess::drawCurrent(rxCurrent, RX_ACCT);
+            MiximBatteryAccess::drawCurrent(rxCurrent, RX_ACCT);
             break;
         case RadioUWBIR::TX:
-            BatteryAccess::drawCurrent(txCurrent, TX_ACCT);
+            MiximBatteryAccess::drawCurrent(txCurrent, TX_ACCT);
             break;
         case RadioUWBIR::SLEEP:
-            BatteryAccess::drawCurrent(sleepCurrent, SLEEP_ACCT);
+            MiximBatteryAccess::drawCurrent(sleepCurrent, SLEEP_ACCT);
             break;
         case RadioUWBIR::SYNC:
-            BatteryAccess::drawCurrent(syncCurrent, SYNC_ACCT);
+            MiximBatteryAccess::drawCurrent(syncCurrent, SYNC_ACCT);
             break;
         default:
             break;
@@ -375,7 +375,7 @@ simtime_t PhyLayerUWBIR::setRadioState(int rs)
 {
     int prevState = radio->getCurrentState();
 
-    if (rs == Radio::RX)
+    if (rs == MiximRadio::RX)
     {
         coreEV << "this is my breakpoint" << endl;
     }
@@ -388,7 +388,7 @@ simtime_t PhyLayerUWBIR::setRadioState(int rs)
 
     if (endSwitch >= 0)
     {
-        if (radio->getCurrentState() == Radio::SWITCHING)
+        if (radio->getCurrentState() == MiximRadio::SWITCHING)
         {
             setSwitchingCurrent(prevState, rs);
         }

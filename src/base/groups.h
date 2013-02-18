@@ -149,7 +149,7 @@
  * BaseConnectionManager is responsible for keeping track of the hosts which are
  * in range of every other host.
  *
- * At last BasePhyLayer uses the ChannelAccess interface provided by BaseConnectionManager
+ * At last BasePhyLayer uses the ConnectionManagerAccess interface provided by BaseConnectionManager
  * to send its packets to every other host in range.
  *
  */
@@ -166,9 +166,9 @@
  * BaseConnectionManager keeps track of the hosts (or better NICs) in range of another host
  * (or better NIC). This information is needed by the BasePhyLayer when it sends an AirFrame to
  * the channel.
- * To get this information BasePhyLayer subclasses from ChannelAccess.
+ * To get this information BasePhyLayer subclasses from ConnectionManagerAccess.
  *
- * ChannelAccess provides access for BasePhyLayer to BaseConnectionManager and provides
+ * ConnectionManagerAccess provides access for BasePhyLayer to BaseConnectionManager and provides
  * the current position of a NIC for BaseConnectionManager.
  *
  * BaseConnectionManager itself keeps a list of NicEntry objects for every NIC in the simulation.
@@ -281,7 +281,7 @@
  *
  * BaseBattery defines the methods every battery module (or power source) has to implement
  * for tracking power consumption.
- * BatteryAccess provides for every host module access to the battery (/power source)
+ * MiximBatteryAccess provides for every host module access to the battery (/power source)
  * by providing methods for registration with and drawing power from the battery.
  *
  * SimpleBattery is a simple implementation of a battery module.

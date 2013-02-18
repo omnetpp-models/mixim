@@ -6,7 +6,7 @@
 #include <string>
 
 #include "MiXiMDefs.h"
-#include "connectionManager/ChannelAccess.h"
+#include "connectionManager/ConnectionManagerAccess.h"
 #include "DeciderToPhyInterface.h"
 #include "MacToPhyInterface.h"
 
@@ -51,7 +51,7 @@ class cXMLElement;
  * The actual evaluation of incoming signals is done by the
  * Decider.
  *
- * base class ChannelAccess:
+ * base class ConnectionManagerAccess:
  * - provides access to the channel via the ConnectionManager
  *
  * base class DeciderToPhyInterface:
@@ -63,7 +63,7 @@ class cXMLElement;
  * @ingroup phyLayer
  * @ingroup baseModules
  */
-class MIXIM_API BasePhyLayer : public ChannelAccess, public DeciderToPhyInterface, public MacToPhyInterface
+class MIXIM_API BasePhyLayer : public ConnectionManagerAccess, public DeciderToPhyInterface, public MacToPhyInterface
 {
 
     protected:
@@ -107,7 +107,7 @@ class MIXIM_API BasePhyLayer : public ChannelAccess, public DeciderToPhyInterfac
         ChannelInfo channelInfo;
 
         /** @brief The state machine storing the current radio state (TX, RX, SLEEP).*/
-        Radio* radio;
+        MiximRadio* radio;
 
         /** @brief Pointer to the decider module. */
         Decider* decider;
@@ -225,7 +225,7 @@ class MIXIM_API BasePhyLayer : public ChannelAccess, public DeciderToPhyInterfac
          * Can be overridden by sub-classing phy layers to use their
          * own Radio implementations.
          */
-        virtual Radio* initializeRadio() const;
+        virtual MiximRadio* initializeRadio() const;
 
         /**
          * @brief Creates and returns an instance of the AnalogueModel with the

@@ -26,7 +26,7 @@
  * @ingroup phyLayer
  */
 
-class MIXIM_API RadioUWBIR : public Radio
+class MIXIM_API RadioUWBIR : public MiximRadio
 {
         friend class PhyLayerUWBIR;
 
@@ -35,7 +35,7 @@ class MIXIM_API RadioUWBIR : public Radio
         enum UWBIRRadioStates
         {
             /* receiving state*/
-            SYNC = Radio::NUM_RADIO_STATES, UWBIR_NUM_RADIO_STATES
+            SYNC = MiximRadio::NUM_RADIO_STATES, UWBIR_NUM_RADIO_STATES
         };
 
         /* Static factory method (see Radio class in PhyUtils.h) */
@@ -87,7 +87,7 @@ class MIXIM_API RadioUWBIR : public Radio
 
         RadioUWBIR(int numRadioStates, bool recordStats, int initialState, Argument::mapped_type_cref minAtt =
                 Argument::MappedOne, Argument::mapped_type_cref maxAtt = Argument::MappedZero) :
-                Radio(numRadioStates, recordStats, initialState, minAtt, maxAtt)
+                MiximRadio(numRadioStates, recordStats, initialState, minAtt, maxAtt)
         {
         }
 

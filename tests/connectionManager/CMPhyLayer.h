@@ -28,7 +28,7 @@
 /**
  * @brief
  */
-class CMPhyLayer : public ChannelAccess
+class CMPhyLayer : public ConnectionManagerAccess
 {
 
 protected:

@@ -8,7 +8,7 @@
 /* ------ Testing stuff for Radio ------ */
 
 // global variables needed for tests
-const int initialState =  Radio::RX;
+const int initialState =  MiximRadio::RX;
 
 const double RX2TX = 1.0;
 const double RX2SLEEP = 2.0;
@@ -27,15 +27,15 @@ const double SLEEP2SLEEP = 9.0;
 
 void testRadioConstructor()
 {
-	Radio* radio1 = Radio::createNewRadio(); // default constructor
+	MiximRadio* radio1 = MiximRadio::createNewRadio(); // default constructor
 
 	// check members of radio1
-	assertTrue("RadioState is correct", radio1->getCurrentState() == Radio::RX);
+	assertTrue("RadioState is correct", radio1->getCurrentState() == MiximRadio::RX);
 
 
 
 
-	Radio* radio2 = Radio::createNewRadio(false, initialState); // contructor with argument
+	MiximRadio* radio2 = MiximRadio::createNewRadio(false, initialState); // contructor with argument
 
 	//check members of radio2
 	assertTrue("RadioState is correct", radio2->getCurrentState() == initialState);
@@ -49,11 +49,11 @@ void testRadioConstructor()
 	return;
 }
 
-int testSwitching(Radio& radio, int to, double refValue)
+int testSwitching(MiximRadio& radio, int to, double refValue)
 {
 
 	// check whether radio is currently switching
-	if (radio.getCurrentState() == Radio::SWITCHING) return -1;
+	if (radio.getCurrentState() == MiximRadio::SWITCHING) return -1;
 
 
 
@@ -61,7 +61,7 @@ int testSwitching(Radio& radio, int to, double refValue)
 	double result = SIMTIME_DBL(radio.switchTo(to, 0));
 
 	assertFalse("Radio does return a valid switch time", result < 0);
-	assertTrue("Radio is now switching", radio.getCurrentState() == Radio::SWITCHING);
+	assertTrue("Radio is now switching", radio.getCurrentState() == MiximRadio::SWITCHING);
 	assertEqual("Radio has returned the correct switch time", refValue, result);
 
 	result = SIMTIME_DBL(radio.switchTo(to, 0));
@@ -77,23 +77,23 @@ int testSwitching(Radio& radio, int to, double refValue)
 
 void testRadioFunctionality()
 {
-	Radio& radio1 = *Radio::createNewRadio();
+	MiximRadio& radio1 = *MiximRadio::createNewRadio();
 
 
 
 	// call setSwTime() for every matrix entry
 	//radio1.setSwitchTime(RX, RX, value);//not a regular case
-	radio1.setSwitchTime(Radio::RX, Radio::TX, RX2TX);
-	radio1.setSwitchTime(Radio::RX, Radio::SLEEP, RX2SLEEP);
+	radio1.setSwitchTime(MiximRadio::RX, MiximRadio::TX, RX2TX);
+	radio1.setSwitchTime(MiximRadio::RX, MiximRadio::SLEEP, RX2SLEEP);
 	//radio1.setSwitchTime(RX, SWITCHING, value); //not a regular case
 
-	radio1.setSwitchTime(Radio::TX, Radio::RX, TX2RX);
+	radio1.setSwitchTime(MiximRadio::TX, MiximRadio::RX, TX2RX);
 	//radio1.setSwitchTime(TX, TX, value);//not a regular case
-	radio1.setSwitchTime(Radio::TX, Radio::SLEEP, TX2SLEEP);
+	radio1.setSwitchTime(MiximRadio::TX, MiximRadio::SLEEP, TX2SLEEP);
 	//radio1.setSwitchTime(TX, SWITCHING, value);//not a regular case
 
-	radio1.setSwitchTime(Radio::SLEEP, Radio::RX, SLEEP2RX);
-	radio1.setSwitchTime(Radio::SLEEP, Radio::TX, SLEEP2TX);
+	radio1.setSwitchTime(MiximRadio::SLEEP, MiximRadio::RX, SLEEP2RX);
+	radio1.setSwitchTime(MiximRadio::SLEEP, MiximRadio::TX, SLEEP2TX);
 	//radio1.setSwitchTime(SLEEP, SLEEP, value);//not a regular case
 	//radio1.setSwitchTime(SLEEP, SWITCHING, value);//not a regular case
 
@@ -103,59 +103,59 @@ void testRadioFunctionality()
 	//radio1.setSwitchTime(SWITCHING, SWITCHING, value);//not a regular case
 
 	// testing switching to the same state, this might not be needed
-	radio1.setSwitchTime(Radio::RX, Radio::RX, RX2RX);
-	radio1.setSwitchTime(Radio::TX, Radio::TX, TX2TX);
-	radio1.setSwitchTime(Radio::SLEEP, Radio::SLEEP, SLEEP2SLEEP);
+	radio1.setSwitchTime(MiximRadio::RX, MiximRadio::RX, RX2RX);
+	radio1.setSwitchTime(MiximRadio::TX, MiximRadio::TX, TX2TX);
+	radio1.setSwitchTime(MiximRadio::SLEEP, MiximRadio::SLEEP, SLEEP2SLEEP);
 
 	int switchResult;
 
 	// RX -> RX
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::RX);
-	switchResult = testSwitching(radio1, Radio::RX, RX2RX);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::RX);
+	switchResult = testSwitching(radio1, MiximRadio::RX, RX2RX);
 	assertTrue("Switching test", switchResult == 0);
 
 	// RX -> TX
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::RX);
-	switchResult = testSwitching(radio1, Radio::TX, RX2TX);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::RX);
+	switchResult = testSwitching(radio1, MiximRadio::TX, RX2TX);
 	assertTrue("Switching test", switchResult == 0);
 
 	// TX -> TX
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::TX);
-	switchResult = testSwitching(radio1, Radio::TX, TX2TX);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::TX);
+	switchResult = testSwitching(radio1, MiximRadio::TX, TX2TX);
 	assertTrue("Switching test", switchResult == 0);
 
 	// TX -> SLEEP
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::TX);
-	switchResult = testSwitching(radio1, Radio::SLEEP, TX2SLEEP);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::TX);
+	switchResult = testSwitching(radio1, MiximRadio::SLEEP, TX2SLEEP);
 	assertTrue("Switching test", switchResult == 0);
 
 	// SLEEP -> SLEEP
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::SLEEP);
-	switchResult = testSwitching(radio1, Radio::SLEEP, SLEEP2SLEEP);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::SLEEP);
+	switchResult = testSwitching(radio1, MiximRadio::SLEEP, SLEEP2SLEEP);
 	assertTrue("Switching test", switchResult == 0);
 
 	// SLEEP -> TX
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::SLEEP);
-	switchResult = testSwitching(radio1, Radio::TX, SLEEP2TX);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::SLEEP);
+	switchResult = testSwitching(radio1, MiximRadio::TX, SLEEP2TX);
 	assertTrue("Switching test", switchResult == 0);
 
 	// TX - > RX
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::TX);
-	switchResult = testSwitching(radio1, Radio::RX, TX2RX);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::TX);
+	switchResult = testSwitching(radio1, MiximRadio::RX, TX2RX);
 	assertTrue("Switching test", switchResult == 0);
 
 	// RX - > SLEEP
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::RX);
-	switchResult = testSwitching(radio1, Radio::SLEEP, RX2SLEEP);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::RX);
+	switchResult = testSwitching(radio1, MiximRadio::SLEEP, RX2SLEEP);
 	assertTrue("Switching test", switchResult == 0);
 
 	// SLEEP -> RX
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::SLEEP);
-	switchResult = testSwitching(radio1, Radio::RX, SLEEP2RX);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::SLEEP);
+	switchResult = testSwitching(radio1, MiximRadio::RX, SLEEP2RX);
 	assertTrue("Switching test", switchResult == 0);
 
 
-	assertTrue("RadioState is correct", radio1.getCurrentState() == Radio::RX);
+	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::RX);
 
 
 

@@ -199,7 +199,7 @@ class MIXIM_API RadioStateAnalogueModel : public AnalogueModel
  *
  * @ingroup phyLayer
  */
-class MIXIM_API Radio
+class MIXIM_API MiximRadio
 {
     public:
         /**
@@ -266,10 +266,10 @@ class MIXIM_API Radio
     private:
         /** @brief Copy constructor is not allowed.
          */
-        Radio(const Radio&);
+        MiximRadio(const MiximRadio&);
         /** @brief Assignment operator is not allowed.
          */
-        Radio& operator=(const Radio&);
+        MiximRadio& operator=(const MiximRadio&);
 
     public:
 
@@ -283,17 +283,17 @@ class MIXIM_API Radio
          * correct number of radio states. Sub classing Radios should also
          * define a factory method like this instead of an public constructor.
          */
-        static Radio* createNewRadio(bool recordStats = false, int initialState = RX,
+        static MiximRadio* createNewRadio(bool recordStats = false, int initialState = RX,
                 Argument::mapped_type_cref minAtt = Argument::MappedOne, Argument::mapped_type_cref maxAtt =
                         Argument::MappedZero, int currentChannel = 0, int nbChannels = 1)
         {
-            return new Radio(NUM_RADIO_STATES, recordStats, initialState, minAtt, maxAtt, currentChannel, nbChannels);
+            return new MiximRadio(NUM_RADIO_STATES, recordStats, initialState, minAtt, maxAtt, currentChannel, nbChannels);
         }
 
         /**
          * @brief Destructor for the Radio class
          */
-        virtual ~Radio();
+        virtual ~MiximRadio();
 
         /**
          * @brief A function called by the Physical Layer to start the switching process to a new RadioState
@@ -399,7 +399,7 @@ class MIXIM_API Radio
          * Therefore sub classing Radios which could be sub-classed further should
          * also do it this way.
          */
-        Radio(int numRadioStates, bool recordStats, int initialState = RX, Argument::mapped_type_cref minAtt =
+        MiximRadio(int numRadioStates, bool recordStats, int initialState = RX, Argument::mapped_type_cref minAtt =
                 Argument::MappedOne, Argument::mapped_type_cref maxAtt = Argument::MappedZero, int currentChannel = 0,
                 int nbChannels = 1);
 

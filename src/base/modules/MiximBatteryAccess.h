@@ -5,8 +5,8 @@
  *      Author: karl
  */
 
-#ifndef BATTERYACCESS_H_
-#define BATTERYACCESS_H_
+#ifndef MIXIMBATTERYACCESS_H_
+#define MIXIMBATTERYACCESS_H_
 
 #include "MiXiMDefs.h"
 #include "BaseModule.h"
@@ -20,7 +20,7 @@
  * @ingroup baseModules
  * @author Karl Wessel
  */
-class MIXIM_API BatteryAccess : public BaseModule
+class MIXIM_API MiximBatteryAccess : public BaseModule
 {
     protected:
         /** @brief Stores pointer to the battery module. */
@@ -62,16 +62,16 @@ class MIXIM_API BatteryAccess : public BaseModule
         void drawEnergy(double amount, int account);
 
     public:
-        BatteryAccess();
-        BatteryAccess(unsigned stacksize);
+        MiximBatteryAccess();
+        MiximBatteryAccess(unsigned stacksize);
 
     private:
         /** @brief Copy constructor is not allowed.
          */
-        BatteryAccess(const BatteryAccess&);
+        MiximBatteryAccess(const MiximBatteryAccess&);
         /** @brief Assignment operator is not allowed.
          */
-        BatteryAccess& operator=(const BatteryAccess&);
+        MiximBatteryAccess& operator=(const MiximBatteryAccess&);
 };
 
 #endif /* BATTERYACCESS_H_ */

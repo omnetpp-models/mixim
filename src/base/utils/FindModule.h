@@ -96,7 +96,7 @@ class FindModule
 
 /**
  * @brief Finds and returns the pointer to a module of type T.
- * Uses FindModule<>::findSubModule(), FindModule<>::findHost(). See usage e.g. at ChannelAccess.
+ * Uses FindModule<>::findSubModule(), FindModule<>::findHost(). See usage e.g. at ConnectionManagerAccess.
  */
 template<typename T = cModule>
 class AccessModuleWrap

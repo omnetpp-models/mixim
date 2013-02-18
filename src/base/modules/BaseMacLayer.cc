@@ -35,7 +35,7 @@
 #include "NetwToMacControlInfo.h"
 #include "MacToPhyControlInfo.h"
 #include "AddressingInterface.h"
-#include "connectionManager/ChannelAccess.h"
+#include "connectionManager/ConnectionManagerAccess.h"
 #include "FindModule.h"
 #include "MacPkt_m.h"
 
@@ -310,7 +310,7 @@ ConstMapping* BaseMacLayer::createSingleFrequencyMapping(simtime_t_cref start, s
 
 BaseConnectionManager* BaseMacLayer::getConnectionManager() const
 {
-    return ChannelAccess::getConnectionManager(getNic());
+    return ConnectionManagerAccess::getConnectionManager(getNic());
 }
 
 const LAddress::L2Type& BaseMacLayer::getUpperDestinationFromControlInfo(const cObject * const pCtrlInfo) const

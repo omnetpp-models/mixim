@@ -172,7 +172,7 @@ class MIXIM_API PhyLayerUWBIR : public BasePhyLayer
         AnalogueModel* createUWBIRIEEE802154APathlossModel(ParameterMap & params) const;
         AnalogueModel* createIntensityModel(ParameterMap & params) const;
         virtual Decider* getDeciderFromName(std::string name, ParameterMap& params);
-        virtual Radio* initializeRadio() const;
+        virtual MiximRadio* initializeRadio() const;
 
         RadioUWBIR* uwbradio;
 

@@ -20,7 +20,7 @@ Coord NoMobiltyPos = Coord::ZERO;
 //--Initialization----------------------------------
 
 BasePhyLayer::BasePhyLayer() :
-        ChannelAccess(), DeciderToPhyInterface(), MacToPhyInterface(), protocolId(GENERIC), thermalNoise(NULL), maxTXPower(
+        ConnectionManagerAccess(), DeciderToPhyInterface(), MacToPhyInterface(), protocolId(GENERIC), thermalNoise(NULL), maxTXPower(
                 0), sensitivity(0), recordStats(false), channelInfo(), radio(NULL), decider(NULL), analogueModels(), upperLayerIn(
                 -1), upperLayerOut(-1), upperControlOut(-1), upperControlIn(-1), radioSwitchingOverTimer(NULL), txOverTimer(
                 NULL), headerLength(-1), world(NULL)
@@ -51,7 +51,7 @@ template bool BasePhyLayer::readPar<bool>(const char* parName, const bool) const
 void BasePhyLayer::initialize(int stage)
 {
 
-    ChannelAccess::initialize(stage);
+    ConnectionManagerAccess::initialize(stage);
 
     if (stage == 0)
     {
@@ -113,7 +113,7 @@ void BasePhyLayer::initialize(int stage)
     }
 }
 
-Radio* BasePhyLayer::initializeRadio() const
+MiximRadio* BasePhyLayer::initializeRadio() const
 {
     int initialRadioState = par("initialRadioState").longValue();
     double radioMinAtt = par("radioMinAtt").doubleValue();
@@ -121,31 +121,31 @@ Radio* BasePhyLayer::initializeRadio() const
     int nbRadioChannels = readPar("nbRadioChannels", 1);
     int initialRadioChannel = readPar("initialRadioChannel", 0);
 
-    Radio* radio = Radio::createNewRadio(recordStats, initialRadioState, radioMinAtt, radioMaxAtt, initialRadioChannel,
+    MiximRadio* radio = MiximRadio::createNewRadio(recordStats, initialRadioState, radioMinAtt, radioMaxAtt, initialRadioChannel,
             nbRadioChannels);
 
     //	- switch times to TX
     //if no RX to TX defined asume same time as sleep to TX
-    radio->setSwitchTime(Radio::RX, Radio::TX,
+    radio->setSwitchTime(MiximRadio::RX, MiximRadio::TX,
             (hasPar("timeRXToTX") ? par("timeRXToTX") : par("timeSleepToTX")).doubleValue());
     //if no sleep to TX defined asume same time as RX to TX
-    radio->setSwitchTime(Radio::SLEEP, Radio::TX,
+    radio->setSwitchTime(MiximRadio::SLEEP, MiximRadio::TX,
             (hasPar("timeSleepToTX") ? par("timeSleepToTX") : par("timeRXToTX")).doubleValue());
 
     //	- switch times to RX
     //if no TX to RX defined asume same time as sleep to RX
-    radio->setSwitchTime(Radio::TX, Radio::RX,
+    radio->setSwitchTime(MiximRadio::TX, MiximRadio::RX,
             (hasPar("timeTXToRX") ? par("timeTXToRX") : par("timeSleepToRX")).doubleValue());
     //if no sleep to RX defined asume same time as TX to RX
-    radio->setSwitchTime(Radio::SLEEP, Radio::RX,
+    radio->setSwitchTime(MiximRadio::SLEEP, MiximRadio::RX,
             (hasPar("timeSleepToRX") ? par("timeSleepToRX") : par("timeTXToRX")).doubleValue());
 
     //	- switch times to sleep
     //if no TX to sleep defined asume same time as RX to sleep
-    radio->setSwitchTime(Radio::TX, Radio::SLEEP,
+    radio->setSwitchTime(MiximRadio::TX, MiximRadio::SLEEP,
             (hasPar("timeTXToSleep") ? par("timeTXToSleep") : par("timeRXToSleep")).doubleValue());
     //if no RX to sleep defined asume same time as TX to sleep
-    radio->setSwitchTime(Radio::RX, Radio::SLEEP,
+    radio->setSwitchTime(MiximRadio::RX, MiximRadio::SLEEP,
             (hasPar("timeRXToSleep") ? par("timeRXToSleep") : par("timeTXToSleep")).doubleValue());
 
     return radio;
@@ -521,7 +521,7 @@ void BasePhyLayer::handleUpperMessage(cMessage* msg)
 {
 
     // check if Radio is in TX state
-    if (radio->getCurrentState() != Radio::TX)
+    if (radio->getCurrentState() != MiximRadio::TX)
     {
         delete msg;
         msg = 0;
@@ -703,8 +703,8 @@ void BasePhyLayer::filterSignal(MiximAirFrame *frame)
     if (analogueModels.empty())
         return;
 
-    ChannelAccess * const senderModule = dynamic_cast<ChannelAccess * const >(frame->getSenderModule());
-    ChannelAccess * const receiverModule = dynamic_cast<ChannelAccess * const >(frame->getArrivalModule());
+    ConnectionManagerAccess * const senderModule = dynamic_cast<ConnectionManagerAccess * const >(frame->getSenderModule());
+    ConnectionManagerAccess * const receiverModule = dynamic_cast<ConnectionManagerAccess * const >(frame->getArrivalModule());
     //const simtime_t      sStart         = frame->getSignal().getReceptionStart();
 
     assert(senderModule);
@@ -945,7 +945,7 @@ void BasePhyLayer::rescheduleMessage(cMessage* msg, simtime_t_cref t)
 
 void BasePhyLayer::drawCurrent(double amount, int activity)
 {
-    BatteryAccess::drawCurrent(amount, activity);
+    MiximBatteryAccess::drawCurrent(amount, activity);
 }
 
 BaseWorldUtility* BasePhyLayer::getWorldUtility() const
@@ -955,7 +955,7 @@ BaseWorldUtility* BasePhyLayer::getWorldUtility() const
 
 void BasePhyLayer::recordScalar(const char *name, double value, const char *unit)
 {
-    ChannelAccess::recordScalar(name, value, unit);
+    ConnectionManagerAccess::recordScalar(name, value, unit);
 }
 
 /**

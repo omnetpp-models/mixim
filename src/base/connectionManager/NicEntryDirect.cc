@@ -20,7 +20,7 @@
  **************************************************************************/
 
 #include "NicEntryDirect.h"
-#include "connectionManager/ChannelAccess.h"
+#include "connectionManager/ConnectionManagerAccess.h"
 
 #ifndef nicEV
 #define nicEV (ev.isDisabled()||!coreDebug) ? ev : ev << "NicEntry: "

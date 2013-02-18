@@ -28,7 +28,7 @@
  *  only for testing multiple accounts.  See DeviceDuty.ned for
  *  parameters.
  */
-class DeviceDuty : public BatteryAccess
+class DeviceDuty : public MiximBatteryAccess
 {
 private:
 	/** @brief Copy constructor is not allowed.
@@ -40,7 +40,7 @@ private:
 
 public:
 	DeviceDuty()
-		: BatteryAccess()
+		: MiximBatteryAccess()
 		, on0(NULL)
 		, gap01(NULL)
 		, on1(NULL)

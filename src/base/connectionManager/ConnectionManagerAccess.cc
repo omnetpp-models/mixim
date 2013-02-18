@@ -1,5 +1,5 @@
 /***************************************************************************
- * file:        ChannelAccess.cc
+ * file:        ConnectionManagerAccess.cc
  *
  * author:      Marc Loebbers
  *
@@ -25,7 +25,7 @@
  *              by:              $Author: willkomm $
  **************************************************************************/
 
-#include "connectionManager/ChannelAccess.h"
+#include "connectionManager/ConnectionManagerAccess.h"
 
 #include <cassert>
 
@@ -35,9 +35,9 @@
 
 using std::endl;
 
-const simsignalwrap_t ChannelAccess::mobilityStateChangedSignal = simsignalwrap_t(MIXIM_SIGNAL_MOBILITY_CHANGE_NAME);
+const simsignalwrap_t ConnectionManagerAccess::mobilityStateChangedSignal = simsignalwrap_t(MIXIM_SIGNAL_MOBILITY_CHANGE_NAME);
 
-BaseConnectionManager* ChannelAccess::getConnectionManager(const cModule* nic)
+BaseConnectionManager* ConnectionManagerAccess::getConnectionManager(const cModule* nic)
 {
     std::string cmName = nic->hasPar("connectionManagerName") ? nic->par("connectionManagerName").stringValue() : "";
     if (cmName != "")
@@ -52,9 +52,9 @@ BaseConnectionManager* ChannelAccess::getConnectionManager(const cModule* nic)
     }
 }
 
-void ChannelAccess::initialize(int stage)
+void ConnectionManagerAccess::initialize(int stage)
 {
-    BatteryAccess::initialize(stage);
+    MiximBatteryAccess::initialize(stage);
 
     if (stage == 0)
     {
@@ -71,7 +71,7 @@ void ChannelAccess::initialize(int stage)
     usePropagationDelay = par("usePropagationDelay");
 }
 
-void ChannelAccess::sendToChannel(cPacket *msg)
+void ConnectionManagerAccess::sendToChannel(cPacket *msg)
 {
     const NicEntry::GateList& gateList = cc->getGateList(getNic()->getId());
     NicEntry::GateList::const_iterator i = gateList.begin();
@@ -137,13 +137,13 @@ void ChannelAccess::sendToChannel(cPacket *msg)
     }
 }
 
-simtime_t ChannelAccess::calculatePropagationDelay(const NicEntry* nic)
+simtime_t ConnectionManagerAccess::calculatePropagationDelay(const NicEntry* nic)
 {
     if (!usePropagationDelay)
         return 0;
 
-    ChannelAccess * const senderModule = this;
-    ChannelAccess * const receiverModule = nic->chAccess;
+    ConnectionManagerAccess * const senderModule = this;
+    ConnectionManagerAccess * const receiverModule = nic->chAccess;
     //const simtime_t_cref sStart         = simTime();
 
     assert(senderModule);
@@ -157,7 +157,7 @@ simtime_t ChannelAccess::calculatePropagationDelay(const NicEntry* nic)
     return receiverPos.distance(sendersPos) / BaseWorldUtility::speedOfLight;
 }
 
-void ChannelAccess::receiveSignal(cComponent */*source*/, simsignal_t signalID, cObject *obj)
+void ConnectionManagerAccess::receiveSignal(cComponent */*source*/, simsignal_t signalID, cObject *obj)
 {
     if (signalID == mobilityStateChangedSignal)
     {

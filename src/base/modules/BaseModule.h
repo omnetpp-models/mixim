@@ -59,10 +59,10 @@
  * There will never be a stand-alone BaseModule module.
  *
  * Note: most modules wont derive from BaseModule directly but from
- * its sub class "BatteryAccess" which extends BaseModule by several
+ * its sub class "MiximBatteryAccess" which extends BaseModule by several
  * methods for accessing the battery module.
  *
- * @see BatteryAccess
+ * @see MiximBatteryAccess
  *
  * @ingroup baseModules
  *

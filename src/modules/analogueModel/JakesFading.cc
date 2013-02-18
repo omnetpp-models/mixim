@@ -17,7 +17,7 @@
 
 #include "BaseWorldUtility.h"
 #include "MiximAirFrame_m.h"
-#include "connectionManager/ChannelAccess.h"
+#include "connectionManager/ConnectionManagerAccess.h"
 
 DimensionSet JakesFadingMapping::dimensions(Dimension::time);
 
@@ -89,9 +89,9 @@ void JakesFading::filterSignal(MiximAirFrame *frame, const Coord& /*sendersPos*/
 {
     Signal& signal = frame->getSignal();
     ChannelMobilityPtrType senderMobility =
-            dynamic_cast<ChannelAccess *>(frame->getSenderModule())->getMobilityModule();
+            dynamic_cast<ConnectionManagerAccess *>(frame->getSenderModule())->getMobilityModule();
     ChannelMobilityPtrType receiverMobility =
-            dynamic_cast<ChannelAccess *>(frame->getArrivalModule())->getMobilityModule();
+            dynamic_cast<ConnectionManagerAccess *>(frame->getArrivalModule())->getMobilityModule();
     const double relSpeed = (senderMobility->getCurrentSpeed() - receiverMobility->getCurrentSpeed()).length();
 
     signal.addAttenuation(

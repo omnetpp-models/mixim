@@ -317,7 +317,7 @@ void BaseConnectionManager::updateNicConnections(NicEntries& nmap, BaseConnectio
     }
 }
 
-bool BaseConnectionManager::registerNic(cModule* nic, ChannelAccess* chAccess, const Coord* nicPos)
+bool BaseConnectionManager::registerNic(cModule* nic, ConnectionManagerAccess* chAccess, const Coord* nicPos)
 {
     assert(nic != NULL);
 
