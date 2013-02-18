@@ -1,7 +1,7 @@
 ifconfig:
 
-# LR-WPAN to router
-name: wlan0     inet_addr: 145.236.0.4
+# INET's WLAN to router
+name: wlan0   inet_addr: 145.236.0.5
 
 ifconfigend.
 

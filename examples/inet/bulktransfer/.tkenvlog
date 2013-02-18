@@ -1,0 +1,242 @@
+----------------------------------------------------------------------
+
+
+Tcl error: tkutil.cc#271: out of stack space (infinite loop?)
+    while executing
+".main.text insert end {issuing OPEN command
+}"
+
+
+Tcl error: tkutil.cc#278: out of stack space (infinite loop?)
+    while executing
+".main.text see end"
+
+
+Tcl error: tkutil.cc#271: out of stack space (infinite loop?)
+    while executing
+".main.text insert end {connection established, starting sending
+}"
+
+
+Tcl error: tkutil.cc#278: out of stack space (infinite loop?)
+    while executing
+".main.text see end"
+
+
+Tcl error: tkutil.cc#271: out of stack space (infinite loop?)
+    while executing
+".main.text insert end {issuing OPEN command
+}"
+
+
+Tcl error: tkutil.cc#278: out of stack space (infinite loop?)
+    while executing
+".main.text see end"
+
+
+Tcl error: inspector.cc#168: out of stack space (infinite loop?)
+    while executing
+".ptr0x45e90e0-2.infobar.name config -text {(inet.nodes.inet.WirelessHost) BulkTransfer.client1  (id=4)  (ptr0x45e90e0)}"
+
+
+Tcl error: inspector.cc#279: out of stack space (infinite loop?)
+    while executing
+".ptr0x45e90e0-2.toolbar.owner config -state normal -command {opp_inspect ptr0x45cb1b0 0}"
+
+
+Tcl error: modinsp.cc#571: out of stack space (infinite loop?)
+    while executing
+".ptr0x45e90e0-2.c delete dx"
+
+
+Tcl error: modinsp.cc#621: out of stack space (infinite loop?)
+    while executing
+"draw_submod .ptr0x45e90e0-2.c ptr0x45f0da0 53 155 {notificationBoard} {is=s;p=53,155;i=block/control} {} 0"
+
+
+Tcl error: modinsp.cc#621: out of stack space (infinite loop?)
+    while executing
+"draw_submod .ptr0x45e90e0-2.c ptr0x45f1730 53 111 {mobility} {p=53,111;i=block/cogwheel} {} 0"
+
+
+Tcl error: modinsp.cc#621: out of stack space (infinite loop?)
+    while executing
+"draw_submod .ptr0x45e90e0-2.c ptr0x45f5e00 329 287 {networkLayer} {q=queue;p=329,287;i=block/fork} {} 0"
+
+
+Tcl error: modinsp.cc#621: out of stack space (infinite loop?)
+    while executing
+"draw_submod .ptr0x45e90e0-2.c ptr0x45f6450 53 225 {routingTable} {t=routerId: 192.168.0.1
+2+0 routes;is=s;p=53,225;i=block/table} {} 0"
+
+
+Tcl error: modinsp.cc#621: out of stack space (infinite loop?)
+    while executing
+"draw_submod .ptr0x45e90e0-2.c ptr0x45f7210 53 287 {interfaceTable} {t=2 interfaces;is=s;p=53,287;i=block/table} {} 0"
+
+
+Tcl error: modinsp.cc#621: out of stack space (infinite loop?)
+    while executing
+"draw_submod .ptr0x45e90e0-2.c ptr0x45f8290 132 406 {wlan[0]} {q=queue;p=132,406,row,60;i=block/ifcard} {} 0"
+
+
+Tcl error: modinsp.cc#621: out of stack space (infinite loop?)
+    while executing
+"draw_submod .ptr0x45e90e0-2.c ptr0x45fa7b0 147 54 {tcpApp[0]} {t=connecting;p=147,54,row,60;i=block/app} {} 0"
+
+
+Tcl error: modinsp.cc#621: out of stack space (infinite loop?)
+    while executing
+"draw_submod .ptr0x45e90e0-2.c ptr0x461c7f0 147 141 {tcp} {p=147,141;i=block/wheelbarrow} {} 0"
+
+
+Tcl error: modinsp.cc#633: out of stack space (infinite loop?)
+    while executing
+"draw_enclosingmod .ptr0x45e90e0-2.c ptr0x45e90e0 {BulkTransfer.client1} {p=131,67;i=device/wifilaptop;bgb=,448} {} "
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x45f9d50 {} ptr0x45f5e00 ptr0x45f8290 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x45f4ec0 {} ptr0x45f5e00 ptr0x461c7f0 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x45f8ab0 {} ptr0x45f8290 ptr0x45f5e00 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x469be40 {} ptr0x45f8290 ptr0x45e90e0 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x469c160 {} ptr0x45f8290 ptr0x45e90e0 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x469c110 {} ptr0x45f8290 ptr0x45e90e0 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x45fc600 {} ptr0x45fa7b0 ptr0x461c7f0 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x461f8a0 {} ptr0x461c7f0 ptr0x45fa7b0 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x461e190 {} ptr0x461c7f0 ptr0x45f5e00 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x45ed3a0 {} ptr0x45e90e0 ptr0x45f8290 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x469be00 {} ptr0x45e90e0 ptr0x45f8290 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x46827f0 {} ptr0x45e90e0 ptr0x45f8290 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#683: out of stack space (infinite loop?)
+    while executing
+"draw_connection .ptr0x45e90e0-2.c ptr0x468c360 {} ptr0x45e90e0 ptr0x45f8290 ptr0 0 1 0 1 0"
+
+
+Tcl error: modinsp.cc#603: out of stack space (infinite loop?)
+    while executing
+".ptr0x45e90e0-2.c raise bubble"
+
+
+Tcl error: modinsp.cc#604: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_setscrollregion .ptr0x45e90e0-2 0"
+
+
+Tcl error: modinsp.cc#739: out of stack space (infinite loop?)
+    while executing
+".ptr0x45e90e0-2.c delete nexteventmarker"
+
+
+Tcl error: modinsp.cc#756: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_draw_nexteventmarker .ptr0x45e90e0-2.c ptr0x461c7f0 2"
+
+
+Tcl error: modinsp.cc#691: out of stack space (infinite loop?)
+    while executing
+".ptr0x45e90e0-2.c delete msg msgname"
+
+
+Tcl error: modinsp.cc#718: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_draw_message_on_gate .ptr0x45e90e0-2.c ptr0x45fc600 ptr0x47da400"
+
+
+Tcl error: modinsp.cc#730: out of stack space (infinite loop?)
+    while executing
+".ptr0x45e90e0-2.c raise bubble"
+
+
+Tcl error: modinsp.cc#768: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_update_submod .ptr0x45e90e0-2.c ptr0x45f0da0"
+
+
+Tcl error: modinsp.cc#768: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_update_submod .ptr0x45e90e0-2.c ptr0x45f1730"
+
+
+Tcl error: modinsp.cc#768: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_update_submod .ptr0x45e90e0-2.c ptr0x45f5e00"
+
+
+Tcl error: modinsp.cc#768: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_update_submod .ptr0x45e90e0-2.c ptr0x45f6450"
+
+
+Tcl error: modinsp.cc#768: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_update_submod .ptr0x45e90e0-2.c ptr0x45f7210"
+
+
+Tcl error: modinsp.cc#768: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_update_submod .ptr0x45e90e0-2.c ptr0x45f8290"
+
+
+Tcl error: modinsp.cc#768: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_update_submod .ptr0x45e90e0-2.c ptr0x45fa7b0"
+
+
+Tcl error: modinsp.cc#768: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_update_submod .ptr0x45e90e0-2.c ptr0x461c7f0"
+
+
+Tcl error: tkenv.cc#1658: out of stack space (infinite loop?)
+    while executing
+"graphmodwin_animate_on_conn .ptr0x45e90e0-2 ptr0x47da400 ptr0x45fc600 beg"
+
+
