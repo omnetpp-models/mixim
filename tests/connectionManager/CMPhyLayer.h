@@ -21,7 +21,7 @@
 #ifndef TEST_PHY_LAYER_H
 #define TEST_PHY_LAYER_H
 
-#include "connectionManager/ChannelAccess.h"
+#include "connectionManager/ConnectionManagerAccess.h"
 #include <MacPkt_m.h>
 #include <iostream>
 
@@ -57,7 +57,7 @@ protected:
 	void assertFalse(std::string msg, bool value) { assertTrue(msg, !value); }
 
 public:
-    //Module_Class_Members( CMPhyLayer, ChannelAccess, 0 );
+    //Module_Class_Members( CMPhyLayer, ConnectionManagerAccess, 0 );
 
     /** @brief Called every time a message arrives*/
     virtual void handleMessage( cMessage* );

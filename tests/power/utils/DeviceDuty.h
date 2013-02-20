@@ -15,7 +15,7 @@
 
 
 #include <omnetpp.h>
-#include "BatteryAccess.h"
+#include "MiximBatteryAccess.h"
 
 #include "BatteryState.h"
 #include "HostState.h"
