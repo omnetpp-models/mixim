@@ -64,29 +64,29 @@ void TestPhyLayer::testInitialisation() {
 	assertTrue("Check upperControlOut ID.", upperControlOut != -1);
 
 	//test radio state switching times
-	radio->switchTo(Radio::SLEEP, simTime());
+	radio->switchTo(MiximRadio::SLEEP, simTime());
 	radio->endSwitch(simTime());
-	simtime_t swTime = radio->switchTo(Radio::RX, simTime());
+	simtime_t swTime = radio->switchTo(MiximRadio::RX, simTime());
 	assertEqual("Switchtime SLEEP to RX.", 3.0, SIMTIME_DBL(swTime));
 	radio->endSwitch(simTime());
 
-	swTime = radio->switchTo(Radio::TX, simTime());
+	swTime = radio->switchTo(MiximRadio::TX, simTime());
 	assertEqual("Switchtime RX to TX.", 1.0, SIMTIME_DBL(swTime));
 	radio->endSwitch(simTime());
 
-	swTime = radio->switchTo(Radio::SLEEP, simTime());
+	swTime = radio->switchTo(MiximRadio::SLEEP, simTime());
 	assertEqual("Switchtime TX to SLEEP.", 2.5, SIMTIME_DBL(swTime));
 	radio->endSwitch(simTime());
 
-	swTime = radio->switchTo(Radio::TX, simTime());
+	swTime = radio->switchTo(MiximRadio::TX, simTime());
 	assertEqual("Switchtime SLEEP to TX.", 3.5, SIMTIME_DBL(swTime));
 	radio->endSwitch(simTime());
 
-	swTime = radio->switchTo(Radio::RX, simTime());
+	swTime = radio->switchTo(MiximRadio::RX, simTime());
 	assertEqual("Switchtime TX to RX.", 2.0, SIMTIME_DBL(swTime));
 	radio->endSwitch(simTime());
 
-	swTime = radio->switchTo(Radio::SLEEP, simTime());
+	swTime = radio->switchTo(MiximRadio::SLEEP, simTime());
 	assertEqual("Switchtime RX to SLEEP.", 1.5, SIMTIME_DBL(swTime));
 	radio->endSwitch(simTime());
 

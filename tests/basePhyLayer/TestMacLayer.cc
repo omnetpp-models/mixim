@@ -89,10 +89,10 @@ void TestMacLayer::testRun1(int stage, const cMessage* /*msg*/){
 //planTest("2", "Check correct handling of radio switches.");
 //planTest("2.1", "Radio starts in SLEEP mode.");
 		int radioState = phy->getRadioState();
-		testForEqual("2.1", Radio::SLEEP, radioState);
+		testForEqual("2.1", MiximRadio::SLEEP, radioState);
 
 //planTest("2.2", "Switch SLEEP to RX.");
-		simtime_t switchTime = phy->setRadioState(Radio::RX);
+		simtime_t switchTime = phy->setRadioState(MiximRadio::RX);
 		assertEqual("Correct switch time to RX.", simtime_t(3.0), switchTime);
 
 		assertMessage(	"SWITCH_OVER message at phy.", BasePhyLayer::RADIO_SWITCHING_OVER,
@@ -103,16 +103,16 @@ void TestMacLayer::testRun1(int stage, const cMessage* /*msg*/){
 						simTime() + switchTime);
 
 //planTest("2.4", "Try switching during ongoing switching.");
-		switchTime = phy->setRadioState(Radio::RX);
+		switchTime = phy->setRadioState(MiximRadio::RX);
 		testForTrue("2.4", switchTime < 0.0);
 	}
 	else if(stage == 1) {
 //planTest("2.2", "Switch SLEEP to RX.");
 		int state = phy->getRadioState();
-		testForEqual("2.2", Radio::RX, state);
+		testForEqual("2.2", MiximRadio::RX, state);
 
 //planTest("2.3", "Switch RX to SLEEP.");
-		simtime_t switchTime = phy->setRadioState(Radio::SLEEP);
+		simtime_t switchTime = phy->setRadioState(MiximRadio::SLEEP);
 		assertEqual("Correct switch time to SLEEP.", simtime_t(1.5), switchTime);
 
 		assertMessage(	"SWITCH_OVER message at phy.", BasePhyLayer::RADIO_SWITCHING_OVER,
@@ -123,7 +123,7 @@ void TestMacLayer::testRun1(int stage, const cMessage* /*msg*/){
 						simTime() + switchTime);
 	}else if(stage == 2) {
 		int state = phy->getRadioState();
-		testForEqual("2.3", Radio::SLEEP, state);
+		testForEqual("2.3", MiximRadio::SLEEP, state);
 		testPassed("2");
 
 //planTest("3", "Check correct forwarding of ChannelSenseRequests from mac to"
@@ -139,7 +139,7 @@ void TestMacLayer::testRun1(int stage, const cMessage* /*msg*/){
 //planTest("4", "Test if sending of packet while radio is not in TX state is "
 //		  		"correctly handled by phy (throws error).");
 		int state = phy->getRadioState();
-		assertNotEqual("Radio is not in TX.", Radio::TX, state);
+		assertNotEqual("Radio is not in TX.", MiximRadio::TX, state);
 
 		macpkt_ptr_t pkt = createMacPkt(1.0);
 		sendDown(pkt);
@@ -163,7 +163,7 @@ void TestMacLayer::testRun2(int stage, const cMessage* /*msg*/){
 		break;
 	case 1:{
 		int state = phy->getRadioState();
-		assertEqual("Radio is in TX.", Radio::TX, state);
+		assertEqual("Radio is in TX.", MiximRadio::TX, state);
 
 		macpkt_ptr_t pkt = createMacPkt(1.0);
 		sendDown(pkt);
@@ -532,7 +532,7 @@ void TestMacLayer::continueIn(simtime_t_cref time){
 }
 
 void TestMacLayer::waitForTX() {
-	simtime_t switchTime = phy->setRadioState(Radio::TX);
+	simtime_t switchTime = phy->setRadioState(MiximRadio::TX);
 	assertTrue("A valid switch time.", switchTime >= 0.0);
 
 

@@ -14,7 +14,7 @@
 #define DEVICEDUTYSIMPLE_H
 
 #include <omnetpp.h>
-#include "BatteryAccess.h"
+#include "MiximBatteryAccess.h"
 
 #include "BatteryState.h"
 #include "HostState.h"
@@ -27,7 +27,7 @@
  * failure.  Used for testing, can also be used as e.g. a prototype
  * sensor device. See DeviceDutySimple.ned for parameters.
  */
-class DeviceDutySimple : public BatteryAccess
+class DeviceDutySimple : public MiximBatteryAccess
 {
 private:
 	/** @brief Copy constructor is not allowed.
@@ -39,7 +39,7 @@ private:
 
 public:
 	DeviceDutySimple()
-		: BatteryAccess()
+		: MiximBatteryAccess()
 		, on(NULL)
 		, off(NULL)
 		, period(0), dutyCycle(0), current(0), wakeup(0)

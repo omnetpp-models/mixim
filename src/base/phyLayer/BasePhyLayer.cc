@@ -20,7 +20,7 @@ Coord NoMobiltyPos = Coord::ZERO;
 //--Initialization----------------------------------
 
 BasePhyLayer::BasePhyLayer()
-	: ChannelAccess()
+	: ConnectionManagerAccess()
 	, DeciderToPhyInterface()
 	, MacToPhyInterface()
 	, protocolId(GENERIC)
@@ -63,7 +63,7 @@ template bool BasePhyLayer::readPar<bool>(const char* parName, const bool) const
 
 void BasePhyLayer::initialize(int stage) {
 
-	ChannelAccess::initialize(stage);
+	ConnectionManagerAccess::initialize(stage);
 
 	if (stage == 0) {
 		// if using sendDirect, make sure that messages arrive without delay
@@ -128,27 +128,27 @@ Radio* BasePhyLayer::initializeRadio() const {
 	int    nbRadioChannels     = readPar("nbRadioChannels",     1);
 	int    initialRadioChannel = readPar("initialRadioChannel", 0);
 
-	Radio* radio = Radio::createNewRadio(recordStats, initialRadioState,
+	MiximRadio* radio = MiximRadio::createNewRadio(recordStats, initialRadioState,
 										 radioMinAtt, radioMaxAtt,
 										 initialRadioChannel, nbRadioChannels);
 
 	//	- switch times to TX
 	//if no RX to TX defined asume same time as sleep to TX
-	radio->setSwitchTime(Radio::RX, Radio::TX, (hasPar("timeRXToTX") ? par("timeRXToTX") : par("timeSleepToTX")).doubleValue());
+	radio->setSwitchTime(MiximRadio::RX, MiximRadio::TX, (hasPar("timeRXToTX") ? par("timeRXToTX") : par("timeSleepToTX")).doubleValue());
 	//if no sleep to TX defined asume same time as RX to TX
-	radio->setSwitchTime(Radio::SLEEP, Radio::TX, (hasPar("timeSleepToTX") ? par("timeSleepToTX") : par("timeRXToTX")).doubleValue());
+	radio->setSwitchTime(MiximRadio::SLEEP, MiximRadio::TX, (hasPar("timeSleepToTX") ? par("timeSleepToTX") : par("timeRXToTX")).doubleValue());
 
 	//	- switch times to RX
 	//if no TX to RX defined asume same time as sleep to RX
-	radio->setSwitchTime(Radio::TX, Radio::RX, (hasPar("timeTXToRX") ? par("timeTXToRX") : par("timeSleepToRX")).doubleValue());
+	radio->setSwitchTime(MiximRadio::TX, MiximRadio::RX, (hasPar("timeTXToRX") ? par("timeTXToRX") : par("timeSleepToRX")).doubleValue());
 	//if no sleep to RX defined asume same time as TX to RX
-	radio->setSwitchTime(Radio::SLEEP, Radio::RX, (hasPar("timeSleepToRX") ? par("timeSleepToRX") : par("timeTXToRX")).doubleValue());
+	radio->setSwitchTime(MiximRadio::SLEEP, MiximRadio::RX, (hasPar("timeSleepToRX") ? par("timeSleepToRX") : par("timeTXToRX")).doubleValue());
 
 	//	- switch times to sleep
 	//if no TX to sleep defined asume same time as RX to sleep
-	radio->setSwitchTime(Radio::TX, Radio::SLEEP, (hasPar("timeTXToSleep") ? par("timeTXToSleep") : par("timeRXToSleep")).doubleValue());
+	radio->setSwitchTime(MiximRadio::TX, MiximRadio::SLEEP, (hasPar("timeTXToSleep") ? par("timeTXToSleep") : par("timeRXToSleep")).doubleValue());
 	//if no RX to sleep defined asume same time as TX to sleep
-	radio->setSwitchTime(Radio::RX, Radio::SLEEP, (hasPar("timeRXToSleep") ? par("timeRXToSleep") : par("timeTXToSleep")).doubleValue());
+	radio->setSwitchTime(MiximRadio::RX, MiximRadio::SLEEP, (hasPar("timeRXToSleep") ? par("timeRXToSleep") : par("timeTXToSleep")).doubleValue());
 
 	return radio;
 }
@@ -475,7 +475,7 @@ void BasePhyLayer::handleAirFrameEndReceive(airframe_ptr_t frame)
 void BasePhyLayer::handleUpperMessage(cMessage* msg){
 
 	// check if Radio is in TX state
-	if (radio->getCurrentState() != Radio::TX)
+	if (radio->getCurrentState() != MiximRadio::TX)
 	{
         delete msg;
         msg = 0;
@@ -642,8 +642,8 @@ void BasePhyLayer::filterSignal(airframe_ptr_t frame) {
 	if (analogueModels.empty())
 		return;
 
-	ChannelAccess *const senderModule   = dynamic_cast<ChannelAccess *const>(frame->getSenderModule());
-	ChannelAccess *const receiverModule = dynamic_cast<ChannelAccess *const>(frame->getArrivalModule());
+	ConnectionManagerAccess *const senderModule   = dynamic_cast<ConnectionManagerAccess *const>(frame->getSenderModule());
+	ConnectionManagerAccess *const receiverModule = dynamic_cast<ConnectionManagerAccess *const>(frame->getArrivalModule());
 	//const simtime_t      sStart         = frame->getSignal().getReceptionStart();
 
 	assert(senderModule); assert(receiverModule);
@@ -679,7 +679,7 @@ BasePhyLayer::~BasePhyLayer() {
 		cancelAndDelete(txOverTimer);
 	}
 	if(radioSwitchingOverTimer) {
-        cancelAndDelete(radioSwitchingOverTimer);
+		cancelAndDelete(radioSwitchingOverTimer);
 	}
 
 	//free thermal noise mapping
@@ -734,7 +734,7 @@ int BasePhyLayer::getRadioState() const {
  * @brief Returns the true if the radio is in RX state.
  */
 bool BasePhyLayer::isRadioInRX() const {
-    return getRadioState() == Radio::RX;
+    return getRadioState() == MiximRadio::RX;
 }
 
 void BasePhyLayer::finishRadioSwitching(bool bSendCtrlMsg /*= true*/)
@@ -878,11 +878,11 @@ void BasePhyLayer::rescheduleMessage(cMessage* msg, simtime_t_cref t) {
 }
 
 void BasePhyLayer::drawCurrent(double amount, int activity) {
-	BatteryAccess::drawCurrent(amount, activity);
+	MiximBatteryAccess::drawCurrent(amount, activity);
 }
 
 void BasePhyLayer::recordScalar(const char *name, double value, const char *unit) {
-	ChannelAccess::recordScalar(name, value, unit);
+	ConnectionManagerAccess::recordScalar(name, value, unit);
 }
 
 /**

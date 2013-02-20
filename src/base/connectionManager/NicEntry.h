@@ -28,7 +28,7 @@
 #include "MiXiMDefs.h"
 #include "Coord.h"
 
-class ChannelAccess;
+class ConnectionManagerAccess;
 
 /**
  * @brief NicEntry is used by ConnectionManager to store the necessary
@@ -68,8 +68,8 @@ class MIXIM_API NicEntry : public cObject
     /** @brief Geographic location of the nic*/
     Coord pos;
 
-    /** @brief Points to this nics ChannelAccess module */
-    ChannelAccess* chAccess;
+    /** @brief Points to this nics ConnectionManagerAccess module */
+    ConnectionManagerAccess* chAccess;
 
   protected:
     /** @brief Debug output switch*/

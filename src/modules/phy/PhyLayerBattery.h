@@ -54,7 +54,7 @@ class MacPkt;
  */
 class MIXIM_API PhyLayerBattery : public PhyLayer {
 public:
-    typedef MacPkt* macpkt_ptr_t;
+	typedef MacPkt* macpkt_ptr_t;
 protected:
 	/** @brief Number of power consuming activities (accounts).*/
 	int numActivities;
@@ -160,7 +160,7 @@ public:
 	 *
 	 * Note: This method should only be used by the Decider to
 	 * draw power. The phy layer itself should call instead its
-	 * protected method BatteryAccess::drawCurrent()!
+	 * protected method MiximBatteryAccess::drawCurrent()!
 	 */
 	virtual void drawCurrent(double amount, int activity);
 

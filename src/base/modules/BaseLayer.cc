@@ -63,7 +63,6 @@ void BaseLayer::initialize(int stage)
     }
 }
 
-
 /**
  * The basic handle message function.
  *

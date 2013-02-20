@@ -21,7 +21,7 @@
 #ifndef TEST_PHY_LAYER_H
 #define TEST_PHY_LAYER_H
 
-#include "connectionManager/ChannelAccess.h"
+#include "connectionManager/ConnectionManagerAccess.h"
 #include <MiXiMMacPkt.h>
 #include <iostream>
 
@@ -29,7 +29,7 @@ class MacPkt;
 /**
  * @brief
  */
-class CMPhyLayer : public ChannelAccess
+class CMPhyLayer : public ConnectionManagerAccess
 {
 public:
 	typedef MacPkt* macpkt_ptr_t;
@@ -60,10 +60,10 @@ protected:
 	void assertFalse(std::string msg, bool value) { assertTrue(msg, !value); }
 
 public:
-    //Module_Class_Members( CMPhyLayer, ChannelAccess, 0 );
+	//Module_Class_Members( CMPhyLayer, ConnectionManagerAccess, 0 );
 
-    /** @brief Called every time a message arrives*/
-    virtual void handleMessage( cMessage* );
+	/** @brief Called every time a message arrives*/
+	virtual void handleMessage( cMessage* );
 
 	virtual void handleSelfMsg() { assertFalse("This phy layer expects no self-msg!", true); }
 	virtual void handleLowerMsg(const LAddress::L2Type& /*srcAddr*/) { assertFalse("This phy layer expects no msg!", true); }

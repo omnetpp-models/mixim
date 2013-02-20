@@ -23,7 +23,7 @@
 
 #include <cassert>
 
-#include "connectionManager/ChannelAccess.h"
+#include "connectionManager/ConnectionManagerAccess.h"
 #include "FindModule.h"
 
 #ifndef nicEV
@@ -145,13 +145,13 @@ cGate* NicEntryDebug::requestInGate(void)
 		hostGate->connectTo(nicGate);
 
 		// pointer to the phy module
-		ChannelAccess* phyModule;
+                ConnectionManagerAccess* phyModule;
 		// gate of the phy module
 		cGate *phyGate;
 
 		// to avoid unnecessary dynamic_casting we check for a "phy"-named submodule first
-		if ((phyModule = dynamic_cast<ChannelAccess *> (nicPtr->getSubmodule("phy"))) == NULL)
-			phyModule = FindModule<ChannelAccess*>::findSubModule(nicPtr);
+		if ((phyModule = dynamic_cast<ConnectionManagerAccess *> (nicPtr->getSubmodule("phy"))) == NULL)
+			phyModule = FindModule<ConnectionManagerAccess*>::findSubModule(nicPtr);
 		assert(phyModule != 0);
 
 		// create a new gate for the phy module
@@ -200,13 +200,13 @@ cGate* NicEntryDebug::requestOutGate(void)
 		nicGate->connectTo(hostGate);
 
 		// pointer to the phy module
-		ChannelAccess* phyModule;
+		ConnectionManagerAccess* phyModule;
 		// gate of the phy module
 		cGate *phyGate;
 
 		// to avoid unnecessary dynamic_casting we check for a "phy"-named submodule first
-		if ((phyModule = dynamic_cast<ChannelAccess *> (nicPtr->getSubmodule("phy"))) == NULL)
-			phyModule = FindModule<ChannelAccess*>::findSubModule(nicPtr);
+		if ((phyModule = dynamic_cast<ConnectionManagerAccess *> (nicPtr->getSubmodule("phy"))) == NULL)
+			phyModule = FindModule<ConnectionManagerAccess*>::findSubModule(nicPtr);
 		assert(phyModule != 0);
 
 		// create a new gate for the phy module

@@ -31,11 +31,11 @@ void SimpleMacLayer::initialize(int stage) {
 		if(myIndex == 0){ //host with index 0 start with sending packets
 			log("Switching radio to TX...");
 			nextReceiver = 1;
-			phy->setRadioState(Radio::TX); //to be able to send packets it has to switch to TX mode
+			phy->setRadioState(MiximRadio::TX); //to be able to send packets it has to switch to TX mode
 
 		}else{ //every other host start in receiving mode
 			log("Switching radio to RX...");
-			phy->setRadioState(Radio::RX);
+			phy->setRadioState(MiximRadio::RX);
 		}
 		//switching the radio can take some time,
 		//we will get a "RADIO_SWITCHING_OVER" message as soon as the radio has switched.
@@ -49,7 +49,7 @@ void SimpleMacLayer::handleMessage(cMessage* msg) {
 		log("...switching radio done.");
 
 		switch(phy->getRadioState()) {
-		case Radio::TX: 		//if we switched to TX mode we probably wanted to send
+		case MiximRadio::TX: 		//if we switched to TX mode we probably wanted to send
 			broadCastPacket();	//an answer packet
 			break;
 		default:
@@ -72,7 +72,7 @@ void SimpleMacLayer::handleTXOver() {
 	//the sending process is over. SO we will switch back to receiving
 	//mode after that.
 	log("Transmission over signal from PhyLayer received. Changing back to RX");
-	phy->setRadioState(Radio::RX);
+	phy->setRadioState(MiximRadio::RX);
 }
 
 void SimpleMacLayer::handleMacPkt(macpkt_ptr_t pkt) {
@@ -86,7 +86,7 @@ void SimpleMacLayer::handleMacPkt(macpkt_ptr_t pkt) {
 			nextReceiver = 0;
 
 		//if the destination of the packet was us, send an answer packet->switch to sending mode
-		phy->setRadioState(Radio::TX);
+		phy->setRadioState(MiximRadio::TX);
 	}else
 		log("Received MacPkt - but not for me.");
 

@@ -36,25 +36,24 @@ void LMacLayer::initialize(int stage)
         queueLength = par("queueLength");
         slotDuration = par("slotDuration");
         bitrate = par("bitrate");
-		headerLength = par("headerLength");
-		coreEV << "headerLength is: " << headerLength << endl;
+        headerLength = par("headerLength");
+        coreEV << "headerLength is: " << headerLength << endl;
         numSlots = par("numSlots");
-		// the first N slots are reserved for mobile nodes to be able to function normally
-		reservedMobileSlots = par("reservedMobileSlots");
-		txPower = par("txPower");
+        // the first N slots are reserved for mobile nodes to be able to function normally
+        reservedMobileSlots = par("reservedMobileSlots");
+        txPower = par("txPower");
 
         droppedPacket.setReason(DroppedPacket::NONE);
         nicId = getNic()->getId();
         debugEV << "My Mac address is" << myMacAddr << " and my Id is " << myId << endl;
 
-
         macState = INIT;
 
-		slotChange = new cOutVector("slotChange");
+        slotChange = new cOutVector("slotChange");
 
-		// how long does it take to send/receive a control packet
-		controlDuration = ((double)headerLength + (double)numSlots + 16) / (double)bitrate;
-		coreEV << "Control packets take : " << controlDuration << " seconds to transmit\n";
+        // how long does it take to send/receive a control packet
+        controlDuration = ((double)headerLength + (double)numSlots + 16) / (double)bitrate;
+        coreEV << "Control packets take : " << controlDuration << " seconds to transmit\n";
     }
 
     else if(stage == 1) {
@@ -63,48 +62,47 @@ void LMacLayer::initialize(int stage)
 
         debugEV << "queueLength = " << queueLength
            << " slotDuration = " << slotDuration
-		   << " controlDuration = " << controlDuration
-		   << " numSlots = " << numSlots
+           << " controlDuration = " << controlDuration
+           << " numSlots = " << numSlots
            << " bitrate = " << bitrate << endl;
 
-		timeout = new cMessage("timeout");
-		timeout->setKind(LMAC_TIMEOUT);
+        timeout = new cMessage("timeout");
+        timeout->setKind(LMAC_TIMEOUT);
 
-		sendData = new cMessage("sendData");
-		sendData->setKind(LMAC_SEND_DATA);
+        sendData = new cMessage("sendData");
+        sendData->setKind(LMAC_SEND_DATA);
 
-		wakeup = new cMessage("wakeup");
-		wakeup->setKind(LMAC_WAKEUP);
+        wakeup = new cMessage("wakeup");
+        wakeup->setKind(LMAC_WAKEUP);
 
-		initChecker = new cMessage("setup phase");
-		initChecker->setKind(LMAC_SETUP_PHASE_END);
+        initChecker = new cMessage("setup phase");
+        initChecker->setKind(LMAC_SETUP_PHASE_END);
 
-		checkChannel = new cMessage("checkchannel");
-		checkChannel->setKind(LMAC_CHECK_CHANNEL);
+        checkChannel = new cMessage("checkchannel");
+        checkChannel->setKind(LMAC_CHECK_CHANNEL);
 
-		start_lmac = new cMessage("start_lmac");
-		start_lmac->setKind(LMAC_START_LMAC);
+        start_lmac = new cMessage("start_lmac");
+        start_lmac->setKind(LMAC_START_LMAC);
 
-		send_control = new cMessage("send_control");
-		send_control->setKind(LMAC_SEND_CONTROL);
+        send_control = new cMessage("send_control");
+        send_control->setKind(LMAC_SEND_CONTROL);
 
-		scheduleAt(0.0, start_lmac);
-
+        scheduleAt(0.0, start_lmac);
 
     }
 }
 
 LMacLayer::~LMacLayer() {
-	delete slotChange;
-	cancelAndDelete(timeout);
-	cancelAndDelete(wakeup);
-	cancelAndDelete(checkChannel);
-	cancelAndDelete(sendData);
-	cancelAndDelete(initChecker);
-	cancelAndDelete(start_lmac);
-	cancelAndDelete(send_control);
+    delete slotChange;
+    cancelAndDelete(timeout);
+    cancelAndDelete(wakeup);
+    cancelAndDelete(checkChannel);
+    cancelAndDelete(sendData);
+    cancelAndDelete(initChecker);
+    cancelAndDelete(start_lmac);
+    cancelAndDelete(send_control);
 
-	MacQueue::iterator it;
+    MacQueue::iterator it;
     for(it = macQueue.begin(); it != macQueue.end(); ++it) {
         delete (*it);
     }
@@ -140,7 +138,7 @@ void LMacLayer::handleUpperMsg(cMessage *msg)
         sendControlUp(mac);
         droppedPacket.setReason(DroppedPacket::QUEUE);
         emit(BaseLayer::catDroppedPacketSignal, &droppedPacket);
-		debugEV <<  "ERROR: Queue is full, forced to delete.\n";
+        debugEV <<  "ERROR: Queue is full, forced to delete.\n";
     }
 }
 
@@ -204,7 +202,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 			if (mySlot == currSlot)
 			{
 				debugEV << "Waking up in my slot. Switch to RECV first to check the channel.\n";
-				phy->setRadioState(Radio::RX);
+				phy->setRadioState(MiximRadio::RX);
 				macState = CCA;
 				debugEV << "Old state: SLEEP, New state: CCA" << endl;
 
@@ -215,7 +213,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 			else
 			{
 				debugEV << "Waking up in a foreign slot. Ready to receive control packet.\n";
-				phy->setRadioState(Radio::RX);
+				phy->setRadioState(MiximRadio::RX);
 				macState = WAIT_CONTROL;
 				debugEV << "Old state: SLEEP, New state: WAIT_CONTROL" << endl;
 				if (!SETUP_PHASE)	//in setup phase do not sleep
@@ -252,7 +250,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 			// if the channel is clear, get ready for sending the control packet
 			coreEV << "Channel is free, so let's prepare for sending.\n";
 
-			phy->setRadioState(Radio::TX);
+			phy->setRadioState(MiximRadio::TX);
 			macState = SEND_CONTROL;
 			debugEV << "Old state: CCA, New state: SEND_CONTROL" << endl;
 
@@ -315,7 +313,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 				debugEV << "Incoming data packet not for me. Going back to sleep.\n";
 				macState = SLEEP;
 				debugEV << "Old state: CCA, New state: SLEEP" << endl;
-				phy->setRadioState(Radio::SLEEP);
+				phy->setRadioState(MiximRadio::SLEEP);
 				if (timeout->isScheduled())
 					cancelEvent(timeout);
 			}
@@ -346,7 +344,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 			// in any case, go back to sleep
 			macState = SLEEP;
 			debugEV << "Old state: CCA, New state: SLEEP" << endl;
-			phy->setRadioState(Radio::SLEEP);
+			phy->setRadioState(MiximRadio::SLEEP);
 		}
 		else if(msg->getKind() == LMAC_SETUP_PHASE_END)
 		{
@@ -371,7 +369,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 			debugEV << "Control timeout. Go back to sleep.\n";
 			macState = SLEEP;
 			debugEV << "Old state: WAIT_CONTROL, New state: SLEEP" << endl;
-			phy->setRadioState(Radio::SLEEP);
+			phy->setRadioState(MiximRadio::SLEEP);
 		}
 		else if(msg->getKind() == LMAC_CONTROL)
 		{
@@ -431,7 +429,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 				debugEV << "Incoming data packet not for me. Going back to sleep.\n";
 				macState = SLEEP;
 				debugEV << "Old state: WAIT_CONTROL, New state: SLEEP" << endl;
-				phy->setRadioState(Radio::SLEEP);
+				phy->setRadioState(MiximRadio::SLEEP);
 				if (timeout->isScheduled())
 					cancelEvent(timeout);
 			}
@@ -498,7 +496,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 			if (currSlot != mySlot)
 			{
 				debugEV << "ERROR: Send data message received, but we are not in our slot!!! Repair.\n";
-				phy->setRadioState(Radio::SLEEP);
+				phy->setRadioState(MiximRadio::SLEEP);
 				if (timeout->isScheduled())
 					cancelEvent(timeout);
 				return;
@@ -566,7 +564,7 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 			// in any case, go back to sleep
 			macState = SLEEP;
 			debugEV << "Old state: WAIT_DATA, New state: SLEEP" << endl;
-			phy->setRadioState(Radio::SLEEP);
+			phy->setRadioState(MiximRadio::SLEEP);
 			if (timeout->isScheduled())
 				cancelEvent(timeout);
 		}
@@ -597,7 +595,6 @@ void LMacLayer::handleLowerMsg(cMessage *msg)
 	handleSelfMsg(msg);
 }
 
-
 /**
  * Handle transmission over messages: send the data packet or don;t do anyhting.
  */
@@ -617,27 +614,23 @@ void LMacLayer::handleLowerControl(cMessage *msg)
 			debugEV << " transmission over. nothing else is scheduled, get back to sleep." << endl;
 			macState = SLEEP;
 			debugEV << "Old state: ?, New state: SLEEP" << endl;
-			phy->setRadioState(Radio::SLEEP);
+			phy->setRadioState(MiximRadio::SLEEP);
 			if (timeout->isScheduled())
 				cancelEvent(timeout);
 		}
-    }
-
+	}
 	else if(msg->getKind() == MacToPhyInterface::RADIO_SWITCHING_OVER)
 	{
 	   	// we just switched to TX after CCA, so simply send the first sendPremable self message
-	   	if ((macState == SEND_CONTROL) && (phy->getRadioState() == Radio::TX))
+	   	if ((macState == SEND_CONTROL) && (phy->getRadioState() == MiximRadio::TX))
 	   	{
 	   		scheduleAt(simTime(), send_control);
 	   	}
-
 	}
-
-    else {
-        EV << "control message with wrong kind -- deleting\n";
-    }
-    delete msg;
-
+	else {
+		EV << "control message with wrong kind -- deleting\n";
+	}
+	delete msg;
 }
 
 /**

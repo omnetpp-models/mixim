@@ -34,9 +34,9 @@ Define_Module(AlohaMacLayer);
 void AlohaMacLayer::initialize(int stage) {
 	UWBIRMac::initialize(stage);
 	if(stage == 1 && myMacAddr != LAddress::L2NULL) {
-            phy->setRadioState(Radio::TX);
+            phy->setRadioState(MiximRadio::TX);
     } else if(stage == 1 && myMacAddr == LAddress::L2NULL) {
-            phy->setRadioState(Radio::RX);
+            phy->setRadioState(MiximRadio::RX);
     }
 }
 

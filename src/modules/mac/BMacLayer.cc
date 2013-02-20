@@ -227,7 +227,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 		{
 			debugEV << "State INIT, message BMAC_START, new state SLEEP" << endl;
 			changeDisplayColor(BLACK);
-			phy->setRadioState(Radio::SLEEP);
+			phy->setRadioState(MiximRadio::SLEEP);
 			macState = SLEEP;
 			scheduleAt(simTime()+dblrand()*slotDuration, wakeup);
 			return;
@@ -238,7 +238,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 		{
 			debugEV << "State SLEEP, message BMAC_WAKEUP, new state CCA" << endl;
 			scheduleAt(simTime() + checkInterval, cca_timeout);
-			phy->setRadioState(Radio::RX);
+			phy->setRadioState(MiximRadio::RX);
 			changeDisplayColor(GREEN);
 			macState = CCA;
 			return;
@@ -253,7 +253,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 			{
 				debugEV << "State CCA, message CCA_TIMEOUT, new state"
 						  " SEND_PREAMBLE" << endl;
-				phy->setRadioState(Radio::TX);
+				phy->setRadioState(MiximRadio::TX);
 				changeDisplayColor(YELLOW);
 				macState = SEND_PREAMBLE;
 				scheduleAt(simTime() + slotDuration, stop_preambles);
@@ -266,7 +266,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 					   << endl;
 				scheduleAt(simTime() + slotDuration, wakeup);
 				macState = SLEEP;
-				phy->setRadioState(Radio::SLEEP);
+				phy->setRadioState(MiximRadio::SLEEP);
 				changeDisplayColor(BLACK);
 				return;
 			}
@@ -350,7 +350,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 				debugEV << "State WAIT_TX_DATA_OVER, message BMAC_DATA_TX_OVER,"
 						  " new state WAIT_ACK" << endl;
 				macState = WAIT_ACK;
-				phy->setRadioState(Radio::RX);
+				phy->setRadioState(MiximRadio::RX);
 				changeDisplayColor(GREEN);
 				scheduleAt(simTime()+checkInterval, ack_timeout);
 			}
@@ -366,7 +366,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 				else
 					scheduleAt(simTime() + slotDuration, wakeup);
 				macState = SLEEP;
-				phy->setRadioState(Radio::SLEEP);
+				phy->setRadioState(MiximRadio::SLEEP);
 				changeDisplayColor(BLACK);
 			}
 			return;
@@ -383,7 +383,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 				txAttempts++;
 				macState = SEND_PREAMBLE;
 				scheduleAt(simTime() + slotDuration, stop_preambles);
-				phy->setRadioState(Radio::TX);
+				phy->setRadioState(MiximRadio::TX);
 				changeDisplayColor(YELLOW);
 			}
 			else
@@ -399,7 +399,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 				else
 					scheduleAt(simTime() + slotDuration, wakeup);
 				macState = SLEEP;
-				phy->setRadioState(Radio::SLEEP);
+				phy->setRadioState(MiximRadio::SLEEP);
 				changeDisplayColor(BLACK);
 				nbMissedAcks++;
 			}
@@ -435,7 +435,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 				else
 					scheduleAt(simTime() + slotDuration, wakeup);
 				macState = SLEEP;
-				phy->setRadioState(Radio::SLEEP);
+				phy->setRadioState(MiximRadio::SLEEP);
 				changeDisplayColor(BLACK);
 				lastDataPktDestAddr = LAddress::L2BROADCAST;
 			}
@@ -482,7 +482,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 						  " SEND_ACK" << endl;
 				macState = SEND_ACK;
 				lastDataPktSrcAddr = src;
-				phy->setRadioState(Radio::TX);
+				phy->setRadioState(MiximRadio::TX);
 				changeDisplayColor(YELLOW);
 			}
 			else
@@ -495,7 +495,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 				else
 					scheduleAt(simTime() + slotDuration, wakeup);
 				macState = SLEEP;
-				phy->setRadioState(Radio::SLEEP);
+				phy->setRadioState(MiximRadio::SLEEP);
 				changeDisplayColor(BLACK);
 			}
 			return;
@@ -510,7 +510,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 			else
 				scheduleAt(simTime() + slotDuration, wakeup);
 			macState = SLEEP;
-			phy->setRadioState(Radio::SLEEP);
+			phy->setRadioState(MiximRadio::SLEEP);
 			changeDisplayColor(BLACK);
 			return;
 		}
@@ -538,7 +538,7 @@ void BMacLayer::handleSelfMsg(cMessage *msg)
 			else
 				scheduleAt(simTime() + slotDuration, wakeup);
 			macState = SLEEP;
-			phy->setRadioState(Radio::SLEEP);
+			phy->setRadioState(MiximRadio::SLEEP);
 			changeDisplayColor(BLACK);
 			lastDataPktSrcAddr = LAddress::L2BROADCAST;
 			return;
@@ -590,17 +590,17 @@ void BMacLayer::handleLowerControl(cMessage *msg)
     else if(msg->getKind() == MacToPhyInterface::RADIO_SWITCHING_OVER) {
     	// we just switched to TX after CCA, so simply send the first
     	// sendPremable self message
-    	if ((macState == SEND_PREAMBLE) && (phy->getRadioState() == Radio::TX))
+    	if ((macState == SEND_PREAMBLE) && (phy->getRadioState() == MiximRadio::TX))
     	{
     		scheduleAt(simTime(), send_preamble);
     	}
-    	if ((macState == SEND_ACK) && (phy->getRadioState() == Radio::TX))
+    	if ((macState == SEND_ACK) && (phy->getRadioState() == MiximRadio::TX))
     	{
     		scheduleAt(simTime(), send_ack);
     	}
     	// we were waiting for acks, but none came. we switched to TX and now
     	// need to resend data
-    	if ((macState == SEND_DATA) && (phy->getRadioState() == Radio::TX))
+    	if ((macState == SEND_DATA) && (phy->getRadioState() == MiximRadio::TX))
     	{
     		scheduleAt(simTime(), resend_data);
     	}

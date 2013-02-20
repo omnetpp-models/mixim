@@ -64,11 +64,11 @@ Decider* PhyLayerBattery::getDeciderFromName(const std::string& name, ParameterM
 }
 
 void PhyLayerBattery::drawCurrent(double amount, int activity) {
-	if(radio->getCurrentState() == Radio::RX) {
+	if(radio->getCurrentState() == MiximRadio::RX) {
 		if(amount != 0.0) {
-			BatteryAccess::drawCurrent(rxCurrent + amount, DECIDER_ACCT + activity);
+			MiximBatteryAccess::drawCurrent(rxCurrent + amount, DECIDER_ACCT + activity);
 		} else {
-			BatteryAccess::drawCurrent(rxCurrent, RX_ACCT);
+			MiximBatteryAccess::drawCurrent(rxCurrent, RX_ACCT);
 		}
 	} else {
 		opp_warning("Decider wanted to change power consumption while radio not in state RX.");
@@ -88,7 +88,7 @@ void PhyLayerBattery::handleUpperMessage(cMessage* msg) {
 	double current = calcTXCurrentForPacket(pkt, cInfo);
 
 	if(current > 0) {
-		BatteryAccess::drawCurrent(current, TX_ACCT);
+		MiximBatteryAccess::drawCurrent(current, TX_ACCT);
 	}
 
 	PhyLayer::handleUpperMessage(msg);
@@ -104,9 +104,9 @@ void PhyLayerBattery::handleAirFrame(airframe_ptr_t frame) {
 }
 
 void PhyLayerBattery::handleHostState(const HostState& state) {
-	if (state.get() != HostState::ACTIVE && radio->getCurrentState() != Radio::SLEEP) {
+	if (state.get() != HostState::ACTIVE && radio->getCurrentState() != MiximRadio::SLEEP) {
 		coreEV<< "host is no longer in active state (maybe FAILED, SLEEP, OFF or BROKEN), force into sleep state!" << endl;
-		setRadioState(Radio::SLEEP);
+		setRadioState(MiximRadio::SLEEP);
 		// it would be good to create a radioState OFF, as well
 	}
 }
@@ -124,12 +124,12 @@ void PhyLayerBattery::setSwitchingCurrent(int from, int to) {
 	    return;
 
 	switch(from) {
-        case Radio::RX:
+        case MiximRadio::RX:
             switch(to) {
-                case Radio::SLEEP:
+                case MiximRadio::SLEEP:
                     current = rxCurrent;
                     break;
-                case Radio::TX:
+                case MiximRadio::TX:
                     current = rxTxCurrent;
                     break;
                 default:
@@ -138,12 +138,12 @@ void PhyLayerBattery::setSwitchingCurrent(int from, int to) {
             }
             break;
 
-        case Radio::TX:
+        case MiximRadio::TX:
             switch(to) {
-                case Radio::SLEEP:
+                case MiximRadio::SLEEP:
                     current = txCurrent;
                     break;
-                case Radio::RX:
+                case MiximRadio::RX:
                     current = txRxCurrent;
                     break;
                 default:
@@ -152,12 +152,12 @@ void PhyLayerBattery::setSwitchingCurrent(int from, int to) {
             }
             break;
 
-        case Radio::SLEEP:
+        case MiximRadio::SLEEP:
             switch(to) {
-                case Radio::TX:
+                case MiximRadio::TX:
                     current = setupTxCurrent;
                     break;
-                case Radio::RX:
+                case MiximRadio::RX:
                     current = setupRxCurrent;
                     break;
                 default:
@@ -171,19 +171,19 @@ void PhyLayerBattery::setSwitchingCurrent(int from, int to) {
             break;
 	}
 
-	BatteryAccess::drawCurrent(current, SWITCHING_ACCT);
+	MiximBatteryAccess::drawCurrent(current, SWITCHING_ACCT);
 }
 
 void PhyLayerBattery::setRadioCurrent(int rs) {
 	switch(rs) {
-	case Radio::RX:
-		BatteryAccess::drawCurrent(rxCurrent, RX_ACCT);
+	case MiximRadio::RX:
+		MiximBatteryAccess::drawCurrent(rxCurrent, RX_ACCT);
 		break;
-	case Radio::TX:
-		BatteryAccess::drawCurrent(txCurrent, TX_ACCT);
+	case MiximRadio::TX:
+		MiximBatteryAccess::drawCurrent(txCurrent, TX_ACCT);
 		break;
-	case Radio::SLEEP:
-		BatteryAccess::drawCurrent(sleepCurrent, SLEEP_ACCT);
+	case MiximRadio::SLEEP:
+		MiximBatteryAccess::drawCurrent(sleepCurrent, SLEEP_ACCT);
 		break;
 	default:
 		opp_error("Unknown radio state: %d", rs);
@@ -196,7 +196,7 @@ simtime_t PhyLayerBattery::setRadioState(int rs) {
 	int prevState = radio->getCurrentState();
 
 	if (battery) {
-		if (battery && battery->getState() != HostState::ACTIVE && rs != Radio::SLEEP && prevState != rs) {
+		if (battery && battery->getState() != HostState::ACTIVE && rs != MiximRadio::SLEEP && prevState != rs) {
 			coreEV << "can not switch radio state, host is not in active state!" << endl;
 			return Decider::notAgain;
 		}
@@ -205,7 +205,7 @@ simtime_t PhyLayerBattery::setRadioState(int rs) {
 	simtime_t endSwitch = PhyLayer::setRadioState(rs);
 
 	if(endSwitch >= SIMTIME_ZERO) {
-		if(radio->getCurrentState() == Radio::SWITCHING) {
+		if(radio->getCurrentState() == MiximRadio::SWITCHING) {
 			setSwitchingCurrent(prevState, rs);
 		}
 		else {

@@ -23,7 +23,7 @@
 #define BASE_LAYER_H
 
 #include "MiXiMDefs.h"
-#include "BatteryAccess.h"
+#include "../modules/MiximBatteryAccess.h"
 #include "PassedMessage.h"
 
 /**
@@ -35,7 +35,7 @@
  * @ingroup baseModules
  * @author Andreas Koepke
  */
-class MIXIM_API BaseLayer : public BatteryAccess
+class MIXIM_API BaseLayer : public MiximBatteryAccess
 {
 public:
     /** @brief SignalID for packets. */
@@ -72,7 +72,7 @@ private:
 
 public:
     BaseLayer()
-        : BatteryAccess()
+        : MiximBatteryAccess()
     	, upperLayerIn(-1)
     	, upperLayerOut(-1)
     	, lowerLayerIn(-1)
@@ -84,7 +84,7 @@ public:
         , passedMsg(NULL)
     {}
     BaseLayer(unsigned stacksize)
-        : BatteryAccess(stacksize)
+        : MiximBatteryAccess(stacksize)
         , upperLayerIn(-1)
         , upperLayerOut(-1)
         , lowerLayerIn(-1)

@@ -126,13 +126,13 @@ void PhyLayerUWBIR::setSwitchingCurrent(int from, int to) {
 	    return;
 	}
 
-	BatteryAccess::drawCurrent(current, act);
+	MiximBatteryAccess::drawCurrent(current, act);
 }
 
 void PhyLayerUWBIR::setRadioCurrent(int rs) {
 	switch(rs) {
         case RadioUWBIR::SYNC:
-            BatteryAccess::drawCurrent(syncCurrent, SYNC_ACCT);
+            MiximBatteryAccess::drawCurrent(syncCurrent, SYNC_ACCT);
             break;
         case RadioUWBIR::SWITCHING:
             // do nothing here

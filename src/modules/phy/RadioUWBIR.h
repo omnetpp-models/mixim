@@ -26,14 +26,14 @@
  * @ingroup phyLayer
  */
 
-class MIXIM_API RadioUWBIR: public Radio {
+class MIXIM_API RadioUWBIR: public MiximRadio {
 	friend class PhyLayerUWBIR;
 
 public:
 
 	enum UWBIRRadioStates {
 		/* receiving state*/
-		 SYNC = Radio::NUM_RADIO_STATES,
+		 SYNC = MiximRadio::NUM_RADIO_STATES,
 		 UWBIR_NUM_RADIO_STATES
 	};
 
@@ -48,7 +48,6 @@ public:
 						 initialState,
 						 minAtt, maxAtt);
 	}
-
 
 	/**
 	 * @brief This switchTo method only accepts three states to switch to:
@@ -74,7 +73,7 @@ public:
 		nextState = newState;
 		int lastState = state;
 		state = RadioUWBIR::SWITCHING;
-  	    radioStates.record(state);
+		radioStates.record(state);
 		// make entry to RSAM
 		makeRSAMEntry(now, state);
 

@@ -2,7 +2,7 @@
 DIR=`dirname $0`
 DIR=`(cd $DIR ; pwd)`
 INET_DIR=`(cd $DIR/../../inet/src ; pwd)`
-COMMAND_LINE_OPTIONS="-l $INET_DIR/inet -n $DIR/../examples:$DIR:$INET_DIR"
+COMMAND_LINE_OPTIONS="-l $INET_DIR/inet -n $DIR/../examples:$DIR/base:$DIR/modules:$INET_DIR"
 
 if [ -x $DIR/mixim -o -x $DIR/mixim.exe ]; then
   $DIR/mixim $COMMAND_LINE_OPTIONS $*

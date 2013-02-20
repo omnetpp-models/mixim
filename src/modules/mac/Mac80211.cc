@@ -92,7 +92,6 @@ void Mac80211::initialize(int stage)
 
         txPower = hasPar("txPower") ? par("txPower").doubleValue() : 110.11;
 
-
         delta = 1E-9;
 
         debugEV << "SIFS: " << SIFS << " DIFS: " << DIFS << " EIFS: " << EIFS << endl;
@@ -106,7 +105,7 @@ void Mac80211::initialize(int stage)
 
     	int channel = phy->getCurrentRadioChannel();
     	if(!(1<=channel && channel<=14)) {
-    		opp_error("Radio set to invalid channel %d. Please make sure the"
+    		opp_error("MiximRadio set to invalid channel %d. Please make sure the"
     				  " phy modules parameter \"initialRadioChannel\" is set to"
     				  " a valid 802.11 channel (1 to 14)!", channel);
     	}
@@ -251,7 +250,7 @@ void Mac80211::handleLowerMsg(cMessage *msg)
 {
     Mac80211Pkt *af = static_cast<Mac80211Pkt *>(msg);
     int radioState = phy->getRadioState();
-    if(radioState == Radio::RX) {
+    if(radioState == MiximRadio::RX) {
         // end of the reception
         debugEV << " handleLowerMsg frame " << af << " received from " << af->getSrcAddr() << " addressed to " << af->getDestAddr() << "\n";
         addNeighbor(af);
@@ -293,7 +292,7 @@ void Mac80211::handleLowerControl(cMessage *msg)
     case BaseDecider::PACKET_DROPPED:
     {
     	int radioState = phy->getRadioState();
-        if(radioState == Radio::RX) {
+        if(radioState == MiximRadio::RX) {
             if (contention->isScheduled()) {
                 error("Gaack! I am changing the IFS on an ongoing contention");
             }
@@ -308,7 +307,7 @@ void Mac80211::handleLowerControl(cMessage *msg)
     }
     case MacToPhyInterface::TX_OVER:
     	debugEV << "PHY indicated transmission over" << endl;
-        phy->setRadioState(Radio::RX);
+        phy->setRadioState(MiximRadio::RX);
         handleEndTransmission();
         delete msg;
         break;
@@ -324,7 +323,6 @@ void Mac80211::handleLowerControl(cMessage *msg)
     	break;
     }
 }
-
 
 /**
  * handle timers
@@ -349,7 +347,6 @@ void Mac80211::handleSelfMsg(cMessage * msg)
         break;
     }
 }
-
 
 /**
  *  Handle all ACKs,RTS, CTS, or DATA not for the node. If RTS/CTS
@@ -434,7 +431,6 @@ void Mac80211::handleMsgNotForMe(cMessage *af, simtime_t_cref duration)
     beginNewCycle();
     delete af;
 }
-
 
 /**
  *  Handle a packet for the node. The result of this reception is
@@ -534,7 +530,6 @@ void Mac80211::handleRTSframe(Mac80211Pkt * af)
     //scheduleAt(simTime() + SIFS, endSifs);
 }
 
-
 /**
  *  Handle a frame which expected to be a DATA frame. Called by
  *  HandleMsgForMe()
@@ -562,7 +557,6 @@ void Mac80211::handleDATAframe(Mac80211Pkt * af)
     //scheduleAt(simTime() + SIFS, endSifs);
 }
 
-
 /**
  *  Handle ACK and delete corresponding packet from queue
  */
@@ -585,7 +579,6 @@ void Mac80211::handleACKframe(Mac80211Pkt * /*af*/)
     beginNewCycle();
 }
 
-
 /**
  *  Handle a CTS frame. Called by HandleMsgForMe(Mac80211Pkt* af)
  */
@@ -601,7 +594,6 @@ void Mac80211::handleCTSframe(Mac80211Pkt * af)
     sendControlDown(endSifs);
     //scheduleAt(simTime() + SIFS, endSifs);
 }
-
 
 /**
  *  Handle a broadcast packet. This packet is simply passed to the
@@ -625,7 +617,6 @@ void Mac80211::handleBroadcastMsg(Mac80211Pkt *af)
     }
 }
 
-
 /**
  *  The node has won the contention, and is now allowed to send an
  *  RTS/DATA or Broadcast packet. The backoff value is deleted and
@@ -633,10 +624,10 @@ void Mac80211::handleBroadcastMsg(Mac80211Pkt *af)
  */
 void Mac80211::handleEndContentionTimer()
 {
-	if(!contention->getResult().isIdle()) {
-		suspendContention();
-		return;
-	}
+    if(!contention->getResult().isIdle()) {
+        suspendContention();
+        return;
+    }
 
     if(state == IDLE) {
         remainingBackoff = 0;
@@ -664,7 +655,7 @@ void Mac80211::handleEndContentionTimer()
         // will be new calculated in the next contention period
         remainingBackoff = 0;
         // unicast packet
-        phy->setRadioState(Radio::TX);
+        phy->setRadioState(MiximRadio::TX);
         if (!nextIsBroadcast)
         {
             if(rtsCts(fromUpperLayer.front())) {
@@ -711,11 +702,9 @@ void Mac80211::handleNavTimer()
     beginNewCycle();
 }
 
-
-
 void Mac80211::dataTransmissionFailed()
 {
-	bool rtscts = rtsCts(fromUpperLayer.front());
+    bool rtscts = rtsCts(fromUpperLayer.front());
     if(rtscts){
         longRetryCounter++;
     }else{
@@ -724,7 +713,6 @@ void Mac80211::dataTransmissionFailed()
     fromUpperLayer.front()->setRetry(true);
     remainingBackoff = backoff(rtscts);
 }
-
 
 void Mac80211::rtsTransmissionFailed()
 {
@@ -758,21 +746,21 @@ void Mac80211::handleTimeoutTimer()
  */
 void Mac80211::handleEndSifsTimer()
 {
-	if(!endSifs->getResult().isIdle()){
-		// delete the previously received frame
-		delete static_cast<Mac80211Pkt *>(endSifs->getContextPointer());
+    if(!endSifs->getResult().isIdle()){
+        // delete the previously received frame
+        delete static_cast<Mac80211Pkt *>(endSifs->getContextPointer());
 
-		// state in now IDLE or CONTEND
-		if (fromUpperLayer.empty())
-			setState(IDLE);
-		else
-			setState(CONTEND);
+        // state in now IDLE or CONTEND
+        if (fromUpperLayer.empty())
+            setState(IDLE);
+        else
+            setState(CONTEND);
 
-		return;
-	}
+        return;
+    }
 
     Mac80211Pkt *frame = static_cast<Mac80211Pkt *>(endSifs->getContextPointer());
-    phy->setRadioState(Radio::TX);
+    phy->setRadioState(MiximRadio::TX);
     switch (frame->getKind())
     {
     case RTS:
@@ -800,7 +788,7 @@ void Mac80211::handleEndSifsTimer()
  */
 void Mac80211::handleEndTransmission()
 {
-	debugEV << "transmission of packet is over\n";
+    debugEV << "transmission of packet is over\n";
     if(state == BUSY) {
         if(nextIsBroadcast) {
             shortRetryCounter = 0;
@@ -850,7 +838,6 @@ void Mac80211::sendDATAframe(Mac80211Pkt *af)
     setState(WFACK);
 }
 
-
 /**
  *  Send an ACK frame.Called by HandleEndSifsTimer()
  */
@@ -877,7 +864,6 @@ void Mac80211::sendACKframe(Mac80211Pkt * af)
     // update state and display
     setState(BUSY);
 }
-
 
 /**
  *  Send a RTS frame.Called by handleContentionTimer()
@@ -914,7 +900,6 @@ void Mac80211::sendRTSframe()
     // update state and display
     setState(WFCTS);
 }
-
 
 /**
  *  Send a CTS frame.Called by HandleEndSifsTimer()

@@ -1,0 +1,18 @@
+ifconfig:
+
+# NICs of router
+name: wlan0  inet_addr: 145.236.0.1
+name: wlan1  inet_addr: 145.236.0.1
+name: wlan2  inet_addr: 145.236.0.1
+name: eth0   inet_addr: 145.236.0.1
+
+ifconfigend.
+
+
+route:
+default:    *   0.0.0.0          H  0   wlan0
+145.236.0.2 *	255.255.255.255		 H	0	eth0
+145.236.0.3 *   255.255.255.255      H  0   wlan0
+145.236.0.4 *   255.255.255.255      H  0   wlan1
+145.236.0.5 *   255.255.255.255      H  0   wlan2
+routeend.

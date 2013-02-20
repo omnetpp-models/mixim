@@ -8,7 +8,7 @@
 #include "MiXiMDefs.h"
 #include "NicEntry.h"
 
-class ChannelAccess;
+class ConnectionManagerAccess;
 
 /**
  * @brief Module to control the channel and handle all connection
@@ -16,7 +16,7 @@ class ChannelAccess;
  *
  * The central module that coordinates the connections between all
  * nodes, and handles dynamic gate creation. BaseConnectionManager therefore
- * periodically communicates with the ChannelAccess modules
+ * periodically communicates with the ConnectionManagerAccess modules
  *
  * You may not instantiate BaseConnectionManager!
  * Use ConnectionManager instead.
@@ -24,7 +24,7 @@ class ChannelAccess;
  * @ingroup connectionManager
  * @author Steffen Sroka, Daniel Willkomm, Karl Wessel
  * @author Christoph Sommer ("unregisterNic()"-method)
- * @sa ChannelAccess
+ * @sa ConnectionManagerAccess
  */
 class MIXIM_API BaseConnectionManager : public cSimpleModule
 {
@@ -382,7 +382,7 @@ public:
 	 * If you want to do your own stuff at the registration of a nic see
 	 * "registerNicExt()".
 	 */
-	bool registerNic(cModule* nic, ChannelAccess* chAccess, const Coord* nicPos);
+        bool registerNic(cModule* nic, ConnectionManagerAccess* chAccess, const Coord* nicPos);
 
 	/**
 	 * @brief Unregisters a NIC such that its connections aren't managed by the CM

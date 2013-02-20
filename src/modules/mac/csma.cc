@@ -181,7 +181,7 @@ csma::~csma() {
  */
 void csma::handleUpperMsg(cMessage *msg) {
 	//macpkt_ptr_tmacPkt = encapsMsg(msg);
-    macpkt_ptr_t macPkt = new MacPkt(msg->getName());
+	macpkt_ptr_t macPkt = new MacPkt(msg->getName());
 	macPkt->setBitLength(headerLength);
 	cObject *const cInfo = msg->removeControlInfo();
 	debugEV<<"CSMA received a message from upper layer, name is " << msg->getName() <<", CInfo removed, mac addr="<< getUpperDestinationFromControlInfo(cInfo) << endl;
@@ -239,7 +239,7 @@ void csma::updateStatusIdle(t_mac_event event, cMessage *msg) {
 		delete msg;
 
 		if(useMACAcks) {
-			phy->setRadioState(Radio::TX);
+			phy->setRadioState(MiximRadio::TX);
 			updateMacState(WAITSIFS_6);
 			startTimer(TIMER_SIFS);
 		}
@@ -252,7 +252,7 @@ void csma::updateStatusIdle(t_mac_event event, cMessage *msg) {
 		delete msg;
 
 		if(useMACAcks) {
-			phy->setRadioState(Radio::TX);
+			phy->setRadioState(MiximRadio::TX);
 			updateMacState(WAITSIFS_6);
 			startTimer(TIMER_SIFS);
 		}
@@ -277,7 +277,7 @@ void csma::updateStatusBackoff(t_mac_event event, cMessage *msg) {
 		<< " starting CCA timer." << endl;
 		startTimer(TIMER_CCA);
 		updateMacState(CCA_3);
-		phy->setRadioState(Radio::RX);
+		phy->setRadioState(MiximRadio::RX);
 		break;
 	case EV_DUPLICATE_RECEIVED:
 		// suspend current transmission attempt,
@@ -288,7 +288,7 @@ void csma::updateStatusBackoff(t_mac_event event, cMessage *msg) {
 			debugEV << "suspending current transmit tentative and transmitting ack";
 			transmissionAttemptInterruptedByRx = true;
 			cancelEvent(backoffTimer);
-			phy->setRadioState(Radio::TX);
+			phy->setRadioState(MiximRadio::TX);
 			updateMacState(WAITSIFS_6);
 			startTimer(TIMER_SIFS);
 		} else {
@@ -308,7 +308,7 @@ void csma::updateStatusBackoff(t_mac_event event, cMessage *msg) {
 			transmissionAttemptInterruptedByRx = true;
 			cancelEvent(backoffTimer);
 
-			phy->setRadioState(Radio::TX);
+			phy->setRadioState(MiximRadio::TX);
 			updateMacState(WAITSIFS_6);
 			startTimer(TIMER_SIFS);
 		} else {
@@ -343,7 +343,7 @@ void csma::updateStatusCCA(t_mac_event event, cMessage *msg) {
 		if(isIdle) {
 			debugEV << "(3) FSM State CCA_3, EV_TIMER_CCA, [Channel Idle]: -> TRANSMITFRAME_4." << endl;
 			updateMacState(TRANSMITFRAME_4);
-			phy->setRadioState(Radio::TX);
+			phy->setRadioState(MiximRadio::TX);
 			macpkt_ptr_t mac = check_and_cast<macpkt_ptr_t>(macQueue.front()->dup());
 			attachSignal(mac, simTime()+aTurnaroundTime);
 			//sendDown(msg);
@@ -388,7 +388,7 @@ void csma::updateStatusCCA(t_mac_event event, cMessage *msg) {
 			transmissionAttemptInterruptedByRx = true;
 			cancelEvent(ccaTimer);
 
-			phy->setRadioState(Radio::TX);
+			phy->setRadioState(MiximRadio::TX);
 			updateMacState(WAITSIFS_6);
 			startTimer(TIMER_SIFS);
 		} else {
@@ -407,7 +407,7 @@ void csma::updateStatusCCA(t_mac_event event, cMessage *msg) {
 			// and resume transmission when entering manageQueue()
 			transmissionAttemptInterruptedByRx = true;
 			cancelEvent(ccaTimer);
-			phy->setRadioState(Radio::TX);
+			phy->setRadioState(MiximRadio::TX);
 			updateMacState(WAITSIFS_6);
 			startTimer(TIMER_SIFS);
 		} else {
@@ -432,7 +432,7 @@ void csma::updateStatusTransmitFrame(t_mac_event event, cMessage *msg) {
 	if (event == EV_FRAME_TRANSMITTED) {
 		//    delete msg;
 	    macpkt_ptr_t packet = macQueue.front();
-		phy->setRadioState(Radio::RX);
+		phy->setRadioState(MiximRadio::RX);
 
 		bool expectAck = useMACAcks;
 		if (!LAddress::isL2Broadcast(packet->getDestAddr())) {
@@ -558,7 +558,7 @@ void csma::updateStatusTransmitAck(t_mac_event event, cMessage *msg) {
 	if (event == EV_FRAME_TRANSMITTED) {
 		debugEV<< "(19) FSM State TRANSMITACK_7, EV_FRAME_TRANSMITTED:"
 		<< " ->manageQueue." << endl;
-		phy->setRadioState(Radio::RX);
+		phy->setRadioState(MiximRadio::RX);
 		//		delete msg;
 		manageQueue();
 	} else {

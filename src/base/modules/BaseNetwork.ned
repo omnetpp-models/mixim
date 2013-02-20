@@ -24,6 +24,12 @@ network BaseNetwork
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
+		**.mobility.constraintAreaMinX = 0m;
+		**.mobility.constraintAreaMinY = 0m;
+		**.mobility.constraintAreaMinZ = 0m;
+		**.mobility.constraintAreaMaxX = playgroundSizeX;
+		**.mobility.constraintAreaMaxY = playgroundSizeY;
+		**.mobility.constraintAreaMaxZ = playgroundSizeZ;
         string cmType = default("org.mixim.base.connectionManager.ConnectionManager"); // connection manager to use
         string wuType = default("org.mixim.base.modules.BaseWorldUtility");            // world utility to use
 
