@@ -1,0 +1,30 @@
+MiXiM - INET examples
+
+This folder contains examples that show how to use lower layer MiXiM modules 
+(i.e. wireless NICs) in INET Framework. 
+
+To use MiXiM with INET:
+- Download and extract INET-Framework 2.1+ into the same workspace where 
+  the MiXiM project is installed (it must be the sibling of 'mixim'.)
+- Import INET into the workspace (if you are using the IDE) 
+  (File | Import... | Existing Projects into the Workspace)
+- Build INET
+
+If you are using the IDE:
+- Open Project Properties on the 'mixim' project.
+- On the OMNeT++ / Project Features page disable the 'MiXiM Standalone' feature.
+- On the OMNeT++ / NED Source Folders page select 'examples-inet' as a NED folder and
+  deselect the 'src/inet_stub' folder.
+- On the Project References page select 'inet' as a referred project.
+- Build the 'mixim' project, too.
+
+If you are building from command line:
+- Create makefiles that link with the INET and the build mixim:
+  $ make makefiles-using-inet
+  $ make
+
+Once the project was successfully built, go to the 'examples-inet' folder and try
+out the examples:
+- IDE: Right click on an 'omnetpp.ini' file and select 'Run As.. / OMNeT++ Simulation'.
+- Command line: use the provided 'run' scripts in the example directories.
+
