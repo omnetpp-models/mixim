@@ -3,7 +3,6 @@
 	<name>MiXiM</name>
 	<comment>Version 2.2</comment>
 	<projects>
-		<project>inet</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
