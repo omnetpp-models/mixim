@@ -16,7 +16,7 @@ module WirelessNode
         string sessionType = default("");                    //type of the session layer
         string presentationType = default("");               //type of the presentation layer
         string applicationType = default("BurstApplLayer");  //type of the application layer
-        string mobilityType = default("ConstSpeedMobility"); //type of the mobility module
+        string mobilityType = default("StationaryMobility"); //type of the mobility module
         string arpType = default("BaseArp");                 //type of address resolution module
         string nicType;
         @display("bgb=210,450,white;i=device/palm;b=40,40,rect");
