@@ -20,8 +20,12 @@ for lP in "${lMiXiMPath}/src" \
 done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
-NEDPATH="${lMiXiMPath}/src:..:."
-[ -d "${lINETPath}/src" ] && NEDPATH="${NEDPATH}:${lINETPath}/src"
+NEDPATH="${lMiXiMPath}/src/base:${lMiXiMPath}/src/modules:..:."
+if [ -d "${lINETPath}/src" ]; then
+  NEDPATH="${NEDPATH}:${lINETPath}/src"
+else
+  NEDPATH="${NEDPATH}:${lMiXiMPath}/src/inet_stub"
+fi
 export PATH
 export NEDPATH
 export LD_LIBRARY_PATH
