@@ -21,8 +21,12 @@ for lP in '../../../src' \
 done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
-NEDPATH="../../../src:../.."
-[ -d "$lINETPath" ] && NEDPATH="${NEDPATH}:$lINETPath"
+NEDPATH="../../../src/base:../../../src/modules:../.."
+if [ -d "$lINETPath" ]; then
+  NEDPATH="${NEDPATH}:$lINETPath"
+else
+  NEDPATH="${NEDPATH}:../../../src/inet_stub"
+fi
 export PATH
 export NEDPATH
 export LD_LIBRARY_PATH
