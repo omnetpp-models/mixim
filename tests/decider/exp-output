@@ -1,14 +1,15 @@
-OMNeT++ Discrete Event Simulation  (C) 1992-2010 Andras Varga, OpenSim Ltd.
-Version: 4.1, build: 100611-4b63c38, edition: Academic Public License -- NOT FOR COMMERCIAL USE
+OMNeT++ Discrete Event Simulation  (C) 1992-2011 Andras Varga, OpenSim Ltd.
+Version: 4.3rc1, build: 130208-f82a32c, edition: Academic Public License -- NOT FOR COMMERCIAL USE
 See the license for distribution terms and warranty disclaimer
 Setting up Cmdenv...
-Loading NED files from /home/karl/git-repo/mixim/base: 17
-Loading NED files from /home/karl/git-repo/mixim/modules: 48
-Loading NED files from /home/karl/git-repo/mixim/tests: 46
+Loading NED files from ..\..\src\base: 14
+Loading NED files from ..\..\src\modules: 49
+Loading NED files from ..: 38
+Loading NED files from ..\..\..\inet\src: 249
 
 Preparing for running configuration General, run #0...
 Scenario: $repetition=0
-Assigned runID=General-0-20110511-10:38:49-13736
+Assigned runID=General-0-20130221-21:57:01-8584
 Setting up network `DeciderTest'...
 Signal for TestAirFrame1 created with header/payload power: 1/0
 [ Test] - Creating TestAirFrame 1 done.
@@ -26,14 +27,14 @@ Initializing...
 Initializing module DeciderTest, stage 0
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 Passed: Decider demands ChannelInfo for one single timepoint
 Passed: Decider demands ChannelInfo for current timepoint
 Passed: This decider considers an empty channel as idle.
 Passed: RSSI-value is the value for 'now' in an empty Set of AirFrames
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 [SNRThresholdDeciderNew Test] - -TEST_GET_CHANNELSTATE_NOISYCHANNEL-----------------------------------------------
 Signal for TestAirFrame5 created with header/payload power: 32/16
 [SNRThresholdDeciderNew Test] - Creating TestAirFrame 5 done.
@@ -102,7 +103,7 @@ Passed: RSSI-value is the value for 'testTime'
 [SNRThresholdDeciderNew Test] - -DONE-------------------------------------------
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 [SNRThresholdDeciderNew Test] - -TEST_GET_CHANNELSTATE_RECEIVING-----------------------------------------------
 [SNRThresholdDeciderNew Test] - -full output-----------------------------------------------
 [SNRThresholdDeciderNew Test] - A new testTime has been set: 2
@@ -178,7 +179,7 @@ Passed: TestAirFrame 4 has been finally processed
 [SNRThresholdDeciderNew Test] - -DONE-------------------------------------------
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 [SNRThresholdDeciderNew Test] - -------------------------------------------------------
 [SNRThresholdDeciderNew Test] - TEST_SNR_THRESHOLD_ACCEPT
 Signal for TestAirFrame5 created with header/payload power: 10/10
@@ -193,7 +194,7 @@ Passed: TestAirFrame 5 has been finally processed
 Passed: sendUp() has been called.
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 [SNRThresholdDeciderNew Test] - -------------------------------------------------------
 [SNRThresholdDeciderNew Test] - TEST_SNR_THRESHOLD_DENY
 Signal for TestAirFrame5 created with header/payload power: 10/10
@@ -206,7 +207,7 @@ Passed: TestAirFrame 5 has been finally processed
 Passed: sendUp() has not been called.
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 [SNRThresholdDeciderNew Test] - -------------------------------------------------------
 [SNRThresholdDeciderNew Test] - TEST_SNR_THRESHOLD_PAYLOAD_DENY
 Signal for TestAirFrame5 created with header/payload power: 20/10
@@ -219,7 +220,7 @@ Passed: TestAirFrame 5 has been finally processed
 Passed: sendUp() has not been called.
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 [SNRThresholdDeciderNew Test] - -------------------------------------------------------
 [SNRThresholdDeciderNew Test] - TEST_SNR_THRESHOLD_MORE_NOISE_BEGINS_IN_BETWEEN_DENY
 Signal for TestAirFrame5 created with header/payload power: 30/30
@@ -232,10 +233,10 @@ Passed: TestAirFrame 5 has been finally processed
 Passed: sendUp() has not been called.
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 Signal for TestAirFrame5 created with header/payload power: 32/16
 [SNRThresholdDeciderNew Test] - Creating TestAirFrame 5 done.
 [SNRThresholdDeciderNew Test] - Filled airFramesOnChannel. (the virtual channel)
@@ -270,7 +271,7 @@ Passed: ChannelSense results RSSI value match expected results RSSI value.
 Passed: UNTIL_BUSY request should have been answered because of time out.
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 Signal for TestAirFrame5 created with header/payload power: 32/16
 [SNRThresholdDeciderNew Test] - Creating TestAirFrame 5 done.
 [SNRThresholdDeciderNew Test] - Filled airFramesOnChannel. (the virtual channel)
@@ -333,7 +334,7 @@ Passed: ChannelSense results RSSI value match expected results RSSI value.
 Passed: UNTIL_IDLE request was answered because of idle channel.
 Passed: [TestBaseDecider] - Member 'myIndex' has been initialized properly by passed value.
 Passed: [TestBaseDecider] - pointer to DeciderToPhyInterface has been set properly
-Passed: [TestBaseDecider] - snr-threshold and receiving-sensitivity have been set properly
+Passed: [TestBaseDecider] - Decider initialization from map was done successfully
 Signal for TestAirFrame5 created with header/payload power: 32/16
 [SNRThresholdDeciderNew Test] - Creating TestAirFrame 5 done.
 [SNRThresholdDeciderNew Test] - Filled airFramesOnChannel. (the virtual channel)
