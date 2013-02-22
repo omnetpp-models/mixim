@@ -121,7 +121,7 @@ void BasePhyLayer::initialize(int stage) {
 	}
 }
 
-Radio* BasePhyLayer::initializeRadio() const {
+MiximRadio* BasePhyLayer::initializeRadio() const {
 	int    initialRadioState   = par("initialRadioState").longValue();
 	double radioMinAtt         = par("radioMinAtt").doubleValue();
 	double radioMaxAtt         = par("radioMaxAtt").doubleValue();

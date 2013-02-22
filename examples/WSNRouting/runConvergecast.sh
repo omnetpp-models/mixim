@@ -1,11 +1,9 @@
-#! /bin/sh
-DIR=`dirname $0`
-DIR=`(cd $DIR ; pwd)`
+#!/bin/bash
 
 lPATH='.'
 LIBSREF=( )
-lINETPath="$DIR/../../inet"
-lMiXiMPath=`(cd "$DIR/.." ; pwd)`
+lINETPath='../../../inet'
+lMiXiMPath='../..'
 for lP in "${lMiXiMPath}/src" \
           "${lMiXiMPath}/src/base" \
           "${lMiXiMPath}/src/modules" \
@@ -22,20 +20,32 @@ for lP in "${lMiXiMPath}/src" \
 done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
-NEDPATH="${lMiXiMPath}/examples:${lMiXiMPath}/src/base:${lMiXiMPath}/src/modules"
+NEDPATH="${lMiXiMPath}/src/base:${lMiXiMPath}/src/modules:..:."
 if [ -d "${lINETPath}/src" ]; then
   NEDPATH="${NEDPATH}:${lINETPath}/src"
-  COMMAND_LINE_OPTIONS="-l ${lINETPath}/src/inet -n $NEDPATH"
 else
   NEDPATH="${NEDPATH}:${lMiXiMPath}/src/inet_stub"
-  COMMAND_LINE_OPTIONS="-n $NEDPATH"
 fi
 export PATH
 export NEDPATH
 export LD_LIBRARY_PATH
 
-if [ -x $DIR/mixim -o -x $DIR/mixim.exe ]; then
-  $DIR/mixim $COMMAND_LINE_OPTIONS $*
-else
-  opp_run -l $DIR/mixim $COMMAND_LINE_OPTIONS $*
+lCombined='miximexamples'
+lSingle='WSNRouting'
+lIsComb=0
+if [ ! -e ${lSingle} -a ! -e ${lSingle}.exe ]; then
+    if [ -e ../${lCombined}.exe ]; then
+        ln -s ../${lCombined}.exe ${lSingle}.exe
+        lIsComb=1
+    elif [ -e ../${lCombined} ]; then
+        ln -s ../${lCombined}     ${lSingle}
+        lIsComb=1
+    fi
 fi
+
+rm -f results/convergecast-*
+echo 'Run all ConverCast...'
+./${lSingle} -u Cmdenv -c convergecast "${LIBSREF[@]}" >  outcon.tmp 2>errcon.tmp
+
+[ x$lIsComb = x1 ] && rm -f ${lSingle} ${lSingle}.exe >/dev/null 2>&1
+[ ! -s errcon.tmp ] && \rm -f errcon.tmp >/dev/null 2>&1

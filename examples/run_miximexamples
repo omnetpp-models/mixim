@@ -1,8 +1,38 @@
 #! /bin/sh
 DIR=`dirname $0`
 DIR=`(cd $DIR ; pwd)`
-INET_DIR=`(cd $DIR/../../inet/src ; pwd)`
-COMMAND_LINE_OPTIONS="-l $INET_DIR/inet -n $DIR/../examples:$DIR:$INET_DIR"
+
+lPATH='.'
+LIBSREF=( )
+lINETPath="$DIR/../../inet"
+lMiXiMPath=`(cd "$DIR/.." ; pwd)`
+for lP in "${lMiXiMPath}/src" \
+          "${lMiXiMPath}/src/base" \
+          "${lMiXiMPath}/src/modules" \
+          "${lINETPath}/src"; do
+    for pr in 'mixim' 'inet'; do
+        if [ -d "$lP" ] && [ -f "${lP}/lib${pr}$(basename $lP).so" -o -f "${lP}/lib${pr}$(basename $lP).dll" ]; then
+            lPATH="${lP}:$lPATH"
+            LIBSREF=( '-l' "${lP}/${pr}$(basename $lP)" "${LIBSREF[@]}" )
+        elif [ -d "$lP" ] && [ -f "${lP}/lib${pr}.so" -o -f "${lP}/lib${pr}.dll" ]; then
+            lPATH="${lP}:$lPATH"
+            LIBSREF=( '-l' "${lP}/${pr}" "${LIBSREF[@]}" )
+        fi
+    done
+done
+PATH="${PATH}:${lPATH}" #needed for windows
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
+NEDPATH="${lMiXiMPath}/examples:${lMiXiMPath}/src/base:${lMiXiMPath}/src/modules"
+if [ -d "${lINETPath}/src" ]; then
+  NEDPATH="${NEDPATH}:${lINETPath}/src"
+  COMMAND_LINE_OPTIONS="-l ${lINETPath}/src/inet -n $NEDPATH"
+else
+  NEDPATH="${NEDPATH}:${lMiXiMPath}/src/inet_stub"
+  COMMAND_LINE_OPTIONS="-n $NEDPATH"
+fi
+export PATH
+export NEDPATH
+export LD_LIBRARY_PATH
 
 if [ -x $DIR/miximexamples -o -x $DIR/miximexamples.exe ]; then
   $DIR/miximexamples $COMMAND_LINE_OPTIONS $*

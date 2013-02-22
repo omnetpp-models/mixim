@@ -113,6 +113,7 @@ void ANSimMobility::extractDataFrom(cXMLElement *node)
     const char *xStr = firstChildWithTag(destElem, "xpos")->getNodeValue();
     const char *yStr = firstChildWithTag(destElem, "ypos")->getNodeValue();
 
+    static_cast<void>(startTimeStr); // disable unused variable warning
     if (!endTimeStr || !xStr || !yStr)
         throw cRuntimeError("No content in <end_time>, <destination>/<xpos> or <ypos> element at %s", node->getSourceLocation());
 

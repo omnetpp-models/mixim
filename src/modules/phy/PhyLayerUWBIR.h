@@ -180,8 +180,8 @@ protected:
 	 * - DeciderUWBIREDSync
 	 * - DeciderUWBIRED
 	 */
-	virtual Decider* getDeciderFromName(const std::string& name, ParameterMap& params);
-	virtual Radio*   initializeRadio() const;
+	virtual Decider*    getDeciderFromName(const std::string& name, ParameterMap& params);
+	virtual MiximRadio* initializeRadio() const;
 
 	RadioUWBIR* uwbradio;
 

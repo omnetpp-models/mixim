@@ -252,8 +252,10 @@ void InterfaceTable::updateLinkDisplayString(InterfaceEntry *entry)
         cGate *outputGate = host->gate(outputGateId);
         if (!outputGate->getChannel())
             return;
+#if defined(WITH_IPv4) or defined(WITH_IPv6)
         cDisplayString& displayString = outputGate->getDisplayString();
         char buf[128];
+#endif
 #ifdef WITH_IPv4
         if (entry->ipv4Data()) {
             sprintf(buf, "%s\n%s/%d", entry->getFullName(), entry->ipv4Data()->getIPAddress().str().c_str(), entry->ipv4Data()->getNetmask().getNetmaskLength());

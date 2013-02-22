@@ -84,7 +84,7 @@ public:
 protected:
 
 	RadioUWBIR(int numRadioStates,bool recordStats, int initialState, Argument::mapped_type_cref minAtt = Argument::MappedOne, Argument::mapped_type_cref maxAtt = Argument::MappedZero)
-	:Radio(numRadioStates, recordStats, initialState, minAtt, maxAtt) {	}
+	:MiximRadio(numRadioStates, recordStats, initialState, minAtt, maxAtt) {	}
 
 	virtual Argument::mapped_type_cref mapStateToAtt(int state)
 	{

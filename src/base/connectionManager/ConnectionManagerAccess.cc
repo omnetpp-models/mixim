@@ -55,7 +55,7 @@ BaseConnectionManager* ConnectionManagerAccess::getConnectionManager(const cModu
 
 void ConnectionManagerAccess::initialize( int stage )
 {
-	BatteryAccess::initialize(stage);
+	MiximBatteryAccess::initialize(stage);
 
     if( stage == 0 ){
         hasPar("coreDebug") ? coreDebug = par("coreDebug").boolValue() : coreDebug = false;
