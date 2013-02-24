@@ -1,6 +1,7 @@
 #include "BasePhyLayer.h"
 
 #include <cxmlelement.h>
+#include <limits>
 
 #include "MacToPhyControlInfo.h"
 #include "PhyToMacControlInfo.h"
@@ -16,6 +17,11 @@ Define_Module(BasePhyLayer);
 short BasePhyLayer::airFramePriority = 10;
 
 Coord NoMobiltyPos = Coord::ZERO;
+
+template<typename _Tp>
+static inline bool isFiniteNumber(register _Tp value) {
+    return value < std::numeric_limits<_Tp>::infinity() && value > -std::numeric_limits<_Tp>::infinity() && value != std::numeric_limits<_Tp>::quiet_NaN();
+}
 
 //--Initialization----------------------------------
 
@@ -86,7 +92,12 @@ void BasePhyLayer::initialize(int stage) {
 		}
 		headerLength = par("headerLength").longValue();
 		sensitivity = par("sensitivity").doubleValue();
-		sensitivity = FWMath::dBm2mW(sensitivity);
+		if (!isFiniteNumber(sensitivity) || sensitivity <= -999999)
+		    sensitivity = 0; // disabled
+		else
+		    sensitivity = FWMath::dBm2mW(sensitivity);
+		if (!isFiniteNumber(sensitivity))
+		    sensitivity = 0; // disabled
 		maxTXPower = par("maxTXPower").doubleValue();
 
 		recordStats = par("recordStats").boolValue();

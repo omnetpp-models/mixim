@@ -57,7 +57,8 @@ void WiseRoute::initialize(int stage)
 
 		sinkAddress = LAddress::L3Type( par("sinkAddress").longValue() ); // 0
 		headerLength = par ("headerLength");
-		rssiThreshold = FWMath::dBm2mW(par("rssiThreshold"));
+		rssiThreshold = par("rssiThreshold").doubleValue();
+		rssiThreshold = FWMath::dBm2mW(rssiThreshold);
 		routeFloodsInterval = par("routeFloodsInterval");
 
 		stats = par("stats");

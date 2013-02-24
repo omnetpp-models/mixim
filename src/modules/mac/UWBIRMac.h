@@ -124,7 +124,7 @@ protected:
     // warning: cfg value is currently ignored
     void prepareData(UWBIRMacPkt* packet, IEEE802154A::config cfg = IEEE802154A::cfg_mandatory_4M);
 
-    void handleLowerMsg(cPacket *msg);
+    virtual void handleLowerMsg(cMessage *msg);
 
     bool validatePacket(UWBIRMacPkt * mac);
 

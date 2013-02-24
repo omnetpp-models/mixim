@@ -226,7 +226,7 @@ bool UWBIRMac::validatePacket(UWBIRMacPkt *mac) {
 	return true;
 }
 
-void UWBIRMac::handleLowerMsg(cPacket *msg) {
+void UWBIRMac::handleLowerMsg(cMessage *msg) {
 	UWBIRMacPkt *mac = static_cast<UWBIRMacPkt *> (msg);
 
 	if (validatePacket(mac)) {
