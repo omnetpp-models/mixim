@@ -3,7 +3,7 @@ ${bannerComment}
 
 #include "${amName}.h"
 
-#include <AirFrame_m.h>
+#include "MiXiMAirFrame.h"
 
 ${amName}::${amName}()
 	: AnalogueModel()<#if par1Name!="">
