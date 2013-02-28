@@ -20,7 +20,7 @@ done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
 NEDPATH="${lMiXiMPath}/examples:${lMiXiMPath}/src/base:${lMiXiMPath}/src/modules"
-if [ -d "${lINETPath}/src" ]; then
+if [ -n "`grep KINET_PROJ ${DIR}/Makefile`" ]; then
   NEDPATH="${NEDPATH}:${lINETPath}/src"
   COMMAND_LINE_OPTIONS="-l ${lINETPath}/src/inet -n $NEDPATH"
 else
