@@ -22,7 +22,8 @@ done
 PATH="${PATH}:${lPATH}" #needed for windows
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${lPATH}"
 NEDPATH="../../../src/base:../../../src/modules:../.."
-if [ -d "$lINETPath" ]; then
+if [ -n "`grep KINET_PROJ ../../Makefile`" ]; then
+  echo hello
   NEDPATH="${NEDPATH}:$lINETPath"
 else
   NEDPATH="${NEDPATH}:../../../src/inet_stub"

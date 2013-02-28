@@ -4,8 +4,10 @@ DIR=`(cd $DIR ; pwd)`/../src
 INET_DIR=`(cd $DIR/../../inet/src ; pwd)`
 COMMAND_LINE_OPTIONS="-l $INET_DIR/inet -n $DIR/../examples-inet:$DIR/base:$DIR/modules:$INET_DIR"
 
-if [ -x $DIR/mixim -o -x $DIR/mixim.exe ]; then
-  $DIR/mixim $COMMAND_LINE_OPTIONS $*
+if [ -z "`grep KINET_PROJ $DIR/Makefile`" ]; then
+  echo "This example requires that MiXiM is configured to use the INET Framework."
+  echo "See examples-inet/README for details."
 else
-  opp_run -l $DIR/mixim $COMMAND_LINE_OPTIONS $*
+$DIR/run_mixim $*
 fi
+

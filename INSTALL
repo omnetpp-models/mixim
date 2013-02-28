@@ -5,9 +5,9 @@ MiXiM.
 Requirements
 ============
 - OMNeT++, at least version 4.2, downloadable at www.omnetpp.org
-- at least INET 2.1 or later (successfully installed and compiled)
-  downloadable at inet.omnetpp.org
-
+- Optional: at least INET 2.1 or later (successfully installed and compiled)
+  downloadable at inet.omnetpp.org. See 'examples-inet/README' for further
+  installation details.
 
 Installation 
 ============
@@ -27,19 +27,20 @@ and proceed with "Next".
 4. "MiXiM" should appear in the "Projects" list below. click "Finish". 
 
 5. To build MiXiM right-click on the project and choose "Build Project".
-   Before building MiXiM make sure that 'inet' (version 2.1+) is available
-   and open in your workspace.
 
 6. Run an example:
     1. Choose an example from the examples directory.
     2. Right click its omnetpp.ini file and choose
         "Run as" -> "Run Simulation...".
-    4. Click "Run"
+    3. Click "Run"
 
 7. To see how to get started with MiXiM please read the section "How to start"
    in the README-file.
 
-From the commandline under Linux
+8. If you want to use MiXiM and INET Framework together, see the 
+   'examples-inet/README' for further intsallation details.
+
+From the command-line under Linux
 --------------------------------
 Unpack the archive (you have probably already done so) in the directory where 'inet' is 
 also installed. (by default it must have the directory name 'inet'. If it is somewhere else
@@ -47,13 +48,16 @@ please adjust the INET directory veriable in 'mixim/Makefile' accordingly.
 
  $ tar xzf mixim<VERSION>.tgz
 
-1. run the following command in the MiXiM root dir (after possibly setting the INET_PRJOJECT_DIR
+1. run the following command in the MiXiM root dir (after possibly setting the INET_PROJECT_DIR
    variable in the Makefile)
- $ make makemakefiles
+
+ $ make makefiles                 # if you want to use MiXiM without INET Framework.
+   or
+ $ make makefiles-using-inet      # if you want to use MiXiM with INET Framework.
 
 2. type "make" to build the mixim library and the example and test binaries 
    and to build the test networks
-   
+
 3. Try to run one of the examples from the examples folder. Use the provided 'run' scripts.
 
 4. To see how to get started with MiXiM please read the section "How to start"

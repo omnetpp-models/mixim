@@ -24,8 +24,8 @@
 
 #include "MiXiMDefs.h"
 #include "BaseMacLayer.h"
-#include "utility/Consts80211.h"
-#include "messages/Mac80211Pkt_m.h"
+#include "Consts80211.h"
+#include "Mac80211Pkt_m.h"
 
 class ChannelSenseRequest;
 

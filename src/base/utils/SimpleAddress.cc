@@ -19,7 +19,7 @@
 
 const LAddress::L2Type LAddress::L2BROADCAST =
 #ifdef MIXIM_INET
-        MACAddress::BROADCAST_ADDRESS;
+        MACAddress("ff:ff:ff:ff:ff:ff");
 #else
 LAddress::L2Type(-1);
 #endif

@@ -324,7 +324,7 @@ bool BaseConnectionManager::registerNic(cModule*                 nic,
 	// fill nicEntry
 	nicEntry->nicPtr = nic;
 	nicEntry->nicId = nicID;
-	nicEntry->hostId   = pHostModule ? pHostModule->getId() : NULL;
+	nicEntry->hostId   = pHostModule ? pHostModule->getId() : 0;
 	nicEntry->pos      = *nicPos;
 	nicEntry->chAccess = chAccess;
 
