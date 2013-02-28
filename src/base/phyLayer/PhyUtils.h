@@ -63,7 +63,7 @@ protected:
 		virtual ~ListEntry() {}
 
 		/** @brief Returns the time of the entry.*/
-		simtime_t getTime() const {
+		simtime_t_cref getTime() const {
 			return basicTimestamp.first;
 		}
 
@@ -73,7 +73,7 @@ protected:
 		}
 
 		/** @brief Returns the value of the entry.*/
-		Argument::mapped_type getValue() const {
+		Argument::mapped_type_cref getValue() const {
 			return basicTimestamp.second;
 		}
 
@@ -113,8 +113,11 @@ protected:
 	 */
 	bool currentlyTracking;
 
-	/**  @brief Data structure to track the Radios attenuation over time.*/
-	std::list<ListEntry> radioStateAttenuation;
+public:
+	/** @brief The type to hold the attenuation's over time. */
+	typedef std::list<ListEntry> time_attenuation_collection_type;
+	/** @brief Data structure to track the Radios attenuation over time.*/
+	time_attenuation_collection_type radioStateAttenuation;
 
 public:
 
@@ -439,10 +442,8 @@ protected:
 	/** @brief Pointer to the RSAM module.*/
 	const RadioStateAnalogueModel* rsam;
 
-	/** @brief Type for the list of attenuation entries.*/
-	typedef std::list<RadioStateAnalogueModel::ListEntry> CurrList;
 	/** @brief List iterator pointing to the current position.*/
-	CurrList::const_iterator it;
+	RadioStateAnalogueModel::time_attenuation_collection_type::const_iterator it;
 
 	/** @brief The current position of this iterator.*/
 	Argument position;

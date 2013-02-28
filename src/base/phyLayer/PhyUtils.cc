@@ -29,9 +29,7 @@ void RadioStateAnalogueModel::cleanUpUntil(simtime_t_cref t)
 	// ==> clear complete list except the last element, return
 	if ( t > radioStateAttenuation.back().getTime() )
 	{
-		ListEntry lastEntry = radioStateAttenuation.back();
-		radioStateAttenuation.clear();
-		radioStateAttenuation.push_back(lastEntry);
+		radioStateAttenuation.erase(radioStateAttenuation.begin(), --radioStateAttenuation.end());
 		return;
 	}
 
@@ -43,11 +41,11 @@ void RadioStateAnalogueModel::cleanUpUntil(simtime_t_cref t)
 	 */
 
 	// get an iterator and set it to the first timepoint >= t
-	std::list<ListEntry>::iterator it;
-	it = lower_bound(radioStateAttenuation.begin(), radioStateAttenuation.end(), t);
+	time_attenuation_collection_type::iterator it =
+	        lower_bound(radioStateAttenuation.begin(), radioStateAttenuation.end(), t);
 
 	// CASE: list contains an element with exactly the given key
-	if ( it->getTime() == t )
+	if ( it != radioStateAttenuation.end() && !(t < *it) )
 	{
 		radioStateAttenuation.erase(radioStateAttenuation.begin(), it);
 		return;
@@ -59,7 +57,6 @@ void RadioStateAnalogueModel::cleanUpUntil(simtime_t_cref t)
 
 	it->setTime(t); // set this elements time to t
 	radioStateAttenuation.erase(radioStateAttenuation.begin(), it); // and erase all previous elements
-
 }
 
 void RadioStateAnalogueModel::writeRecvEntry(simtime_t_cref time, Argument::mapped_type_cref value)
@@ -76,9 +73,6 @@ void RadioStateAnalogueModel::writeRecvEntry(simtime_t_cref time, Argument::mapp
 		assert(radioStateAttenuation.back().getTime() == time);
 	}
 }
-
-
-
 
 MiximRadio::MiximRadio(int numRadioStates,
 			 bool recordStats,
@@ -241,8 +235,8 @@ void RSAMConstMappingIterator::setNextPosition()
 			nextPosition.setTime(signalStart);
 		} else
 		{
-			CurrList::const_iterator it2 = it;
-			it2++;
+		    RadioStateAnalogueModel::time_attenuation_collection_type::const_iterator it2 = it;
+			++it2;
 
 			assert(it->getTime() <= position.getTime() && position.getTime() < it2->getTime());
 
@@ -259,9 +253,8 @@ void RSAMConstMappingIterator::setNextPosition()
 
 	} else // iterator it stands on last entry or next entry whould be behind signal end
 	{
-		nextPosition.setTime(position.getTime() + 1);
+		nextPosition.setTime(MappingUtils::incNextPosition(position.getTime()));
 	}
-
 }
 
 void RSAMConstMappingIterator::iterateTo(const Argument& pos)
@@ -288,7 +281,6 @@ void RSAMConstMappingIterator::iterateTo(const Argument& pos)
 	// update current position
 	position.setTime(t);
 	setNextPosition();
-
 }
 
 bool RSAMConstMappingIterator::inRange() const
@@ -306,7 +298,7 @@ bool RSAMConstMappingIterator::hasNext() const
 {
 	assert( !(rsam->radioStateAttenuation.empty()) );
 
-	CurrList::const_iterator it2 = it;
+	RadioStateAnalogueModel::time_attenuation_collection_type::const_iterator it2 = it;
 	if (it2 != rsam->radioStateAttenuation.end())
 	{
 		++it2;
@@ -318,10 +310,11 @@ bool RSAMConstMappingIterator::hasNext() const
 
 void RSAMConstMappingIterator::iterateToOverZeroSwitches(simtime_t_cref t)
 {
-	if( it != rsam->radioStateAttenuation.end() && !(t < it->getTime()) )
+    RadioStateAnalogueModel::time_attenuation_collection_type::const_iterator itEnd = rsam->radioStateAttenuation.end();
+	if( it != itEnd && !(t < it->getTime()) )
 	{
 		// and go over (ignore) all zero-time-switches, to the next greater entry (time)
-		while( it != rsam->radioStateAttenuation.end() && !(t < it->getTime()) )
+		while( it != itEnd && !(t < it->getTime()) )
 			++it;
 
 		// go back one step, here the iterator 'it' is placed right
@@ -342,7 +335,7 @@ RSAMMapping::argument_value_t RSAMMapping::getValue(const Argument& pos) const
 	/* receiving list contains at least one entry */
 
 	// set an iterator to the first entry with timepoint > t
-	std::list<RadioStateAnalogueModel::ListEntry>::const_iterator it;
+	RadioStateAnalogueModel::time_attenuation_collection_type::const_iterator it;
 	it = upper_bound(rsam->radioStateAttenuation.begin(), rsam->radioStateAttenuation.end(), t);
 
 	// REGULAR CASE: it points to an element that has a predecessor
