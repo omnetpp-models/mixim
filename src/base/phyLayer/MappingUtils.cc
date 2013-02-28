@@ -409,6 +409,15 @@ simtime_t MappingUtils::post(simtime_t_cref t)
 	return stPost;
 }
 
+simtime_t MappingUtils::incNextPosition(simtime_t_cref t)
+{
+	//assert(SIMTIME_RAW(t) < SIMTIME_RAW(MAXTIME));
+	// original it was following formula, but I do not know why
+	// the '+1' is used here!? I think post should be enough!
+	//return t + 1;
+	return post(t);
+}
+
 
 /*
 Mapping* Mapping::multiply(ConstMapping &f1, ConstMapping &f2, const Argument& from, const Argument& to)

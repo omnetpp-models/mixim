@@ -2,28 +2,35 @@
 #include "Mapping.h"
 
 #include <asserts.h>
+#include <limits>
+#include <cmath>
 #include <OmnetTestBase.h>
 
+static bool simTimeDblEquals(simtime_t_cref a, double b) {
+    simtime_t    stB(b);
+    const double dDelta( std::fabs(a.dbl() - b) );
 
+    return ( a == stB || dDelta < std::numeric_limits<double>::epsilon() || dDelta < std::pow(10.0, simtime_t::getScaleExp()) );
+}
+static bool doubleEquals(double a, double b) {
+    return a == b || std::fabs(a - b) < std::numeric_limits<double>::epsilon();
+}
 /* ------ Testing stuff for Radio ------ */
 
 // global variables needed for tests
 const int initialState =  MiximRadio::RX;
 
-const double RX2TX = 1.0;
-const double RX2SLEEP = 2.0;
-const double TX2RX = 3.0;
-const double TX2SLEEP = 4.0;
-const double SLEEP2RX = 5.0;
-const double SLEEP2TX = 6.0;
-const double RX2RX = 7.0;
-const double TX2TX = 8.0;
-const double SLEEP2SLEEP = 9.0;
-
-
+static const double RX2TX       = 1.0;
+static const double RX2SLEEP    = 2.0;
+static const double TX2RX       = 3.0;
+static const double TX2SLEEP    = 4.0;
+static const double SLEEP2RX    = 5.0;
+static const double SLEEP2TX    = 6.0;
+static const double RX2RX       = 7.0;
+static const double TX2TX       = 8.0;
+static const double SLEEP2SLEEP = 9.0;
 
 // test functions
-
 
 void testRadioConstructor()
 {
@@ -32,14 +39,10 @@ void testRadioConstructor()
 	// check members of radio1
 	assertTrue("RadioState is correct", radio1->getCurrentState() == MiximRadio::RX);
 
-
-
-
 	MiximRadio* radio2 = MiximRadio::createNewRadio(false, initialState); // contructor with argument
 
 	//check members of radio2
 	assertTrue("RadioState is correct", radio2->getCurrentState() == initialState);
-
 
 	std::cout << "Constructor Test passed." << std::endl;
 
@@ -54,8 +57,6 @@ int testSwitching(MiximRadio& radio, int to, double refValue)
 
 	// check whether radio is currently switching
 	if (radio.getCurrentState() == MiximRadio::SWITCHING) return -1;
-
-
 
 	// call switchTo
 	double result = SIMTIME_DBL(radio.switchTo(to, 0));
@@ -78,8 +79,6 @@ int testSwitching(MiximRadio& radio, int to, double refValue)
 void testRadioFunctionality()
 {
 	MiximRadio& radio1 = *MiximRadio::createNewRadio();
-
-
 
 	// call setSwTime() for every matrix entry
 	//radio1.setSwitchTime(RX, RX, value);//not a regular case
@@ -154,12 +153,7 @@ void testRadioFunctionality()
 	switchResult = testSwitching(radio1, MiximRadio::RX, SLEEP2RX);
 	assertTrue("Switching test", switchResult == 0);
 
-
 	assertTrue("RadioState is correct", radio1.getCurrentState() == MiximRadio::RX);
-
-
-
-
 	std::cout << "SetSwitchTime test passed." << std::endl;
 
 	delete &radio1;
@@ -173,27 +167,23 @@ void testRadioFunctionality()
 // further global variables
 
 // timepoints to store in the analogue model
-const double time1 = 0.2; // first timepoint
-const double time2 = 0.3;
-const double time3 = 0.51;
-const double time4 = 0.6; // last timepoint
+static const double time1 = (0.2); // first timepoint
+static const double time2 = (0.3);
+static const double time3 = (0.51);
+static const double time4 = (0.6); // last timepoint
 
 // timepoint for testing purposes
-const double time5 = 0.5; // in between two timepoints, before duplicate
-const double time6 = 0.52; // in between two timepoints, after duplicate
-const double time7 = 0.01; // before first timepoint
-//const double time7 = 0.19; // before first timepoint
-const double time8 = 0.65; // after last timepoint
-const double time9 = 0.59; // before last timepoint
+static const double time5 = (0.5); // in between two timepoints, before duplicate
+static const double time6 = (0.52); // in between two timepoints, after duplicate
+static const double time7 = (0.01); // before first timepoint
+//const simtime_t time7 = 0.19; // before first timepoint
+static const double time8 = (0.65); // after last timepoint
+static const double time9 = (0.59); // before last timepoint
 
+static const Argument::mapped_type minAtt = (2.0);
+static const Argument::mapped_type maxAtt = (0.0);
 
-
-const double minAtt = 2.0;
-const double maxAtt = 0.0;
-
-
-
-typedef std::list<std::pair<simtime_t, double> > RSList;
+typedef std::list< std::pair<double, Argument::mapped_type> > RSList;
 
 // just an inherited class to get access to the members
 class DiagRSAM : public RadioStateAnalogueModel
@@ -217,23 +207,49 @@ public:
 	ListEntry getFirstRecvListEntry() const { return radioStateAttenuation.front(); }
 
 
-	bool compareRecvLists(RSList refRecvList)
+	bool compareRecvLists(const RSList& refRecvList) const
 	{
-		if ( ((int) radioStateAttenuation.size()) != ((int) refRecvList.size()) ) return false;
+		if ( radioStateAttenuation.size() != refRecvList.size() )
+		    return false;
 
-		std::list<ListEntry>::iterator it1;
-		RSList::iterator it2;
+		time_attenuation_collection_type::const_iterator it1;
+        time_attenuation_collection_type::const_iterator it1End = radioStateAttenuation.end();
+		RSList::const_iterator                           it2;
 
-		for (it1 = radioStateAttenuation.begin(), it2 = refRecvList.begin(); it1 != radioStateAttenuation.end(); it1++, it2++)
-		{
-			if ( it1->getTime() != it2->first ) return false;
-			if ( it1->getValue() != it2->second ) return false;
+		for (it1 = radioStateAttenuation.begin(), it2 = refRecvList.begin(); it1 != it1End; ++it1, ++it2) {
+			if ( !simTimeDblEquals(it1->getTime(), it2->first) ) return false;
+			if ( !doubleEquals(it1->getValue(), it2->second) )   return false;
 		}
 
 		return true;
 	}
+    void printLists(const RSList& refRecvList) const
+    {
+        time_attenuation_collection_type::const_iterator it1;
+        time_attenuation_collection_type::const_iterator it1End = radioStateAttenuation.end();
+        RSList::const_iterator                           it2;
+        RSList::const_iterator                           it2End = refRecvList.end();
+        unsigned                                         iCnt   = 0;
 
-
+        for (it1 = radioStateAttenuation.begin(), it2 = refRecvList.begin(); it1 != it1End || it2 != it2End; ++iCnt) {
+            if ( it1 != it1End ) {
+                std::cout << "#" << iCnt << " Time1: " << it1->getTime() << ", Value1: " << it1->getValue();
+                ++it1;
+            }
+            else {
+                std::cout << "#" << iCnt << " Time1: \t\t, Value1: ";
+            }
+            std::cout << std::endl;
+            if ( it2 != it2End ) {
+                std::cout << "   Time2: " << it2->first << ", Value2: " << it2->second;
+                ++it2;
+            }
+            else {
+                std::cout << "   Time2: \t\t, Value1: ";
+            }
+            std::cout << std::endl;
+        }
+    }
 };
 
 
@@ -267,19 +283,16 @@ private:
 	{
 		// contains only last timestamp
 		// (time4,minAtt)
-		oneElemList.push_back( std::pair<simtime_t, double> (time4, minAtt) );
+		oneElemList.push_back( std::make_pair(time4, minAtt) );
 
 		// contains all timestamps
 		// (initTime, minAtt)--(time1,minAtt)--(time2,minAtt)--(time3,maxAtt)--(time3,minAtt)--(time4,minAtt)
-		manyElemList.push_back( std::pair<simtime_t, double> (initTime, minAtt) );
-		manyElemList.push_back( std::pair<simtime_t, double> (time1, minAtt) );
-		manyElemList.push_back( std::pair<simtime_t, double> (time2, minAtt) );
-		manyElemList.push_back( std::pair<simtime_t, double> (time3, maxAtt) );
-		manyElemList.push_back( std::pair<simtime_t, double> (time3, minAtt) );
-		manyElemList.push_back( std::pair<simtime_t, double> (time4, minAtt) );
-
-
-
+		manyElemList.push_back( std::make_pair(initTime.dbl(), minAtt) );
+		manyElemList.push_back( std::make_pair(time1, minAtt) );
+		manyElemList.push_back( std::make_pair(time2, minAtt) );
+		manyElemList.push_back( std::make_pair(time3, maxAtt) );
+		manyElemList.push_back( std::make_pair(time3, minAtt) );
+		manyElemList.push_back( std::make_pair(time4, minAtt) );
 	}
 
 	//test constructor with all possible arguments (attenuation, initTime)
@@ -338,34 +351,40 @@ private:
 
 		m.setTrackingModeTo(true);
 
-		m.writeRecvEntry(time1, minAtt);
-		m.writeRecvEntry(time2, minAtt);
-		m.writeRecvEntry(time3, maxAtt);
-		m.writeRecvEntry(time3, minAtt);
-		m.writeRecvEntry(time4, minAtt);
+		const simtime_t stime1(time1);
+		const simtime_t stime2(time2);
+		const simtime_t stime3(time3);
+		const simtime_t stime4(time4);
+		const simtime_t stime5(time5);
+		const simtime_t stime6(time6);
+		const simtime_t stime7(time7);
+		const simtime_t stime8(time8);
+		const simtime_t stime9(time9);
+
+		m.writeRecvEntry(stime1, minAtt);
+		m.writeRecvEntry(stime2, minAtt);
+		m.writeRecvEntry(stime3, maxAtt);
+		m.writeRecvEntry(stime3, minAtt);
+		m.writeRecvEntry(stime4, minAtt);
 
 		assertTrue("Elements have been written to list.", m.getRecvListSize() == (1+5));
-
 
 		// compare lists
 		assertTrue("Lists are equal. (many entries)", m.compareRecvLists(manyElemList));
 
-
-
 		// make copies for cleanup-tests
-
 
 		// special cases
 		DiagRSAM temp = DiagRSAM(m);
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(manyElemList));
 		// called with timepoint before the first entry
-		temp.cleanUpUntil(time7); // nothing should happen
+		temp.cleanUpUntil(stime7); // nothing should happen
 		assertTrue("Lists are equal. (many entries), cleanUp before first entry", temp.compareRecvLists(manyElemList));
 
 		temp = DiagRSAM(m);
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(manyElemList));
 		// called with timepoint after the last entry
-		temp.cleanUpUntil(time8); // complete list should be cleaned, except last entry
+		temp.cleanUpUntil(stime8); // complete list should be cleaned, except last entry
 		assertTrue("Lists are equal. (many entries), cleanUp after last entry", temp.compareRecvLists(oneElemList));
 
 		temp = DiagRSAM(m);
@@ -377,72 +396,69 @@ private:
 		temp = DiagRSAM(m);
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(manyElemList));
 		// called with timepoint equal to the last entry
-		temp.cleanUpUntil(time4); // only last entry should remain
+		temp.cleanUpUntil(stime4); // only last entry should remain
 		assertTrue("Lists are equal. (many entries), cleanUp exactly last entry", temp.compareRecvLists(oneElemList));
-
 
 		// expected regular cases
 
 		// (time3,maxAtt)--(time3,minAtt)--(time4,minAtt)
 		variableList.clear();
-		variableList.push_back( std::pair<simtime_t, double> (time3, maxAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time3, minAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time4, minAtt) );
+		variableList.push_back( std::make_pair(time3, maxAtt) );
+		variableList.push_back( std::make_pair(time3, minAtt) );
+		variableList.push_back( std::make_pair(time4, minAtt) );
 
 		temp = DiagRSAM(m);
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(manyElemList));
 		// called with timepoint equal to the first entry of
 		// a bunch with same timepoint
-		temp.cleanUpUntil(time3); // all entries with timepoint >= time3 should remain
+		temp.cleanUpUntil(stime3); // all entries with timepoint >= time3 should remain
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(variableList));
-
-
 
 		// (time5,minAtt)--(time3,maxAtt)--(time3,minAtt)--(time4,minAtt)
 		variableList.clear();
-		variableList.push_back( std::pair<simtime_t, double> (time5, minAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time3, maxAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time3, minAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time4, minAtt) );
+		variableList.push_back( std::make_pair(time5, minAtt) );
+		variableList.push_back( std::make_pair(time3, maxAtt) );
+		variableList.push_back( std::make_pair(time3, minAtt) );
+		variableList.push_back( std::make_pair(time4, minAtt) );
 
 		temp = DiagRSAM(m);
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(manyElemList));
 		// called with timepoint in between two timepoint, one entry must be modified,
 		// all others before that one must be deleted
-		temp.cleanUpUntil(time5); // (time2, minAtt) must become (time5, minAtt), (time1, minAtt) must be deleted
+		temp.cleanUpUntil(stime5); // (time2, minAtt) must become (time5, minAtt), (time1, minAtt) must be deleted
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(variableList));
-
-
 
 		// (time2,minAtt)--(time3,maxAtt)--(time3,minAtt)--(time4,minAtt)
 		variableList.clear();
-		variableList.push_back( std::pair<simtime_t, double> (time2, minAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time3, maxAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time3, minAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time4, minAtt) );
+		variableList.push_back( std::make_pair(time2, minAtt) );
+		variableList.push_back( std::make_pair(time3, maxAtt) );
+		variableList.push_back( std::make_pair(time3, minAtt) );
+		variableList.push_back( std::make_pair(time4, minAtt) );
 
 		temp = DiagRSAM(m);
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(manyElemList));
 		// called with exact timepoint of one entry in the middle
-		temp.cleanUpUntil(time2); // all entries before (time2, minAtt) must be deleted
+		temp.cleanUpUntil(stime2); // all entries before (time2, minAtt) must be deleted
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(variableList));
-
 
 		// (time9,minAtt)--(time4,minAtt)
 		variableList.clear();
-		variableList.push_back( std::pair<simtime_t, double> (time9, minAtt) );
-		variableList.push_back( std::pair<simtime_t, double> (time4, minAtt) );
-
+		variableList.push_back( std::make_pair(time9, minAtt) );
+		variableList.push_back( std::make_pair(time4, minAtt) );
 
 		temp = DiagRSAM(m);
+		if (!temp.compareRecvLists(manyElemList)) {
+		    temp.printLists(manyElemList);
+		}
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(manyElemList));
 		// called with timepoint before a single entry
-		temp.cleanUpUntil(time9); // (time3, minAtt) must become (time9, minAtt) , all before must be deleted
+		temp.cleanUpUntil(stime9); // (time3, minAtt) must become (time9, minAtt) , all before must be deleted
+		if (!temp.compareRecvLists(variableList)) {
+		    temp.printLists(variableList);
+		}
 		assertTrue("Lists are equal. (many entries)", temp.compareRecvLists(variableList));
 
 		std::cout << "END" << std::endl;
-
-
 
 		// tests for lists storing exactly one entry
 		DiagRSAM m2 = DiagRSAM(minAtt, true, initTime);
@@ -454,33 +470,34 @@ private:
 
 		assertTrue("Element has been written to list.", m2.getRecvListSize() == (1+1));
 
-		m2.cleanUpUntil(time4);
+		m2.cleanUpUntil(stime4);
 		// (time4, minAtt)
 
+        if (!m2.compareRecvLists(oneElemList)) {
+            m2.printLists(oneElemList);
+        }
 
 		assertTrue("Lists are equal. (one entry)", m2.compareRecvLists(oneElemList));
 
 		DiagRSAM temp2 = DiagRSAM(m2);
 		assertTrue("Lists are equal. (one entry)", temp2.compareRecvLists(oneElemList));
 		// called with timepoint before entry
-		temp2.cleanUpUntil(time9); // nothing should happen
+		temp2.cleanUpUntil(stime9); // nothing should happen
 		assertTrue("Lists are equal. (one entry), cleanUp before entry", temp2.compareRecvLists(oneElemList));
 
 		temp2 = DiagRSAM(m2);
 		assertTrue("Lists are equal. (one entry)", temp2.compareRecvLists(oneElemList));
 		// called with exactly the timepoint contained
-		temp2.cleanUpUntil(time4); // nothing should happen
+		temp2.cleanUpUntil(stime4); // nothing should happen
 		assertTrue("Lists are equal. (one entry), cleanup exactly on entry", temp2.compareRecvLists(oneElemList));
 
 		temp2 = DiagRSAM(m2);
 		assertTrue("Lists are equal. (one entry)", temp2.compareRecvLists(oneElemList));
 		// called with timepoint after entry
-		temp2.cleanUpUntil(time8); // list should be cleaned
+		temp2.cleanUpUntil(stime8); // list should be cleaned
 		assertTrue("Lists are equal. (one entry), cleanUp after entry", temp2.compareRecvLists(oneElemList));
 
 		std::cout << "END" << std::endl;
-
-
 	}
 
 	/* ------ Testing stuff for RSAMMapping ------ */
@@ -514,19 +531,14 @@ private:
 		assertEqual("Entry at time-point with zero-time-switches (time3)", mapping.getValue(Argument(time3)), minAtt);
 		assertEqual("Entry at last time-point (time4)", mapping.getValue(Argument(time4)), minAtt);
 		assertEqual("Entry after last time-point", mapping.getValue(Argument(time4+offset)), mapping.getValue(Argument(time4)));
-
-
-
-
-
 	}
 
 	/* ------ Testing stuff for RSAMConstMappingIterator ------ */
 
-	void checkIterator(std::string msg, ConstMappingIterator& it,
+	void checkIterator(std::string msg, const ConstMappingIterator& it,
 					   bool hasNext, bool inRange,
-					   Argument arg, Argument nextArg,
-					   double val, ConstMapping& f) {
+					   const Argument& arg, const Argument& nextArg,
+					   double val, const ConstMapping& f) const {
 		assertEqual(msg + ": hasNext()", hasNext, it.hasNext());
 		assertEqual(msg + ": inRange()", inRange, it.inRange());
 		assertEqual(msg + ": currentPos()", arg, it.getPosition());
@@ -545,15 +557,22 @@ private:
 
 	simtime_t incrTime(simtime_t_cref t)
 	{
-		return t + 1;
+		return MappingUtils::incNextPosition(t);
 	}
 
 	void testRSAMConstMappingIterator()
 	{
 		std::cout << "---test RSAMConstMappingiterator" << endl;
 
-
-
+		const simtime_t stime1(time1);
+		const simtime_t stime2(time2);
+		const simtime_t stime3(time3);
+		const simtime_t stime4(time4);
+		const simtime_t stime5(time5);
+		const simtime_t stime6(time6);
+		const simtime_t stime7(time7);
+		const simtime_t stime8(time8);
+		const simtime_t stime9(time9);
 
 		// create empty RSAM and mapping
 		RadioStateAnalogueModel rsam = RadioStateAnalogueModel(minAtt, true, initTime);
@@ -564,7 +583,7 @@ private:
 		// Constructor tests with rsam storing only the entry (initTime, minAtt)
 		// rsamCMI stands on initTime
 		simtime_t t0(initTime);
-		simtime_t t0Next(t0); t0Next+=1;
+		simtime_t t0Next(MappingUtils::incNextPosition(t0));
 		rsamCMI = static_cast<RSAMConstMappingIterator*>(mapping.createConstIterator());
 		checkIterator("default Constructor", *rsamCMI, false, true, Argument(t0), Argument(t0Next), minAtt, mapping);
 		delete rsamCMI;
@@ -572,7 +591,7 @@ private:
 		// Constructor tests with rsam storing only one the entry (initTime, minAtt) and Argument(initTime)
 		// rsamCMI stands on initTime
 		simtime_t t1(initTime);
-		simtime_t t1Next(t1); t1Next+=1;
+		simtime_t t1Next(MappingUtils::incNextPosition(t1));
 		Argument pos1(t1);
 		rsamCMI = static_cast<RSAMConstMappingIterator*>(mapping.createConstIterator(pos1));
 		checkIterator("constructor with position exactly on beginning of initial rsam",
@@ -583,72 +602,65 @@ private:
 		// Constructor tests with rsam storing only one the entry (initTime, minAtt) and Argument(initTime+offset)
 		// rsamCMI stands on initTime+offset
 		simtime_t t2(initTime+offset);
-		simtime_t t2Next(t2); t2Next+=1;
-		Argument pos2(t2);
+		simtime_t t2Next(MappingUtils::incNextPosition(t2));
+		Argument  pos2(t2);
 		rsamCMI = static_cast<RSAMConstMappingIterator*>(mapping.createConstIterator(pos2));
 		checkIterator("constructor with position after beginning of initial rsam",
-				*rsamCMI, false, false, Argument(t2), Argument(t2Next), minAtt, mapping);
+				*rsamCMI, false, false, pos2, Argument(t2Next), minAtt, mapping);
 		delete rsamCMI;
 
 		//--- End of constructor tests
 
-
-
 		//--- Begin iterator movement tests
 		rsam = RadioStateAnalogueModel(minAtt, true, initTime);
-		mapping = RSAMMapping( &rsam, initTime, time4 );
+		mapping = RSAMMapping( &rsam, initTime, stime4 );
 
 		// update of RSAM, leads to:
 		// (initTime, minAtt)--(time1,minAtt)--(time2,maxAtt)--(time3,maxAtt)--(time3,minAtt)--(time4,maxAtt)
-		rsam.writeRecvEntry(time1, minAtt);
-		rsam.writeRecvEntry(time2, maxAtt);
-		rsam.writeRecvEntry(time3, maxAtt);
-		rsam.writeRecvEntry(time3, minAtt);
-		rsam.writeRecvEntry(time4, maxAtt);
+		rsam.writeRecvEntry(stime1, minAtt);
+		rsam.writeRecvEntry(stime2, maxAtt);
+		rsam.writeRecvEntry(stime3, maxAtt);
+		rsam.writeRecvEntry(stime3, minAtt);
+		rsam.writeRecvEntry(stime4, maxAtt);
 
 		rsamCMI = static_cast<RSAMConstMappingIterator*>(mapping.createConstIterator());
 
-
-
-
 		checkIterator("Iterator at beginning of filled RSAM",
-				*rsamCMI, true, true, Argument(initTime), Argument(MappingUtils::pre(time1)), minAtt, mapping);
-
+				*rsamCMI, true, true, Argument(initTime), Argument(MappingUtils::pre(stime1)), minAtt, mapping);
 
 		// --- test iterateTo() method by iterating through some interesting points
 
 		std::cout << "--- testing iterateTo()" << std::endl;
 
-		simtime_t t3(time1 + (time2-time1)/2);
+		simtime_t t3(stime1 + (stime2-stime1)/2);
 		rsamCMI->iterateTo(Argument(t3));
 		checkIterator("Iterator between time1 and time2",
-					*rsamCMI, true, true, Argument(t3), Argument(MappingUtils::pre(time2)), minAtt, mapping);
+					*rsamCMI, true, true, Argument(t3), Argument(MappingUtils::pre(stime2)), minAtt, mapping);
 
-		rsamCMI->iterateTo(Argument(MappingUtils::pre(time2)));
+		rsamCMI->iterateTo(Argument(MappingUtils::pre(stime2)));
 		checkIterator("Iterator on pre(time2)",
-					*rsamCMI, true, true, Argument(MappingUtils::pre(time2)), Argument(time2), minAtt, mapping);
+					*rsamCMI, true, true, Argument(MappingUtils::pre(stime2)), Argument(stime2), minAtt, mapping);
 
-		rsamCMI->iterateTo(Argument(time2));
+		rsamCMI->iterateTo(Argument(stime2));
 		checkIterator("Iterator on time2",
-					*rsamCMI, true, true, Argument(time2), Argument(MappingUtils::pre(time3)), maxAtt, mapping);
+					*rsamCMI, true, true, Argument(stime2), Argument(MappingUtils::pre(stime3)), maxAtt, mapping);
 
 
-		rsamCMI->iterateTo(Argument(time3));
+		rsamCMI->iterateTo(Argument(stime3));
 		checkIterator("Iterator on time3",
-					*rsamCMI, true, true, Argument(time3), Argument(MappingUtils::pre(time4)), minAtt, mapping);
+					*rsamCMI, true, true, Argument(stime3), Argument(MappingUtils::pre(stime4)), minAtt, mapping);
 
-		rsamCMI->iterateTo(Argument(time4));
-		simtime_t time4Next = incrTime(time4);
+		rsamCMI->iterateTo(Argument(stime4));
+		simtime_t time4Next = incrTime(stime4);
 		checkIterator("Iterator on time4",
-					*rsamCMI, false, true, Argument(time4), Argument(time4Next), maxAtt, mapping);
+					*rsamCMI, false, true, Argument(stime4), Argument(time4Next), maxAtt, mapping);
 
 
-		simtime_t t5(time4+offset);
+		simtime_t t5     = stime4+offset;
 		simtime_t t5Next = incrTime(t5);
 		rsamCMI->iterateTo(Argument(t5));
 		checkIterator("Iterator on time4+offset",
 					*rsamCMI, false, false, Argument(t5), Argument(t5Next), maxAtt, mapping);
-
 
 		// --- test jumpTo() method by jumping to some interesting points
 
@@ -657,73 +669,63 @@ private:
 		// reset iterator to the beginning of the mapping
 		rsamCMI->jumpToBegin();
 
-
-
 		checkIterator("Iterator at beginning of filled RSAM",
-					*rsamCMI, true, true, Argument(initTime), Argument(MappingUtils::pre(time1)), minAtt, mapping);
-
-
+					*rsamCMI, true, true, Argument(initTime), Argument(MappingUtils::pre(stime1)), minAtt, mapping);
 
 		rsamCMI->jumpTo(Argument(t3));
 		checkIterator("Iterator between time1 and time2",
-					*rsamCMI, true, true, Argument(t3), Argument(MappingUtils::pre(time2)), minAtt, mapping);
+					*rsamCMI, true, true, Argument(t3), Argument(MappingUtils::pre(stime2)), minAtt, mapping);
 
-		rsamCMI->jumpTo(Argument(MappingUtils::pre(time2)));
+		rsamCMI->jumpTo(Argument(MappingUtils::pre(stime2)));
 		checkIterator("Iterator on pre(time2)",
-					*rsamCMI, true, true, Argument(MappingUtils::pre(time2)), Argument(time2), minAtt, mapping);
+					*rsamCMI, true, true, Argument(MappingUtils::pre(stime2)), Argument(stime2), minAtt, mapping);
 
-		rsamCMI->jumpTo(Argument(time2));
+		rsamCMI->jumpTo(Argument(stime2));
 		checkIterator("Iterator on time2",
-					*rsamCMI, true, true, Argument(time2), Argument(MappingUtils::pre(time3)), maxAtt, mapping);
+					*rsamCMI, true, true, Argument(stime2), Argument(MappingUtils::pre(time3)), maxAtt, mapping);
 
 
-		rsamCMI->jumpTo(Argument(time3));
+		rsamCMI->jumpTo(Argument(stime3));
 		checkIterator("Iterator on time3",
-					*rsamCMI, true, true, Argument(time3), Argument(MappingUtils::pre(time4)), minAtt, mapping);
+					*rsamCMI, true, true, Argument(stime3), Argument(MappingUtils::pre(stime4)), minAtt, mapping);
 
-		rsamCMI->jumpTo(Argument(time4));
+		rsamCMI->jumpTo(Argument(stime4));
 		checkIterator("Iterator on time4",
-					*rsamCMI, false, true, Argument(time4), Argument(time4Next), maxAtt, mapping);
-
-
+					*rsamCMI, false, true, Argument(stime4), Argument(time4Next), maxAtt, mapping);
 
 		rsamCMI->jumpTo(Argument(t5));
 		checkIterator("Iterator on time4+offset",
 					*rsamCMI, false, false, Argument(t5), Argument(t5Next), maxAtt, mapping);
 
-
-
 		std::cout << "--- testing jumpTo() backwards" << endl;
 
-		rsamCMI->jumpTo(Argument(time4));
+		rsamCMI->jumpTo(Argument(stime4));
 		checkIterator("Iterator on time4",
-					*rsamCMI, false, true, Argument(time4), Argument(time4Next), maxAtt, mapping);
+					*rsamCMI, false, true, Argument(stime4), Argument(time4Next), maxAtt, mapping);
 
-		rsamCMI->jumpTo(Argument(time3));
+		rsamCMI->jumpTo(Argument(stime3));
 		checkIterator("Iterator on time3",
-					*rsamCMI, true, true, Argument(time3), Argument(MappingUtils::pre(time4)), minAtt, mapping);
+					*rsamCMI, true, true, Argument(stime3), Argument(MappingUtils::pre(stime4)), minAtt, mapping);
 
 
-		rsamCMI->jumpTo(Argument(time2));
+		rsamCMI->jumpTo(Argument(stime2));
 		checkIterator("Iterator on time2",
-					*rsamCMI, true, true, Argument(time2), Argument(MappingUtils::pre(time3)), maxAtt, mapping);
+					*rsamCMI, true, true, Argument(stime2), Argument(MappingUtils::pre(stime3)), maxAtt, mapping);
 
 		rsamCMI->jumpTo(Argument(t3));
 		checkIterator("Iterator between time1 and time2",
-					*rsamCMI, true, true, Argument(t3), Argument(MappingUtils::pre(time2)), minAtt, mapping);
+					*rsamCMI, true, true, Argument(t3), Argument(MappingUtils::pre(stime2)), minAtt, mapping);
 
 		// some tests on multiple entries at first timepoint
 		std::cout << "--- some tests on multiple entries at first timepoint" << endl;
 
-
 		// clean the list and add a zero time switch at initTime
 		//rsam.cleanUpUntil(initTime);
 		rsam = RadioStateAnalogueModel(minAtt, true, initTime);
-		mapping = RSAMMapping( &rsam, initTime, time4 );
+		mapping = RSAMMapping( &rsam, initTime, stime4 );
 
 		t0 = initTime;
-		t0Next = t0; t0Next+=1;
-
+		t0Next = MappingUtils::incNextPosition(t0);
 
 		rsamCMI = static_cast<RSAMConstMappingIterator*>(mapping.createConstIterator());
 		checkIterator("Iterator at init time without zero time switch",
@@ -750,13 +752,9 @@ private:
 		checkIterator("Iterator at init time without zero time switch",
 						*rsamCMI, false, true, Argument(t0), Argument(t0Next), minAtt, mapping);
 
-
-
 		delete rsamCMI;
 		rsamCMI = 0;
-
 	}
-
 
 protected:
 	void runTests() {

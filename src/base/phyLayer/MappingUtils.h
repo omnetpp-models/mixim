@@ -2022,6 +2022,11 @@ public:
 	 * @brief returns the closest value of simtime after passed values
 	 */
 	static simtime_t post(simtime_t_cref t);
+
+    /**
+     * @brief returns the incremented position point (used in RSAMConstMappingIterator::setNextPosition).
+     */
+    static simtime_t incNextPosition(simtime_t_cref t);
 };
 
 
