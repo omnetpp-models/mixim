@@ -1,5 +1,0 @@
-- Get rid of the BaseWorldUtility class
-- make it work with FlatNetworkConfigurator and IPv4NetworkConfigurator
-- Make the battery optional for NICs in MIXIM
-- Make the decider and analogue model use INI files instead of XML (possibly by makeing the a simple modeule)
-- move to dignal based statistic gathering
