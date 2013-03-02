@@ -188,7 +188,6 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		}
 		else {
 			EV << "Unknown packet" << msg->getKind() <<  "in state" << macState << endl;
-			delete msg;
 		}
 		break;
 
@@ -240,7 +239,6 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		else
 		{
 			EV << "Unknown packet" << msg->getKind() <<  "in state" << macState << endl;
-			delete msg;
 		}
 		break;
 
@@ -359,7 +357,6 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		else
 		{
 			EV << "Unknown packet" << msg->getKind() <<  "in state" << macState << endl;
-			delete msg;
 		}
 		break;
 
@@ -460,7 +457,6 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		else
 		{
 			EV << "Unknown packet" << msg->getKind() <<  "in state" << macState << endl;
-			delete msg;
 		}
 
 		break;
@@ -529,7 +525,6 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		else
 		{
 			EV << "Unknown packet" << msg->getKind() <<  "in state" << macState << endl;
-			delete msg;
 		}
 		break;
 
@@ -541,7 +536,6 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		else
 		{
 			EV << "Unknown packet" << msg->getKind() <<  "in state" << macState << endl;
-			delete msg;
 		}
 		break;
 
@@ -577,7 +571,6 @@ void LMacLayer::handleSelfMsg(cMessage *msg)
 		else
 		{
 			EV << "Unknown packet" << msg->getKind() <<  "in state" << macState << endl;
-			delete msg;
 		}
 		break;
 	default:
