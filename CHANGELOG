@@ -1,3 +1,17 @@
+v2.3
++ More work on getting better INET compatibility, now we are very close to integrate 
+  MiXiM into INET framework. (Many thanks to Rudolf Hornig)
++ Added type definition for the radioStateAttenuation collection, changed some return
+  value definition to const ref. Using the MapUtils::incNextPosition method for 
+  calculating nextPosition. (Instead of adding ONE to calculating the nextPosition, 
+  we use the MapUtils::post operation now).
++ The default value for the constraint area is now derived from the playgroundSize parameter.
++ Some compiler fixes for gcc >= 4.7.
++ nic.phy.sensitivity <= -999999 dBm disables the sensitivity check
++ Renames to avoid nam clashes with INET: Radio>MiximRadio, BatteryAccess>MiximBatteryAccess
+  , ChannelAccess>ConnectionManagerAccess
++ Some Bugfixes
+
 v2.2.1
 + .cproject is now OMNeT++ 4.2 conform
 + renamed mobility coordinates from (x, y, z) into (initialX, initialY, initialZ) and
