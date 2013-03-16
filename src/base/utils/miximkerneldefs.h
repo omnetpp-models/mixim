@@ -20,6 +20,11 @@
 
 #define MIXIM_VERSION 0x0203
 
+#ifndef MIXIM_INET
+// should be defined always, since version 2.3
+#define MIXIM_INET
+#endif
+
 #define MIXIM_SIGNAL_PACKET_NAME          "org.mixim.modules.utility.packet"
 #define MIXIM_SIGNAL_UWBIRPACKET_NAME     "org.mixim.modules.utility.uwbirpacket"
 #define MIXIM_SIGNAL_DROPPEDPACKET_NAME   "org.mixim.modules.utility.droppedpacket"
